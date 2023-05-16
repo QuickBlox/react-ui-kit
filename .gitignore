@@ -1,0 +1,38 @@
+/mvvm-react-arch-autotest/ex.ts
+/.idea/modules.xml
+/.idea/react-ui-kit-private-04-01-2023.iml
+/.idea/vcs.xml
+.DS_Store
+
+# npm packages
+node_modules
+npm-debug.log
+npm-debug.log.*
+
+# *Storm
+.idea
+.idea/*
+.idea/workspace.xml
+
+# *Sublime
+*.sublime-*
+
+#vscode
+.vscode
+
+#jasmine-npm generate
+.grunt
+
+# Cordova build
+**/build
+
+*.xcarchive
+
+# Android
+.gradle
+.idea
+
+# karma
+coverage
+/.idea/
+/.idea/

@@ -1,0 +1,133 @@
+$dialog-information-container-height: 64px;
+$dialog-information-container-width: 720px;
+$dialog-information-container-dialog-information-height: 64px;
+
+.message-header-container {
+  border-bottom: 1px solid var(--divider);
+  min-height: $dialog-information-container-height;
+  max-height: $dialog-information-container-height;
+  height: $dialog-information-container-height;
+
+  // todo: delete this comment
+  // min-width: $dialog-information-container-width; // !!!
+
+  display: flex;
+  flex-direction: column;
+  //align-items: center;
+  padding: 0px;
+
+  //position: absolute;
+  //width: 720px;
+  //height: 64px;
+  //left: 0px;
+  //top: 0px;
+
+  // border: 1px solid green;
+
+  &--info-wrapper{
+    min-height: $dialog-information-container-dialog-information-height;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+
+    margin: 0px;
+    //padding: 0px;
+
+    //align-items: center;
+    //gap: 16px;
+
+    // border: 1px solid orange;
+
+    &__dialog-icon{
+      flex: 1 1 40px;
+      min-height: 40px;
+      min-width: 40px;
+      max-width: 40px;
+      margin-left: 20px;
+      margin-top: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: var(--disabled-elements);
+      border-radius: 50%;
+
+      // border: 1px solid red;
+    }
+
+    &__detail{
+      flex: 2 3;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 0px;
+
+
+      min-height: 40px;
+      // border: 1px solid orange;
+
+      &__dialog-name{
+        margin-top: 12px;
+        //margin-bottom: 28px;
+        margin-left: 8px;
+
+        max-width: 250px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 24px;
+        letter-spacing: 0.15px;
+        color: var(--main-text);
+
+        // border: 1px solid blue;
+      }
+
+      &__dialog-members{
+        margin-left: 8px;
+
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 11px;
+        line-height: 16px;
+        letter-spacing: 0.5px;
+        color: var(--secondary-text)
+        // border: 1px solid green;
+      }
+    }
+
+    &__detail-button{
+      flex: 1 1 80px;
+      min-width: 80px;
+      max-width: 80px;
+      display: flex;
+      flex-direction: row;
+      //justify-content: flex-end;
+      align-items: flex-end;
+      padding: 0px;
+      gap: 16px;
+
+      min-height: 32px;
+      min-width: 80px;
+      margin: 16px 16px 16px 0px;
+      // flex: 1 1 40px;
+
+      // border: 1px solid green;
+
+      &__call {
+        // border: 1px solid orange;
+      }
+
+      &__info {
+        // border: 1px solid blue;
+      }
+    }
+  }
+}

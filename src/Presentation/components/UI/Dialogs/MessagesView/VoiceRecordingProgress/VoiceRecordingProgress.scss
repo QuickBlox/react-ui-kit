@@ -1,0 +1,35 @@
+$chat-message-text-min-height: 64px;
+.chat-message-text-container{
+  // border: 3px solid blue;
+  width: 100%;
+  height: 44px;
+  min-Height: 44px;
+  max-Height: $chat-message-text-min-height;
+  background-Color: var(--chat-input);
+  border-Radius: 4px;
+  padding-left: 16px;
+  padding-top: 8px;
+  line-height: 24px;
+  font-size: 16px;
+  margin: 0 auto;
+  resize: none;
+
+  //
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+
+  justify-content: flex-start;
+  align-items: center;
+
+  gap: 12px;
+  &__stop_record_button{
+    cursor: pointer;
+    border-radius: 50%;
+    background: var(--error);
+    min-height: 24px;
+    max-height: 24px;
+    height: 24px;
+    width: 24px;
+  }
+}

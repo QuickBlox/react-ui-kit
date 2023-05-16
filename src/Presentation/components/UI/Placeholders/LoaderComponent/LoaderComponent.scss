@@ -1,0 +1,21 @@
+$default-background-color: var(--main-elements);
+$default-width-icon: 44;
+$default-height-icon: 44;
+
+// #Loader{fill: $default-background-color};
+
+.loader {
+  animation: spin 1s linear infinite;
+  svg path {fill: $default-background-color};
+  min-width: $default-width-icon;
+  min-height: $default-height-icon;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

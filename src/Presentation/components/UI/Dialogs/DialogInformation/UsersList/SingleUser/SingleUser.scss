@@ -1,0 +1,95 @@
+$user-single-container-height: 320px;
+.user-single-container {
+  min-height: $user-single-container-height;
+  max-height: $user-single-container-height;
+  height: $user-single-container-height;
+  //border: 1px solid green;
+
+  &--search-wrapper{
+    min-height: 56px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 16px;
+
+    //border: 1px solid blue;
+
+    &__search-text{
+      min-height: 24px;
+      // margin: 16px 16px 16px 16px;
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 24px;
+      letter-spacing: 0.15px;
+      flex: 2 2 268px;
+      letter-spacing: 0.15px;
+
+      //border: 1px solid orange;
+    }
+    &__search-icon{
+      min-height: 24px;
+      margin-left: 10px;
+      flex: 1 1 24px;
+      cursor: pointer;
+
+      //border: 1px solid red;
+    }
+  }
+
+  &--wrapper {
+    min-height: 56px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 16px;
+
+   // border: 1px solid blue;
+
+    &__username {
+      min-height: 24px;
+      min-width: 232px;
+      max-width: 232px;
+      // margin: 16px 16px 16px 16px;
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 24px;
+      letter-spacing: 0.15px;
+      flex: 2 2 268px;
+      letter-spacing: 0.15px;
+
+      //border: 1px solid orange;
+    }
+
+    &__icon {
+      min-height: 40px;
+      min-width: 40px;
+      max-height: 40px;
+      max-width: 40px;
+      margin-left: 16px;
+      margin-top: 8px;
+      margin-bottom: 8px;
+      // flex: 1 1 24px;
+      display: flex;
+      //cursor: pointer;
+      background-color: var(--caption);
+      border-radius: 50%;
+      align-items: center;
+      text-align: center;
+      align-content: center;
+
+      // border: 1px solid red;
+
+      &__content {
+        margin: 6px;
+      }
+    }
+  }
+}

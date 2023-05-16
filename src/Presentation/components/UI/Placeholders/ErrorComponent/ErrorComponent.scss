@@ -1,0 +1,74 @@
+$error-container-background-color: var(--main-background);
+$error-container-error-message-text-color: var(--caption);
+$error-container-error-action-color: var(--main-elements);
+$error-container-divider: var(--divider);
+
+.error-container-wrapper {
+  // padding-top: 9px;
+  // padding-bottom: 12px;
+  border: 1px solid $error-container-divider;
+}
+
+.error-container {
+  display: flex;
+  flex-flow: column nowrap;
+  min-width: 360px;
+  min-height: 156px;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  // border: 1px solid green;
+  gap: 16px;
+  background-color: $error-container-background-color;
+  &__error-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+
+    min-width: 60px;
+    min-height: 60px;
+
+
+    color: $error-container-error-message-text-color;
+    svg path {fill: $error-container-error-message-text-color}
+  }
+  &__error-message {
+    min-height: 24px;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    text-align: center;
+    letter-spacing: 0.15px;
+    color: $error-container-error-message-text-color;
+  }
+  &--error-action {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    gap: 8px;
+    min-height: 40px;
+    min-width: 92px;
+    cursor: pointer;
+
+    &__refresh-icon {
+      min-width: 24px;
+      min-height: 24px;
+      svg path {fill: $error-container-error-action-color}
+    }
+    &__refresh-text {
+      color: $error-container-error-action-color;
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 16px;
+      letter-spacing: 0.4px;
+     }
+  }
+}

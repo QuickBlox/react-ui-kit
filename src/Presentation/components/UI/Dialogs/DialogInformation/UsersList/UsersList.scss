@@ -1,0 +1,60 @@
+//.btn-container {
+//  min-width: 287px;
+//  min-height: 64px;
+//
+//  border: 1px solid green;
+//  &--wrapper {
+//    display: flex;
+//    flex-direction: row;
+//    justify-content: center;
+//    align-items: flex-start;
+//    padding: 8px 0px 24px;
+//    gap: 8px;
+//    min-width: 287px;
+//    margin-left: 16px;
+//    margin-right: 16px;
+//
+//    &__btn{
+//      box-sizing: border-box;
+//
+//      /* Auto layout */
+//
+//      display: flex;
+//      flex-direction: row;
+//      justify-content: center;
+//      align-items: center;
+//      padding: 8px 16px;
+//
+//      // width: 143px;
+//      height: 32px;
+//
+//      /* Secondary/Secondary-500 */
+//
+//      border: 1px solid var(--secondary-elements);
+//      border-radius: 4px;
+//
+//      /* Inside auto layout */
+//
+//      flex: none;
+//      order: 0;
+//      flex-grow: 0;
+//
+//      /* Button/Default */
+//
+//      font-family: 'Roboto';
+//      font-style: normal;
+//      font-weight: 700;
+//      font-size: 14px;
+//      line-height: 16px;
+//      /* identical to box height, or 114% */
+//
+//      letter-spacing: 0.4px;
+//
+//      /* Secondary/Secondary-500 */
+//
+//      color: var(--secondary-elements);
+//    }
+//  }
+//
+//
+//}

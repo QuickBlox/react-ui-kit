@@ -1,0 +1,32 @@
+.user-avatar-wrapper {
+  background: var(--disabled-elements);
+  //width: 55px;
+  //height: 55px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 0 auto;
+
+  &--btn {
+    position: relative;
+    isolation: isolate;
+    right: 5px;
+    top: -20px;
+
+    cursor: pointer;
+
+    color: var(--main-elements);
+
+    //border: 1px solid orange;
+  }
+
+  &--img {
+    //width: 55px;
+    //height: 55px;
+    position: relative;
+    right: 0px;
+    top: 0px;
+    border-radius: 50%;
+  }
+}

@@ -1,0 +1,127 @@
+.main-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+
+  //width: 63px;
+  height: 32px;
+
+  /* Light Theme/Main elements */
+
+  background: var(--main-elements);
+  border-radius: 4px;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+
+  //
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16px;
+  /* identical to box height, or 114% */
+
+  letter-spacing: 0.4px;
+
+  /* Light Theme/System */
+  color: var(--main-background);
+}
+
+.danger-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+
+  //width: 76px;
+  height: 32px;
+
+  /* Light Theme/Error */
+  background: var(--error);
+  border-radius: 4px;
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+
+  /* Button/Default */
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16px;
+  /* identical to box height, or 114% */
+  letter-spacing: 0.4px;
+  /* Light Theme/System */
+  color: var(--main-background);
+}
+
+.secondary-button{
+  /* Button */
+  box-sizing: border-box;
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  //width: 76px;
+  height: 32px;
+
+  /* Light Theme/Secondary elements */
+  background-color: var(--main-background);
+  border: 1px solid var(--secondary-elements);
+  border-radius: 4px;
+  /* Inside auto layout */
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+  //
+  /* Button/Default */
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16px;
+  /* identical to box height, or 114% */
+  letter-spacing: 0.4px;
+  /* Light Theme/Secondary elements */
+  color: var(--secondary-elements);
+
+}
+
+.main-disabled-button{
+  /* Button */
+  /* Auto layout */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+  //width: 76px;
+  height: 32px;
+  /* Light Theme/Disabled elements */
+  background: var(--disabled-elements);
+  border-radius: 4px;
+  /* Inside auto layout */
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+  /* Button/Default */
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16px;
+  /* identical to box height, or 114% */
+  letter-spacing: 0.4px;
+  /* Light Theme/Secondary text */
+  color: var(--secondary-text);
+}

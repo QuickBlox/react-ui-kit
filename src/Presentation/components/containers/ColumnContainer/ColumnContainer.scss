@@ -1,0 +1,6 @@
+$column-container-width: 320px;
+.column-container{
+  width: $column-container-width;
+  display: flex;
+  flex-flow: column nowrap;
+}

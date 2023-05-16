@@ -1,0 +1,128 @@
+$members-list-container-height: 800px;
+
+.members-container {
+  min-height: $members-list-container-height;
+  max-height: $members-list-container-height;
+  height: $members-list-container-height;
+
+  display: flex;
+  flex-direction: column;
+
+  // border: 3px solid green;
+
+  &--members-information-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin: 0 0 0 0;
+    height: 64px;
+    min-height: 64px;
+    max-height: 64px;
+
+    // border: 1px solid red;
+
+    &__members-information {
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 24px;
+      letter-spacing: 0.0015em;
+      height: 24px;
+      margin-left: 24px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+
+      // border: 1px solid orange;
+    }
+
+    &__members-information-count{
+      height: 20px;
+      margin: 22px 130px 22px 8px;
+      align-items: center;
+      padding: 2px 6px;
+      gap: 10px;
+      background: var(--disabled-elements);
+      border-radius: 30px;
+
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 16px;
+      text-align: center;
+      letter-spacing: 0.5px;
+      color: var(--main-background);
+    }
+    &__members-close {
+      margin-top: 16px;
+      margin-right: 16px;
+      margin-bottom: 16px;
+
+      max-height: 50px;
+
+      // border: 1px solid purple;
+    }
+  }
+
+
+  &--members-search-wrapper{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin: 0 0 0 0;
+    height: 76px;
+    min-height: 76px;
+    max-height: 76px;
+
+    // border: 1px solid red;
+
+    &__search-member-input{
+      margin: 16px;
+      max-width: 288px;
+      width: 288px;
+      //padding-right: 6px;
+
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+
+      align-items: center;
+      text-align: center;
+      align-content: center;
+
+      width: 320px;
+      height: 44px;
+
+      border: 1px solid #90979F;
+      border-radius: 4px;
+
+      background-color: var(--main-background);
+      color: var(--secondary-text);
+
+      input {
+        color: var(--secondary-text);
+        background-color: var(--main-background);
+
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 24px;
+
+        display: flex;
+        align-items: center;
+        letter-spacing: 0.15px;
+      }
+
+    }
+
+    &--members-list-wrapper{
+      //border: 3px solid firebrick;
+      display: flex;
+      max-height: 660px;
+      height: 660px;
+    }
+  }
+}

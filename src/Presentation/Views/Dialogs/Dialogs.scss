@@ -1,0 +1,66 @@
+.scroll-box{
+  max-height: 736px !important;
+  overflow: auto;
+  &::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: transparent;
+  }
+
+  &.scroll-box.border {
+    padding-bottom: 12px;
+    margin-bottom: 23px;
+    border-bottom: 2px solid rgba($color: #2c80e2, $alpha: 0.08);
+  }
+}
+.scroll-dialogs-container{
+  // border: 1px solid darkred;
+  flex: 1 1 200px;
+  width: 100%;
+  max-height: 200px;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-end;
+
+}
+.search-dialog-name-input{
+  margin: 16px;
+
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+
+  align-items: center;
+  text-align: center;
+  padding: 8px;
+  width: 288px;
+  height: 44px;
+
+  border: 1px solid #90979F;
+  border-radius: 4px;
+
+  background-color: var(--main-background);
+  color: var(--secondary-text);
+
+  input {
+    color: var(--secondary-text);
+    background-color: var(--main-background);
+    margin-left: 6px;
+    margin-right: 6px;
+
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.15px;
+  }
+}

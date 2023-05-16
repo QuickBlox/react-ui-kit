@@ -1,0 +1,24 @@
+$gap-width: 20px;
+$column-count: 4;
+$gap-count: $column-count - 1;
+
+$content-gap-width: 5px;
+
+.container-test-stage{
+  border: 10px solid #6c38cc;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $gap-width;
+  &__item{
+    //border: 1px solid #6c38cc;
+    text-align: center;
+    padding: calc($gap-width / 2);
+    flex: 0 1 calc(100% / $column-count - $gap-width * $gap-count / $column-count);
+  }
+  &--content-wrapper{
+    //border: 10px solid #6c38cc;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $content-gap-width;
+  }
+}

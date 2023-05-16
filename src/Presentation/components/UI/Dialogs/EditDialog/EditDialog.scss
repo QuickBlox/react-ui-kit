@@ -1,0 +1,183 @@
+$container-width: 332px;
+$container-height: 236px;
+$create-dialog-container-width: 332px;
+$create-dialog-container-height: 180px;
+
+.edit-container {
+  //border: 1px solid blue;
+  min-height: $container-height;
+  max-height: $container-height;
+  height: $container-height;
+  min-width: $container-width;
+  max-width: $container-width;
+  width: $container-width;
+
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.edit-btn-container{
+  //border: 3px solid black;
+  min-height: 34px;
+  max-height: 34px;
+  height: 34px;
+  min-width: $container-width;
+  max-width: $container-width;
+  width: $container-width;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.edit-dialog-container {
+  min-height: $create-dialog-container-height;
+  max-height: $create-dialog-container-height;
+  height: $create-dialog-container-height;
+  min-width: $create-dialog-container-width;
+  max-width: $create-dialog-container-width;
+  width: $create-dialog-container-width;
+
+  //border: 3px solid green;
+
+  margin-bottom: 24px;
+
+  &--wrapper{
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    //border: 1px solid blue;
+
+    &__inf{
+      min-height: 20px;
+
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 20px;
+      letter-spacing: 0.25px;
+      // color: var(--color-background);
+
+      //border: 1px solid orange;
+    }
+
+    &__icon-container {
+      min-height: 56px;
+      max-height: 56px;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      align-items: flex-start;
+
+      &__icon {
+        min-height: 56px;
+        max-height: 56px;
+        height: 56px;
+        min-width: 56px;
+        max-width: 56px;
+        height: 56px;
+        margin-top: 8px;
+
+
+        background-color: var(--disabled-elements);
+        border-radius: 50%;
+        text-align: center;
+        align-content: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        //border: 1px solid red;
+
+        &__content {
+          // margin: 10px;
+        }
+      }
+
+      &__upload {
+        min-height: 32px;
+        max-height: 32px;
+        min-width: 80px;
+        max-width: 80px;
+        margin-top: 8px;
+        padding-left: 16px;
+        padding-top: 20px;
+
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 16px;
+        letter-spacing: 0.4px;
+        color: var(--color-icon);
+        //cursor: pointer;
+
+        // border: 1px solid green;
+      }
+    }
+
+    &__dialog-name-inf{
+      min-height: 20px;
+
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 20px;
+      letter-spacing: 0.25px;
+      margin-top: 24px;
+
+      //border: 1px solid orange;
+    }
+
+    &__dialog-name-input{
+      margin-top: 8px;
+
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 8px;
+
+      width: 320px;
+      height: 44px;
+
+      border: 1px solid var(--tertiary-elements);//#90979F;
+      border-radius: 4px;
+
+      flex: none;
+      order: 1;
+      align-self: stretch;
+      flex-grow: 0;
+
+      background-color: var(--main-background);
+
+      input {
+        color: var(--secondary-text);
+        background-color: var(--main-background);
+
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 24px;
+
+        display: flex;
+        align-items: center;
+        letter-spacing: 0.15px;
+      }
+    }
+  }
+}
