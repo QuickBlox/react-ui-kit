@@ -1,23 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import useQbDataContext from '../../../providers/QuickBloxUIKitProvider/useQbDataContext';
-import BaseViewModel from '../../../../Views/Base/BaseViewModel';
-import { DialogEntity } from '../../../../../Domain/entity/DialogEntity';
-import { DialogsViewModel } from '../../../../Views/Dialogs/DialogViewModel';
-import DialogsComponent from '../../../../Views/Dialogs/Dialogs';
-import DialogInformation from '../../../UI/Dialogs/DialogInformation/DialogInformation';
-import DesktopLayoutForMockModels from '../../Desktop/DesktopLayoutForMockModels';
-import MessagesView from '../../../UI/Dialogs/MessagesView/MessagesView';
-import useDialogsViewModelWithMockUseCase from '../../../../Views/Dialogs/useDialogsViewModelWithMockUseCase';
-import { Pagination } from '../../../../../Domain/repository/Pagination';
-import { SubscribeToDialogEventsUseCase } from '../../../../../Domain/use_cases/SubscribeToDialogEventsUseCase';
-import useEventMessagesRepository from '../../../providers/QuickBloxUIKitProvider/useEventMessagesRepository';
-import EventMessageType from '../../../../../Domain/entity/EventMessageType';
-import { NotificationTypes } from '../../../../../Domain/entity/NotificationTypes';
-import { stringifyError } from '../../../../../utils/parse';
-import { DialogEventInfo } from '../../../../../Domain/entity/DialogEventInfo';
+import useQbDataContext from '../../providers/QuickBloxUIKitProvider/useQbDataContext';
+import { DialogEntity } from '../../../../Domain/entity/DialogEntity';
+import { DialogsViewModel } from '../../../Views/Dialogs/DialogViewModel';
+import DialogsComponent from '../../../Views/Dialogs/Dialogs';
+import DialogInformation from '../../UI/Dialogs/DialogInformation/DialogInformation';
+import DesktopLayout from './DesktopLayout';
+import MessagesView from '../../UI/Dialogs/MessagesView/MessagesView';
+import useDialogsViewModel from '../../../Views/Dialogs/useDialogsViewModel';
+import { Pagination } from '../../../../Domain/repository/Pagination';
+import { SubscribeToDialogEventsUseCase } from '../../../../Domain/use_cases/SubscribeToDialogEventsUseCase';
+import useEventMessagesRepository from '../../providers/QuickBloxUIKitProvider/useEventMessagesRepository';
+import EventMessageType from '../../../../Domain/entity/EventMessageType';
+import { NotificationTypes } from '../../../../Domain/entity/NotificationTypes';
+import { stringifyError } from '../../../../utils/parse';
+import { DialogEventInfo } from '../../../../Domain/entity/DialogEventInfo';
+import UiKitTheme from '../../../assets/UiKitTheme';
+import BaseViewModel from '../../../Views/Base/BaseViewModel';
 
-function TestStageWithMockData() {
-  console.log('create TestStageWithMockData');
+type QuickBloxUIKitDesktopLayoutProps = {
+  theme?: UiKitTheme;
+};
+
+const QuickBloxUIKitDesktopLayout: React.FC<
+  QuickBloxUIKitDesktopLayoutProps
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars,react/function-component-definition
+> = ({ theme = undefined }: QuickBloxUIKitDesktopLayoutProps) => {
+  console.log('create QuickBloxUIKitDesktopLayout');
   const [selectedDialog, setSelectedDialog] =
     React.useState<BaseViewModel<DialogEntity>>();
 
@@ -25,20 +33,20 @@ function TestStageWithMockData() {
   const eventMessaging = useEventMessagesRepository();
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const { userName } =
-    currentContext.storage.REMOTE_DATA_SOURCE.authInformation;
+  const userName =
+    currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userName;
   const userId =
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId;
 
   const dialogsViewModel: DialogsViewModel =
-    useDialogsViewModelWithMockUseCase(currentContext);
+    useDialogsViewModel(currentContext);
 
   const subscribeToDialogEventsUseCase: SubscribeToDialogEventsUseCase =
     new SubscribeToDialogEventsUseCase(eventMessaging, 'TestStage');
 
   /* DATA needed to init MockData
-  const remoteDataSourceMock: RemoteDataSource = currentContext.storage
-    .REMOTE_DATA_SOURCE as RemoteDataSource;
+  const remoteDataSourceMock: RemoteDataSourceMock = currentContext.storage
+    .REMOTE_DATA_SOURCE_MOCK as RemoteDataSourceMock;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const localDataSource: LocalDataSource =
     currentContext.storage.LOCAL_DATA_SOURCE;
@@ -55,11 +63,11 @@ function TestStageWithMockData() {
 
     console.log(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `initialValue.REMOTE_DATA_SOURCE.needInit: ${currentContext.storage.REMOTE_DATA_SOURCE.needInit}`,
+      `initialValue.REMOTE_DATA_SOURCE_MOCK.needInit: ${currentContext.storage.REMOTE_DATA_SOURCE.needInit}`,
     );
     console.log(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      `initialValue.REMOTE_DATA_SOURCE.authProcessed: ${currentContext.storage.REMOTE_DATA_SOURCE.authProcessed}`,
+      `initialValue.REMOTE_DATA_SOURCE_MOCK.authProcessed: ${currentContext.storage.REMOTE_DATA_SOURCE.authProcessed}`,
     );
 
     console.log(
@@ -159,7 +167,7 @@ function TestStageWithMockData() {
   };
 
   return (
-    <DesktopLayoutForMockModels
+    <DesktopLayout
       dialogsView={
         <DialogsComponent
           dialogsViewModel={dialogsViewModel} // 1 Get 2 Update UseCase
@@ -204,6 +212,6 @@ function TestStageWithMockData() {
       }
     />
   );
-}
+};
 
-export default TestStageWithMockData;
+export default QuickBloxUIKitDesktopLayout;

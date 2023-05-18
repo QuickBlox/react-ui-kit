@@ -11,7 +11,7 @@ import ImagePlay from '../../svgs/Icons/Toggle/ImagePlay';
 import ColumnContainer from '../../../containers/ColumnContainer/ColumnContainer';
 import ImageFile from '../../svgs/Icons/Media/ImageFile';
 import { MessagesViewModel } from './MessagesViewModel';
-import useMessagesViewModelWithMockUseCase from './useMessagesViewModelWithMockUseCase';
+import useMessagesViewModel from './useMessagesViewModel';
 import LoaderComponent from '../../Placeholders/LoaderComponent/LoaderComponent';
 import ErrorComponent from '../../Placeholders/ErrorComponent/ErrorComponent';
 import HeaderMessages from './HeaderMessages/HeaderMessages';
@@ -44,11 +44,13 @@ import SentStatusIcon from '../../svgs/Icons/Status/Sent';
 import ViewedDelivered from '../../svgs/Icons/Status/ViewedDelivered';
 import { stringifyError } from '../../../../../utils/parse';
 import VoiceRecordingProgress from './VoiceRecordingProgress/VoiceRecordingProgress';
+import UiKitTheme from '../../../../assets/UiKitTheme';
 
 type HeaderDialogsMessagesProps = {
   dialog: DialogEntity;
   InformationHandler?: FunctionTypeVoidToVoid;
   maxWidthToResize?: string;
+  theme?: UiKitTheme;
 };
 
 // eslint-disable-next-line react/function-component-definition
@@ -57,6 +59,8 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   InformationHandler,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   maxWidthToResize = undefined,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  theme = undefined,
 }: HeaderDialogsMessagesProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const maxWidthToResizing =
@@ -76,8 +80,10 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
     [],
   );
 
-  const messagesViewModel: MessagesViewModel =
-    useMessagesViewModelWithMockUseCase(dialog.type, dialog);
+  const messagesViewModel: MessagesViewModel = useMessagesViewModel(
+    dialog.type,
+    dialog,
+  );
 
   useEffect(() => {
     console.log('HAVE NEW DIALOG');

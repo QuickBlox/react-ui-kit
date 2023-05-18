@@ -1,7 +1,7 @@
-import Theme from './Theme';
+import UiKitTheme from './UiKitTheme';
 import ThemeScheme from './ThemeScheme';
 
-export default class DarkTheme implements Theme {
+export default class DarkTheme implements UiKitTheme {
   // eslint-disable-next-line class-methods-use-this
   caption = (): string => ThemeScheme.secondary_100;
 

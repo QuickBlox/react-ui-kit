@@ -10,5 +10,5 @@ interface FlatListProps<T> {
     autoScrollToBottom?: boolean;
     renderItem: (item: T, index: number) => React.ReactElement | null;
 }
-export default function ScrollableContainer<T>(props: FlatListProps<T>): JSX.Element;
+export default function ScrollableContainer<T>(props: FlatListProps<T>): import("react/jsx-runtime").JSX.Element;
 export {};

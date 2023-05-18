@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import './TestStageMarkup.scss';
-declare function TestStageMarkup(): JSX.Element;
+declare function TestStageMarkup(): import("react/jsx-runtime").JSX.Element;
 export default TestStageMarkup;

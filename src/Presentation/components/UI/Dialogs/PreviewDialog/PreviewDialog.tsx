@@ -13,7 +13,7 @@ import RowLeftContainer from '../../../containers/RowLeftContainer/RowLeftContai
 import PreviewDialogViewModel from './PreviewDialogViewModel';
 import NotifyOff from '../../svgs/Icons/Toggle/NotifyOff';
 import EditDots from '../../svgs/Icons/Actions/EditDots';
-import Theme from '../../../../assets/Theme';
+import UiKitTheme from '../../../../assets/UiKitTheme';
 
 export type ThemeNames = 'light' | 'dark' | 'custom';
 type PreviewDialogsColorTheme = {
@@ -26,7 +26,7 @@ type PreviewDialogsColorTheme = {
 };
 type PreviewDialogsTheme = {
   themeName?: ThemeNames;
-  colorTheme?: Theme;
+  colorTheme?: UiKitTheme;
   selected: boolean;
   muted: boolean;
 };

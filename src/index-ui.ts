@@ -2,8 +2,6 @@ import './index.scss';
 import MainButton, {
   TypeButton,
 } from './Presentation/components/UI/Buttons/MainButton/MainButton';
-import MyButton from './MyButton/MyButton';
-import MyInput from './MyInput/MyInput';
 import QuickBloxUIKitProvider, {
   qbDataContext,
 } from './Presentation/components/providers/QuickBloxUIKitProvider/QuickBloxUIKitProvider';
@@ -12,14 +10,14 @@ import useQBConnection from './Presentation/components/providers/QuickBloxUIKitP
 import useQbDataContext from './Presentation/components/providers/QuickBloxUIKitProvider/useQbDataContext';
 import useEventMessagesRepository from './Presentation/components/providers/QuickBloxUIKitProvider/useEventMessagesRepository';
 import { DialogsViewModel } from './Presentation/Views/Dialogs/DialogViewModel';
-import useDialogsViewModelWithMockUseCase from './Presentation/Views/Dialogs/useDialogsViewModelWithMockUseCase';
+import useDialogsViewModel from './Presentation/Views/Dialogs/useDialogsViewModel';
 import { SubscribeToDialogEventsUseCase } from './Domain/use_cases/SubscribeToDialogEventsUseCase';
 import { Pagination } from './Domain/repository/Pagination';
 import { DialogEventInfo } from './Domain/entity/DialogEventInfo';
 import EventMessageType from './Domain/entity/EventMessageType';
 import { NotificationTypes } from './Domain/entity/NotificationTypes';
 import { stringifyError } from './utils/parse';
-import DesktopLayoutForMockModels from './Presentation/components/layouts/Desktop/DesktopLayoutForMockModels';
+import DesktopLayout from './Presentation/components/layouts/Desktop/DesktopLayout';
 import DialogsComponent from './Presentation/Views/Dialogs/Dialogs';
 import MessagesView from './Presentation/components/UI/Dialogs/MessagesView/MessagesView';
 import DialogInformation from './Presentation/components/UI/Dialogs/DialogInformation/DialogInformation';
@@ -29,11 +27,10 @@ import {
   LoginData,
   RemoteDataSource,
 } from './Data/source/remote/RemoteDataSource';
+import QuickBloxUIKitDesktopLayout from './Presentation/components/layouts/Desktop/QuickBloxUIKitDesktopLayout';
 
 export {
   MainButton,
-  MyButton,
-  MyInput,
   TypeButton,
   type LoginData,
   QuickBloxUIKitProvider,
@@ -44,17 +41,18 @@ export {
   useQbDataContext,
   useEventMessagesRepository,
   type DialogsViewModel,
-  useDialogsViewModelWithMockUseCase,
+  useDialogsViewModel,
   SubscribeToDialogEventsUseCase,
   Pagination,
   type DialogEventInfo,
   EventMessageType,
   NotificationTypes,
   stringifyError,
-  DesktopLayoutForMockModels,
+  DesktopLayout,
   DialogsComponent,
   MessagesView,
   DialogInformation,
   type DialogEntity,
   BaseViewModel,
+  QuickBloxUIKitDesktopLayout,
 };

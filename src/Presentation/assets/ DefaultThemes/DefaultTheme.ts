@@ -1,6 +1,6 @@
-import Theme from '../../../assets/Theme';
+import UiKitTheme from '../UiKitTheme';
 
-export default class DefaultTheme implements Theme {
+export default class DefaultTheme implements UiKitTheme {
   // eslint-disable-next-line class-methods-use-this
   divider = (): string => 'var(--divider)';
 

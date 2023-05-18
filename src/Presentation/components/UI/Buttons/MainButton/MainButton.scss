@@ -8,7 +8,7 @@
   //width: 63px;
   height: 32px;
 
-  /* Light Theme/Main elements */
+  /* Light UiKitTheme/Main elements */
 
   background: var(--main-elements);
   border-radius: 4px;
@@ -29,7 +29,7 @@
 
   letter-spacing: 0.4px;
 
-  /* Light Theme/System */
+  /* Light UiKitTheme/System */
   color: var(--main-background);
 }
 
@@ -43,7 +43,7 @@
   //width: 76px;
   height: 32px;
 
-  /* Light Theme/Error */
+  /* Light UiKitTheme/Error */
   background: var(--error);
   border-radius: 4px;
   /* Inside auto layout */
@@ -59,7 +59,7 @@
   line-height: 16px;
   /* identical to box height, or 114% */
   letter-spacing: 0.4px;
-  /* Light Theme/System */
+  /* Light UiKitTheme/System */
   color: var(--main-background);
 }
 
@@ -75,7 +75,7 @@
   //width: 76px;
   height: 32px;
 
-  /* Light Theme/Secondary elements */
+  /* Light UiKitTheme/Secondary elements */
   background-color: var(--main-background);
   border: 1px solid var(--secondary-elements);
   border-radius: 4px;
@@ -92,7 +92,7 @@
   line-height: 16px;
   /* identical to box height, or 114% */
   letter-spacing: 0.4px;
-  /* Light Theme/Secondary elements */
+  /* Light UiKitTheme/Secondary elements */
   color: var(--secondary-elements);
 
 }
@@ -107,7 +107,7 @@
   padding: 8px 16px;
   //width: 76px;
   height: 32px;
-  /* Light Theme/Disabled elements */
+  /* Light UiKitTheme/Disabled elements */
   background: var(--disabled-elements);
   border-radius: 4px;
   /* Inside auto layout */
@@ -122,6 +122,6 @@
   line-height: 16px;
   /* identical to box height, or 114% */
   letter-spacing: 0.4px;
-  /* Light Theme/Secondary text */
+  /* Light UiKitTheme/Secondary text */
   color: var(--secondary-text);
 }

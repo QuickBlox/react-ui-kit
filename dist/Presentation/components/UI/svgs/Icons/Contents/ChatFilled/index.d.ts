@@ -1,4 +1,3 @@
-/// <reference types="react" />
 import { IconTheme } from '../../IconsCommonTypes';
-declare function ChatFilled(theme?: IconTheme | undefined): JSX.Element;
+declare function ChatFilled(theme?: IconTheme | undefined): import("react/jsx-runtime").JSX.Element;
 export default ChatFilled;

@@ -1,5 +1,5 @@
-import Theme from '../../../assets/Theme';
-export default class DefaultTheme implements Theme {
+import UiKitTheme from '../UiKitTheme';
+export default class DefaultTheme implements UiKitTheme {
     divider: () => string;
     mainText: () => string;
     fontFamily: () => string;

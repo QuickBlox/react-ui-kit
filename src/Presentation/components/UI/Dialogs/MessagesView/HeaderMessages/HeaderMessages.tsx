@@ -12,12 +12,14 @@ import UserAvatar from '../../EditDialog/UserAvatar/UserAvatar';
 import User from '../../../svgs/Icons/Contents/User';
 import { PublicDialogEntity } from '../../../../../../Domain/entity/PublicDialogEntity';
 import PublicChannel from '../../../svgs/Icons/Contents/PublicChannel';
+import UiKitTheme from '../../../../../assets/UiKitTheme';
 
 type HeaderMessagesProps = {
   dialog: DialogEntity;
   countMembers?: number;
   InformationHandler?: FunctionTypeVoidToVoid;
   CallHandler?: FunctionTypeVoidToVoid;
+  theme?: UiKitTheme;
 };
 // eslint-disable-next-line react/function-component-definition
 const HeaderMessages: React.FC<HeaderMessagesProps> = ({
@@ -25,6 +27,8 @@ const HeaderMessages: React.FC<HeaderMessagesProps> = ({
   countMembers = 0,
   InformationHandler,
   CallHandler,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  theme = undefined,
 }: HeaderMessagesProps) => {
   // TODO: check showDialogInformation, add handler for close DialogInformation
   const [showDialogInformation, setShowDialogInformation] =

@@ -200,7 +200,7 @@ function TestStageMarkup() {
   );
 
   function changeThemeActions() {
-    console.log('Theme has changed.');
+    console.log('UiKitTheme has changed.');
     setThemeName(document.documentElement.getAttribute('data-theme'));
     setDialogsList(dialogs);
   }

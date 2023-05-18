@@ -5,5 +5,5 @@ type LayoutItems = {
     dialogMessagesView: React.ReactNode;
     dialogInfoView: React.ReactNode;
 };
-declare function DesktopLayoutForMockModels({ dialogsView, dialogMessagesView, dialogInfoView, }: LayoutItems): JSX.Element;
-export default DesktopLayoutForMockModels;
+declare function DesktopLayout({ dialogsView, dialogMessagesView, dialogInfoView, }: LayoutItems): import("react/jsx-runtime").JSX.Element;
+export default DesktopLayout;

@@ -10,5 +10,5 @@ type ModalContextType = {
     ModalContainerStyle: React.CSSProperties;
 };
 export declare const ModalContext: React.Context<ModalContextType>;
-declare function Modal(): JSX.Element;
+declare function Modal(): import("react/jsx-runtime").JSX.Element;
 export default Modal;

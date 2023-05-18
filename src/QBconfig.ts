@@ -1,11 +1,3 @@
-/*
-const configApp = {
-    APPLICATION_ID: 75949,+
-    AUTH_KEY: "DdS7zxMEm5Q7DaS",
-    AUTH_SECRET: "g88RhdOjnDOqFkv",+
-    ACCOUNT_KEY: "uK_8uinNyz8-npTNB6tx",+
-};
- */
 export const QBConfig = {
   credentials: {
     appId: 0,

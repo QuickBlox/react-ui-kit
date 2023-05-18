@@ -1,5 +1,5 @@
-import Theme from './Theme';
-export default class DarkTheme implements Theme {
+import UiKitTheme from './UiKitTheme';
+export default class DarkTheme implements UiKitTheme {
     caption: () => string;
     chatInput: () => string;
     disabledElements: () => string;

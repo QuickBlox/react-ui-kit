@@ -1,2 +1,1 @@
-/// <reference types="react" />
-export default function Navbar(): JSX.Element;
+export default function Navbar(): import("react/jsx-runtime").JSX.Element;

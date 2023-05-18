@@ -21,11 +21,14 @@ import { IconTheme } from '../../components/UI/svgs/Icons/IconsCommonTypes';
 import { GroupDialogEntity } from '../../../Domain/entity/GroupDialogEntity';
 import Search from '../../components/UI/svgs/Icons/Navigation/Search';
 import Remove from '../../components/UI/svgs/Icons/Actions/Remove';
+import UiKitTheme from '../../assets/UiKitTheme';
 
 type DialogsComponentSettings = {
   themeName?: ThemeNames;
   withoutHeader?: boolean;
   useSubHeader?: boolean;
+  themeHeader?: UiKitTheme;
+  themePreview?: UiKitTheme;
 };
 
 type DialogsProps = {

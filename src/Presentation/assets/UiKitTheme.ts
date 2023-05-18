@@ -1,6 +1,6 @@
 // import ThemeScheme from './ThemeScheme';
 /*
-export default class Theme {
+export default class UiKitTheme {
   private static readonly _main_elements = ThemeScheme.primary_500;
 
   static get mainElements(): string {
@@ -104,7 +104,7 @@ export default class Theme {
   private static readonly _hightlight = ThemeScheme.highlight;
 }
 */
-export default interface Theme {
+export default interface UiKitTheme {
   mainElements(): string;
 
   secondaryElements(): string;

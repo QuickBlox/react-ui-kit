@@ -7,7 +7,7 @@ import Search from '../../svgs/Icons/Navigation/Search';
 import NewChat from '../../svgs/Icons/Actions/NewChat';
 import ActiveSvg from '../../svgs/ActiveSvg/ActiveSvg';
 import { FunctionTypeVoidToVoid } from '../../../../Views/Base/BaseViewModel';
-import Theme from '../../../../assets/Theme';
+import UiKitTheme from '../../../../assets/UiKitTheme';
 
 type HeaderDialogsProps = {
   title?: string;
@@ -15,7 +15,7 @@ type HeaderDialogsProps = {
   touchSearchHandler?: FunctionTypeVoidToVoid;
   ClickActionHandler?: FunctionTypeVoidToVoid;
   TouchActionHandler?: FunctionTypeVoidToVoid;
-  theme?: Theme;
+  theme?: UiKitTheme;
   settings?: any;
 };
 // eslint-disable-next-line react/function-component-definition

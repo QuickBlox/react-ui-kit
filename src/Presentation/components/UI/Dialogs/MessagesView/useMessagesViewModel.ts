@@ -28,11 +28,11 @@ import ChatMessageAttachmentEntity from '../../../../../Domain/entity/ChatMessag
 import { UserTypingMessageUseCase } from '../../../../../Domain/use_cases/UserTypingMessageUseCase';
 import { DialogEventInfo } from '../../../../../Domain/entity/DialogEventInfo';
 
-export default function useMessagesViewModelWithMockUseCase(
+export default function useMessagesViewModel(
   dialogType: DialogType,
   dialogEntity: DialogEntity,
 ): MessagesViewModel {
-  console.log('useMessagesViewModelWithMockUseCase');
+  console.log('useMessagesViewModel');
   const [loading, setLoading] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState('error: wrong message list');
@@ -50,9 +50,7 @@ export default function useMessagesViewModelWithMockUseCase(
 
   const [typingText, setTypingText] = useState<string>('');
   const dialogUpdateHandler = (dialogInfo: DialogEventInfo) => {
-    console.log(
-      'call dialogUpdateHandler in useMessagesViewModelWithMockUseCase',
-    );
+    console.log('call dialogUpdateHandler in useMessagesViewModel');
     const getSender = async (sender_id: number) => {
       const getUser: GetUsersByIdsUseCase = new GetUsersByIdsUseCase(
         new UsersRepository(
@@ -338,7 +336,7 @@ export default function useMessagesViewModelWithMockUseCase(
         const errorMessage = stringifyError(reason);
 
         console.log(
-          'exception in sendMessage in useMessagesViewModelWithMockUseCase',
+          'exception in sendMessage in useMessagesViewModel',
           errorMessage,
         );
         setLoading(false);

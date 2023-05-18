@@ -1,4 +1,4 @@
-export default interface Theme {
+export default interface UiKitTheme {
     mainElements(): string;
     secondaryElements(): string;
     inputElements(): string;

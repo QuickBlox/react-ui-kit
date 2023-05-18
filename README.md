@@ -64,7 +64,7 @@ QB.init(APPLICATION_ID, AUTH_KEY, AUTH_SECRET, ACCOUNT_KEY, CONFIG);
 
 ## Authentication
 
-Before sending your first message you need to authenticate users in the QuickBlox system. You can read more about different ways of authentication by [this link](https://docs.quickblox.com/docs/js-authentication). 
+Before sending your first message you need to authenticate users in the QuickBlox system. You can read more about different ways of authentication by [this link](https://docs.quickblox.com/docs/js-authentication).
 In our example we show how to authenticate user with login and password.
 
 ```
@@ -79,7 +79,7 @@ QB.login(params, function(error, result) {
     // Navigate User to the UIKit
 });
 ```
-To order to config quickblox ui kit provider 
+To order to config quickblox ui kit provider
 ```
 <QuickBloxUIKitProvider
 maxFileSize={100 * 1000000} //set max size for attachments
@@ -253,3 +253,6 @@ and specify selected components:
   message_date_time_sent="5 min ago"
 />
 ```
+# Sample
+
+https://github.com/QuickBlox/quickblox-javascript-sdk/tree/gh-pages/samples/react-chat

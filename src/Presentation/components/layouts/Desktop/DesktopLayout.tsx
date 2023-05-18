@@ -6,7 +6,7 @@ type LayoutItems = {
   dialogMessagesView: React.ReactNode;
   dialogInfoView: React.ReactNode;
 };
-function DesktopLayoutForMockModels({
+function DesktopLayout({
   dialogsView,
   dialogMessagesView,
   dialogInfoView,
@@ -28,4 +28,4 @@ function DesktopLayoutForMockModels({
   );
 }
 
-export default DesktopLayoutForMockModels;
+export default DesktopLayout;

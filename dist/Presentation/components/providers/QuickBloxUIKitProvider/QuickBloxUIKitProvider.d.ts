@@ -37,5 +37,5 @@ export type QBDataContextType = {
     updateQBInitParams: (InitParams: InitParams) => void;
 };
 export declare const qbDataContext: React.Context<QBDataContextType>;
-declare function QuickBloxUIKitProvider({ children, accountData, qbConfig, loginData, maxFileSize, }: QuickBloxProviderProps): JSX.Element;
+declare function QuickBloxUIKitProvider({ children, accountData, qbConfig, loginData, maxFileSize, }: QuickBloxProviderProps): import("react/jsx-runtime").JSX.Element;
 export default QuickBloxUIKitProvider;

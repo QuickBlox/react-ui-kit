@@ -8,14 +8,13 @@ import Login from './Presentation/components/layouts/TestStage/LoginView/Login';
 import QuickBloxUIKitProvider, {
   qbDataContext,
 } from './Presentation/components/providers/QuickBloxUIKitProvider/QuickBloxUIKitProvider';
-import Desktop from './Presentation/components/layouts/Desktop/Desktop';
 import TestStageMarkup from './Presentation/components/layouts/TestStage/TestStageMarkup';
-import TestStageWithMockData from './Presentation/components/layouts/TestStage/TestStageWithMockData/TestStageWithMockData';
 import { Stubs } from './Data/Stubs';
 import {
   LoginData,
   RemoteDataSource,
 } from './Data/source/remote/RemoteDataSource';
+import QuickBloxUIKitDesktopLayout from './Presentation/components/layouts/Desktop/QuickBloxUIKitDesktopLayout';
 
 function App() {
   const currentContext = React.useContext(qbDataContext);
@@ -27,10 +26,19 @@ function App() {
   const { connectionRepository } = useQBConnection();
 
   const initLoginData: LoginData = {
-    userName: '',
-    password: '',
+    userName: 'artimed',
+    password: 'quickblox',
   };
-  
+  /*
+  artik1  134885168
+  artimed 134804147
+  artem   131103326
+  anruaav 134769917
+  kolart  136066102
+  koltunov1 135062587
+  koltunov2 137171800
+  safariM11 134728539
+   */
   const [currentUser, setCurrentUser] = React.useState(initLoginData);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -213,11 +221,10 @@ function App() {
             <Route path="/" element={<Login loginHandler={loginHandler} />} />
             <Route
               path="/desktop-test-mock"
-              element={<TestStageWithMockData />}
+              element={<QuickBloxUIKitDesktopLayout />}
             />
 
             <Route path="/test-stage" element={<TestStageMarkup />} />
-            <Route path="/desktop-test" element={<Desktop />} />
           </Routes>
         </div>
         <br />

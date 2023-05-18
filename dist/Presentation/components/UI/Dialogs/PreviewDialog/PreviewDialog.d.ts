@@ -2,11 +2,11 @@ import React from 'react';
 import './PreviewDialog.scss';
 import { DialogType } from '../../../../../Domain/entity/DialogTypes';
 import PreviewDialogViewModel from './PreviewDialogViewModel';
-import Theme from '../../../../assets/Theme';
+import UiKitTheme from '../../../../assets/UiKitTheme';
 export type ThemeNames = 'light' | 'dark' | 'custom';
 type PreviewDialogsTheme = {
     themeName?: ThemeNames;
-    colorTheme?: Theme;
+    colorTheme?: UiKitTheme;
     selected: boolean;
     muted: boolean;
 };

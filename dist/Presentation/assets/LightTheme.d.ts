@@ -1,5 +1,5 @@
-import Theme from './Theme';
-export default class LightTheme implements Theme {
+import UiKitTheme from './UiKitTheme';
+export default class LightTheme implements UiKitTheme {
     caption: () => string;
     chatInput: () => string;
     disabledElements: () => string;

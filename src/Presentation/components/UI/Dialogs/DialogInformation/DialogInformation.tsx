@@ -221,7 +221,7 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
   );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const changeThemeActions = () => {
-    console.log('Theme has changed.');
+    console.log('UiKitTheme has changed.');
     setThemeName(document.documentElement.getAttribute('data-theme'));
   };
 
