@@ -16,6 +16,7 @@ import { FunctionTypeVoidToVoid } from '../../../../Views/Base/BaseViewModel';
 import { DialogType } from '../../../../../Domain/entity/DialogTypes';
 import NotFoundContent from './NotFoundContent/NotFoundContent';
 import Remove from '../../svgs/Icons/Actions/Remove';
+import { OpenDialogArcheType, TypeOpenDialog } from '../EditDialog/EditDialog';
 
 type SelectedItemInfo = { isChecked: boolean; userid: number };
 
@@ -25,35 +26,28 @@ export type FunctionTypeUserEntitiesToVoid = (
 ) => void;
 
 type InviteMembersProps = {
-  // inviteUsersViewModel: InviteUsersResultViewModel;
   typeDialog: DialogType;
   idOwnerDialog: string;
+  typeAddEditDialog: OpenDialogArcheType;
   applyInviteUsersHandler: FunctionTypeUserEntitiesToVoid;
   participants?: number[];
   cancelInviteMembersHandler?: FunctionTypeVoidToVoid;
 };
 // eslint-disable-next-line react/function-component-definition,@typescript-eslint/no-unused-vars
 const InviteMembers: React.FC<InviteMembersProps> = ({
-  // inviteUsersViewModel, [participants]
   typeDialog,
   idOwnerDialog,
+  typeAddEditDialog,
   applyInviteUsersHandler,
   participants,
   cancelInviteMembersHandler,
 }) => {
   const userperPage = 12;
   const userViewModel: InviteMembersViewModel = useInviteMembersViewModel();
-  // const usersResultViewModel: InviteUsersResultViewModel =
-  //   new InviteUsersResultViewModel(userViewModel.users, []);
 
-  // const [usersSelected, setUsersSelected] = React.useState<number>([]);
   const initRecord: Record<number, SelectedItemInfo> = {};
 
   if (participants?.length && participants?.length > 0) {
-    console.log(
-      'InviteMembers : init participants: ',
-      JSON.stringify(participants),
-    );
     participants.forEach((item) => {
       initRecord[item] = { isChecked: true, userid: item };
     });
@@ -67,7 +61,6 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
 
   useEffect(() => {
     userViewModel.getUsers(new Pagination(0, userperPage));
-    console.log('useEffect InviteMembers, getUsers()');
   }, []);
 
   const getUsersForIncludeInDialog = () => {
@@ -99,11 +92,9 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
   };
 
   const userSelectedHandler = (item: UserEntity, checkedStatus: boolean) => {
-    console.log('call userSelectedHandler: ', item.id);
     const newItems = selectedItems;
 
     newItems[item.id] = { isChecked: checkedStatus, userid: item.id };
-    console.log('newItems: ', JSON.stringify(newItems));
     setSelectedItems(newItems);
     const countCheckedUsers = getUsersForIncludeInDialog().length;
 
@@ -112,14 +103,6 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
 
   const containsSelectedUser = (id: number) => {
     let result = false;
-
-    // Object.entries(selectedItems).map((x) => {
-    //   if (x[1].userid === id) {
-    //     result = true;
-    //   }
-    //
-    //   return x;
-    // });
 
     const r = Object.entries(selectedItems).findIndex(
       (x) => x[1].userid === id && x[1].isChecked,
@@ -150,45 +133,29 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const renderUserComponent = (user: UserEntity, index: number) => {
     const checkedValue = selectedItems[user.id]?.isChecked || false;
-    // const flrt = participants?.filter((item) => item === user.id);
-    //
-    // if (flrt && flrt?.length > 0) {
-    //   console.log('All participants: ', JSON.stringify(participants));
-    //   console.log(
-    //     `have for participant ${user.id}
-    //     status ${checkedValue ? 'checked' : 'unchecked'} in ${JSON.stringify(
-    //       selectedItems[user.id],
-    //     )}`,
-    //   );
-    // }
 
-    return (
-      <SingleUserWithCheckBox
-        user={user}
-        checkedHandler={userSelectedHandler}
-        isElementChecked={checkedValue}
-        keyValue={user.id}
-        isDisabled={getDisabledStatus(user)}
-      />
-    );
+    if (user.id.toString() !== idOwnerDialog) {
+      return (
+        <SingleUserWithCheckBox
+          user={user}
+          checkedHandler={userSelectedHandler}
+          isElementChecked={checkedValue}
+          keyValue={user.id}
+          isDisabled={getDisabledStatus(user)}
+        />
+      );
+    }
+
+    return null;
   };
 
   const fetchMoreData = () => {
-    console.log('call user fetchMoreData');
-    console.log(
-      'before pagination: ',
-      JSON.stringify(userViewModel.pagination),
-    );
     if (userViewModel.pagination.hasNextPage()) {
       const newPagination = userViewModel.pagination;
 
       newPagination.perPage = 12;
       newPagination.nextPage();
 
-      console.log(
-        'after pagination: ',
-        JSON.stringify(userViewModel.pagination),
-      );
       userViewModel.getUsers(newPagination);
     }
   };
@@ -304,42 +271,29 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
               RightItem={
                 <div>
                   <MainButton
-                    title="Create"
+                    title={
+                      typeAddEditDialog === TypeOpenDialog.create
+                        ? 'Create'
+                        : 'Save'
+                    }
                     typeButton={TypeButton.default}
                     disabled={
                       typeDialog === DialogType.private &&
                       getUsersForIncludeInDialog().length <= 0
                     }
-                    clickHandler={
-                      () => {
-                        const listUsersForInvite: number[] =
-                          getUsersForIncludeInDialog();
-                        const listUsersForRemove: number[] =
-                          getUsersForExcludedFromDialog();
+                    clickHandler={() => {
+                      const listUsersForInvite: number[] =
+                        getUsersForIncludeInDialog();
+                      const listUsersForRemove: number[] =
+                        getUsersForExcludedFromDialog();
 
-                        if (applyInviteUsersHandler) {
-                          applyInviteUsersHandler(
-                            listUsersForInvite,
-                            listUsersForRemove,
-                          );
-                        }
+                      if (applyInviteUsersHandler) {
+                        applyInviteUsersHandler(
+                          listUsersForInvite,
+                          listUsersForRemove,
+                        );
                       }
-                      // {
-                      //   const listSelectedUsers: number[] = [];
-                      //
-                      //   Object.entries(selectedItems).map((x) => {
-                      //     if (x[1].isChecked) {
-                      //       listSelectedUsers.push(x[1].userid);
-                      //     }
-                      //
-                      //     return x[1].isChecked;
-                      //   });
-                      //
-                      //   if (applyInviteUsersHandler) {
-                      //     applyInviteUsersHandler(listSelectedUsers);
-                      //   }
-                      // }
-                    }
+                    }}
                   />
                 </div>
               }

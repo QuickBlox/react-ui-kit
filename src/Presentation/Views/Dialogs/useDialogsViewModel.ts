@@ -148,11 +148,7 @@ export default function useDialogsViewModel(
       'call createDialog in use case with params: ',
       JSON.stringify(dialogInfo),
     );
-    /*
-    currentContext.storage.LOCAL_DATA_SOURCE,
-        remoteDataSourceMock,
-        currentContext.storage.CONNECTION_REPOSITORY
-     */
+
     const createDialogUseCase: CreateDialogUseCase = new CreateDialogUseCase(
       eventMessageRepository,
       new DialogsRepository(
@@ -181,7 +177,7 @@ export default function useDialogsViewModel(
 
   const updateDialog = async (
     // eslint-disable-next-line @typescript-eslint/no-shadow,@typescript-eslint/no-unused-vars
-    dialogToUpdate: GroupDialogEntity,
+    dialog: GroupDialogEntity,
   ): Promise<DialogEntity> => {
     const updateDialogUseCase: UpdateDialogUseCase = new UpdateDialogUseCase(
       eventMessageRepository,
@@ -189,7 +185,7 @@ export default function useDialogsViewModel(
         currentContext.storage.LOCAL_DATA_SOURCE,
         remoteDataSourceMock,
       ),
-      dialogToUpdate,
+      dialog,
     );
 
     const resultDialog: DialogEntity = await updateDialogUseCase
@@ -198,6 +194,21 @@ export default function useDialogsViewModel(
         console.log('Error updateDialogUseCase: ', stringifyError(e));
         throw new Error(stringifyError(e));
       });
+
+    const { participantIds } = dialog;
+
+    dialog.newParticipantIds?.forEach((item) => {
+      if (!participantIds.includes(item)) {
+        participantIds.push(item);
+      }
+    });
+
+    const dialogForUpdate: GroupDialogEntity = {
+      ...dialog,
+      participantIds,
+    };
+
+    setNewDialog(dialogForUpdate as DialogEntity);
 
     return Promise.resolve(resultDialog);
   };
@@ -285,6 +296,15 @@ export default function useDialogsViewModel(
     }
 
     if (leaveResult) {
+      const dialogForUpdate: GroupDialogEntity = {
+        ...dialog,
+        participantIds: dialog.participantIds.filter(
+          (item) => !dialog.participantsToRemoveIds?.includes(item),
+        ),
+      };
+
+      setNewDialog(dialogForUpdate as DialogEntity);
+
       return Promise.resolve(leaveResult);
     }
 
@@ -292,7 +312,6 @@ export default function useDialogsViewModel(
   };
 
   const uploadFile = async (file: File): Promise<FileEntity> => {
-    console.log('call uploadFile(), file: ', file);
     const fileEntity: FileEntity = Stubs.createFileEntityWithDefaultValues();
 
     fileEntity.data = file;

@@ -1,13 +1,13 @@
 export const QBConfig = {
   credentials: {
-    appId: 0,
+    appId: -1,
     accountKey: '',
     authKey: '',
     authSecret: '',
     sessionToken: '',
   },
   appConfig: {
-    maxFileSize: 90 * 1000000,
+    maxFileSize: 1 * 1024 * 1024,
     chatProtocol: {
       active: 2,
     },

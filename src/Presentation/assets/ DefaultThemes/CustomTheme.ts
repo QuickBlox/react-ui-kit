@@ -1,5 +1,4 @@
-import DefaultTheme from './DefaultTheme'
-
+import DefaultTheme from './DefaultTheme';
 
 export default class CustomTheme extends DefaultTheme {
   // eslint-disable-next-line class-methods-use-this

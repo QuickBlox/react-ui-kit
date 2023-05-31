@@ -6,6 +6,12 @@ The main goal of the QuickBlox UIKit for React is to offer developers a streamli
 
 The QuickBlox UIKit for React offers modules that encapsulate complex chat functionalities, such as dialogs and chat management and real-time updates. These modules provide a simplified interface for integrating chat features into applications without the need for extensive knowledge of the underlying protocols or server-side infrastructure.
 
+# Screenshots
+
+Chat dashboard with list of dialogs and create new chat dialog;
+
+   ![dashboard!](./src/Presentation/assets/img/web-doc.png "chats dashboard")
+
 ## Features
 
 QuickBlox UIKit for React provides next functionality:
@@ -256,3 +262,27 @@ and specify selected components:
 # Sample
 
 https://github.com/QuickBlox/quickblox-javascript-sdk/tree/gh-pages/samples/react-chat
+
+# License
+[](#license)
+MIT License [here](https://github.com/QuickBlox/react-ui-kit/blob/main/LICENSE.md).
+
+Copyright © 2023 QuickBlox.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

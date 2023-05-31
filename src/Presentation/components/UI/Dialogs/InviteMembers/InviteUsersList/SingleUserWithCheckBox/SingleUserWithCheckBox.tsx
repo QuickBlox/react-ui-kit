@@ -24,9 +24,6 @@ const SingleUserWithCheckBox: React.FC<SingleUserWithCheckBoxProps> = ({
   keyValue,
   isDisabled = false,
 }) => {
-  // const [isUserChecked, setIsUserChecked] =
-  //   React.useState<boolean>(isElementChecked);
-
   function getChecked(index: number | undefined) {
     const result = isElementChecked; // || isUserChecked;
 
@@ -58,12 +55,7 @@ const SingleUserWithCheckBox: React.FC<SingleUserWithCheckBoxProps> = ({
         />
       </div>
       <div className="user-single-container-chbox--wrapper__username">
-        {`${user?.full_name || user?.login || user?.email || user?.id} - ${
-          user?.id
-        }`}
-        {/* {`${user?.full_name} - ${user?.id} - ${ */}
-        {/*  isElementChecked ? 'true' : 'false' */}
-        {/* }`} */}
+        {`${user?.full_name || user?.login || user?.email || user?.id}`}
       </div>
       <div className="user-single-container-chbox--wrapper__select">
         <input

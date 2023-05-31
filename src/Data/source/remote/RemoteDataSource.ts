@@ -276,6 +276,8 @@ export class RemoteDataSource implements IRemoteDataSource {
     new SubscriptionPerformer<boolean>();
 
   subscribeOnSessionExpiredListener(callback: CallBackFunction<boolean>): void {
+    console.log('call subscribeOnSessionExpiredListener');
+    console.log('subscribeOnSessionExpiredListener');
     this.subscriptionOnSessionExpiredListener.subscribe(
       callback,
       EventMessageType.LocalMessage,
@@ -376,6 +378,8 @@ export class RemoteDataSource implements IRemoteDataSource {
       );
     };
     QB.chat.onSessionExpiredListener = (error) => {
+      console.log('call  onSessionExpiredListener');
+      console.timeLog('onSessionExpiredListener');
       let result = true;
 
       if (error) {

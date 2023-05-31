@@ -13,7 +13,7 @@ import UserAvatar from './UserAvatar/UserAvatar';
 import { DialogType } from '../../../../../Domain/entity/DialogTypes';
 import GroupChat from '../../svgs/Icons/Contents/GroupChat';
 import PublicChannel from '../../svgs/Icons/Contents/PublicChannel';
-// import { QBCreateAndUploadContent } from '../../../../../qb-api-calls';
+import useQbDataContext from '../../../providers/QuickBloxUIKitProvider/useQbDataContext';
 
 export const TypeOpenDialog = {
   edit: 'edit',
@@ -40,8 +40,13 @@ const EditDialog: React.FC<EditDialogProps> = ({
   clickUpdatedHandler,
   clickCancelHandler,
 }) => {
+  const currentContext = useQbDataContext();
+  const maxUploadFileSize = currentContext.InitParams.maxFileSize;
   const minLengthNameDialog = 3;
   const maxLengthNameDialog = 60;
+  const errorMessageUploadMaxSize = `file size must be less than ${
+    maxUploadFileSize / 1024 / 1024
+  } Mb`;
   const [dialogName, setDialogName] = useState(nameDialog);
   const [fileUploadAvatar, setFileUploadAvatar] = useState<File | null>(null);
   const [urlAvatar, setUrlAvatar] = useState(ulrIcon || '');
@@ -49,6 +54,7 @@ const EditDialog: React.FC<EditDialogProps> = ({
     nameDialog.length < minLengthNameDialog ||
       nameDialog.length > maxLengthNameDialog,
   );
+  const [errorMessageUpload, setErrorMessageUpload] = useState('');
 
   useEffect(() => {
     setDisabledButton(
@@ -58,10 +64,21 @@ const EditDialog: React.FC<EditDialogProps> = ({
   }, [dialogName]);
 
   const ChangeFileHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setErrorMessageUpload('');
     const reader = new FileReader();
     const file = event.currentTarget.files
       ? event.currentTarget.files[0]
       : null;
+
+    console.log('file: ', file);
+
+    const fileSize = file?.size || 0;
+
+    if (fileSize >= maxUploadFileSize) {
+      setErrorMessageUpload(errorMessageUploadMaxSize);
+
+      return;
+    }
 
     reader.onloadend = () => {
       setFileUploadAvatar(file);
@@ -69,13 +86,6 @@ const EditDialog: React.FC<EditDialogProps> = ({
     };
 
     if (file !== null) reader.readAsDataURL(file);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const imgUrl = urlAvatar; // event.currentTarget.files[0].name;
-
-    // TODO: upload file to server
-    console.log('imgUrl :', imgUrl);
   };
 
   // eslint-disable-next-line consistent-return
@@ -126,7 +136,10 @@ const EditDialog: React.FC<EditDialogProps> = ({
       return (
         <UserAvatar
           urlAvatar={urlAvatar}
-          clickRemoveAvatarHandler={() => setUrlAvatar('null')}
+          clickRemoveAvatarHandler={() => {
+            setUrlAvatar('null');
+            setErrorMessageUpload('');
+          }}
         />
       );
     }
@@ -136,8 +149,6 @@ const EditDialog: React.FC<EditDialogProps> = ({
     <ColumnContainer gapBetweenItem="8px">
       <div
         style={{
-          // maxHeight: '236px',
-          // maxWidth: '380px',
           backgroundColor: 'var(--main-background)',
         }}
         className="edit-container"
@@ -166,7 +177,6 @@ const EditDialog: React.FC<EditDialogProps> = ({
                     type="file"
                     accept="image/*"
                     style={{ display: 'none' }}
-                    // onChange={uploadIconHandler}
                     onChange={(event) => {
                       ChangeFileHandler(event);
                     }}
@@ -175,6 +185,11 @@ const EditDialog: React.FC<EditDialogProps> = ({
                 </label>
               </div>
             </div>
+            {errorMessageUpload.length > 0 ? (
+              <div className="edit-dialog-container--wrapper__upload-error">
+                {errorMessageUpload}
+              </div>
+            ) : null}
             <div className="edit-dialog-container--wrapper__dialog-name-inf">
               Dialog name
             </div>
@@ -205,13 +220,13 @@ const EditDialog: React.FC<EditDialogProps> = ({
                 <MainButton
                   clickHandler={() => {
                     if (clickUpdatedHandler) {
-                      if (urlAvatar !== 'null') {
-                        setUrlAvatar(
-                          fileUploadAvatar === null
-                            ? ''
-                            : fileUploadAvatar.name,
-                        );
-                      }
+                      // if (urlAvatar !== 'null') {
+                      //   setUrlAvatar(
+                      //     fileUploadAvatar === null
+                      //       ? ''
+                      //       : fileUploadAvatar.name,
+                      //   );
+                      // }
 
                       const params: EditDialogParams = {
                         dialogTitle: dialogName,

@@ -52,13 +52,6 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
   const currentUserId =
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId.toString();
   const { handleModal } = React.useContext(ModalContext);
-  // Markups Rules:
-  // 1. Container for size - SizeContainer(WrapperContent) <div>
-  // 2. Container for theme - ThemeContainer (not use margin and padding) <div>
-  // 3. Container for states -  include style in ThemeContainer from & in scss
-  // 4. if OnHover - need fix margin
-  // Получить список Юзеров (нужен юзкейс)[2998]
-  // ViewModel - которая вернет список юзеров для этого диалога[3002]
   const userViewModel = useUsersListViewModel(dialog);
   const [showMembersDialog, setShowMembersDialog] = React.useState(false);
   const [isAllMembersShow, setIsAllMembersShow] = React.useState(false);
@@ -72,9 +65,13 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
       return;
     }
     userViewModel.entity = dialogViewModel.entity;
-    userViewModel.getUsers();
+
     setShowMembersDialog(false);
   }, [dialog, dialogViewModel.entity]);
+
+  useEffect(() => {
+    userViewModel.getUsers();
+  }, [userViewModel.entity]);
 
   useEffect(() => {
     console.log('users list has changed in DialogInformation:');
@@ -96,7 +93,9 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
           yesActionCaption="Leave"
           ClickYesActionHandler={() => {
             dialogViewModel
-              .deleteDialog(dialog as GroupDialogEntity)
+              .deleteDialog(
+                (dialogViewModel?.entity || dialog) as GroupDialogEntity,
+              )
               .then((result) => {
                 if (result) closeModal();
 
@@ -221,7 +220,6 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
   );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const changeThemeActions = () => {
-    console.log('UiKitTheme has changed.');
     setThemeName(document.documentElement.getAttribute('data-theme'));
   };
 
@@ -278,9 +276,15 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
                       handleModal(
                         true,
                         <EditDialog
-                          nameDialog={dialog.name}
-                          typeDialog={dialog.type}
-                          ulrIcon={getUrlAvatar(dialog)}
+                          nameDialog={
+                            dialogViewModel?.entity.name || dialog.name
+                          }
+                          typeDialog={
+                            dialogViewModel?.entity.type || dialog.type
+                          }
+                          ulrIcon={getUrlAvatar(
+                            dialogViewModel?.entity || dialog,
+                          )}
                           typeAddEditDialog={TypeOpenDialog.edit}
                           clickUpdatedHandler={getDialogUpdatedInfoHandler}
                           clickCancelHandler={closeModal}
@@ -307,9 +311,6 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
                 {dialogViewModel?.entity?.name || dialog?.name}
               </div>
             </div>
-            {/* <div className="dialog-information-container__icon-dialog__btn"> */}
-            {/*  edit */}
-            {/* </div> */}
           </div>
         </div>
         <div className="dialog-information-container--notifications-wrapper">
@@ -420,7 +421,7 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
                             true,
                             <InviteMembers
                               participants={PublicDialogEntity.getParticipants(
-                                dialog,
+                                dialogViewModel?.entity || dialog,
                               )}
                               applyInviteUsersHandler={(
                                 usersForInvite,
@@ -434,17 +435,21 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
                                 );
 
                                 const alreadyPresents =
-                                  PublicDialogEntity.getParticipants(dialog);
+                                  PublicDialogEntity.getParticipants(
+                                    dialogViewModel?.entity || dialog,
+                                  );
                                 const newParticipants = usersForInvite.filter(
                                   (item) => alreadyPresents.indexOf(item) < 0,
                                 );
 
-                                // const participantsForDelete = usersForInvite.filter( (item) => item.isC )
-
                                 if (newParticipants.length > 0) {
                                   const dialogForUpdate: GroupDialogEntity = {
-                                    ...(dialog as GroupDialogEntity),
-                                    participantIds: newParticipants,
+                                    ...(dialogViewModel?.entity ||
+                                      (dialog as GroupDialogEntity)),
+                                    participantIds: (
+                                      (dialogViewModel?.entity ||
+                                        dialog) as GroupDialogEntity
+                                    ).participantIds,
                                     newParticipantIds: newParticipants,
                                     photo: '',
                                     name: '',
@@ -467,7 +472,8 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
 
                                 if (usersForRemove.length > 0) {
                                   const dialogForUpdate: GroupDialogEntity = {
-                                    ...(dialog as GroupDialogEntity),
+                                    ...((dialogViewModel?.entity ||
+                                      dialog) as GroupDialogEntity),
                                     photo: '',
                                     name: '',
                                     participantsToRemoveIds: usersForRemove,
@@ -491,6 +497,7 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
                               cancelInviteMembersHandler={() => {
                                 closeModal();
                               }}
+                              typeAddEditDialog={TypeOpenDialog.edit}
                               typeDialog={dialog.type}
                               idOwnerDialog={dialog.ownerId}
                             />,
@@ -507,101 +514,6 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
                         typeButton={TypeButton.outlined}
                         clickHandler={() => setIsAllMembersShow(true)}
                       />
-                      {/* <DialogMembersButton */}
-                      {/*  content="Invite members" */}
-                      {/*  clickHandler={() => { */}
-                      {/*    handleModal( */}
-                      {/*      true, */}
-                      {/*      <InviteMembers */}
-                      {/*        participants={PublicDialogEntity.getParticipants( */}
-                      {/*          dialog, */}
-                      {/*        )} */}
-                      {/*        applyInviteUsersHandler={( */}
-                      {/*          usersForInvite, */}
-                      {/*          usersForRemove, */}
-                      {/*        ) => { */}
-                      {/*          console.log('apply invite users'); */}
-                      {/*          console.log( */}
-                      {/*            'HAVE SELECTED USERS: ', */}
-                      {/*            JSON.stringify(usersForInvite), */}
-                      {/*          ); */}
-
-                      {/*          const alreadyPresents = */}
-                      {/*            PublicDialogEntity.getParticipants(dialog); */}
-                      {/*          const newParticipants = usersForInvite.filter( */}
-                      {/*            (item) => alreadyPresents.indexOf(item) < 0, */}
-                      {/*          ); */}
-
-                      {/*          // const participantsForDelete = usersForInvite.filter( (item) => item.isC ) */}
-
-                      {/*          if (newParticipants.length > 0) { */}
-                      {/*            const dialogForUpdate: GroupDialogEntity = { */}
-                      {/*              ...(dialog as GroupDialogEntity), */}
-                      {/*              participantIds: newParticipants, */}
-                      {/*              newParticipantIds: newParticipants, */}
-                      {/*              photo: '', */}
-                      {/*              name: '', */}
-                      {/*            }; */}
-
-                      {/*            dialogViewModel */}
-                      {/*              .updateDialog(dialogForUpdate) */}
-                      {/*              // eslint-disable-next-line promise/always-return */}
-                      {/*              .then((data) => { */}
-                      {/*                console.log( */}
-                      {/*                  'result update dialog: ', */}
-                      {/*                  JSON.stringify(data), */}
-                      {/*                ); */}
-                      {/*                closeModal(); */}
-                      {/*              }) */}
-                      {/*              .catch((e) => { */}
-                      {/*                console.log('Exception: ', e); */}
-                      {/*              }); */}
-                      {/*          } */}
-
-                      {/*          if (usersForRemove.length > 0) { */}
-                      {/*            const dialogForUpdate: GroupDialogEntity = { */}
-                      {/*              ...(dialog as GroupDialogEntity), */}
-                      {/*              photo: '', */}
-                      {/*              name: '', */}
-                      {/*              participantsToRemoveIds: usersForRemove, */}
-                      {/*            }; */}
-
-                      {/*            dialogViewModel */}
-                      {/*              .removeMembers(dialogForUpdate) */}
-                      {/*              .then((data) => { */}
-                      {/*                console.log( */}
-                      {/*                  'result removeMembers dialog: ', */}
-                      {/*                  JSON.stringify(data), */}
-                      {/*                ); */}
-                      {/*                closeModal(); */}
-                      {/*              }) */}
-                      {/*              .catch((e) => { */}
-                      {/*                console.log('Exception: ', e); */}
-                      {/*              }); */}
-                      {/*          } */}
-                      {/*        }} */}
-                      {/*        cancelInviteMembersHandler={() => { */}
-                      {/*          closeModal(); */}
-                      {/*        }} */}
-                      {/*        typeDialog={dialog.type} */}
-                      {/*        idOwnerDialog={dialog.ownerId} */}
-                      {/*      />, */}
-                      {/*      'Edit dialog', */}
-                      {/*      false, */}
-                      {/*      false, */}
-                      {/*    ); */}
-                      {/*  }} */}
-                      {/*  touchHandler={() => { */}
-                      {/*    console.log('touch invite users'); */}
-                      {/*  }} */}
-                      {/* /> */}
-                      {/* <DialogMembersButton */}
-                      {/*  content="See all members" */}
-                      {/*  clickHandler={() => setIsAllMembersShow(true)} */}
-                      {/*  touchHandler={() => */}
-                      {/*    console.log('touch See all members') */}
-                      {/*  } */}
-                      {/* /> */}
                     </div>
                   </div>
                 </ColumnContainer>

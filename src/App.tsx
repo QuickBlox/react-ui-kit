@@ -15,6 +15,7 @@ import {
   RemoteDataSource,
 } from './Data/source/remote/RemoteDataSource';
 import QuickBloxUIKitDesktopLayout from './Presentation/components/layouts/Desktop/QuickBloxUIKitDesktopLayout';
+import CustomTheme from './Presentation/assets/ DefaultThemes/CustomTheme';
 
 function App() {
   const currentContext = React.useContext(qbDataContext);
@@ -26,19 +27,10 @@ function App() {
   const { connectionRepository } = useQBConnection();
 
   const initLoginData: LoginData = {
-    userName: 'artimed',
-    password: 'quickblox',
+    userName: '',
+    password: '',
   };
-  /*
-  artik1  134885168
-  artimed 134804147
-  artem   131103326
-  anruaav 134769917
-  kolart  136066102
-  koltunov1 135062587
-  koltunov2 137171800
-  safariM11 134728539
-   */
+
   const [currentUser, setCurrentUser] = React.useState(initLoginData);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -49,6 +41,22 @@ function App() {
     //
     await Stubs.initializeWithDialogsMockData(localDataSource);
   }
+
+  const navigate = useNavigate();
+
+  const logoutHandler = async () => {
+    console.log('call logout...');
+    currentContext.storage.SYNC_DIALOGS_USE_CASE.release();
+    console.log('call release...');
+    connectionRepository.stopKeepAlive();
+    console.log('call stopKeepAlive...');
+    await remoteDataSourceMock.disconnectAndLogoutUser();
+    console.log('call disconnectAndLogoutUser...');
+    await currentContext.storage.LOCAL_DATA_SOURCE.clearAll();
+    console.log('call clearAll...');
+    setCurrentUser({ userName: '', password: '' });
+    navigate('/');
+  };
 
   const prepareSDK = async (authData: LoginData): Promise<void> => {
     console.log('call prepareSDK with data:', authData);
@@ -84,6 +92,14 @@ function App() {
       }).catch(() => {
         console.log('EXCEPTION SYNC_DIALOGS_USE_CASE_MOCK.execute');
       });
+      //
+      currentContext.storage.REMOTE_DATA_SOURCE.subscribeOnSessionExpiredListener(
+        () => {
+          console.log('call subscribeOnSessionExpiredListener');
+          console.timeLog('subscribeOnSessionExpiredListener');
+          logoutHandler();
+        },
+      );
       //
     }
     // else {
@@ -142,8 +158,6 @@ function App() {
     //
     //
   };
-
-  const navigate = useNavigate();
 
   const loginHandler = async (data: LoginData): Promise<void> => {
     setCurrentUser(data);
@@ -221,7 +235,9 @@ function App() {
             <Route path="/" element={<Login loginHandler={loginHandler} />} />
             <Route
               path="/desktop-test-mock"
-              element={<QuickBloxUIKitDesktopLayout />}
+              element={
+                <QuickBloxUIKitDesktopLayout theme={new CustomTheme()} />
+              }
             />
 
             <Route path="/test-stage" element={<TestStageMarkup />} />

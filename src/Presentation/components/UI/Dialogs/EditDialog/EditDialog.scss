@@ -127,6 +127,19 @@ $create-dialog-container-height: 180px;
       }
     }
 
+    &__upload-error{
+      min-height: 20px;
+
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 20px;
+      letter-spacing: 0.25px;
+      margin-top: 5px;
+      color: var(--error);
+    }
+
     &__dialog-name-inf{
       min-height: 20px;
 

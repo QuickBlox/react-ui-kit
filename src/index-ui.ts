@@ -28,6 +28,8 @@ import {
   RemoteDataSource,
 } from './Data/source/remote/RemoteDataSource';
 import QuickBloxUIKitDesktopLayout from './Presentation/components/layouts/Desktop/QuickBloxUIKitDesktopLayout';
+import DefaultTheme from './Presentation/assets/ DefaultThemes/DefaultTheme';
+import UiKitTheme from './Presentation/assets/UiKitTheme';
 
 export {
   MainButton,
@@ -55,4 +57,6 @@ export {
   type DialogEntity,
   BaseViewModel,
   QuickBloxUIKitDesktopLayout,
+  DefaultTheme,
+  type UiKitTheme,
 };
