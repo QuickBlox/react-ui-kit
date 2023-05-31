@@ -177,6 +177,7 @@ const CreateNewDialogFlow: React.FC<CreateNewDialogFlowProps> = ({
             closeModal();
           }}
           typeDialog={selectedDialogType || DialogType.group}
+          typeAddEditDialog={TypeOpenDialog.create}
           idOwnerDialog={remoteDataSourceMock.authInformation!.userId.toString()}
         />
       )}
