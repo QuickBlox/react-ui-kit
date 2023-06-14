@@ -3,12 +3,14 @@ import './VoiceRecordingProgress.scss';
 import { FunctionTypeVoidToVoid } from '../../../../../Views/Base/BaseViewModel';
 
 type VoiceRecordingProgressProps = {
+  startStatus: boolean;
   longRecInSec: number;
   ClickActionHandler?: FunctionTypeVoidToVoid;
   TouchActionHandler?: FunctionTypeVoidToVoid;
 };
 // eslint-disable-next-line react/function-component-definition
 const VoiceRecordingProgress: React.FC<VoiceRecordingProgressProps> = ({
+  startStatus,
   longRecInSec,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ClickActionHandler,
@@ -43,9 +45,16 @@ const VoiceRecordingProgress: React.FC<VoiceRecordingProgressProps> = ({
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const startTimer = () => {
+    console.log('call startTimer');
     // setStartTime(Date.now());
-    const longRec = longRecInSec < 60 && longRecInSec > 0 ? longRecInSec : 10;
+    const longRec = longRecInSec <= 60 && longRecInSec > 0 ? longRecInSec : 10;
 
+    console.log(
+      'LONG REC IN SEC = ',
+      longRecInSec,
+      ' using LONG REC = ',
+      longRec,
+    );
     setTimeout(() => {
       stopTimer();
     }, longRec * 1000);
@@ -55,17 +64,11 @@ const VoiceRecordingProgress: React.FC<VoiceRecordingProgressProps> = ({
         setCurrentTime(Date.now());
       }, 1000);
     }
-    /*
-    if ((Date.now() - this._typingTime) / 1000 >= this.typingTimeout) {
-          this.messagesRepository.typingMessageStop(this.dialog, this.senderId);
-          clearInterval(this._typingTimer);
-          this._typingTimer = undefined;
-          this._typingTime = 0;
-        }
-     */
   };
 
-  startTimer();
+  useEffect(() => {
+    if (startStatus) startTimer();
+  }, [startStatus]);
 
   return (
     <div className="chat-message-text-container">

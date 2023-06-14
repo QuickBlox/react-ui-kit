@@ -23,9 +23,13 @@ const MembersList: React.FC<MembersListProps> = ({
   ]);
 
   useEffect(() => {
-    if (userNameForFilter.length > 0) {
+    if (userNameForFilter.length >= 3) {
       const newFilteredMembers = members.filter((item) =>
-        item.full_name ? item.full_name.includes(userNameForFilter, 0) : false,
+        item.full_name
+          ? item.full_name
+              .toUpperCase()
+              .includes(userNameForFilter.toUpperCase(), 0)
+          : false,
       );
 
       setMembersListFilter([...newFilteredMembers]);

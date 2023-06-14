@@ -1,12 +1,17 @@
 .scroll-box{
   max-height: 736px !important;
-  overflow: auto;
+  overflow: hidden !important;
+  scrollbar-width: none !important;
+  ///
+  //overflow-y: scroll;
+  //overflow-x: hidden;
   &::-webkit-scrollbar {
     width: 0px;
     background: transparent;
   }
 
   &::-webkit-scrollbar-thumb {
+    width: 0px;
     background: transparent;
   }
 
@@ -15,6 +20,11 @@
     margin-bottom: 23px;
     border-bottom: 2px solid rgba($color: #2c80e2, $alpha: 0.08);
   }
+}
+.scroll-box:hover{
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  scrollbar-width: none !important;
 }
 .scroll-dialogs-container{
   // border: 1px solid darkred;

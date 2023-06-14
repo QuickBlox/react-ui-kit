@@ -46,27 +46,6 @@ const Login: React.FC<LoginProps> = ({ loginHandler }: LoginProps) => {
   };
 
   return (
-    // <div>
-    //   <div>Login data:</div>
-    //   <div>user: anruaav</div>
-    //   <div>password: quickblox</div>
-    //   <button
-    //     onClick={() => {
-    //       console.log('ok');
-    //       const data = {
-    //         userName: 'anruaav',
-    //         password: 'anruaav',
-    //       };
-    //
-    //       if (loginHandler) {
-    //         loginHandler(data);
-    //       }
-    //     }}
-    //     type="button"
-    //   >
-    //     login
-    //   </button>
-    // </div>
     <div id="login">
       <h1>Please login.</h1>
 

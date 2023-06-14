@@ -91,19 +91,27 @@ export class SubscriptionPerformer<TArg> implements ISubscribable<TArg> {
     event: string = SubscriptionPerformer.DEFAULT_SUBSCRIPTION_NAME,
   ): void {
     const haveSubscriptionsForType = this.onEventByTypeSubscribers[eventType];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const haveSubscriptionName =
       event !== SubscriptionPerformer.DEFAULT_SUBSCRIPTION_NAME;
-    const haveSubscribers =
+    const haveSubscriber =
       this.onEventByTypeSubscribers[eventType][event] !== undefined;
     const haveValidType =
       typeof this.onEventByTypeSubscribers[eventType][event] === 'function';
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const haveManySubscribers =
+      Object.entries(this.onEventByTypeSubscribers[eventType]).length > 1;
 
     if (haveSubscriptionsForType) {
-      if (haveSubscriptionName && haveSubscribers && haveValidType) {
+      if (haveSubscriptionName && haveSubscriber && haveValidType) {
+        // if (!haveSubscriptionName && haveSubscriber && haveValidType)
+        // if (!haveManySubscribers && haveSubscriber && haveValidType)
+
         if (arg) {
-          this.onEventByTypeSubscribers[eventType][event](arg);
+          this.onEventByTypeSubscribers[eventType][event](arg); // new, edit dialog
         }
       } else {
+        // local events and leave dialog
         Object.entries(this.onEventByTypeSubscribers[eventType]).forEach(
           (value) => {
             if (arg) {

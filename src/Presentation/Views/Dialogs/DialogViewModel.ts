@@ -1,4 +1,5 @@
 import BaseViewModel, {
+  FunctionTypeBooleanToVoid,
   FunctionTypeDialogEntityToBoolean,
   FunctionTypeDialogEntityToDialogEntity,
   FunctionTypeFileToFileEntity,
@@ -15,6 +16,7 @@ export interface DialogsViewModel extends BaseViewModel<DialogEntity> {
   dialogs: DialogEntity[]; // content // PublicDialogEntity
   getDialogs: FunctionTypePaginationToVoid; // prepareContent
   release: FunctionTypeVoidToVoid; // release Content
+  setWaitLoadingStatus: FunctionTypeBooleanToVoid; // set loading state
   createDialog: FunctionTypeDialogEntityToDialogEntity;
   updateDialog: FunctionTypeDialogEntityToDialogEntity;
   deleteDialog: FunctionTypeDialogEntityToBoolean;

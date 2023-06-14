@@ -172,6 +172,7 @@ const DialogsComponent: React.FC<DialogsProps> = ({
           },
         );
       }}
+      theme={additionalSettings?.themeHeader}
     />
   );
 
@@ -243,6 +244,7 @@ const DialogsComponent: React.FC<DialogsProps> = ({
               additionalSettings?.themeName === 'dark' ? 'dark' : 'light',
             selected: item.isSelected,
             muted: isMute(item.entity),
+            colorTheme: additionalSettings?.themePreview,
           }}
           title={`${item.entity.name || ''}`}
           unreadMessageCount={
@@ -332,7 +334,9 @@ const DialogsComponent: React.FC<DialogsProps> = ({
           {nameDialogForSearch.length > 0 &&
             dialogsToView
               .filter((item) =>
-                item.entity.name.includes(nameDialogForSearch, 0),
+                item.entity.name
+                  .toUpperCase()
+                  .includes(nameDialogForSearch.toUpperCase(), 0),
               )
               .map((item, index) => renderPreviewDialog(item, index))}
           {nameDialogForSearch.length === 0 &&

@@ -41,6 +41,9 @@ export default function useDialogsViewModel(
   const [dialogs, setDialogs] = useState<PublicDialogEntity[]>([]);
   const [newDialog, setNewDialog] = useState<DialogEntity>();
 
+  //
+  const currentUserId =
+    currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId;
   // const currentContext = useQbDataContext();
   const remoteDataSourceMock: RemoteDataSource =
     currentContext.storage.REMOTE_DATA_SOURCE;
@@ -84,6 +87,18 @@ export default function useDialogsViewModel(
           });
         }
       }
+      //
+      if (
+        dialogInfo.notificationTypes === NotificationTypes.DELETE_LEAVE_DIALOG
+      ) {
+        if (
+          dialogInfo.messageInfo &&
+          dialogInfo.messageInfo.sender_id === currentUserId
+        ) {
+          setNewDialog(undefined);
+        }
+      }
+      //
     }
   };
 
@@ -139,6 +154,10 @@ export default function useDialogsViewModel(
 
   const release = () => {
     useCaseSubscribeToDialogsUpdates.release();
+  };
+
+  const setWaitLoadingStatus = (status: boolean): void => {
+    setLoading(status);
   };
 
   const createDialog = async (
@@ -355,5 +374,6 @@ export default function useDialogsViewModel(
     deleteDialog,
     uploadFile,
     removeMembers,
+    setWaitLoadingStatus,
   };
 }

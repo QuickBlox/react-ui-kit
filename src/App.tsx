@@ -15,7 +15,7 @@ import {
   RemoteDataSource,
 } from './Data/source/remote/RemoteDataSource';
 import QuickBloxUIKitDesktopLayout from './Presentation/components/layouts/Desktop/QuickBloxUIKitDesktopLayout';
-import CustomTheme from './Presentation/assets/ DefaultThemes/CustomTheme';
+import DefaultTheme from './Presentation/assets/DefaultThemes/DefaultTheme';
 
 function App() {
   const currentContext = React.useContext(qbDataContext);
@@ -69,6 +69,7 @@ function App() {
           authKeyOrAppId: currentContext.InitParams.accountData.authKey,
           authSecret: currentContext.InitParams.accountData.authSecret,
           accountKey: currentContext.InitParams.accountData.accountKey,
+          config: QBConfig.appConfig,
         },
         authData,
       );
@@ -83,16 +84,11 @@ function App() {
         connectionRepository.keepALiveChatConnection();
       }
       //
-      // START SYNC MOCK - слушает коннекшн репозиторий и после восстановления инета
-      // загружает новые данные, а при первом запуске - грузит предустановленные значения (если они есть)
-      // и мок версия может запускать дополнение по таймеру новых диалогов
-      //
       await currentContext.storage.SYNC_DIALOGS_USE_CASE.execute(() => {
         console.log('SYNC_DIALOGS_USE_CASE_MOCK.execute');
       }).catch(() => {
         console.log('EXCEPTION SYNC_DIALOGS_USE_CASE_MOCK.execute');
       });
-      //
       currentContext.storage.REMOTE_DATA_SOURCE.subscribeOnSessionExpiredListener(
         () => {
           console.log('call subscribeOnSessionExpiredListener');
@@ -101,26 +97,15 @@ function App() {
         },
       );
       //
+      QB.chat.onSessionExpiredListener = function (error) {
+        if (error) {
+          console.log('onSessionExpiredListener - error: ', error);
+        } else {
+          console.log('Hello from client app SessionExpiredListener');
+        }
+      };
+      //
     }
-    // else {
-    //   //
-    //   // TODO: 1. disconnect 2. setup new user
-    //   console.log('login data in prepareSDK:', authData);
-    //   await remoteDataSourceMock.disconnectAndLogoutUser();
-    //
-    //   await remoteDataSourceMock.loginWithUser(authData);
-    //   //
-    //   // todo: temporary off, must turn on and reorganize code rows
-    //   await connectionRepository.initializeStates();
-    //   console.log(
-    //     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    //     `3. after repo initialize in prepareSDK, need init ${connectionRepository.needInit}`,
-    //   );
-    //   if (!connectionRepository.needInit) {
-    //     connectionRepository.keepALiveChatConnection();
-    //   }
-    //   //
-    // }
   };
 
   const reloginSDK = async (authData: LoginData): Promise<void> => {
@@ -150,12 +135,7 @@ function App() {
   const prepareContent = async (): Promise<void> => {
     console.log('PREPARE CONTENT');
     // todo: must delete it and ADD Preload data (read first page everywhere)
-    // или во все юзкейсы 2) Get/Sync execute(completed/callback):Promise<Entity[]>
-    // await prepareMockData();
     console.log('ADD REAL DATA TO DIALOG MOCK DATA ');
-    // await remoteDataSourceMock.getDialogsFirstPage();
-    // await remoteDataSourceMock.setUpMockStorage();
-    //
     //
   };
 
@@ -189,6 +169,7 @@ function App() {
             authKeyOrAppId: currentContext.InitParams.accountData.authKey,
             authSecret: currentContext.InitParams.accountData.authSecret,
             accountKey: currentContext.InitParams.accountData.accountKey,
+            config: QBConfig.appConfig,
           },
           data,
         );
@@ -227,8 +208,6 @@ function App() {
       }}
     >
       <div className="App">
-        {/* <Navbar /> */}
-
         <div className="App">
           <Routes>
             {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
@@ -236,7 +215,11 @@ function App() {
             <Route
               path="/desktop-test-mock"
               element={
-                <QuickBloxUIKitDesktopLayout theme={new CustomTheme()} />
+                // <QuickBloxUIKitDesktopLayout theme={new CustomTheme()} InputWidgetLeftPlaceHolder={CustomWidgetVoiceToText('','')} />
+
+                // <QuickBloxUIKitDesktopLayout theme={new CustomTheme()} />
+
+                <QuickBloxUIKitDesktopLayout theme={new DefaultTheme()} />
               }
             />
 

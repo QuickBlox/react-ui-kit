@@ -36,17 +36,21 @@ import { FileEntity } from '../../../../../Domain/entity/FileEntity';
 import UserAvatar from '../EditDialog/UserAvatar/UserAvatar';
 import MainButton, { TypeButton } from '../../Buttons/MainButton/MainButton';
 import useQbDataContext from '../../../providers/QuickBloxUIKitProvider/useQbDataContext';
+import UiKitTheme from '../../../../assets/UiKitTheme';
 
 type HeaderDialogsProps = {
   dialog: DialogEntity;
   dialogViewModel: DialogsViewModel;
   closeInformationHandler: FunctionTypeVoidToVoid;
+  theme?: UiKitTheme;
 };
 // eslint-disable-next-line react/function-component-definition
 const DialogInformation: React.FC<HeaderDialogsProps> = ({
   dialog,
   dialogViewModel,
   closeInformationHandler,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  theme = undefined,
 }: HeaderDialogsProps) => {
   const currentContext = useQbDataContext();
   const currentUserId =
@@ -268,7 +272,8 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
         <div className="dialog-information-container--icon-dialog-wrapper">
           <div className="dialog-information-container__icon-dialog">
             <div className="dialog-information-container__icon-dialog__info">
-              {dialog.type !== DialogType.private ? (
+              {dialog.type !== DialogType.private &&
+              dialog.ownerId === currentUserId ? (
                 <div className="dialog-information-container__icon-dialog__btn">
                   <ActiveButton
                     content="Edit"
@@ -537,7 +542,9 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
         <div className="dialog-information-container--leave-dialog-wrapper">
           <div className="dialog-information-container--leave-dialog-wrapper__leave-icon">
             <ActiveSvg
-              content={<Leave width="24" height="24" applyZoom />}
+              content={
+                <Leave width="24" height="24" applyZoom color="var(--error)" />
+              }
               clickAction={() => {
                 leaveDialogHandler();
               }}

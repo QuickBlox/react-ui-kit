@@ -45,9 +45,10 @@ import ViewedDelivered from '../../svgs/Icons/Status/ViewedDelivered';
 import { stringifyError } from '../../../../../utils/parse';
 import VoiceRecordingProgress from './VoiceRecordingProgress/VoiceRecordingProgress';
 import UiKitTheme from '../../../../assets/UiKitTheme';
+import { DialogsViewModel } from '../../../../Views/Dialogs/DialogViewModel';
 
 type HeaderDialogsMessagesProps = {
-  dialog: DialogEntity;
+  dialogsViewModel: DialogsViewModel;
   InformationHandler?: FunctionTypeVoidToVoid;
   maxWidthToResize?: string;
   theme?: UiKitTheme;
@@ -55,7 +56,7 @@ type HeaderDialogsMessagesProps = {
 
 // eslint-disable-next-line react/function-component-definition
 const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
-  dialog,
+  dialogsViewModel,
   InformationHandler,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   maxWidthToResize = undefined,
@@ -81,23 +82,29 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   );
 
   const messagesViewModel: MessagesViewModel = useMessagesViewModel(
-    dialog.type,
-    dialog,
+    dialogsViewModel.entity?.type,
+    dialogsViewModel.entity,
   );
+
+  const { maxFileSize } = currentContext.InitParams;
 
   useEffect(() => {
     console.log('HAVE NEW DIALOG');
     // messagesViewModel.getMessages(new Pagination());
-    messagesViewModel.entity = dialog;
+    messagesViewModel.entity = dialogsViewModel.entity;
     setMessagesToView([]);
-  }, [dialog]);
+  }, [dialogsViewModel.entity]);
 
   useEffect(() => {
     console.log('HAVE NEW ENTITY');
     messagesViewModel.getMessages(new Pagination());
   }, [messagesViewModel.entity]);
   //
-
+  useEffect(() => {
+    console.log('HAVE NEW ENTITY');
+    dialogsViewModel.setWaitLoadingStatus(messagesViewModel?.loading);
+  }, [messagesViewModel?.loading]);
+  //
   function prepareFirstPage(initData: MessageEntity[]) {
     const firstPageSize =
       messagesViewModel.messages.length < 47
@@ -231,7 +238,10 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
         if (att.type === FileType.text) {
           contentResult = (
             <div className="message-view-container--file-message-content-wrapper">
-              <div className="message-view-container__file-message-icon">
+              <div
+                style={theme ? { backgroundColor: theme.caption() } : {}}
+                className="message-view-container__file-message-icon"
+              >
                 {contentPlaceHolder}
               </div>
               <div>{att.name || 'file'}</div>
@@ -262,7 +272,10 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
           className="message-view-container--system-message-wrapper"
           key={message.id}
         >
-          <div className="message-view-container--system-message-wrapper__date_container">
+          <div
+            style={theme ? { backgroundColor: theme.disabledElements() } : {}}
+            className="message-view-container--system-message-wrapper__date_container"
+          >
             <div>{getDateShortFormatEU(message.date_sent)},</div>
           </div>
           {/* <div>{getTimeShort24hFormat(message.date_sent)}</div> */}
@@ -276,7 +289,10 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
           key={message.id}
         >
           <div className="message-view-container--incoming-message-wrapper__avatar">
-            <div className="message-view-container__sender-avatar">
+            <div
+              style={theme ? { backgroundColor: theme.disabledElements() } : {}}
+              className="message-view-container__sender-avatar"
+            >
               <User
                 width="24"
                 height="24"
@@ -286,14 +302,30 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
             </div>
           </div>
           <div className="message-view-container--incoming-message-container">
-            <div className="message-view-container__sender-name">
+            <div
+              style={theme ? { color: theme.secondaryText() } : {}}
+              className="message-view-container__sender-name"
+            >
               {getSenderName(message.sender) || message.sender_id.toString()}
             </div>
-            <div className="message-view-container__sender-message">
+            <div
+              style={
+                theme
+                  ? {
+                      color: theme.mainText(),
+                      backgroundColor: theme.incomingBackground(),
+                    }
+                  : {}
+              }
+              className="message-view-container__sender-message"
+            >
               {messageContentRender(message)}
             </div>
           </div>
-          <div className="message-view-container__incoming-time">
+          <div
+            style={theme ? { color: theme.mainText() } : {}}
+            className="message-view-container__incoming-time"
+          >
             {getTimeShort24hFormat(message.date_sent)}
           </div>
         </div>
@@ -307,17 +339,40 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
           <div className="message-view-container__status-message">
             <div className="message-view-container__incoming-time">
               {message.delivered_ids && message.delivered_ids.length > 0 ? (
-                <ViewedDelivered width="13" height="13" applyZoom />
+                <ViewedDelivered
+                  width="13"
+                  height="13"
+                  applyZoom
+                  color={theme ? theme.mainElements() : 'var(--main-elements)'}
+                />
               ) : (
-                <SentStatusIcon width="13" height="13" applyZoom />
+                <SentStatusIcon
+                  width="13"
+                  height="13"
+                  applyZoom
+                  color={theme ? theme.mainElements() : 'var(--main-elements)'}
+                />
               )}
             </div>
-            <div className="message-view-container__incoming-time">
+            <div
+              style={theme ? { color: theme.mainText() } : {}}
+              className="message-view-container__incoming-time"
+            >
               {getTimeShort24hFormat(message.date_sent)}
             </div>
           </div>
 
-          <div className="message-view-container__outgoing-message">
+          <div
+            style={
+              theme
+                ? {
+                    color: theme.mainText(),
+                    backgroundColor: theme.outgoingBackground(),
+                  }
+                : {}
+            }
+            className="message-view-container__outgoing-message"
+          >
             {messageContentRender(message)}
           </div>
         </div>
@@ -371,7 +426,8 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
 
   useEffect(() => {
     console.log('have Attachments');
-    const MAXSIZE = 90 * 1000000;
+    const MAXSIZE = maxFileSize || 90 * 1000000;
+    const MAXSIZE_FOR_MESSAGE = MAXSIZE / (1024 * 1024);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const flag = fileToSend?.size && fileToSend?.size < MAXSIZE;
 
@@ -379,7 +435,7 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
       messagesViewModel.sendAttachmentMessage(fileToSend);
     } else if (fileToSend) {
       showErrorMessage(
-        `file size ${fileToSend?.size} must be less then ${MAXSIZE} mb.`,
+        `file size ${fileToSend?.size} must be less then ${MAXSIZE_FOR_MESSAGE} mb.`,
       );
     }
   }, [fileToSend]);
@@ -548,6 +604,25 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
     }
   }, [permission]);
 
+  function sendTextMessageActions() {
+    if (messagesViewModel?.loading) return;
+    setVoiceMessage(true);
+    if (messageText.length > 0 && messageText.length <= 1000) {
+      const messageTextToSend = messageText;
+
+      setMessageText('');
+      messagesViewModel.sendTextMessage(messageTextToSend);
+      setMessageText('');
+    } else {
+      setWarningErrorText(
+        'length of text message must be less then 1000 chars.',
+      );
+      setTimeout(() => {
+        setWarningErrorText('');
+      }, 3000);
+    }
+  }
+
   return (
     <div
       style={
@@ -573,15 +648,24 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
         <HeaderMessages
           dialog={messagesViewModel.entity}
           InformationHandler={InformationHandler}
-          countMembers={getCountDialogMembers(dialog)}
+          countMembers={getCountDialogMembers(dialogsViewModel.entity)}
         />
       </div>
       <div
-        style={{
-          flexGrow: `1`,
-          flexShrink: `1`,
-          flexBasis: `${maxWidthToResizing}`,
-        }}
+        style={
+          theme
+            ? {
+                flexGrow: `1`,
+                flexShrink: `1`,
+                flexBasis: `${maxWidthToResizing}`,
+                backgroundColor: theme.mainElements(),
+              }
+            : {
+                flexGrow: `1`,
+                flexShrink: `1`,
+                flexBasis: `${maxWidthToResizing}`,
+              }
+        }
         className="message-view-container--information"
       >
         <div>
@@ -602,11 +686,20 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
         <div>{` current user id: ${currentUserId || 'no user'}`}</div>
       </div>
       <div
-        style={{
-          flexGrow: `1`,
-          flexShrink: `1`,
-          flexBasis: `${maxWidthToResizing}`,
-        }}
+        style={
+          theme
+            ? {
+                flexGrow: `1`,
+                flexShrink: `1`,
+                flexBasis: `${maxWidthToResizing}`,
+                backgroundColor: theme.secondaryBackground(), // var(--secondary-background);
+              }
+            : {
+                flexGrow: `1`,
+                flexShrink: `1`,
+                flexBasis: `${maxWidthToResizing}`,
+              }
+        }
         className="message-view-container--messages"
       >
         {messagesViewModel?.error && (
@@ -645,7 +738,10 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
             />
           </div>
         )}
-        <div className="message-view-container--warning-error">
+        <div
+          style={theme ? { color: theme.mainElements() } : {}}
+          className="message-view-container--warning-error"
+        >
           {warningErrorText}
         </div>
       </div>
@@ -674,7 +770,9 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
                   width="32"
                   height="32"
                   applyZoom
-                  color="var(--input-elements)"
+                  color={
+                    theme ? theme.inputElements() : 'var(--input-elements)'
+                  }
                 />
               }
               clickAction={() => {
@@ -698,6 +796,7 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
 
         {!isRecording && (
           <textarea
+            style={theme ? { backgroundColor: theme.chatInput() } : {}}
             disabled={messagesViewModel?.loading}
             value={messageText}
             onFocus={() => {
@@ -709,12 +808,23 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
             onInput={() => {
               messagesViewModel.sendTypingTextMessage();
             }}
+            onKeyDown={(e) => {
+              console.log(
+                `onKeyDown: ${e.key} shift ${
+                  e.shiftKey ? 'true' : 'false'
+                } ctrl ${e.ctrlKey ? 'true' : 'false'}`,
+              );
+              if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
+                sendTextMessageActions();
+              }
+            }}
             placeholder="enter text to send"
           />
         )}
 
         {isRecording && (
           <VoiceRecordingProgress
+            startStatus={isRecording}
             longRecInSec={60}
             ClickActionHandler={() => {
               console.log('click send voice message');
@@ -722,7 +832,7 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
               setIsRecording(!isRecording);
             }}
             TouchActionHandler={() => {
-              console.log('click send voice message');
+              console.log('touch send voice message');
               if (messagesViewModel?.loading) return;
               setIsRecording(!isRecording);
             }}
@@ -737,27 +847,12 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
                   width="21"
                   height="18"
                   applyZoom
-                  color="var(--main-elements)"
+                  color={theme ? theme.mainElements() : 'var(--main-elements)'}
                 />
               }
               clickAction={() => {
                 console.log('click send message');
-                if (messagesViewModel?.loading) return;
-                setVoiceMessage(true);
-                if (messageText.length > 0 && messageText.length <= 1000) {
-                  const messageTextToSend = messageText;
-
-                  setMessageText('');
-                  messagesViewModel.sendTextMessage(messageTextToSend);
-                  setMessageText('');
-                } else {
-                  setWarningErrorText(
-                    'length of text message must be less then 1000 chars.',
-                  );
-                  setTimeout(() => {
-                    setWarningErrorText('');
-                  }, 3000);
-                }
+                sendTextMessageActions();
               }}
               touchAction={() => {
                 console.log('touch send message');

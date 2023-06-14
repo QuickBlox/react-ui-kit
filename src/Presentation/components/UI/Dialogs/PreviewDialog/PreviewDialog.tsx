@@ -71,33 +71,61 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
   //   .getPropertyValue('--color-icon')
   //   .trim();
 
-  const colorIcon = 'var(--color-icon)';
+  const colorIcon = theme?.colorTheme
+    ? theme?.colorTheme.mainElements()
+    : 'var(--main-elements)';
 
   const defaultLightTheme: PreviewDialogsColorTheme = {
-    backgroundColorMainSection: 'var(--main-background)', // ThemeScheme.primary_a_100,
-    backgroundColorAvatarSection: 'var(--disabled-elements)', // ThemeScheme.secondary_100,
-    colorAvatarIcon: 'var(--secondary-text)', // ThemeScheme.secondary_300,
-    fontColorMessage: 'var(--input-elements)', // ThemeScheme.secondary_500,
-    fontColorTitle: 'var(--main-text)', // ThemeScheme.secondary_900,
-    divider: 'var(--divider)', // ThemeScheme.primary_50,
+    backgroundColorMainSection: theme?.colorTheme
+      ? theme?.colorTheme.mainBackground()
+      : 'var(--main-background)', // ThemeScheme.primary_a_100,
+    backgroundColorAvatarSection: theme?.colorTheme
+      ? theme?.colorTheme.disabledElements()
+      : 'var(--disabled-elements)', // ThemeScheme.secondary_100,
+    colorAvatarIcon: theme?.colorTheme
+      ? theme?.colorTheme.secondaryText()
+      : 'var(--secondary-text)', // ThemeScheme.secondary_300,
+    fontColorMessage: theme?.colorTheme
+      ? theme?.colorTheme.inputElements()
+      : 'var(--input-elements)', // ThemeScheme.secondary_500,
+    fontColorTitle: theme?.colorTheme
+      ? theme?.colorTheme.mainText()
+      : 'var(--main-text)', // ThemeScheme.secondary_900,
+    divider: theme?.colorTheme ? theme?.colorTheme.divider() : 'var(--divider)', // ThemeScheme.primary_50,
   };
 
   const darkDefaultTheme: PreviewDialogsColorTheme = {
-    backgroundColorMainSection: 'var(--main-background)', // ThemeScheme.primary_a_100,
-    backgroundColorAvatarSection: 'var(--disabled-elements)', // ThemeScheme.secondary_100,
-    colorAvatarIcon: 'var(--secondary-text)', // ThemeScheme.secondary_300,
-    fontColorMessage: 'var(--input-elements)', // ThemeScheme.secondary_500,
-    fontColorTitle: 'var(--main-text)', // ThemeScheme.secondary_900,
-    divider: 'var(--color-divider)', // ThemeScheme.secondary_400,
+    backgroundColorMainSection: theme?.colorTheme
+      ? theme?.colorTheme.mainBackground()
+      : 'var(--main-background)', // ThemeScheme.primary_a_100,
+    backgroundColorAvatarSection: theme?.colorTheme
+      ? theme?.colorTheme.disabledElements()
+      : 'var(--disabled-elements)', // ThemeScheme.secondary_100,
+    colorAvatarIcon: theme?.colorTheme
+      ? theme?.colorTheme.secondaryText()
+      : 'var(--secondary-text)', // ThemeScheme.secondary_300,
+    fontColorMessage: theme?.colorTheme
+      ? theme?.colorTheme.inputElements()
+      : 'var(--input-elements)', // ThemeScheme.secondary_500,
+    fontColorTitle: theme?.colorTheme
+      ? theme?.colorTheme.mainText()
+      : 'var(--main-text)', // ThemeScheme.secondary_900,
+    divider: theme?.colorTheme ? theme?.colorTheme.divider() : 'var(--divider)', // ThemeScheme.secondary_400, // 'var(--color-divider)'
   };
 
   const hoverTheme: PreviewDialogsColorTheme = darkDefaultTheme;
 
   if (theme?.themeName === 'light') {
-    hoverTheme.backgroundColorMainSection = 'var(--chat-input)'; // ThemeScheme.primary_a_200;
-    hoverTheme.divider = 'var(--divider)'; // ThemeScheme.primary_50;
+    hoverTheme.backgroundColorMainSection = theme?.colorTheme
+      ? theme?.colorTheme.chatInput()
+      : 'var(--chat-input)'; // ThemeScheme.primary_a_200;
+    hoverTheme.divider = theme?.colorTheme
+      ? theme?.colorTheme.divider()
+      : 'var(--divider)'; // ThemeScheme.primary_50;
   } else {
-    hoverTheme.backgroundColorMainSection = 'var(--field-border)'; // ThemeScheme.secondary_200;
+    hoverTheme.backgroundColorMainSection = theme?.colorTheme
+      ? theme?.colorTheme.fieldBorder()
+      : 'var(--field-border)'; // ThemeScheme.secondary_200;
   }
 
   const workTheme: PreviewDialogsColorTheme =
@@ -111,7 +139,9 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
     workTheme.fontColorMessage = theme?.colorTheme.inputElements();
     workTheme.fontColorTitle = theme?.colorTheme.mainText();
     workTheme.divider = theme?.colorTheme.divider();
-    hoverTheme.backgroundColorMainSection = 'var(--field-border)'; // ThemeScheme.secondary_200;
+    hoverTheme.backgroundColorMainSection = theme?.colorTheme
+      ? theme?.colorTheme.fieldBorder()
+      : 'var(--field-border)'; // ThemeScheme.secondary_200;
   }
 
   const avatarSectionStyles = {
@@ -344,7 +374,13 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
                 RightItem={
                   <div>
                     <div style={hoverItemStyle}>
-                      <EditDots />
+                      <EditDots
+                        color={
+                          theme?.colorTheme
+                            ? theme?.colorTheme.mainElements()
+                            : 'var(--main-elements)'
+                        }
+                      />
                     </div>
                   </div>
                 }
@@ -383,7 +419,7 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
                     style={messageDialogStyles}
                     className={textWrapperContainer}
                   >
-                    <span className="preview-d  ialog-container__text-concat">
+                    <span className="preview-dialog-container__text-concat">
                       {previewMessage}
                     </span>
                   </div>

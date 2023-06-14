@@ -1,26 +1,47 @@
 import React from 'react';
 import './DesktopLayout.scss';
+import UiKitTheme from '../../../assets/UiKitTheme';
 
 type LayoutItems = {
   dialogsView: React.ReactNode;
   dialogMessagesView: React.ReactNode;
   dialogInfoView: React.ReactNode;
+  theme?: UiKitTheme;
 };
 function DesktopLayout({
   dialogsView,
   dialogMessagesView,
   dialogInfoView,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  theme = undefined,
 }: LayoutItems) {
+  const mainContainerStyles = theme
+    ? {
+        color: theme.mainText(),
+        backgroundColor: theme.mainBackground(),
+        border: `1px solid ${theme.divider()}`,
+      }
+    : {};
+
   return (
-    <div className="desktop-layout-main-container">
-      <div className="desktop-layout-main-container__item-left">
+    <div style={mainContainerStyles} className="desktop-layout-main-container">
+      <div
+        style={mainContainerStyles}
+        className="desktop-layout-main-container__item-left"
+      >
         {dialogsView}
       </div>
-      <div className="desktop-layout-main-container__item-center">
+      <div
+        style={mainContainerStyles}
+        className="desktop-layout-main-container__item-center"
+      >
         {dialogMessagesView}
       </div>
       {dialogInfoView && (
-        <div className="desktop-layout-main-container__item-right">
+        <div
+          style={mainContainerStyles}
+          className="desktop-layout-main-container__item-right"
+        >
           {dialogInfoView}
         </div>
       )}

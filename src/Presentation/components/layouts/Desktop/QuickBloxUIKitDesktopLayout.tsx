@@ -8,12 +8,12 @@ import DesktopLayout from './DesktopLayout';
 import MessagesView from '../../UI/Dialogs/MessagesView/MessagesView';
 import useDialogsViewModel from '../../../Views/Dialogs/useDialogsViewModel';
 import { Pagination } from '../../../../Domain/repository/Pagination';
-import { SubscribeToDialogEventsUseCase } from '../../../../Domain/use_cases/SubscribeToDialogEventsUseCase';
-import useEventMessagesRepository from '../../providers/QuickBloxUIKitProvider/useEventMessagesRepository';
-import EventMessageType from '../../../../Domain/entity/EventMessageType';
-import { NotificationTypes } from '../../../../Domain/entity/NotificationTypes';
-import { stringifyError } from '../../../../utils/parse';
-import { DialogEventInfo } from '../../../../Domain/entity/DialogEventInfo';
+// import { SubscribeToDialogEventsUseCase } from '../../../../Domain/use_cases/SubscribeToDialogEventsUseCase';
+// import useEventMessagesRepository from '../../providers/QuickBloxUIKitProvider/useEventMessagesRepository';
+// import EventMessageType from '../../../../Domain/entity/EventMessageType';
+// import { NotificationTypes } from '../../../../Domain/entity/NotificationTypes';
+// import { stringifyError } from '../../../../utils/parse';
+// import { DialogEventInfo } from '../../../../Domain/entity/DialogEventInfo';
 import UiKitTheme from '../../../assets/UiKitTheme';
 import BaseViewModel from '../../../Views/Base/BaseViewModel';
 
@@ -30,7 +30,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     React.useState<BaseViewModel<DialogEntity>>();
 
   const currentContext = useQbDataContext();
-  const eventMessaging = useEventMessagesRepository();
+  // const eventMessaging = useEventMessagesRepository();
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const userName =
@@ -41,17 +41,15 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   const dialogsViewModel: DialogsViewModel =
     useDialogsViewModel(currentContext);
 
-  const subscribeToDialogEventsUseCase: SubscribeToDialogEventsUseCase =
-    new SubscribeToDialogEventsUseCase(eventMessaging, 'TestStage');
+  const selectDialogActions = (item: BaseViewModel<DialogEntity>): void => {
+    if (!dialogsViewModel.loading) {
+      setSelectedDialog(item);
+    }
+  };
 
-  /* DATA needed to init MockData
-  const remoteDataSourceMock: RemoteDataSourceMock = currentContext.storage
-    .REMOTE_DATA_SOURCE_MOCK as RemoteDataSourceMock;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const localDataSource: LocalDataSource =
-    currentContext.storage.LOCAL_DATA_SOURCE;
-  const { connectionRepository } = useQBConnection();
-*/
+  // const subscribeToDialogEventsUseCase: SubscribeToDialogEventsUseCase =
+  //   new SubscribeToDialogEventsUseCase(eventMessaging, 'TestStage');
+
   // инициализация СДК и загрузка тестовых данных, запуск пинга - может не быть
   // todo: добавить метод в контекст
   const isAuthProcessed = (): boolean => {
@@ -98,29 +96,29 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     };
   }, []); // сейчас это выполняется один раз при старте, а нужно каждый раз при смене пользователя
 
-  const dialogsEventHandler = (dialogInfo: DialogEventInfo) => {
-    console.log('call dialogsEventHandler in subscribeToDialogEventsUseCase');
-    if (dialogInfo.eventMessageType === EventMessageType.SystemMessage) {
-      switch (dialogInfo.notificationTypes) {
-        case NotificationTypes.DELETE_LEAVE_DIALOG: {
-          if (
-            dialogInfo.messageInfo &&
-            dialogInfo.messageInfo.sender_id === userId
-          ) {
-            setSelectedDialog(undefined);
-          }
-
-          break;
-        }
-        default: {
-          const pagination: Pagination = new Pagination();
-
-          dialogsViewModel?.getDialogs(pagination);
-          break;
-        }
-      }
-    }
-  };
+  // const dialogsEventHandler = (dialogInfo: DialogEventInfo) => {
+  //   console.log('call dialogsEventHandler in QuickBloxUIKitDesktopLayout');
+  //   if (dialogInfo.eventMessageType === EventMessageType.SystemMessage) {
+  //     switch (dialogInfo.notificationTypes) {
+  //       case NotificationTypes.DELETE_LEAVE_DIALOG: {
+  //         if (
+  //           dialogInfo.messageInfo &&
+  //           dialogInfo.messageInfo.sender_id === userId
+  //         ) {
+  //           setSelectedDialog(undefined);
+  //         }
+  //
+  //         break;
+  //       }
+  //       default: {
+  //         const pagination: Pagination = new Pagination();
+  //
+  //         dialogsViewModel?.getDialogs(pagination);
+  //         break;
+  //       }
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     console.log('TestStage: GET DATA AFTER User data has CHANGED');
@@ -136,14 +134,15 @@ const QuickBloxUIKitDesktopLayout: React.FC<
 
       dialogsViewModel?.getDialogs(pagination);
       //
-      console.log('auth is completed, subscribe');
-
-      subscribeToDialogEventsUseCase
-        .execute(dialogsEventHandler)
-        .catch((reason) => {
-          console.log(stringifyError(reason));
-        });
+      // console.log('auth is completed, subscribe');
       //
+      // subscribeToDialogEventsUseCase
+      //   .execute(dialogsEventHandler)
+      //   .catch((reason) => {
+      //     console.log(stringifyError(reason));
+      //   });
+      // //
+      // console.log('subscribe is completed, go');
     }
   }, [currentContext.InitParams]);
 
@@ -153,10 +152,21 @@ const QuickBloxUIKitDesktopLayout: React.FC<
         selectedDialog?.entity?.name || 'Dialog Name is empty'
       }`,
     );
-    if (selectedDialog) {
-      dialogsViewModel.entity = selectedDialog.entity!;
+    if (selectedDialog && selectedDialog.entity) {
+      dialogsViewModel.entity = selectedDialog.entity;
     }
   }, [selectedDialog]);
+
+  useEffect(() => {
+    console.log(
+      `Clear selected dialog: ${
+        selectedDialog?.entity?.name || 'Dialog Name is empty'
+      }`,
+    );
+    if (!dialogsViewModel.entity) {
+      setSelectedDialog(undefined);
+    }
+  }, [dialogsViewModel.entity]);
 
   const [needDialogInformation, setNeedDialogInformation] = useState(true);
   const informationCloseHandler = (): void => {
@@ -168,21 +178,27 @@ const QuickBloxUIKitDesktopLayout: React.FC<
 
   return (
     <DesktopLayout
+      theme={theme}
       dialogsView={
         <DialogsComponent
           dialogsViewModel={dialogsViewModel} // 1 Get 2 Update UseCase
-          itemSelectHandler={setSelectedDialog}
-          additionalSettings={{ withoutHeader: false }}
+          itemSelectHandler={selectDialogActions}
+          additionalSettings={{
+            withoutHeader: false,
+            themeHeader: theme,
+            themePreview: theme,
+          }}
         />
       }
       dialogMessagesView={
-        selectedDialog && selectedDialog.entity ? (
+        selectedDialog && selectedDialog.entity && dialogsViewModel.entity ? (
           <MessagesView
-            dialog={selectedDialog?.entity}
+            dialogsViewModel={dialogsViewModel}
             InformationHandler={informationOpenHandler}
             maxWidthToResize={
               selectedDialog && needDialogInformation ? undefined : '1040px'
             }
+            theme={theme}
           /> // 1 Get Messages + 1 Get User by Id
         ) : (
           <div
@@ -206,6 +222,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
               dialog={selectedDialog.entity}
               dialogViewModel={dialogsViewModel}
               closeInformationHandler={informationCloseHandler}
+              theme={theme}
             />
           )}
         </div>

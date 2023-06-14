@@ -54,6 +54,7 @@ export type FunctionTypeFileToToVoid = (file: File) => void;
 export type FunctionTypePaginationToVoid = (pagination: Pagination) => void;
 export type FunctionTypeVoidToVoid = () => void;
 export type FunctionTypeStringToVoid = (value: string) => void;
+export type FunctionTypeBooleanToVoid = (value: boolean) => void;
 export type FunctionTypeEditDialogParamsToVoid = (
   params: EditDialogParams,
 ) => void;

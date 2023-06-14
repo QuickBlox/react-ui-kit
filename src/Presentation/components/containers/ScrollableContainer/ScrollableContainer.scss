@@ -24,23 +24,22 @@
 .list .list-content {
   flex: 1;
   overflow-x: hidden;
-  // overflow-y: hidden;
+  //overflow-y: hidden;
   overflow-y: auto;
   width: 100%;
-
-
 }
 
 .list {
   ::-webkit-scrollbar{
-    // display: none;
+    display: none;
     width: 0px !important;
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
     background: transparent;
   }
-  :hover{
-    overflow-y: scroll;
-  }
+  //:hover{
+  //  overflow-y: scroll;
+  //}
 }
+

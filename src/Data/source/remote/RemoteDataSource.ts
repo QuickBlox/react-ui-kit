@@ -56,6 +56,7 @@ import { CallBackFunction } from '../../../Domain/use_cases/base/IUseCase';
 import { FileDTOMapper } from './Mapper/FileDTOMapper';
 import { DialogEventInfo } from '../../../Domain/entity/DialogEventInfo';
 import { IRemoteDataSource } from './IRemoteDataSource';
+import { QBConfig } from '../../../QBconfig';
 
 export type PaginatedDTOResult = {
   // PaginatedList: Record<number, RemoteUserDTO[]>;
@@ -182,6 +183,7 @@ export class RemoteDataSource implements IRemoteDataSource {
         authKeyOrAppId: sdkParams.authKeyOrAppId,
         authSecret: sdkParams.authSecret,
         accountKey: sdkParams.accountKey,
+        config: sdkParams.config,
       });
       const QuickBloxVersion = `CALL initData: Init SDK was success: version ${QB.version} build ${QB.buildNumber}`;
 
@@ -203,6 +205,7 @@ export class RemoteDataSource implements IRemoteDataSource {
         authKeyOrAppId: sdkParams.authKeyOrAppId,
         authSecret: sdkParams.authSecret,
         accountKey: sdkParams.accountKey,
+        config: sdkParams.config,
       });
       const QuickBloxVersion = `CALL initData: Init SDK was success: version ${QB.version} build ${QB.buildNumber}`;
 
@@ -276,12 +279,23 @@ export class RemoteDataSource implements IRemoteDataSource {
     new SubscriptionPerformer<boolean>();
 
   subscribeOnSessionExpiredListener(callback: CallBackFunction<boolean>): void {
-    console.log('call subscribeOnSessionExpiredListener');
-    console.log('subscribeOnSessionExpiredListener');
+    console.log('subscribe On Session Expired Event');
     this.subscriptionOnSessionExpiredListener.subscribe(
       callback,
       EventMessageType.LocalMessage,
     );
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const sessionTimeOut = QBConfig.appConfig.sessionTimeOut || 122;
+
+    setTimeout(() => {
+      console.log('NEED LOGOUT');
+      if (this._authProcessed) {
+        this.subscriptionOnSessionExpiredListener.informSubscribers(
+          true,
+          EventMessageType.LocalMessage,
+        );
+      }
+    }, sessionTimeOut * 60 * 1000);
   }
 
   subscribeOnUpdateMessageStatus(
@@ -298,10 +312,26 @@ export class RemoteDataSource implements IRemoteDataSource {
       console.log(`EVENT: receive system message: ${JSON.stringify(message)}`);
       const resultMessage = new RemoteMessageDTO();
 
+      resultMessage.sender_id = message.userId;
       resultMessage.message = message.body || 'system message';
       resultMessage.notification_type =
         message.extension.notification_type || NotificationTypes.UPDATE_DIALOG;
       resultMessage.dialogId = message?.extension?.dialog_id || '';
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      function getEventNameFromNotification(notification_type: string) {
+        let EventName = SubscriptionPerformer.DEFAULT_SUBSCRIPTION_NAME;
+
+        if (
+          notification_type === NotificationTypes.UPDATE_DIALOG ||
+          notification_type === NotificationTypes.NEW_DIALOG
+        ) {
+          EventName = 'UPDATE_DIALOG_LIST_INFO';
+        }
+
+        return EventName;
+      }
+
       this.subscriptionOnSystemMessages[
         resultMessage.notification_type
       ].informSubscribers(resultMessage, EventMessageType.SystemMessage);
@@ -463,6 +493,10 @@ export class RemoteDataSource implements IRemoteDataSource {
 
     if (!sessionResult) return;
     //
+    //
+    this.initEventsHandlers();
+    //
+    //
     console.log('USER DATA :  ', userRequiredParams);
     console.log('USER SESSION DATA :  ', sessionResult);
     console.log('Session token :  ', sessionResult.token);
@@ -498,9 +532,9 @@ export class RemoteDataSource implements IRemoteDataSource {
       this.setAuthProcessedSuccessed();
       console.log('CHAT CONNECTED. CAN WORK!');
       console.log('CONNECTION DATA: ', JSON.stringify(authInformation));
-      //
-      this.initEventsHandlers();
-      //
+      // //
+      // this.initEventsHandlers();
+      // //
     } else {
       console.log('could not connect to chat');
     }

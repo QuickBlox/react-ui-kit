@@ -3,72 +3,16 @@
 @import "Presentation/assets/styles/theme_colors_scheme";
 @import "Presentation/assets/styles/variables";
 
-
-//start
 * {
   box-sizing: border-box;
 }
 
 body {
   font-family: 'Roboto';
-  color: var(--color-font);
+  color: var(--main-text);
   background-color: var(--main-background);
+  overflow: hidden !important;
+  scrollbar-width: none !important;
+  max-height: 810px;
+  max-width: 1380px;
 }
-
-
-//
-//.main-container{
-//  max-width: 1440px;
-//  display: flex;
-//  flex-flow: row nowrap;
-//  justify-content: space-between;
-//  align-items: center;
-//  margin: 0 auto;
-//}
-//.main-container__item{
-//  flex: 1 1 325px;
-//}
-//.main-container__item__center{
-//  flex: 3 2 720px;
-//}
-//.list-container{
-//  width: 320px;
-//  display: flex;
-//  flex-flow: column nowrap;
-//}
-//.header-container{
-//  display: flex;
-//  height: 64px;
-//  gap: 0 140px;
-//  padding: 16px 16px 16px 20px;
-//  border: 1px solid var(--color-divider);
-//}
-//.list-header-title{
-//  font-family: 'Roboto';
-//  font-style: normal;
-//  font-weight: 500;
-//  font-size: 20px;
-//  line-height: 24px;
-//  letter-spacing: 0.0015em;
-//}
-//.list-header-buttons{
-//  display: flex;
-//  align-items: center;
-//  gap: 29px;
-//  background: none;
-//  color: var(--primary);
-//}
-//
-////end
-//
-//
-//.logo-img path {
-//  fill: #49CF77;
-//}
-//#svg-add{
-//  fill: #FF766E;// "#3978FC"
-//}
-//
-//#svg-add2{
-//  fill: #FF766E;// "#3978FC"
-//}
