@@ -46,6 +46,7 @@ import { stringifyError } from '../../../../../utils/parse';
 import VoiceRecordingProgress from './VoiceRecordingProgress/VoiceRecordingProgress';
 import UiKitTheme from '../../../../assets/UiKitTheme';
 import { DialogsViewModel } from '../../../../Views/Dialogs/DialogViewModel';
+import { HighLightLink, messageHasUrls } from './HighLightLink/HighLightLink';
 
 type HeaderDialogsMessagesProps = {
   dialogsViewModel: DialogsViewModel;
@@ -185,7 +186,10 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
       if (m.notification_type && m.notification_type.length > 0) {
         return SystemMessage;
       }
-      if (m.sender && m.sender.id !== currentUserId) {
+      if (
+        (m.sender && m.sender.id.toString() !== currentUserId?.toString()) ||
+        m.sender_id.toString() !== currentUserId?.toString()
+      ) {
         return IncomingMessage;
       }
 
@@ -261,6 +265,10 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
             {messageText}
           </ColumnContainer>
         );
+      }
+
+      if (messageHasUrls(mc.message)) {
+        return <HighLightLink messageText={mc.message} />;
       }
 
       return messageContent;

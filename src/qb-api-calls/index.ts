@@ -367,7 +367,7 @@ export function QBUpdateDialog(
   });
 }
 
-export function QBJoinDialog(dialogId: QBChatDialog['_id']) {
+export function QBJoinGroupDialog(dialogId: QBChatDialog['_id']) {
   return new Promise((resolve, reject) => {
     const dialogJid = QB.chat.helpers.getRoomJidFromDialogId(dialogId);
 
@@ -443,31 +443,66 @@ export function QBCreateAndUploadContent(paramContent: QBContentParam) {
   });
 }
 
-export function QBChatGetMessages(
+// export function QBChatGetMessages(
+//   dialogId: QBChatDialog['_id'],
+//   skip = 0,
+//   limit = 100,
+// ) {
+//   return new Promise<GetMessagesResult & { dialogId: QBChatDialog['_id'] }>(
+//     (resolve, reject) => {
+//       QB.chat.message.list(
+//         {
+//           chat_dialog_id: dialogId,
+//           sort_desc: 'date_sent',
+//           limit,
+//           skip,
+//           mark_as_read: 0,
+//         },
+//         (error, messages) => {
+//           if (error) {
+//             reject(stringifyError(error));
+//           } else {
+//             resolve({ ...messages, dialogId });
+//           }
+//         },
+//       );
+//     },
+//   );
+// }
+// //
+
+export function qbChatGetMessagesExtended(
   dialogId: QBChatDialog['_id'],
-  skip = 0,
-  limit = 100,
-) {
-  return new Promise<GetMessagesResult & { dialogId: QBChatDialog['_id'] }>(
-    (resolve, reject) => {
-      QB.chat.message.list(
-        {
-          chat_dialog_id: dialogId,
-          sort_desc: 'date_sent',
-          limit,
-          skip,
-          mark_as_read: 0,
-        },
-        (error, messages) => {
-          if (error) {
-            reject(stringifyError(error));
-          } else {
-            resolve({ ...messages, dialogId });
-          }
-        },
-      );
-    },
-  );
+  params: Partial<{
+    skip: number;
+    limit: number;
+    sort_desc: 'date_sent' | 'created_at' | 'updated_at';
+    sort_asc: 'date_sent' | 'created_at' | 'updated_at';
+    _id: string;
+    date_sent: Partial<{
+      lt: number;
+      lte: number;
+      gt: number;
+      gte: number;
+    }>;
+  }> = {},
+): Promise<GetMessagesResult> {
+  return new Promise<GetMessagesResult>((resolve, reject) => {
+    QB.chat.message.list(
+      {
+        chat_dialog_id: dialogId,
+        sort_desc: 'date_sent',
+        ...params,
+      },
+      (error, messages) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(messages);
+        }
+      },
+    );
+  });
 }
 //
 export function QBSendIsTypingStatus(
@@ -508,7 +543,10 @@ export function QBSendIsStopTypingStatus(
 }
 //
 
-export function QBChatSendMessage(to: string, message: QBChatNewMessage) {
+export function QBChatSendMessage(
+  to: string | number, // artan 22.06.23
+  message: QBChatNewMessage,
+) {
   return new Promise<QBChatMessage['_id']>((resolve) => {
     resolve(QB.chat.send(to, message));
   });

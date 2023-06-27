@@ -293,7 +293,8 @@ export class MessageRemoteDTOMapper implements IMapper {
       message(v: unknown): v is RemoteMessageDTO['message'] {
         const { message } = v as RemoteMessageDTO;
 
-        return message !== undefined && message !== null && message.length > 0;
+        return message !== undefined && message !== null;
+        // && message.length > 0;
       },
       read(v: unknown): v is RemoteMessageDTO['read'] {
         const { read } = v as RemoteMessageDTO;

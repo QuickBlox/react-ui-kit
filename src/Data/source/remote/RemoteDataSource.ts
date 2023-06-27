@@ -19,7 +19,7 @@ import { Stubs } from '../../Stubs';
 import {
   QBChatConnect,
   QBChatDisconnect,
-  QBChatGetMessages,
+  qbChatGetMessagesExtended,
   QBChatMarkMessageRead,
   QBChatSendMessage,
   QBChatSendSystemMessage,
@@ -32,7 +32,7 @@ import {
   QBGetDialogs,
   QBInit,
   QBInitParams,
-  QBJoinDialog,
+  QBJoinGroupDialog,
   QBLogout,
   QBSendIsStopTypingStatus,
   QBSendIsTypingStatus,
@@ -80,7 +80,7 @@ export class RemoteDataSource implements IRemoteDataSource {
     return this._needInit;
   }
 
-  private dialogDTOMapper: IDTOMapper;
+  // private dialogDTOMapper: IDTOMapper;
 
   private userDTOMapper: IDTOMapper;
 
@@ -112,9 +112,16 @@ export class RemoteDataSource implements IRemoteDataSource {
   }
 
   //
+  getCurrentDialogDTOMapper(): IDTOMapper {
+    const currentUserId: number = this._authInformation?.userId || -1;
+    const dialogDTOMapper: IDTOMapper = new DialogDTOMapper(currentUserId);
+
+    return dialogDTOMapper;
+  }
+
+  //
   constructor() {
     console.log('CONSTRUCTOR RemoteDataSourceMock');
-    this.dialogDTOMapper = new DialogDTOMapper();
     this.userDTOMapper = new UserDTOMapper();
     this.messageDTOMapper = new MessageDTOMapper();
     this.fileDTOMapper = new FileDTOMapper();
@@ -379,12 +386,29 @@ export class RemoteDataSource implements IRemoteDataSource {
           message,
         )}`,
       );
-      const resultMessage = ToRemoteMessageDTO(message);
+      // нужно получить реализовать так как при обработке onDeliveredStatusListener
+      const dialogId = message.dialog_id || message.extension.dialog_id || '-1';
 
-      this.subscriptionOnChatMessages.informSubscribers(
-        resultMessage,
-        EventMessageType.RegularMessage,
-      );
+      // eslint-disable-next-line promise/catch-or-return
+      QBGetDialogById(dialogId).then((result) => {
+        const dialogs: QBChatDialog[] | undefined = result?.items.filter(
+          (v) => v._id === dialogId,
+        );
+        const current = dialogs && dialogs.length > 0 ? dialogs[0] : undefined;
+
+        // eslint-disable-next-line promise/always-return
+        if (current && current.type === DialogType.group) {
+          // const messageId = message.id;
+          const resultMessage = ToRemoteMessageDTO(message);
+
+          this.subscriptionOnChatMessages.informSubscribers(
+            resultMessage,
+            EventMessageType.RegularMessage,
+          );
+        }
+
+        //
+      });
     };
     QB.chat.onMessageTypingListener = (isTyping, userId, dialogId) => {
       console.log(
@@ -447,6 +471,49 @@ export class RemoteDataSource implements IRemoteDataSource {
       console.log(
         `EVENT: receive delivered message id: ${messageId}, dialogid: ${dialogId} userid: ${userId}`,
       );
+
+      QBGetDialogById(dialogId)
+        .then((result) => {
+          //
+          const dialogs: QBChatDialog[] | undefined = result?.items.filter(
+            (v) => v._id === dialogId,
+          );
+          const current =
+            dialogs && dialogs.length > 0 ? dialogs[0] : undefined;
+
+          // eslint-disable-next-line promise/always-return
+          if (current && current.type === DialogType.private) {
+            //
+            qbChatGetMessagesExtended(dialogId, {
+              _id: messageId,
+            })
+              // eslint-disable-next-line promise/always-return
+              .then((qbMessages: GetMessagesResult) => {
+                ///
+                qbMessages.items.map(async (currentItem) => {
+                  const dtoMessage: RemoteMessageDTO =
+                    await this.messageDTOMapper.toTDO<
+                      QBChatMessage,
+                      RemoteMessageDTO
+                    >(currentItem);
+
+                  dtoMessage.dialogId = dialogId;
+
+                  this.subscriptionOnChatMessages.informSubscribers(
+                    dtoMessage,
+                    EventMessageType.RegularMessage,
+                  );
+
+                  return dtoMessage;
+                });
+
+                ///
+              })
+              .catch();
+            //
+          }
+        })
+        .catch();
     };
     QB.chat.onReadStatusListener = (messageId, dialogId, userId) => {
       console.log(
@@ -542,45 +609,6 @@ export class RemoteDataSource implements IRemoteDataSource {
     //
   }
 
-  private async getDialogsFirstPage() {
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    const params = {
-      created_at: {
-        lt: Date.now() / 1000,
-      },
-      sort_desc: 'created_at',
-      limit: 100,
-    };
-
-    console.log('Chat connected. Get dialog.list....');
-    const qbDialogs: QBGetDialogResult | undefined = await QBGetDialogs(params);
-
-    if (qbDialogs) {
-      console.log('Ok... have dialog.list: ', JSON.stringify(qbDialogs));
-      //
-      const prevDialogs: RemoteDialogsDTO = await this.getDialogs();
-
-      // eslint-disable-next-line no-restricted-syntax
-      for (const item of prevDialogs.dialogs) {
-        // eslint-disable-next-line no-await-in-loop
-        await this.deleteDialog(item);
-      }
-      //
-      // eslint-disable-next-line no-restricted-syntax
-      for (const item of qbDialogs.items) {
-        const qbEntity: QBChatDialog = item;
-        // eslint-disable-next-line no-await-in-loop
-        const newDTO: RemoteDialogDTO = await this.dialogDTOMapper.toTDO(
-          qbEntity,
-        );
-
-        // eslint-disable-next-line no-await-in-loop
-        await this.createDialog(newDTO);
-      }
-      console.log('DATA COMPLETED');
-    }
-  }
-
   async getDialogs(pagination?: Pagination): Promise<RemoteDialogsDTO> {
     let currentPagination: Pagination = pagination || new Pagination();
 
@@ -634,10 +662,23 @@ export class RemoteDataSource implements IRemoteDataSource {
       // eslint-disable-next-line no-restricted-syntax
       for (const item of qbDialogs.items) {
         const qbEntity: QBChatDialog = item;
-        // eslint-disable-next-line no-await-in-loop
-        const newDTO: RemoteDialogDTO = await this.dialogDTOMapper.toTDO(
-          qbEntity,
-        );
+
+        const newDTO: RemoteDialogDTO =
+          // eslint-disable-next-line no-await-in-loop
+          await this.getCurrentDialogDTOMapper().toTDO(qbEntity);
+
+        // artan 27/06/23
+        if (newDTO.type === DialogType.group) {
+          // eslint-disable-next-line no-await-in-loop
+          await QBJoinGroupDialog(newDTO.id).catch(() => {
+            throw new RemoteDataSourceException(
+              INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_MESSAGE,
+              INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,
+            );
+          });
+        }
+
+        //
 
         dialogsDTO.push(newDTO);
       }
@@ -660,7 +701,8 @@ export class RemoteDataSource implements IRemoteDataSource {
       'call createDialog in remote with params: ',
       JSON.stringify(dto),
     );
-    const qbEntity: QBChatDialog = await this.dialogDTOMapper.fromDTO(dto);
+    const qbEntity: QBChatDialog =
+      await this.getCurrentDialogDTOMapper().fromDTO(dto);
 
     let qbDialog: QBChatDialog | undefined | null;
 
@@ -685,7 +727,8 @@ export class RemoteDataSource implements IRemoteDataSource {
       );
     }
 
-    const newDTO: RemoteDialogDTO = await this.dialogDTOMapper.toTDO(qbDialog);
+    const newDTO: RemoteDialogDTO =
+      await this.getCurrentDialogDTOMapper().toTDO(qbDialog);
 
     console.log(
       'have result in createDialog in remote ds: ',
@@ -696,7 +739,8 @@ export class RemoteDataSource implements IRemoteDataSource {
   }
 
   async updateDialog(dto: RemoteDialogDTO): Promise<RemoteDialogDTO> {
-    const qbEntity: QBChatDialog = await this.dialogDTOMapper.fromDTO(dto);
+    const qbEntity: QBChatDialog =
+      await this.getCurrentDialogDTOMapper().fromDTO(dto);
 
     let data = {};
 
@@ -732,14 +776,16 @@ export class RemoteDataSource implements IRemoteDataSource {
       );
     }
 
-    const newDTO: RemoteDialogDTO = await this.dialogDTOMapper.toTDO(qbDialogs);
+    const newDTO: RemoteDialogDTO =
+      await this.getCurrentDialogDTOMapper().toTDO(qbDialogs);
 
     return Promise.resolve(newDTO);
   }
 
   // eslint-disable-next-line class-methods-use-this
   async getDialog(dto: RemoteDialogDTO): Promise<RemoteDialogDTO> {
-    const qbEntity: QBChatDialog = await this.dialogDTOMapper.fromDTO(dto);
+    const qbEntity: QBChatDialog =
+      await this.getCurrentDialogDTOMapper().fromDTO(dto);
 
     const qbDialog: QBGetDialogResult | undefined = await QBGetDialogById(
       qbEntity._id,
@@ -755,16 +801,16 @@ export class RemoteDataSource implements IRemoteDataSource {
     }
     const qbEntityFromDB: QBChatDialog = qbDialog.items[0];
 
-    const resultDTO: RemoteDialogDTO = await this.dialogDTOMapper.toTDO(
-      qbEntityFromDB,
-    );
+    const resultDTO: RemoteDialogDTO =
+      await this.getCurrentDialogDTOMapper().toTDO(qbEntityFromDB);
 
     return Promise.resolve(resultDTO);
   }
 
   // eslint-disable-next-line class-methods-use-this
   async deleteDialog(dto: RemoteDialogDTO): Promise<void> {
-    const qbEntity: QBChatDialog = await this.dialogDTOMapper.fromDTO(dto);
+    const qbEntity: QBChatDialog =
+      await this.getCurrentDialogDTOMapper().fromDTO(dto);
 
     await QBDeleteDialog([qbEntity._id]).catch(() => {
       throw new RemoteDataSourceException(
@@ -780,9 +826,8 @@ export class RemoteDataSource implements IRemoteDataSource {
     dialogDTO: RemoteDialogDTO,
     usersDTO: Array<RemoteUserDTO>,
   ): Promise<void> {
-    const qbEntity: QBChatDialog = await this.dialogDTOMapper.fromDTO(
-      dialogDTO,
-    );
+    const qbEntity: QBChatDialog =
+      await this.getCurrentDialogDTOMapper().fromDTO(dialogDTO);
     const usersIds: string[] = [];
 
     usersDTO.forEach((item) => {
@@ -965,17 +1010,20 @@ export class RemoteDataSource implements IRemoteDataSource {
   ): Promise<RemoteMessagesDTO> {
     const messagesDTO: Array<RemoteMessageDTO> = new Array<RemoteMessageDTO>();
 
-    //
-    await QBJoinDialog(dialogId).catch(() => {
-      throw new RemoteDataSourceException(
-        INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_MESSAGE,
-        INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,
-      );
-    });
+    // // artan 22.06.23 перенесли в то место, где получаем весь список диалогов
+    // await QBJoinGroupDialog(dialogId).catch(() => {
+    //   throw new RemoteDataSourceException(
+    //     INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_MESSAGE,
+    //     INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,
+    //   );
+    // });
     //
 
-    const qbMessages: GetMessagesResult & { dialogId: QBChatDialog['_id'] } =
-      await QBChatGetMessages(dialogId);
+    const qbMessages: GetMessagesResult = await qbChatGetMessagesExtended(
+      dialogId,
+    );
+    // const qbMessages: GetMessagesResult & { dialogId: QBChatDialog['_id'] } =
+    //   await QBChatGetMessages(dialogId);
 
     if (qbMessages === null || qbMessages === undefined) {
       return Promise.reject(
@@ -1029,16 +1077,17 @@ export class RemoteDataSource implements IRemoteDataSource {
     dialogDTO: RemoteDialogDTO,
     senderId: number,
   ): Promise<void> {
-    const qbEntity: QBChatDialog = await this.dialogDTOMapper.fromDTO(
-      dialogDTO,
-    );
+    const qbEntity: QBChatDialog =
+      await this.getCurrentDialogDTOMapper().fromDTO(dialogDTO);
 
-    await QBJoinDialog(dialogDTO.id).catch(() => {
-      throw new RemoteDataSourceException(
-        INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_MESSAGE,
-        INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,
-      );
-    });
+    if (dialogDTO.type === DialogType.group) {
+      await QBJoinGroupDialog(dialogDTO.id).catch(() => {
+        throw new RemoteDataSourceException(
+          INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_MESSAGE,
+          INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,
+        );
+      });
+    }
 
     QBSendIsTypingStatus(qbEntity, senderId);
 
@@ -1050,9 +1099,8 @@ export class RemoteDataSource implements IRemoteDataSource {
     dialogDTO: RemoteDialogDTO,
     senderId: number,
   ): Promise<void> {
-    const qbEntity: QBChatDialog = await this.dialogDTOMapper.fromDTO(
-      dialogDTO,
-    );
+    const qbEntity: QBChatDialog =
+      await this.getCurrentDialogDTOMapper().fromDTO(dialogDTO);
 
     QBSendIsStopTypingStatus(qbEntity, senderId);
 
@@ -1134,18 +1182,21 @@ export class RemoteDataSource implements IRemoteDataSource {
         qbEntity.extension.attachments?.push(chatMessageAttachment);
       });
     }
+    let qbMessages: QBChatMessage['_id'];
 
-    await QBJoinDialog(dto.dialogId).catch(() => {
-      throw new RemoteDataSourceException(
-        INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_MESSAGE,
-        INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,
-      );
-    });
-    const dialogJid = QB.chat.helpers.getRoomJidFromDialogId(dto.dialogId);
-    const qbMessages: QBChatMessage['_id'] = await QBChatSendMessage(
-      dialogJid,
-      qbEntity,
-    );
+    if (dto.dialog_type === DialogType.private) {
+      qbMessages = await QBChatSendMessage(dto.recipient_id, qbEntity);
+    } else {
+      await QBJoinGroupDialog(dto.dialogId).catch(() => {
+        throw new RemoteDataSourceException(
+          INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_MESSAGE,
+          INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,
+        );
+      });
+      const dialogJid = QB.chat.helpers.getRoomJidFromDialogId(dto.dialogId);
+
+      qbMessages = await QBChatSendMessage(dialogJid, qbEntity);
+    }
 
     if (qbMessages === null || qbMessages === undefined) {
       return Promise.reject(

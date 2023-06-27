@@ -3,6 +3,7 @@ import { CustomDataEntity } from './CustomDataEntity';
 import { LastMessageEntity } from './LastMessageEntity';
 import { DialogType } from './DialogTypes';
 import { GroupDialogEntity } from './GroupDialogEntity';
+import { PrivateDialogEntity } from './PrivateDialogEntity';
 
 export class PublicDialogEntity implements DialogEntity {
   customData: CustomDataEntity;
@@ -51,10 +52,17 @@ export class PublicDialogEntity implements DialogEntity {
     }
     if (
       d.type === DialogType.private &&
+      (d as GroupDialogEntity).participantIds &&
       (d as GroupDialogEntity).participantIds.length > 0
     ) {
-      // return [(d as PrivateDialogEntity).participantId];
       return [(d as GroupDialogEntity).participantIds[0]];
+    }
+    // artan 22.06.23
+    if (
+      d.type === DialogType.private &&
+      (d as PrivateDialogEntity).participantId
+    ) {
+      return [(d as PrivateDialogEntity).participantId];
     }
 
     return [];

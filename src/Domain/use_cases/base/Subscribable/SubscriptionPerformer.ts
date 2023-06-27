@@ -86,7 +86,7 @@ export class SubscriptionPerformer<TArg> implements ISubscribable<TArg> {
   }
 
   public informSubscribers(
-    arg: TArg,
+    arg?: TArg,
     eventType: string = this.EVENT_TYPE,
     event: string = SubscriptionPerformer.DEFAULT_SUBSCRIPTION_NAME,
   ): void {

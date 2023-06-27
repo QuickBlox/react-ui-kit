@@ -49,113 +49,7 @@ export default function useMessagesViewModel(
     new SubscribeToDialogEventsUseCase(eventMessaging, 'MessagesViewModel');
 
   const [typingText, setTypingText] = useState<string>('');
-  const dialogUpdateHandler = (dialogInfo: DialogEventInfo) => {
-    console.log('call dialogUpdateHandler in useMessagesViewModel');
-    const getSender = async (sender_id: number) => {
-      const getUser: GetUsersByIdsUseCase = new GetUsersByIdsUseCase(
-        new UsersRepository(
-          currentContext.storage.LOCAL_DATA_SOURCE,
-          currentContext.storage.REMOTE_DATA_SOURCE,
-        ),
-        [sender_id],
-      );
 
-      let userEntity: UserEntity | undefined;
-
-      await getUser
-        .execute()
-        // eslint-disable-next-line promise/always-return
-        .then((data) => {
-          // eslint-disable-next-line prefer-destructuring
-          userEntity = data[0];
-        })
-        .catch((e) => {
-          console.log('have ERROR get users :', JSON.stringify(e));
-        });
-
-      return userEntity;
-    };
-
-    if (dialogInfo.eventMessageType === EventMessageType.LocalMessage) {
-      if (dialogInfo.messageStatus) {
-        if (dialogInfo.messageStatus.isTyping) {
-          // eslint-disable-next-line promise/catch-or-return
-          getSender(dialogInfo.messageStatus.userId).then((senderUser) => {
-            const typingMessage = `User ${
-              // eslint-disable-next-line promise/always-return
-              senderUser?.full_name ||
-              senderUser?.login ||
-              senderUser?.email ||
-              senderUser?.id ||
-              ''
-            } is typing message`;
-
-            setTypingText(typingMessage);
-          });
-        } else {
-          setTypingText('');
-        }
-      }
-    }
-    if (dialogInfo.eventMessageType === EventMessageType.RegularMessage) {
-      if (dialogInfo.messageInfo) {
-        const messageId = dialogInfo.messageInfo.id;
-        const messageText = dialogInfo.messageInfo.message;
-
-        console.log(
-          `new message id = ${messageId}, new message text: ${messageText}, found messages:`,
-        );
-        const ResultMessage: MessageEntity = { ...dialogInfo.messageInfo };
-
-        // eslint-disable-next-line promise/catch-or-return,promise/always-return
-        getSender(dialogInfo.messageInfo.sender_id)
-          // eslint-disable-next-line promise/always-return
-          .then((user) => {
-            ResultMessage.sender = user;
-            ResultMessage.sender_id = dialogInfo.messageInfo!.sender_id;
-          })
-          .finally(() => {
-            setMessages((prevState) => {
-              const newState = [...prevState];
-
-              newState.push(ResultMessage);
-
-              return newState;
-            });
-          });
-      }
-    }
-    if (dialogInfo.eventMessageType === EventMessageType.SystemMessage) {
-      if (dialogInfo.notificationTypes === NotificationTypes.UPDATE_DIALOG) {
-        if (dialogInfo.messageInfo) {
-          const { dialogId } = dialogInfo.messageInfo;
-
-          const getDialogByIdUseCase: GetDialogByIdUseCase =
-            new GetDialogByIdUseCase(
-              new DialogsRepository(
-                currentContext.storage.LOCAL_DATA_SOURCE,
-                currentContext.storage.REMOTE_DATA_SOURCE,
-              ),
-              dialogId,
-            );
-
-          // eslint-disable-next-line promise/catch-or-return,promise/always-return
-          getDialogByIdUseCase.execute().then((updatedDialog) => {
-            setDialog(updatedDialog);
-          });
-        }
-      }
-    }
-  };
-
-  subscribeToDialogEventsUseCase
-    .execute(dialogUpdateHandler)
-    .catch((reason) => {
-      console.log(stringifyError(reason));
-    });
-
-  //
-  // eslint-disable-next-line @typescript-eslint/require-await
   async function getMessages() {
     console.log(
       'call getMessages in MessagesViewModelWithMockUseCase for dialog: ',
@@ -267,6 +161,123 @@ export default function useMessagesViewModel(
     console.log('EXECUTE USE CASE MessagesViewModelWithMockUseCase EXECUTED');
   }
 
+  const dialogUpdateHandler = (dialogInfo: DialogEventInfo) => {
+    console.log('call dialogUpdateHandler in useMessagesViewModel');
+    const getSender = async (sender_id: number) => {
+      const getUser: GetUsersByIdsUseCase = new GetUsersByIdsUseCase(
+        new UsersRepository(
+          currentContext.storage.LOCAL_DATA_SOURCE,
+          currentContext.storage.REMOTE_DATA_SOURCE,
+        ),
+        [sender_id],
+      );
+
+      let userEntity: UserEntity | undefined;
+
+      await getUser
+        .execute()
+        // eslint-disable-next-line promise/always-return
+        .then((data) => {
+          // eslint-disable-next-line prefer-destructuring
+          userEntity = data[0];
+        })
+        .catch((e) => {
+          console.log('have ERROR get users :', JSON.stringify(e));
+        });
+
+      return userEntity;
+    };
+
+    if (dialogInfo.eventMessageType === EventMessageType.LocalMessage) {
+      if (dialogInfo.messageStatus) {
+        if (dialogInfo.messageStatus.isTyping) {
+          // eslint-disable-next-line promise/catch-or-return
+          getSender(dialogInfo.messageStatus.userId).then((senderUser) => {
+            const typingMessage = `User ${
+              // eslint-disable-next-line promise/always-return
+              senderUser?.full_name ||
+              senderUser?.login ||
+              senderUser?.email ||
+              senderUser?.id ||
+              ''
+            } is typing message`;
+
+            setTypingText(typingMessage);
+          });
+        } else {
+          setTypingText('');
+        }
+      }
+    }
+    if (dialogInfo.eventMessageType === EventMessageType.RegularMessage) {
+      if (
+        dialogInfo.messageInfo &&
+        dialogInfo.messageInfo.message &&
+        dialogInfo.messageInfo.id &&
+        dialogInfo.messageInfo.dialogId === dialog.id
+      ) {
+        const messageId = dialogInfo.messageInfo.id;
+        const messageText = dialogInfo.messageInfo.message;
+
+        console.log(
+          `new message id = ${messageId}, new message text: ${messageText}, found messages:`,
+        );
+        const ResultMessage: MessageEntity = { ...dialogInfo.messageInfo };
+
+        // eslint-disable-next-line promise/catch-or-return,promise/always-return
+        getSender(dialogInfo.messageInfo.sender_id)
+          // eslint-disable-next-line promise/always-return
+          .then((user) => {
+            ResultMessage.sender = user;
+            ResultMessage.sender_id = dialogInfo.messageInfo!.sender_id;
+          })
+          .finally(() => {
+            setMessages((prevState) => {
+              const newState = [...prevState];
+
+              newState.push(ResultMessage);
+
+              return newState;
+            });
+          });
+      }
+      // else {
+      //   // загрузить все сообщения заново
+      //   getMessages().catch();
+      // }
+    }
+    if (dialogInfo.eventMessageType === EventMessageType.SystemMessage) {
+      if (dialogInfo.notificationTypes === NotificationTypes.UPDATE_DIALOG) {
+        if (dialogInfo.messageInfo) {
+          const { dialogId } = dialogInfo.messageInfo;
+
+          const getDialogByIdUseCase: GetDialogByIdUseCase =
+            new GetDialogByIdUseCase(
+              new DialogsRepository(
+                currentContext.storage.LOCAL_DATA_SOURCE,
+                currentContext.storage.REMOTE_DATA_SOURCE,
+              ),
+              dialogId,
+            );
+
+          // eslint-disable-next-line promise/catch-or-return,promise/always-return
+          getDialogByIdUseCase.execute().then((updatedDialog) => {
+            setDialog(updatedDialog);
+          });
+        }
+      }
+    }
+  };
+
+  subscribeToDialogEventsUseCase
+    .execute(dialogUpdateHandler)
+    .catch((reason) => {
+      console.log(stringifyError(reason));
+    });
+
+  //
+  // eslint-disable-next-line @typescript-eslint/require-await
+
   const release = () => {
     console.log('call release in MessagesViewModelWithMockUseCase');
   };
@@ -362,8 +373,10 @@ export default function useMessagesViewModel(
       [],
       [],
       1,
-      currentUserId,
-      currentUserId,
+      currentUserId, // artan 22.06.23
+      dialog.type === DialogType.private
+        ? (dialog as PrivateDialogEntity).participantId
+        : currentUserId,
       [],
       '',
       DialogType.group,

@@ -97,6 +97,7 @@ export class DialogRemoteDTOMapper implements IMapper {
           dialog.type,
           dialog.unreadMessageCount,
           dialog.updatedAt,
+          // interlocutorId,
           parseInt(dialog.participantId, 10),
         );
         break;

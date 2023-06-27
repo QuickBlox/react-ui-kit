@@ -14,6 +14,12 @@ type DtoValidator<T> = {
 };
 
 export class DialogDTOMapper implements IDTOMapper {
+  private readonly currentUserId: number;
+
+  constructor(currentUserId: number) {
+    this.currentUserId = currentUserId;
+  }
+
   // eslint-disable-next-line class-methods-use-this
   fromDTO<TArg, TResult>(dto: TArg): Promise<TResult> {
     const dialogDTO: RemoteDialogDTO = dto as unknown as RemoteDialogDTO;
@@ -74,6 +80,14 @@ export class DialogDTOMapper implements IDTOMapper {
 
     switch (qbDialog.type) {
       case DialogType.private:
+        // eslint-disable-next-line no-case-declarations
+        const interlocutorId = dto.participantsIds.find(
+          (p) => p !== this.currentUserId,
+        ); // ;
+
+        dto.participantId = interlocutorId
+          ? interlocutorId.toString()
+          : qbDialog.user_id.toString();
         dto.id = qbDialog._id;
         dto.lastMessageText = qbDialog.last_message as string;
         dto.lastMessageDateSent = qbDialog.last_message_date_sent as string;

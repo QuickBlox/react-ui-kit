@@ -4,11 +4,11 @@
 html[data-theme="dark"]{
   --primary: #{$primary-500};
   --color-background: #{$secondary-900};
-  --color-background-modal: #{$secondary-200};
+  --color-background-modal: #{$secondary-800};
   --color-background-overlay: #{$secondary-900};
   --color-divider: #{$secondary-400};
   --color-font: #{$primary-a-100};
-  --color-icon: #{$primary-500};
+  --color-icon: #{$primary-300};
 
 
   --color-background-info: #{$primary-500};
