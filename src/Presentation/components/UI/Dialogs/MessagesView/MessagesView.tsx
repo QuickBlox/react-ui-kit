@@ -267,7 +267,10 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
         );
       }
 
-      if (messageHasUrls(mc.message)) {
+      if (
+        messageHasUrls(mc.message) &&
+        !(mc.attachments && mc.attachments.length > 0)
+      ) {
         return <HighLightLink messageText={mc.message} />;
       }
 

@@ -76,10 +76,6 @@ export type AuthorizationData = {
 };
 
 export class RemoteDataSource implements IRemoteDataSource {
-  get needInit(): boolean {
-    return this._needInit;
-  }
-
   // private dialogDTOMapper: IDTOMapper;
 
   private userDTOMapper: IDTOMapper;
@@ -93,7 +89,25 @@ export class RemoteDataSource implements IRemoteDataSource {
   private _authProcessed: boolean;
 
   get authProcessed(): boolean {
-    return this._authProcessed;
+    // return this._authProcessed || QB.chat.isConnected;
+    // return this._authProcessed;// work
+    const auth = this._authProcessed;
+    const chatConnection = QB && QB.chat && QB.chat.isConnected;
+
+    if (chatConnection) return true;
+
+    return auth || chatConnection;
+  }
+
+  get needInit(): boolean {
+    // return this._needInit || QB.chat.isConnected;
+    // return this._needInit; // work
+    const needed = this._needInit;
+    const chatConnection = QB && QB.chat && QB.chat.isConnected;
+
+    if (chatConnection) return false;
+
+    return needed;
   }
 
   public setAuthProcessedSuccessed() {
@@ -205,7 +219,7 @@ export class RemoteDataSource implements IRemoteDataSource {
     authData: LoginData,
   ): Promise<void> {
     console.log('2. call initSDK in RemoteDataSourceMock');
-    if (this._needInit) {
+    if (this.needInit) {
       console.log('2. start init actions');
       QBInit({
         appIdOrToken: sdkParams.appIdOrToken,
@@ -224,7 +238,7 @@ export class RemoteDataSource implements IRemoteDataSource {
   }
 
   public async disconnectAndLogoutUser() {
-    if (this._authProcessed) {
+    if (this.authProcessed) {
       QBChatDisconnect();
       await QBLogout();
       this._authProcessed = false;
@@ -296,7 +310,7 @@ export class RemoteDataSource implements IRemoteDataSource {
 
     setTimeout(() => {
       console.log('NEED LOGOUT');
-      if (this._authProcessed) {
+      if (this.authProcessed) {
         this.subscriptionOnSessionExpiredListener.informSubscribers(
           true,
           EventMessageType.LocalMessage,
@@ -389,15 +403,17 @@ export class RemoteDataSource implements IRemoteDataSource {
       // нужно получить реализовать так как при обработке onDeliveredStatusListener
       const dialogId = message.dialog_id || message.extension.dialog_id || '-1';
 
-      // eslint-disable-next-line promise/catch-or-return
+      // eslint-disable-next-line promise/catch-or-return,@typescript-eslint/no-unused-vars,promise/always-return
       QBGetDialogById(dialogId).then((result) => {
-        const dialogs: QBChatDialog[] | undefined = result?.items.filter(
-          (v) => v._id === dialogId,
-        );
-        const current = dialogs && dialogs.length > 0 ? dialogs[0] : undefined;
+        // const dialogs: QBChatDialog[] | undefined = result?.items.filter(
+        //   (v) => v._id === dialogId,
+        // );
+        // const current = dialogs && dialogs.length > 0 ? dialogs[0] : undefined;
 
         // eslint-disable-next-line promise/always-return
-        if (current && current.type === DialogType.group) {
+        // if (current && current.type === DialogType.group)
+        // eslint-disable-next-line no-lone-blocks
+        {
           // const messageId = message.id;
           const resultMessage = ToRemoteMessageDTO(message);
 
@@ -416,8 +432,7 @@ export class RemoteDataSource implements IRemoteDataSource {
           isTyping ? 'true' : 'false'
         }, dialog id: ${dialogId} userid: ${userId}`,
       );
-      if (this._authProcessed && this.authInformation?.userId === userId)
-        return;
+      if (this.authProcessed && this.authInformation?.userId === userId) return;
 
       const resultMessage: DialogEventInfo = {
         eventMessageType: EventMessageType.LocalMessage,
@@ -538,8 +553,8 @@ export class RemoteDataSource implements IRemoteDataSource {
   }
 
   public async loginWithUser(authParams: LoginData) {
-    if (this._needInit) return;
-    if (this._authProcessed) return;
+    if (this.needInit) return;
+    if (this.authProcessed) return;
     //
     console.log('CALL createUserSession....');
     const userRequiredParams = {
@@ -1048,7 +1063,7 @@ export class RemoteDataSource implements IRemoteDataSource {
         >(currentItem);
 
         if (
-          this._authProcessed &&
+          this.authProcessed &&
           currentUserId &&
           dtoMessage.read_ids &&
           dtoMessage.read_ids.length > 0 &&

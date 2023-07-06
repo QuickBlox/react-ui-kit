@@ -1,3 +1,11 @@
+<div align="center">
+
+<p>
+		<a href="https://discord.gg/c6bxq9BC"><img src="https://img.shields.io/discord/1042743094833065985?color=5865F2&logo=discord&logoColor=white&label=QuickBlox%20Discord%20server&style=for-the-badge" alt="Discord server" /></a>
+</p>
+
+</div>
+
 # Overview
 
 The QuickBlox UIKit for React is a comprehensive user interface kit specifically designed for building chat applications. It provides a collection of pre-built components, modules, and utilities that simplify the process of creating chat applications.

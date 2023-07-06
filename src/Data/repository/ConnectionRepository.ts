@@ -4,18 +4,34 @@ import { stringifyError } from '../../utils/parse';
 export default class ConnectionRepository extends SubscriptionPerformer<boolean> {
   private timerId: NodeJS.Timer | undefined;
 
-  public needInit: boolean;
+  private _needInit: boolean;
+
+  get needInit(): boolean {
+    const chatConnection = QB && QB.chat && QB.chat.isConnected;
+
+    if (chatConnection) return false;
+
+    return this._needInit;
+  }
+
+  set needInit(value: boolean) {
+    this._needInit = value;
+  }
 
   private chatConnectedStatus = false;
 
   public isChatConnected(): boolean {
+    const chatConnection = QB && QB.chat && QB.chat.isConnected;
+
+    if (chatConnection) return true;
+
     return this.chatConnectedStatus;
   }
 
   constructor() {
     super();
     console.log('CREATE ConnectionRepository');
-    this.needInit = true;
+    this._needInit = true;
   }
 
   public changeConnectionStatus(satus: boolean) {
@@ -44,7 +60,7 @@ export default class ConnectionRepository extends SubscriptionPerformer<boolean>
       // eslint-disable-next-line promise/always-return
       .then((result) => {
         this.changeConnectionStatus(result);
-        this.needInit = false;
+        this._needInit = false;
 
         // eslint-disable-next-line promise/no-return-wrap
         return Promise.resolve(true);
