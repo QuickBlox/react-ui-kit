@@ -3,6 +3,7 @@ import { ProviderProps } from '../ProviderProps';
 import ModalContextProvider from '../ModalContextProvider/ModalContextProvider';
 import { LocalDataSource } from '../../../../Data/source/local/LocalDataSource';
 import {
+  AuthorizationData,
   LoginData,
   RemoteDataSource,
 } from '../../../../Data/source/remote/RemoteDataSource';
@@ -12,6 +13,7 @@ import { BaseUseCase } from '../../../../Domain/use_cases/base/BaseUseCase';
 import { QBConfig } from '../../../../QBconfig';
 import ConnectionRepository from '../../../../Data/repository/ConnectionRepository';
 import EventMessagesRepository from '../../../../Data/repository/EventMessagesRepository';
+import { CallBackFunction } from '../../../../Domain/use_cases/base/IUseCase';
 
 // import packageInfo from '../../../../../package.json';
 
@@ -26,6 +28,17 @@ const initialEvent = {
     initialValues.REMOTE_DATA_SOURCE,
     initialValues.LOCAL_DATA_SOURCE,
     initialValues.CONNECTION_REPOSITORY,
+  ),
+};
+
+const initialSync = {
+  SYNC_DIALOGS_USE_CASE: new SyncDialogsUseCase(
+    new DialogsRepository(
+      initialValues.LOCAL_DATA_SOURCE,
+      initialValues.REMOTE_DATA_SOURCE,
+    ),
+    initialValues.CONNECTION_REPOSITORY,
+    initialEvent.EVENT_MESSAGE_REPOSITORY,
   ),
 };
 
@@ -69,7 +82,11 @@ export type QBDataContextType = {
   InitParams: InitParams;
   updateStorage: (storage: QBDataStorage) => void;
   updateQBInitParams: (InitParams: InitParams) => void;
-  // getQBReactUIKitVersionInfo: () => QBReactUIKitVersionInfo;
+  release: () => void;
+  authorize: (authorizationData: AuthorizationData) => Promise<void>;
+  setSubscribeOnSessionExpiredListener: (
+    callback: CallBackFunction<boolean>,
+  ) => void;
 };
 const initDataContext: QBDataContextType = {
   // authProcessed: false,
@@ -78,14 +95,15 @@ const initDataContext: QBDataContextType = {
     REMOTE_DATA_SOURCE: initialValues.REMOTE_DATA_SOURCE, // QB instances
     CONNECTION_REPOSITORY: initialValues.CONNECTION_REPOSITORY,
     EVENT_MESSAGE_REPOSITORY: initialEvent.EVENT_MESSAGE_REPOSITORY,
-    SYNC_DIALOGS_USE_CASE: new SyncDialogsUseCase(
-      new DialogsRepository(
-        initialValues.LOCAL_DATA_SOURCE,
-        initialValues.REMOTE_DATA_SOURCE,
-      ),
-      initialValues.CONNECTION_REPOSITORY,
-      initialEvent.EVENT_MESSAGE_REPOSITORY,
-    ),
+    SYNC_DIALOGS_USE_CASE: initialSync.SYNC_DIALOGS_USE_CASE,
+    // SYNC_DIALOGS_USE_CASE: new SyncDialogsUseCase(
+    //   new DialogsRepository(
+    //     initialValues.LOCAL_DATA_SOURCE,
+    //     initialValues.REMOTE_DATA_SOURCE,
+    //   ),
+    //   initialValues.CONNECTION_REPOSITORY,
+    //   initialEvent.EVENT_MESSAGE_REPOSITORY,
+    // ),
   },
   InitParams: {
     accountData: QBConfig.credentials,
@@ -106,14 +124,48 @@ const initDataContext: QBDataContextType = {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     console.log(`empty function with param ${storage}`);
   },
-  // getQBReactUIKitVersionInfo: (): QBReactUIKitVersionInfo => {
-  //   const qbReactUIKitVersionInfo: QBReactUIKitVersionInfo = {
-  //     version: packageInfo.version,
-  //     build: packageInfo.version,
-  //   };
-  //
-  //   return qbReactUIKitVersionInfo;
-  // },
+  release: (): void => {
+    console.log(`function release start`);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    initialSync.SYNC_DIALOGS_USE_CASE.release();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    initialValues.CONNECTION_REPOSITORY.stopKeepAlive();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    initialValues.REMOTE_DATA_SOURCE.disconnectAndLogoutUser().catch();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    initialValues.LOCAL_DATA_SOURCE.clearAll().catch();
+    console.log(`function release end`);
+  },
+  authorize: async (authorizationData: AuthorizationData): Promise<void> => {
+    initialValues.REMOTE_DATA_SOURCE.authInformation = authorizationData;
+    initialValues.REMOTE_DATA_SOURCE.setAuthProcessedSuccessed();
+    //
+    await initialValues.CONNECTION_REPOSITORY.initializeStates();
+    if (!initialValues.CONNECTION_REPOSITORY.needInit) {
+      initialValues.CONNECTION_REPOSITORY.keepALiveChatConnection();
+    }
+    await initialSync.SYNC_DIALOGS_USE_CASE.execute(() => {
+      console.log('sync dialogs has started');
+    }).catch(() => {
+      console.log('sync dialogs has exception');
+    });
+    //
+  },
+  setSubscribeOnSessionExpiredListener: (
+    callback: CallBackFunction<boolean>,
+  ): void => {
+    initialValues.REMOTE_DATA_SOURCE.subscribeOnSessionExpiredListener(
+      callback,
+    );
+  },
 };
 
 export const qbDataContext =
@@ -145,14 +197,15 @@ function QuickBloxUIKitProvider({
     REMOTE_DATA_SOURCE: initialValues.REMOTE_DATA_SOURCE, // QB instances
     CONNECTION_REPOSITORY: initialValues.CONNECTION_REPOSITORY,
     EVENT_MESSAGE_REPOSITORY: initialEvent.EVENT_MESSAGE_REPOSITORY,
-    SYNC_DIALOGS_USE_CASE: new SyncDialogsUseCase(
-      new DialogsRepository(
-        initialValues.LOCAL_DATA_SOURCE,
-        initialValues.REMOTE_DATA_SOURCE,
-      ),
-      initialValues.CONNECTION_REPOSITORY,
-      initialEvent.EVENT_MESSAGE_REPOSITORY,
-    ),
+    SYNC_DIALOGS_USE_CASE: initialSync.SYNC_DIALOGS_USE_CASE,
+    // SYNC_DIALOGS_USE_CASE: new SyncDialogsUseCase(
+    //   new DialogsRepository(
+    //     initialValues.LOCAL_DATA_SOURCE,
+    //     initialValues.REMOTE_DATA_SOURCE,
+    //   ),
+    //   initialValues.CONNECTION_REPOSITORY,
+    //   initialEvent.EVENT_MESSAGE_REPOSITORY,
+    // ),
   };
 
   console.log(
@@ -188,14 +241,40 @@ function QuickBloxUIKitProvider({
     setInitParams(initParams);
   };
 
-  // const getQBReactUIKitVersionInfo = (): QBReactUIKitVersionInfo => {
-  //   const qbReactUIKitVersionInfo: QBReactUIKitVersionInfo = {
-  //     version: packageInfo.version,
-  //     build: packageInfo.version,
-  //   };
-  //
-  //   return qbReactUIKitVersionInfo;
-  // };
+  const release = (): void => {
+    console.log(`function release start`);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    initialSync.SYNC_DIALOGS_USE_CASE.release();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    initialValues.CONNECTION_REPOSITORY.stopKeepAlive();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    initialValues.REMOTE_DATA_SOURCE.disconnectAndLogoutUser().catch();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access,@typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    initialValues.LOCAL_DATA_SOURCE.clearAll().catch();
+    console.log(`function release end`);
+  };
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const authorize = (authorizationData: AuthorizationData): Promise<void> => {
+    initialValues.REMOTE_DATA_SOURCE.authInformation = authorizationData;
+    initialValues.REMOTE_DATA_SOURCE.setAuthProcessedSuccessed();
+  };
+
+  const setSubscribeOnSessionExpiredListener = (
+    callback: CallBackFunction<boolean>,
+  ): void => {
+    initialValues.REMOTE_DATA_SOURCE.subscribeOnSessionExpiredListener(
+      callback,
+    );
+  };
 
   // todo: temporary off, must turn on
   // todo: cause of recycle v1
@@ -242,7 +321,9 @@ function QuickBloxUIKitProvider({
         InitParams,
         updateQBInitParams,
         // authProcessed,
-        // getQBReactUIKitVersionInfo,
+        release,
+        authorize,
+        setSubscribeOnSessionExpiredListener,
         storage,
         updateStorage,
       }}

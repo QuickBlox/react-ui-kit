@@ -99,6 +99,10 @@ export class RemoteDataSource implements IRemoteDataSource {
     return auth || chatConnection;
   }
 
+  set authProcessed(value: boolean) {
+    this._authProcessed = value;
+  }
+
   get needInit(): boolean {
     // return this._needInit || QB.chat.isConnected;
     // return this._needInit; // work
@@ -111,7 +115,7 @@ export class RemoteDataSource implements IRemoteDataSource {
   }
 
   public setAuthProcessedSuccessed() {
-    this._authProcessed = true;
+    this.authProcessed = true;
     this.setInitSDKSuccessed();
   }
 
@@ -123,6 +127,10 @@ export class RemoteDataSource implements IRemoteDataSource {
 
   get authInformation(): AuthorizationData | undefined {
     return this._authInformation;
+  }
+
+  set authInformation(value: AuthorizationData | undefined) {
+    this._authInformation = value;
   }
 
   //
@@ -241,7 +249,7 @@ export class RemoteDataSource implements IRemoteDataSource {
     if (this.authProcessed) {
       QBChatDisconnect();
       await QBLogout();
-      this._authProcessed = false;
+      this.authProcessed = false;
       this.releaseSubscriptions();
       this.releaseEventsHandlers();
     }
@@ -565,7 +573,7 @@ export class RemoteDataSource implements IRemoteDataSource {
       userRequiredParams,
     ).catch((e) => {
       this._needInit = true;
-      this._authProcessed = false;
+      this.authProcessed = false;
       console.log(
         `EXCEPTION IN CREATE USER SESSION (${
           userRequiredParams.login
