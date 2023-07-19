@@ -27,7 +27,7 @@ function App() {
   const { connectionRepository } = useQBConnection();
 
   const initLoginData: LoginData = {
-    userName: '',
+    login: '',
     password: '',
   };
 
@@ -54,7 +54,7 @@ function App() {
     console.log('call disconnectAndLogoutUser...');
     await currentContext.storage.LOCAL_DATA_SOURCE.clearAll();
     console.log('call clearAll...');
-    setCurrentUser({ userName: '', password: '' });
+    setCurrentUser({ login: '', password: '' });
     navigate('/');
   };
 
@@ -148,7 +148,7 @@ function App() {
           remoteDataSourceMock?.authInformation.userName,
         )}`,
       );
-      if (data.userName !== remoteDataSourceMock.authInformation.userName) {
+      if (data.login !== remoteDataSourceMock.authInformation.userName) {
         await reloginSDK(data).catch((e) => {
           console.log(
             `exception in reloginSDK ${(e as unknown as Error).message}`,
@@ -203,7 +203,7 @@ function App() {
       //   webrtc: {},
       // }}
       loginData={{
-        userName: currentUser.userName,
+        login: currentUser.login,
         password: currentUser.password,
       }}
     >

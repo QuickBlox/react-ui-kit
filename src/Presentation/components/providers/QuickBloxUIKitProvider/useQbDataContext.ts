@@ -57,8 +57,8 @@ const useQbDataContext = (): QBDataContextType => {
       // });
       // if (
       //   currentQbDataContext.InitParams.loginData &&
-      //   currentQbDataContext.InitParams.loginData.userName &&
-      //   currentQbDataContext.InitParams.loginData.userName.length > 0 &&
+      //   currentQbDataContext.InitParams.loginData.login &&
+      //   currentQbDataContext.InitParams.loginData.login.length > 0 &&
       //   currentQbDataContext.InitParams.loginData.password &&
       //   currentQbDataContext.InitParams.loginData.password.length > 0
       // ) {
@@ -67,7 +67,7 @@ const useQbDataContext = (): QBDataContextType => {
       //   console.log('all data to auth is collected');
       //   // currentQbDataContext.updateAuthProcessedStatus(true);
       // } else {
-      //   throw new Error('HAVE NO AUTH USER DATA: userName or password');
+      //   throw new Error('HAVE NO AUTH USER DATA: login or password');
       // }
     } else {
       throw new Error('HAVE NO AUTH USER or WRONG authSecret');

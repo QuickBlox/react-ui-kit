@@ -145,8 +145,13 @@ const initDataContext: QBDataContextType = {
     console.log(`function release end`);
   },
   authorize: async (authorizationData: AuthorizationData): Promise<void> => {
+    console.log('UI Kit authorize');
     initialValues.REMOTE_DATA_SOURCE.authInformation = authorizationData;
     initialValues.REMOTE_DATA_SOURCE.setAuthProcessedSuccessed();
+    //
+    initialValues.REMOTE_DATA_SOURCE.initEventsHandlers();
+    //
+    console.log('UI Kit authorize event handler has initialized');
     //
     await initialValues.CONNECTION_REPOSITORY.initializeStates();
     if (!initialValues.CONNECTION_REPOSITORY.needInit) {
@@ -157,6 +162,8 @@ const initDataContext: QBDataContextType = {
     }).catch(() => {
       console.log('sync dialogs has exception');
     });
+    //
+    console.log(`function authorize end`);
     //
   },
   setSubscribeOnSessionExpiredListener: (
@@ -229,7 +236,7 @@ function QuickBloxUIKitProvider({
       sessionToken: accountData.sessionToken,
     },
     loginData: {
-      userName: loginData?.userName || '',
+      login: loginData?.login || '',
       password: loginData?.password || '',
     },
     maxFileSize,

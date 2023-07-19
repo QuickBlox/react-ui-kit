@@ -65,7 +65,7 @@ export type PaginatedDTOResult = {
 };
 
 export type LoginData = {
-  userName: string;
+  login: string;
   password: string;
 };
 export type AuthorizationData = {
@@ -337,6 +337,7 @@ export class RemoteDataSource implements IRemoteDataSource {
   }
 
   public initEventsHandlers() {
+    console.log('CALL--initEventsHandlers--CALL');
     QB.chat.onSystemMessageListener = (message) => {
       console.log(`EVENT: receive system message: ${JSON.stringify(message)}`);
       const resultMessage = new RemoteMessageDTO();
@@ -404,7 +405,7 @@ export class RemoteDataSource implements IRemoteDataSource {
       message: QBChatXMPPMessage,
     ) => {
       console.log(
-        `EVENT: receive  message for userid: ${userId}, error: ${stringifyError(
+        `EVENT: receive  message for userid: ${userId}, message: ${stringifyError(
           message,
         )}`,
       );
@@ -566,7 +567,7 @@ export class RemoteDataSource implements IRemoteDataSource {
     //
     console.log('CALL createUserSession....');
     const userRequiredParams = {
-      login: authParams.userName,
+      login: authParams.login,
       password: authParams.password,
     };
     const sessionResult = await this.createUserSession(
@@ -601,7 +602,7 @@ export class RemoteDataSource implements IRemoteDataSource {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     console.log(`session token to chat init = ${sessionData.token}`);
     const authInformation = {
-      userName: authParams.userName,
+      userName: authParams.login,
       userId: sessionData.user_id,
       sessionToken: sessionData.token,
       password: sessionData.token,

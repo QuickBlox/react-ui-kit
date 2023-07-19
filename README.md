@@ -83,7 +83,14 @@ In our example we show how to authenticate user with login and password.
 
 ```
 import * as QB from "quickblox/quickblox";
-import { QuickBloxUIKitProvider } from 'quickblox-ui-kit-react/dist/index-ui';
+import {
+  QuickBloxUIKitProvider,
+  qbDataContext,
+  QuickBloxUIKitDesktopLayout, 
+  LoginData,
+  AuthorizationData,
+  QBDataContextType,
+} from 'quickblox-ui-kit-react/dist/index-ui';
 
 var params = { login: "garry", password: "garry5santos" };
 
@@ -92,13 +99,29 @@ QB.login(params, function(error, result) {
   } else {
     // Navigate User to the UIKit
 });
+
+const qbUIKitContext: QBDataContextType = React.useContext(qbDataContext);
 ```
-To order to config quickblox ui kit provider
+To order to config quickblox ui kit provider if you use SDK without session token:
 ```
-<QuickBloxUIKitProvider
-maxFileSize={100 * 1000000} //set max size for attachments
->
-  <Desktop> // container for DesktopLayout
+ <QuickBloxUIKitProvider
+            maxFileSize={100 * 1000000} //set max size for attachments
+            accountData={{ ...QBConfig.credentials }}
+            loginData={{
+              login: params.login,
+              password: params.password,
+            }}
+        >
+  <QuickBloxUIKitDesktopLayout /> // container for DesktopLayout
+</QuickBloxUIKitProvider>
+```
+To order to config quickblox ui kit provider if you use SDK with session token:
+```
+ <QuickBloxUIKitProvider
+            maxFileSize={100 * 1000000} //set max size for attachments
+            accountData={{ ...QBConfig.credentials }} // sessionToken was used in QBConfig
+        >
+  <QuickBloxUIKitDesktopLayout /> // container for DesktopLayout
 </QuickBloxUIKitProvider>
 ```
 
@@ -269,7 +292,7 @@ and specify selected components:
 ```
 # Sample
 
-https://github.com/QuickBlox/quickblox-javascript-sdk/tree/gh-pages/samples/react-chat
+https://github.com/QuickBlox/quickblox-javascript-sdk/tree/gh-pages/samples/react-chat-ui-kit-init-sample
 
 # License
 [](#license)

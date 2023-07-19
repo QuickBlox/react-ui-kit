@@ -13,7 +13,7 @@ type LoginProps = {
 const Login: React.FC<LoginProps> = ({ loginHandler }: LoginProps) => {
   const currentContext = useQbDataContext();
   const [UserName, setUsername] = useState(
-    currentContext.InitParams.loginData?.userName || 'tester',
+    currentContext.InitParams.loginData?.login || 'tester',
   );
   const [Password, setPassword] = useState('quickblox');
 
@@ -28,7 +28,7 @@ const Login: React.FC<LoginProps> = ({ loginHandler }: LoginProps) => {
     console.log('submit actions perform');
 
     const data: LoginData = {
-      userName: UserName,
+      login: UserName,
       password: Password,
     };
 

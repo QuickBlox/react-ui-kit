@@ -4,6 +4,7 @@ import MainButton, {
 } from './Presentation/components/UI/Buttons/MainButton/MainButton';
 import QuickBloxUIKitProvider, {
   qbDataContext,
+  QBDataContextType,
 } from './Presentation/components/providers/QuickBloxUIKitProvider/QuickBloxUIKitProvider';
 import { LocalDataSource } from './Data/source/local/LocalDataSource';
 import useQBConnection from './Presentation/components/providers/QuickBloxUIKitProvider/useQBConnection';
@@ -25,6 +26,7 @@ import { DialogEntity } from './Domain/entity/DialogEntity';
 import BaseViewModel from './Presentation/Views/Base/BaseViewModel';
 import {
   LoginData,
+  AuthorizationData,
   RemoteDataSource,
 } from './Data/source/remote/RemoteDataSource';
 import QuickBloxUIKitDesktopLayout from './Presentation/components/layouts/Desktop/QuickBloxUIKitDesktopLayout';
@@ -35,8 +37,10 @@ export {
   MainButton,
   TypeButton,
   type LoginData,
+  type AuthorizationData,
   QuickBloxUIKitProvider,
   qbDataContext,
+  type QBDataContextType,
   RemoteDataSource,
   LocalDataSource,
   useQBConnection,
