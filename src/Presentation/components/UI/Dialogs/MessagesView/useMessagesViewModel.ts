@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { DialogType } from '../../../../../Domain/entity/DialogTypes';
-import useQbDataContext from '../../../providers/QuickBloxUIKitProvider/useQbDataContext';
+import useQbInitializedDataContext from '../../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
 import { DialogEntity } from '../../../../../Domain/entity/DialogEntity';
 import { MessagesViewModel } from './MessagesViewModel';
 import { MessageEntity } from '../../../../../Domain/entity/MessageEntity';
@@ -42,7 +42,7 @@ export default function useMessagesViewModel(
   const [dialog, setDialog] = useState<DialogEntity>(dialogEntity);
   // const [dialogsParticipants, setDialogsParticipants] = useState<number[]>([]);
 
-  const currentContext = useQbDataContext();
+  const currentContext = useQbInitializedDataContext();
   const eventMessaging = useEventMessagesRepository();
 
   const subscribeToDialogEventsUseCase: SubscribeToDialogEventsUseCase =

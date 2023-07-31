@@ -27,6 +27,7 @@ type DialogsComponentSettings = {
   themeName?: ThemeNames;
   withoutHeader?: boolean;
   useSubHeader?: boolean;
+  useUpHeader?: boolean;
   themeHeader?: UiKitTheme;
   themePreview?: UiKitTheme;
 };
@@ -34,7 +35,8 @@ type DialogsComponentSettings = {
 type DialogsProps = {
   header?: React.ReactNode;
   subHeaderContent?: React.ReactNode;
-  itemSelectHandler?: FunctionTypeViewModelToVoid<DialogEntity>;
+  upHeaderContent?: React.ReactNode;
+  onDialogSelectHandler?: FunctionTypeViewModelToVoid<DialogEntity>;
   dialogsViewModel: DialogsViewModel;
   additionalSettings?: DialogsComponentSettings;
 };
@@ -43,7 +45,8 @@ type DialogsProps = {
 const DialogsComponent: React.FC<DialogsProps> = ({
   header,
   subHeaderContent,
-  itemSelectHandler,
+  upHeaderContent,
+  onDialogSelectHandler,
   dialogsViewModel,
   additionalSettings = undefined,
 }: DialogsProps) => {
@@ -68,15 +71,15 @@ const DialogsComponent: React.FC<DialogsProps> = ({
     dialogsViewModel?.dialogs.forEach((entiy, index) => {
       const pw: PreviewDialogViewModel = new PreviewDialogViewModel(
         (it) => {
-          if (itemSelectHandler) {
+          if (onDialogSelectHandler) {
             setSelectedItem({ selectedIndex: index, item: it });
-            itemSelectHandler(it);
+            onDialogSelectHandler(it);
           }
         },
         (it) => {
-          if (itemSelectHandler) {
+          if (onDialogSelectHandler) {
             setSelectedItem({ selectedIndex: index, item: it });
-            itemSelectHandler(it);
+            onDialogSelectHandler(it);
           }
         },
         // Number(entiy.id),
@@ -149,7 +152,9 @@ const DialogsComponent: React.FC<DialogsProps> = ({
   const useHeader = !additionalSettings?.withoutHeader || header || false;
   const useSubContent =
     additionalSettings?.useSubHeader || subHeaderContent || false;
-  const usingHeader = header || (
+  const useUpContent =
+    additionalSettings?.useUpHeader || upHeaderContent || false;
+  const HeaderContent = header || (
     <HeaderDialogs
       title="Dialogs"
       clickSearchHandler={() => {
@@ -307,7 +312,8 @@ const DialogsComponent: React.FC<DialogsProps> = ({
       }}
     >
       <ColumnContainer>
-        {useHeader && usingHeader}
+        {useUpContent && upHeaderContent}
+        {useHeader && HeaderContent}
         {/* {showSearchDialogs ? renderSearchDialogs() : null} */}
         {useSubContent && subHeaderContent}
         {dialogsViewModel?.loading && (

@@ -8,7 +8,7 @@ import QuickBloxUIKitProvider, {
 } from './Presentation/components/providers/QuickBloxUIKitProvider/QuickBloxUIKitProvider';
 import { LocalDataSource } from './Data/source/local/LocalDataSource';
 import useQBConnection from './Presentation/components/providers/QuickBloxUIKitProvider/useQBConnection';
-import useQbDataContext from './Presentation/components/providers/QuickBloxUIKitProvider/useQbDataContext';
+import useQbInitializedDataContext from './Presentation/components/providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
 import useEventMessagesRepository from './Presentation/components/providers/QuickBloxUIKitProvider/useEventMessagesRepository';
 import { DialogsViewModel } from './Presentation/Views/Dialogs/DialogViewModel';
 import useDialogsViewModel from './Presentation/Views/Dialogs/useDialogsViewModel';
@@ -32,6 +32,7 @@ import {
 import QuickBloxUIKitDesktopLayout from './Presentation/components/layouts/Desktop/QuickBloxUIKitDesktopLayout';
 import DefaultTheme from './Presentation/assets/DefaultThemes/DefaultTheme';
 import UiKitTheme from './Presentation/assets/UiKitTheme';
+import useQbUIKitDataContext from './Presentation/components/providers/QuickBloxUIKitProvider/useQbUIKitDataContext';
 
 export {
   MainButton,
@@ -44,7 +45,8 @@ export {
   RemoteDataSource,
   LocalDataSource,
   useQBConnection,
-  useQbDataContext,
+  useQbInitializedDataContext,
+  useQbUIKitDataContext,
   useEventMessagesRepository,
   type DialogsViewModel,
   useDialogsViewModel,

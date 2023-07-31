@@ -49,7 +49,10 @@ export type EditDialogParams = {
   dialogTitle: string;
   dialogAvatar: File | string | null;
 };
-
+export interface IChatMessage {
+  role: string;
+  content: string;
+}
 export type FunctionTypeFileToToVoid = (file: File) => void;
 export type FunctionTypePaginationToVoid = (pagination: Pagination) => void;
 export type FunctionTypeVoidToVoid = () => void;
@@ -65,3 +68,8 @@ export type FunctionTypeDialogEntityToBoolean = (
   entity: GroupDialogEntity,
 ) => Promise<boolean>;
 export type FunctionTypeFileToFileEntity = (file: File) => Promise<FileEntity>;
+export type FunctionTypeJSXElement = () => JSX.Element;
+export type FunctionTypeChatMessagesToVoid = (
+  lastMessage: string,
+  messages: IChatMessage,
+) => void;

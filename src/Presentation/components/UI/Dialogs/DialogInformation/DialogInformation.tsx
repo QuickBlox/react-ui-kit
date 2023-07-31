@@ -35,24 +35,28 @@ import { stringifyError } from '../../../../../utils/parse';
 import { FileEntity } from '../../../../../Domain/entity/FileEntity';
 import UserAvatar from '../EditDialog/UserAvatar/UserAvatar';
 import MainButton, { TypeButton } from '../../Buttons/MainButton/MainButton';
-import useQbDataContext from '../../../providers/QuickBloxUIKitProvider/useQbDataContext';
+import useQbInitializedDataContext from '../../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
 import UiKitTheme from '../../../../assets/UiKitTheme';
 
 type HeaderDialogsProps = {
   dialog: DialogEntity;
   dialogViewModel: DialogsViewModel;
-  closeInformationHandler: FunctionTypeVoidToVoid;
+  onCloseDialogInformationHandler: FunctionTypeVoidToVoid;
   theme?: UiKitTheme;
+  subHeaderContent?: React.ReactNode;
+  upHeaderContent?: React.ReactNode;
 };
 // eslint-disable-next-line react/function-component-definition
 const DialogInformation: React.FC<HeaderDialogsProps> = ({
   dialog,
   dialogViewModel,
-  closeInformationHandler,
+  onCloseDialogInformationHandler,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   theme = undefined,
+  subHeaderContent = undefined,
+  upHeaderContent = undefined,
 }: HeaderDialogsProps) => {
-  const currentContext = useQbDataContext();
+  const currentContext = useQbInitializedDataContext();
   const currentUserId =
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId.toString();
   const { handleModal } = React.useContext(ModalContext);
@@ -62,9 +66,9 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
 
   useEffect(() => {
     console.log('HAVE NEW DIALOG');
-    if (dialog === undefined && closeInformationHandler) {
+    if (dialog === undefined && onCloseDialogInformationHandler) {
       console.log('HAVE UNDEFINED NEW DIALOG');
-      closeInformationHandler();
+      onCloseDialogInformationHandler();
 
       return;
     }
@@ -244,6 +248,9 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
     }
   };
 
+  const useSubContent = subHeaderContent || false;
+  const useUpContent = upHeaderContent || false;
+
   return isAllMembersShow ? (
     <MembersList
       closeInformationHandler={() => {
@@ -254,6 +261,7 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
   ) : (
     <div className="dialog-information-container">
       <ColumnContainer maxWidth="320px">
+        {useUpContent && upHeaderContent}
         <div className="dialog-information-container--dialog-information-wrapper">
           <div className="dialog-information-container__dialog-information">
             <div>Dialog information</div>
@@ -262,13 +270,14 @@ const DialogInformation: React.FC<HeaderDialogsProps> = ({
             <ActiveSvg
               content={<Close applyZoom color="var(--secondary-elements)" />}
               clickAction={() => {
-                if (closeInformationHandler) {
-                  closeInformationHandler();
+                if (onCloseDialogInformationHandler) {
+                  onCloseDialogInformationHandler();
                 }
               }}
             />
           </div>
         </div>
+        {useSubContent && subHeaderContent}
         <div className="dialog-information-container--icon-dialog-wrapper">
           <div className="dialog-information-container__icon-dialog">
             <div className="dialog-information-container__icon-dialog__info">

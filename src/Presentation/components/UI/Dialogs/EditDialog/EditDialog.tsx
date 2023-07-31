@@ -13,7 +13,7 @@ import UserAvatar from './UserAvatar/UserAvatar';
 import { DialogType } from '../../../../../Domain/entity/DialogTypes';
 import GroupChat from '../../svgs/Icons/Contents/GroupChat';
 import PublicChannel from '../../svgs/Icons/Contents/PublicChannel';
-import useQbDataContext from '../../../providers/QuickBloxUIKitProvider/useQbDataContext';
+import useQbInitializedDataContext from '../../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
 
 export const TypeOpenDialog = {
   edit: 'edit',
@@ -40,7 +40,7 @@ const EditDialog: React.FC<EditDialogProps> = ({
   clickUpdatedHandler,
   clickCancelHandler,
 }) => {
-  const currentContext = useQbDataContext();
+  const currentContext = useQbInitializedDataContext();
   const maxUploadFileSize = currentContext.InitParams.maxFileSize;
   const minLengthNameDialog = 3;
   const maxLengthNameDialog = 60;

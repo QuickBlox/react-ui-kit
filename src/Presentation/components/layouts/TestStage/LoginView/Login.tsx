@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Login.scss';
 import { InitParams } from '../../../providers/QuickBloxUIKitProvider/QuickBloxUIKitProvider';
-import useQbDataContext from '../../../providers/QuickBloxUIKitProvider/useQbDataContext';
+import useQbInitializedDataContext from '../../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
 import { LoginData } from '../../../../../Data/source/remote/RemoteDataSource';
 
 export type FunctionTypeLoginDataToVoid = (data: LoginData) => void;
@@ -11,7 +11,7 @@ type LoginProps = {
 };
 // eslint-disable-next-line react/function-component-definition
 const Login: React.FC<LoginProps> = ({ loginHandler }: LoginProps) => {
-  const currentContext = useQbDataContext();
+  const currentContext = useQbInitializedDataContext();
   const [UserName, setUsername] = useState(
     currentContext.InitParams.loginData?.login || 'tester',
   );

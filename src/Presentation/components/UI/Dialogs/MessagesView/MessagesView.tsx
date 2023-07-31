@@ -22,7 +22,7 @@ import { DialogType } from '../../../../../Domain/entity/DialogTypes';
 import { GroupDialogEntity } from '../../../../../Domain/entity/GroupDialogEntity';
 import { PrivateDialogEntity } from '../../../../../Domain/entity/PrivateDialogEntity';
 import { UserEntity } from '../../../../../Domain/entity/UserEntity';
-import useQbDataContext from '../../../providers/QuickBloxUIKitProvider/useQbDataContext';
+import useQbInitializedDataContext from '../../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
 import { Pagination } from '../../../../../Domain/repository/Pagination';
 import {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -47,33 +47,48 @@ import VoiceRecordingProgress from './VoiceRecordingProgress/VoiceRecordingProgr
 import UiKitTheme from '../../../../assets/UiKitTheme';
 import { DialogsViewModel } from '../../../../Views/Dialogs/DialogViewModel';
 import { HighLightLink, messageHasUrls } from './HighLightLink/HighLightLink';
+// import CompanyLogo from '../../../layouts/TestStage/CompanyLogo/CompanyLogo';
 
 type HeaderDialogsMessagesProps = {
+  // InputWidgetToLeftPlaceHolder?: InputWidget;
+  // InputWidgetToRightPlaceHolder?: InputWidget;
+  // IncomingMessageWidgetToRightPlaceHolder?: InputWidget;
   dialogsViewModel: DialogsViewModel;
-  InformationHandler?: FunctionTypeVoidToVoid;
+  onDialogInformationHandler?: FunctionTypeVoidToVoid;
   maxWidthToResize?: string;
   theme?: UiKitTheme;
+  subHeaderContent?: React.ReactNode;
+  upHeaderContent?: React.ReactNode;
 };
 
 // eslint-disable-next-line react/function-component-definition
 const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // InputWidgetToLeftPlaceHolder,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // InputWidgetToRightPlaceHolder,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // IncomingMessageWidgetToRightPlaceHolder,
   dialogsViewModel,
-  InformationHandler,
+  onDialogInformationHandler,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   maxWidthToResize = undefined,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   theme = undefined,
+  subHeaderContent = undefined,
+  upHeaderContent = undefined,
 }: HeaderDialogsMessagesProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const maxWidthToResizing =
     maxWidthToResize || '$message-view-container-wrapper-min-width';
   // const maxWidthToResizing = '720px'; // $message-view-container-wrapper-min-width:
 
-  const currentContext = useQbDataContext();
+  const currentContext = useQbInitializedDataContext();
   const currentUserId =
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId;
   const currentUserName =
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userName;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { connectionRepository, browserOnline } = useQBConnection();
   const [dialogMessagesCount, setDialogMessageCount] = useState(100);
   const [hasMore, setHasMore] = React.useState(true);
@@ -339,6 +354,16 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
           >
             {getTimeShort24hFormat(message.date_sent)}
           </div>
+          <div
+            className="message-view-container__incoming-time"
+            onClick={() => {
+              // IncomingMessageWidgetToRightPlaceHolder?.textToWidget(
+              //   message.message,
+              // );
+            }}
+          >
+            {/* {IncomingMessageWidgetToRightPlaceHolder?.renderWidget()} */}
+          </div>
         </div>
       );
     } else {
@@ -410,6 +435,8 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   const [fileToSend, setFileToSend] = useState<File | null>(null);
   const [messageText, setMessageText] = useState<string>('');
   const [warningErrorText, setWarningErrorText] = useState<string>('');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [widgetTextContent, setWidgetTextContent] = useState<string>('');
 
   useEffect(() => {
     setWarningErrorText(messagesViewModel.typingText);
@@ -465,6 +492,7 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
 
   const [audioChunks, setAudioChunks] = useState<Array<Blob>>([]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const mimeType = 'audio/webm;codecs=opus'; // audio/ogg audio/mpeg audio/webm audio/x-wav audio/mp4
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getMicrophonePermission = async () => {
@@ -499,16 +527,34 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/require-await
   const startRecording = async () => {
     if (!stream) return;
-    // setRecordingStatus('recording');
+    // const mimeTypes = [
+    //   'audio/aac',
+    //   'audio/mp4',
+    //   'audio/mpeg',
+    //   'audio/ogg',
+    //   'audio/wav',
+    //   'audio/webm',
+    //   'audio/3gpp',
+    //   'audio/flac',
+    //   'audio/x-aiff',
+    //   'audio/x-m4a',
+    // ];
+    //
+    // console.log('MIME TYPES: ');
+    // mimeTypes.forEach((mimeType) => {
+    //   if (MediaRecorder.isTypeSupported(mimeType)) {
+    //     console.log(`${mimeType} is supported`);
+    //   } else {
+    //     console.log(`${mimeType} is not supported`);
+    //   }
+    // });
     // audio/mp4;codecs=mp4a audio/webm;codecs=opus audio/webm;codecs=vp9,opus
     const mimeContent = window.MediaRecorder.isTypeSupported(
       'audio/mp4;codecs=mp4a',
     )
       ? 'audio/mp4;codecs=mp4a'
       : 'audio/webm;codecs=opus';
-    /*
-    this.mediaRecorder = new MediaRecorder(window.stream, {mimeType: mimeContent});
-   */
+
     const media = new MediaRecorder(stream, { mimeType: mimeContent });
 
     mediaRecorder.current = media;
@@ -536,7 +582,17 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
     mediaRecorder.current.stop();
 
     mediaRecorder.current.onstop = () => {
-      const audioBlob = new Blob(audioChunks, { type: mimeType });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const mimeContent = window.MediaRecorder.isTypeSupported(
+        'audio/mp4;codecs=mp4a',
+      )
+        ? 'audio/mp4;codecs=mp4a'
+        : 'audio/webm;codecs=opus';
+      // const audioBlob = new Blob(audioChunks, { type: mimeContent }); // mimeType
+      // const mp4Blob = new Blob(recordedChunks, { type: 'video/mp4' });
+
+      // const audioBlob = new Blob(audioChunks, { type: 'video/mp4' }); // mimeType
+      const audioBlob = new Blob(audioChunks, { type: 'audio/mp4' }); // mimeType
 
       setResultAudioBlob(audioBlob);
 
@@ -564,14 +620,23 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
     return resultFile;
   };
 
+  const [useAudioWidget, setUseAudioWidget] = useState<boolean>(false);
+
   useEffect(() => {
+    const fileExt = 'mp4';
+
     if (resultAudioBlob) {
       const voiceMessage = blobToFile(
         resultAudioBlob,
-        `${currentUserName || ''}_voice_message.webm`,
+        `${currentUserName || ''}_voice_message.${fileExt}`,
       );
 
       setFileToSend(voiceMessage);
+      if (useAudioWidget) {
+        setUseAudioWidget(false);
+        // InputWidgetToRightPlaceHolder?.fileToWidget(voiceMessage);
+      }
+      //
     }
   }, [resultAudioBlob]);
   // test component version
@@ -634,6 +699,49 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
     }
   }
 
+  // useEffect(() => {
+  //   if (
+  //     InputWidgetToLeftPlaceHolder?.textToInput &&
+  //     InputWidgetToLeftPlaceHolder?.textToInput.length > 0
+  //   ) {
+  //     setMessageText(InputWidgetToLeftPlaceHolder?.textToInput);
+  //     setWidgetTextContent(InputWidgetToLeftPlaceHolder?.textToInput);
+  //     setTimeout(() => {
+  //       setWidgetTextContent('');
+  //     }, 45 * 1000);
+  //   }
+  // }, [InputWidgetToLeftPlaceHolder?.textToInput]);
+  //
+  // useEffect(() => {
+  //   if (
+  //     InputWidgetToRightPlaceHolder?.textToInput &&
+  //     InputWidgetToRightPlaceHolder?.textToInput.length > 0
+  //   ) {
+  //     setMessageText(InputWidgetToRightPlaceHolder?.textToInput);
+  //     setWidgetTextContent(InputWidgetToRightPlaceHolder?.textToInput);
+  //     setTimeout(() => {
+  //       setWidgetTextContent('');
+  //     }, 45 * 1000);
+  //   }
+  // }, [InputWidgetToRightPlaceHolder?.textToInput]);
+  //
+  // useEffect(() => {
+  //   if (
+  //     IncomingMessageWidgetToRightPlaceHolder?.textToInput &&
+  //     IncomingMessageWidgetToRightPlaceHolder?.textToInput.length > 0
+  //   ) {
+  //     setWidgetTextContent(
+  //       IncomingMessageWidgetToRightPlaceHolder?.textToInput,
+  //     );
+  //     setTimeout(() => {
+  //       setWidgetTextContent('');
+  //     }, 45 * 1000);
+  //   }
+  // }, [IncomingMessageWidgetToRightPlaceHolder?.textToInput]);
+
+  const useSubContent = subHeaderContent || false;
+  const useUpContent = upHeaderContent || false;
+
   return (
     <div
       style={
@@ -656,46 +764,75 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
         }}
         className="message-view-container--header"
       >
+        {useUpContent && upHeaderContent}
         <HeaderMessages
           dialog={messagesViewModel.entity}
-          InformationHandler={InformationHandler}
+          InformationHandler={onDialogInformationHandler}
           countMembers={getCountDialogMembers(dialogsViewModel.entity)}
         />
+        {useSubContent && subHeaderContent}
       </div>
-      <div
-        style={
-          theme
-            ? {
-                flexGrow: `1`,
-                flexShrink: `1`,
-                flexBasis: `${maxWidthToResizing}`,
-                backgroundColor: theme.mainElements(),
-              }
-            : {
-                flexGrow: `1`,
-                flexShrink: `1`,
-                flexBasis: `${maxWidthToResizing}`,
-              }
-        }
-        className="message-view-container--information"
-      >
-        <div>
-          connection status:
-          {browserOnline ? 'online ' : 'offline '}
-          {/* eslint-disable-next-line no-nested-ternary */}
-          {connectionRepository.isChatConnected() === undefined
-            ? 'unexpected undefined'
-            : connectionRepository.isChatConnected()
-            ? 'connected'
-            : 'disconnected'}
-        </div>
-        {hasMore && (
-          <div style={{ color: 'red' }}>
-            unread: {dialogMessagesCount - messagesToView.length}
-          </div>
-        )}
-        <div>{` current user id: ${currentUserId || 'no user'}`}</div>
-      </div>
+      {/* <div */}
+      {/*  style={{ */}
+      {/*    flexGrow: `1`, */}
+      {/*    flexShrink: `1`, */}
+      {/*    flexBasis: `${maxWidthToResizing}`, */}
+      {/*  }} */}
+      {/*  className="message-view-container--information" */}
+      {/* > */}
+      {/*  <div> */}
+      {/*    connection status: */}
+      {/*    {browserOnline ? 'online ' : 'offline '} */}
+      {/*    /!* eslint-disable-next-line no-nested-ternary *!/ */}
+      {/*    {connectionRepository.isChatConnected() === undefined */}
+      {/*      ? 'unexpected undefined' */}
+      {/*      : connectionRepository.isChatConnected() */}
+      {/*      ? 'connected' */}
+      {/*      : 'disconnected'} */}
+      {/*  </div> */}
+      {/*  {hasMore && ( */}
+      {/*    <div style={{ color: 'red' }}> */}
+      {/*      unread: {dialogMessagesCount - messagesToView.length} */}
+      {/*    </div> */}
+      {/*  )} */}
+      {/*  <div>{` current user id: ${currentUserId || 'no user'}`}</div> */}
+      {/* </div> */}
+      {/* version 2 start */}
+      {/* <div */}
+      {/*  style={ */}
+      {/*    theme */}
+      {/*      ? { */}
+      {/*          flexGrow: `1`, */}
+      {/*          flexShrink: `1`, */}
+      {/*          flexBasis: `${maxWidthToResizing}`, */}
+      {/*          backgroundColor: theme.mainElements(), */}
+      {/*        } */}
+      {/*      : { */}
+      {/*          flexGrow: `1`, */}
+      {/*          flexShrink: `1`, */}
+      {/*          flexBasis: `${maxWidthToResizing}`, */}
+      {/*        } */}
+      {/*  } */}
+      {/*  className="message-view-container--information" */}
+      {/* > */}
+      {/*  <div> */}
+      {/*    connection status: */}
+      {/*    {browserOnline ? 'online ' : 'offline '} */}
+      {/*    /!* eslint-disable-next-line no-nested-ternary *!/ */}
+      {/*    {connectionRepository.isChatConnected() === undefined */}
+      {/*      ? 'unexpected undefined' */}
+      {/*      : connectionRepository.isChatConnected() */}
+      {/*      ? 'connected' */}
+      {/*      : 'disconnected'} */}
+      {/*  </div> */}
+      {/*  {hasMore && ( */}
+      {/*    <div style={{ color: 'red' }}> */}
+      {/*      unread: {dialogMessagesCount - messagesToView.length} */}
+      {/*    </div> */}
+      {/*  )} */}
+      {/*  <div>{` current user id: ${currentUserId || 'no user'}`}</div> */}
+      {/* </div> */}
+      {/* version 2 end */}
       <div
         style={
           theme
@@ -804,7 +941,24 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
             }}
           />
         </label>
-
+        {/*  start InputWidgetToRightPlaceHolder */}
+        {/* {InputWidgetToRightPlaceHolder && ( */}
+        {/*  <div> */}
+        {/*    <ActiveSvg */}
+        {/*      content={InputWidgetToRightPlaceHolder.renderWidget()} */}
+        {/*      clickAction={() => { */}
+        {/*        console.log('click left place golder widget'); */}
+        {/*        if (messagesViewModel?.loading) return; */}
+        {/*        setIsRecording(!isRecording); */}
+        {/*        setUseAudioWidget(true); */}
+        {/*      }} */}
+        {/*      touchAction={() => { */}
+        {/*        console.log('touch left place golder widget'); */}
+        {/*      }} */}
+        {/*    /> */}
+        {/*  </div> */}
+        {/* )} */}
+        {/* end InputWidgetToRightPlaceHolder */}
         {!isRecording && (
           <textarea
             style={theme ? { backgroundColor: theme.chatInput() } : {}}
@@ -849,7 +1003,22 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
             }}
           />
         )}
-
+        {/* InputWidgetToRightPlaceHolder start InputWidgetToLeftPlaceHolder */}
+        {/* {InputWidgetToLeftPlaceHolder && ( */}
+        {/*  <div> */}
+        {/*    <ActiveSvg */}
+        {/*      content={InputWidgetToLeftPlaceHolder.renderWidget()} */}
+        {/*      clickAction={() => { */}
+        {/*        console.log('click left place golder widget'); */}
+        {/*        InputWidgetToLeftPlaceHolder?.textToWidget(messageText); */}
+        {/*      }} */}
+        {/*      touchAction={() => { */}
+        {/*        console.log('touch left place golder widget'); */}
+        {/*      }} */}
+        {/*    /> */}
+        {/*  </div> */}
+        {/* )} */}
+        {/* end InputWidgetLeftPlaceHolder */}
         {!isVoiceMessage && (
           <div>
             <ActiveSvg
@@ -897,7 +1066,7 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
         )}
       </div>
       {/* <div className="message-view-container--warning-error"> */}
-      {/*  {warningErrorText} */}
+      {/*  {widgetTextContent} */}
       {/* </div> */}
     </div>
   );

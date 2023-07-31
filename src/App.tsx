@@ -5,9 +5,7 @@ import { QBConfig } from './QBconfig';
 import useQBConnection from './Presentation/components/providers/QuickBloxUIKitProvider/useQBConnection';
 import { LocalDataSource } from './Data/source/local/LocalDataSource';
 import Login from './Presentation/components/layouts/TestStage/LoginView/Login';
-import QuickBloxUIKitProvider, {
-  qbDataContext,
-} from './Presentation/components/providers/QuickBloxUIKitProvider/QuickBloxUIKitProvider';
+import QuickBloxUIKitProvider from './Presentation/components/providers/QuickBloxUIKitProvider/QuickBloxUIKitProvider';
 import TestStageMarkup from './Presentation/components/layouts/TestStage/TestStageMarkup';
 import { Stubs } from './Data/Stubs';
 import {
@@ -16,10 +14,13 @@ import {
 } from './Data/source/remote/RemoteDataSource';
 import QuickBloxUIKitDesktopLayout from './Presentation/components/layouts/Desktop/QuickBloxUIKitDesktopLayout';
 import DefaultTheme from './Presentation/assets/DefaultThemes/DefaultTheme';
+import useQbUIKitDataContext from './Presentation/components/providers/QuickBloxUIKitProvider/useQbUIKitDataContext';
 
 function App() {
-  const currentContext = React.useContext(qbDataContext);
-  const remoteDataSourceMock: RemoteDataSource =
+  // const currentContext = React.useContext(qbDataContext);
+  const currentContext = useQbUIKitDataContext();
+
+  const remoteDataSource: RemoteDataSource =
     currentContext.storage.REMOTE_DATA_SOURCE;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const localDataSource: LocalDataSource =
@@ -50,7 +51,7 @@ function App() {
     console.log('call release...');
     connectionRepository.stopKeepAlive();
     console.log('call stopKeepAlive...');
-    await remoteDataSourceMock.disconnectAndLogoutUser();
+    await remoteDataSource.disconnectAndLogoutUser();
     console.log('call disconnectAndLogoutUser...');
     await currentContext.storage.LOCAL_DATA_SOURCE.clearAll();
     console.log('call clearAll...');
@@ -61,9 +62,9 @@ function App() {
   const prepareSDK = async (authData: LoginData): Promise<void> => {
     console.log('call prepareSDK with data:', authData);
     // todo: must be real remote datasource
-    if (remoteDataSourceMock.needInit) {
+    if (remoteDataSource.needInit) {
       console.log('start prepareSDK actions with data:', authData);
-      await remoteDataSourceMock.initSDKWithUser(
+      await remoteDataSource.initSDKWithUser(
         {
           appIdOrToken: currentContext.InitParams.accountData.appId,
           authKeyOrAppId: currentContext.InitParams.accountData.authKey,
@@ -114,10 +115,10 @@ function App() {
     console.log('call reloginSDK with data:', JSON.stringify(authData));
     currentContext.storage.SYNC_DIALOGS_USE_CASE.release();
     connectionRepository.stopKeepAlive();
-    await remoteDataSourceMock.disconnectAndLogoutUser();
+    await remoteDataSource.disconnectAndLogoutUser();
     await currentContext.storage.LOCAL_DATA_SOURCE.clearAll();
 
-    await remoteDataSourceMock.loginWithUser(authData);
+    await remoteDataSource.loginWithUser(authData);
     //
     // todo: temporary off, must turn on and reorganize code rows
     await connectionRepository.initializeStates();
@@ -135,20 +136,25 @@ function App() {
   const prepareContent = async (): Promise<void> => {
     console.log('PREPARE CONTENT');
     // todo: must delete it and ADD Preload data (read first page everywhere)
+    // или во все юзкейсы 2) Get/Sync execute(completed/callback):Promise<Entity[]>
+    // await prepareMockData();
     console.log('ADD REAL DATA TO DIALOG MOCK DATA ');
+    // await remoteDataSource.getDialogsFirstPage();
+    // await remoteDataSource.setUpMockStorage();
+    //
     //
   };
 
   const loginHandler = async (data: LoginData): Promise<void> => {
     setCurrentUser(data);
     console.log(`call login actions: ${JSON.stringify(data)}`);
-    if (remoteDataSourceMock.authInformation) {
+    if (remoteDataSource.authInformation) {
       console.log(
         `authInformation: ${JSON.stringify(
-          remoteDataSourceMock?.authInformation.userName,
+          remoteDataSource?.authInformation.userName,
         )}`,
       );
-      if (data.login !== remoteDataSourceMock.authInformation.userName) {
+      if (data.login !== remoteDataSource.authInformation.userName) {
         await reloginSDK(data).catch((e) => {
           console.log(
             `exception in reloginSDK ${(e as unknown as Error).message}`,
@@ -161,9 +167,9 @@ function App() {
       }
     } else {
       console.log('need prepare SDK with data:', data);
-      if (remoteDataSourceMock.needInit) {
+      if (remoteDataSource.needInit) {
         console.log('start prepareSDK actions with data:', data);
-        await remoteDataSourceMock.initSDKWithUser(
+        await remoteDataSource.initSDKWithUser(
           {
             appIdOrToken: currentContext.InitParams.accountData.appId,
             authKeyOrAppId: currentContext.InitParams.accountData.authKey,
@@ -187,6 +193,18 @@ function App() {
     console.log('0. APP INIT');
     prepareSDK(currentUser).catch();
   }, []);
+
+  // const { apiKey } = QBConfig.configAIApi.AIAnswerAssistWidgetConfig;
+  // // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  // const openAIConfiguration: Configuration = new Configuration({
+  //   apiKey,
+  // });
+  //
+  // // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  // const openAIApi: OpenAIApi = new OpenAIApi(openAIConfiguration);
+  // const defaultIncomingMessageWidget = UseDefaultIncomingMessageWidget({
+  //   openAIApi,
+  // });
 
   // todo: uncomment authSecret
   return (
@@ -215,9 +233,12 @@ function App() {
             <Route
               path="/desktop-test-mock"
               element={
-                // <QuickBloxUIKitDesktopLayout theme={new CustomTheme()} InputWidgetLeftPlaceHolder={CustomWidgetVoiceToText('','')} />
-
-                // <QuickBloxUIKitDesktopLayout theme={new CustomTheme()} />
+                // <QuickBloxUIKitDesktopLayout
+                //   theme={new DefaultTheme()}
+                //   IncomingMessageWidgetToRightPlaceHolder={
+                //     defaultIncomingMessageWidget
+                //   }
+                // />
 
                 <QuickBloxUIKitDesktopLayout theme={new DefaultTheme()} />
               }

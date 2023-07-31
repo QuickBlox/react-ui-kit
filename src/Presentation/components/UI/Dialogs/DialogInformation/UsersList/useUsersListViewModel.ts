@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { DialogEntity } from '../../../../../../Domain/entity/DialogEntity';
-import useQbDataContext from '../../../../providers/QuickBloxUIKitProvider/useQbDataContext';
+import useQbInitializedDataContext from '../../../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
 import { UserEntity } from '../../../../../../Domain/entity/UserEntity';
 import { UsersListViewModel } from './UsersListViewModel';
 import { GetUsersByIdsUseCase } from '../../../../../../Domain/use_cases/GetUsersByIdsUseCase';
@@ -18,7 +18,7 @@ export default function useUsersListViewModel(
   const [users, setUsers] = useState<UserEntity[]>([]);
   const [dialog, setDialog] = useState<DialogEntity>(dialogEntity);
 
-  const currentContext = useQbDataContext();
+  const currentContext = useQbInitializedDataContext();
 
   async function getUsers() {
     console.log('call getUsers in useUsersListViewModel');

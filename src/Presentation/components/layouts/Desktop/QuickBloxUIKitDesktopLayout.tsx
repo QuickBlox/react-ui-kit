@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import useQbDataContext from '../../providers/QuickBloxUIKitProvider/useQbDataContext';
+// import { Configuration, OpenAIApi } from 'openai';
+import useQbInitializedDataContext from '../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
 import { DialogEntity } from '../../../../Domain/entity/DialogEntity';
 import { DialogsViewModel } from '../../../Views/Dialogs/DialogViewModel';
 import DialogsComponent from '../../../Views/Dialogs/Dialogs';
@@ -16,9 +17,17 @@ import { Pagination } from '../../../../Domain/repository/Pagination';
 // import { DialogEventInfo } from '../../../../Domain/entity/DialogEventInfo';
 import UiKitTheme from '../../../assets/UiKitTheme';
 import BaseViewModel from '../../../Views/Base/BaseViewModel';
+// import { InputWidget } from '../../UI/Dialogs/MessagesView/InputWidget/InputWidget';
+// import useDefaultTextInputWidget from '../../UI/Dialogs/MessagesView/InputWidget/UseDefaultTextInputWidget';
+// import useDefaultVoiceInputWidget from '../../UI/Dialogs/MessagesView/InputWidget/useDefaultVoiceInputWidget';
+// import UseDefaultIncomingMessageWidget from '../../UI/Dialogs/MessagesView/InputWidget/UseDefaultIncomingMessageWidget';
+// import CompanyLogo from '../TestStage/CompanyLogo/CompanyLogo';
 
 type QuickBloxUIKitDesktopLayoutProps = {
   theme?: UiKitTheme;
+  // InputWidgetToLeftPlaceHolder?: InputWidget;
+  // InputWidgetToRightPlaceHolder?: InputWidget;
+  // IncomingMessageWidgetToRightPlaceHolder?: InputWidget;
 };
 
 const QuickBloxUIKitDesktopLayout: React.FC<
@@ -29,7 +38,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   const [selectedDialog, setSelectedDialog] =
     React.useState<BaseViewModel<DialogEntity>>();
 
-  const currentContext = useQbDataContext();
+  const currentContext = useQbInitializedDataContext();
   // const eventMessaging = useEventMessagesRepository();
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -41,12 +50,34 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   const dialogsViewModel: DialogsViewModel =
     useDialogsViewModel(currentContext);
 
+  // let defaultLeftPlaceHolderInputWidget = InputWidgetToLeftPlaceHolder; // useDefaultTextInputWidget();
+  //
+  // if (!defaultLeftPlaceHolderInputWidget) {
+  //   defaultLeftPlaceHolderInputWidget = useDefaultTextInputWidget();
+  // }
+  // const defaultRightPlaceHolderInputWidget =
+  //   InputWidgetToRightPlaceHolder || useDefaultVoiceInputWidget();
+  // let defaultIncomingMessageWidget = IncomingMessageWidgetToRightPlaceHolder;
+  //
+  // if (!defaultIncomingMessageWidget) {
+  //   const apiKey = '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'; // Замените на ваш реальный ключ API
+  //
+  //   const openAIConfiguration = new Configuration({
+  //     apiKey,
+  //   });
+  //
+  //   const openAIApi = new OpenAIApi(openAIConfiguration);
+  //
+  //   defaultIncomingMessageWidget = UseDefaultIncomingMessageWidget({
+  //     openAIApi,
+  //   });
+  // }
+
   const selectDialogActions = (item: BaseViewModel<DialogEntity>): void => {
     if (!dialogsViewModel.loading) {
       setSelectedDialog(item);
     }
   };
-
   // const subscribeToDialogEventsUseCase: SubscribeToDialogEventsUseCase =
   //   new SubscribeToDialogEventsUseCase(eventMessaging, 'TestStage');
 
@@ -181,23 +212,34 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       theme={theme}
       dialogsView={
         <DialogsComponent
+          // subHeaderContent={<CompanyLogo />}
+          // upHeaderContent={<CompanyLogo />}
           dialogsViewModel={dialogsViewModel} // 1 Get 2 Update UseCase
-          itemSelectHandler={selectDialogActions}
+          onDialogSelectHandler={selectDialogActions}
           additionalSettings={{
             withoutHeader: false,
             themeHeader: theme,
             themePreview: theme,
+            useSubHeader: false,
+            useUpHeader: false,
           }}
         />
       }
       dialogMessagesView={
         selectedDialog && selectedDialog.entity && dialogsViewModel.entity ? (
           <MessagesView
+            // subHeaderContent={<CompanyLogo />}
+            // upHeaderContent={<CompanyLogo />}
             dialogsViewModel={dialogsViewModel}
-            InformationHandler={informationOpenHandler}
+            onDialogInformationHandler={informationOpenHandler}
             maxWidthToResize={
               selectedDialog && needDialogInformation ? undefined : '1040px'
             }
+            // InputWidgetToLeftPlaceHolder={defaultLeftPlaceHolderInputWidget}
+            // InputWidgetToRightPlaceHolder={defaultRightPlaceHolderInputWidget}
+            // IncomingMessageWidgetToRightPlaceHolder={
+            //   defaultIncomingMessageWidget
+            // }
             theme={theme}
           /> // 1 Get Messages + 1 Get User by Id
         ) : (
@@ -219,10 +261,11 @@ const QuickBloxUIKitDesktopLayout: React.FC<
         <div>
           {selectedDialog && needDialogInformation && (
             <DialogInformation
+              // subHeaderContent={<CompanyLogo />}
+              // upHeaderContent={<CompanyLogo />}
               dialog={selectedDialog.entity}
               dialogViewModel={dialogsViewModel}
-              closeInformationHandler={informationCloseHandler}
-              theme={theme}
+              onCloseDialogInformationHandler={informationCloseHandler}
             />
           )}
         </div>

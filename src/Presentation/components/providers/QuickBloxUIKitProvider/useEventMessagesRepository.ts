@@ -1,8 +1,8 @@
 import EventMessagesRepository from '../../../../Data/repository/EventMessagesRepository';
-import useQbDataContext from './useQbDataContext';
+import useQbInitializedDataContext from './useQbInitializedDataContext';
 
 const useEventMessagesRepository = (): EventMessagesRepository => {
-  const currentQbDataContext = useQbDataContext();
+  const currentQbDataContext = useQbInitializedDataContext();
 
   return currentQbDataContext.storage.EVENT_MESSAGE_REPOSITORY;
 };

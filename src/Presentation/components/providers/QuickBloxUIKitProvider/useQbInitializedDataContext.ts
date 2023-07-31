@@ -1,7 +1,7 @@
 import React from 'react';
 import { qbDataContext, QBDataContextType } from './QuickBloxUIKitProvider';
 
-const useQbDataContext = (): QBDataContextType => {
+const useQbInitializedDataContext = (): QBDataContextType => {
   const currentQbDataContext = React.useContext(qbDataContext);
 
   console.log(
@@ -79,4 +79,4 @@ const useQbDataContext = (): QBDataContextType => {
   return currentQbDataContext;
 };
 
-export default useQbDataContext;
+export default useQbInitializedDataContext;

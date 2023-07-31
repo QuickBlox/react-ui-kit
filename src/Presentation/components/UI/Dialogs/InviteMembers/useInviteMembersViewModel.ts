@@ -7,7 +7,7 @@ import {
 import { UserEntity } from '../../../../../Domain/entity/UserEntity';
 import { GetAllUsersUseCase } from '../../../../../Domain/use_cases/GetAllUsersUseCase';
 import UsersRepository from '../../../../../Data/repository/UsersRepository';
-import useQbDataContext from '../../../providers/QuickBloxUIKitProvider/useQbDataContext';
+import useQbInitializedDataContext from '../../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
 import { Stubs } from '../../../../../Data/Stubs';
 import { stringifyError } from '../../../../../utils/parse';
 import {
@@ -18,7 +18,7 @@ import {
 export default function useInviteMembersViewModel(): InviteMembersViewModel {
   // initPagination?: Pagination,
   console.log('create useUsersListViewModel');
-  const currentContext = useQbDataContext();
+  const currentContext = useQbInitializedDataContext();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('error with getting user list');
 

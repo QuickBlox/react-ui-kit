@@ -44,7 +44,7 @@ export default function useDialogsViewModel(
   //
   const currentUserId =
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId;
-  // const currentContext = useQbDataContext();
+  // const currentContext = useQbInitializedDataContext();
   const remoteDataSourceMock: RemoteDataSource =
     currentContext.storage.REMOTE_DATA_SOURCE;
 
