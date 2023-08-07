@@ -15,7 +15,10 @@ import useMessagesViewModel from './useMessagesViewModel';
 import LoaderComponent from '../../Placeholders/LoaderComponent/LoaderComponent';
 import ErrorComponent from '../../Placeholders/ErrorComponent/ErrorComponent';
 import HeaderMessages from './HeaderMessages/HeaderMessages';
-import { FunctionTypeVoidToVoid } from '../../../../Views/Base/BaseViewModel';
+import {
+  FunctionTypeVoidToVoid,
+  IChatMessage,
+} from '../../../../Views/Base/BaseViewModel';
 import VideoAttachmentComponent from './VideoAttachmentComponent/VideoAttachmentComponent';
 import ImageAttachmentComponent from './ImageAttachmentComponent/ImageAttachmentComponent';
 import { DialogType } from '../../../../../Domain/entity/DialogTypes';
@@ -45,14 +48,15 @@ import ViewedDelivered from '../../svgs/Icons/Status/ViewedDelivered';
 import { stringifyError } from '../../../../../utils/parse';
 import VoiceRecordingProgress from './VoiceRecordingProgress/VoiceRecordingProgress';
 import UiKitTheme from '../../../../assets/UiKitTheme';
+import { AIWidget } from './AIWidgets/AIWidget';
 import { DialogsViewModel } from '../../../../Views/Dialogs/DialogViewModel';
 import { HighLightLink, messageHasUrls } from './HighLightLink/HighLightLink';
-// import CompanyLogo from '../../../layouts/TestStage/CompanyLogo/CompanyLogo';
+import { loopToLimitTokens } from '../../../../../utils/utils';
 
 type HeaderDialogsMessagesProps = {
-  // InputWidgetToLeftPlaceHolder?: InputWidget;
-  // InputWidgetToRightPlaceHolder?: InputWidget;
-  // IncomingMessageWidgetToRightPlaceHolder?: InputWidget;
+  AIEditMessage?: AIWidget;
+  AITranslation?: AIWidget;
+  AIAnswerToMessage?: AIWidget;
   dialogsViewModel: DialogsViewModel;
   onDialogInformationHandler?: FunctionTypeVoidToVoid;
   maxWidthToResize?: string;
@@ -64,11 +68,11 @@ type HeaderDialogsMessagesProps = {
 // eslint-disable-next-line react/function-component-definition
 const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // InputWidgetToLeftPlaceHolder,
+  AIEditMessage,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // InputWidgetToRightPlaceHolder,
+  AITranslation,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // IncomingMessageWidgetToRightPlaceHolder,
+  AIAnswerToMessage,
   dialogsViewModel,
   onDialogInformationHandler,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -96,6 +100,32 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   const [messagesToView, setMessagesToView] = React.useState<MessageEntity[]>(
     [],
   );
+  const [waitAIWidget, setWaitAIWidget] = useState<boolean>(false);
+
+  const messageEntitiesToIChatMessageCollection = (
+    messageEntities: MessageEntity[],
+  ): IChatMessage[] => {
+    const MAX_TOKENS = 3584;
+    const items = messageEntities.filter(
+      (it) =>
+        !it.notification_type ||
+        (it.notification_type && it.notification_type.length === 0),
+    );
+    const messages = loopToLimitTokens(
+      MAX_TOKENS,
+      items,
+      ({ message }) => message || '',
+    ).reverse();
+    const chatCompletionMessages: IChatMessage[] = messages.map(
+      ({ message, sender_id }) => ({
+        role: sender_id === currentUserId ? 'user' : 'assistant',
+        content: message,
+      }),
+    );
+
+    //
+    return chatCompletionMessages;
+  };
 
   const messagesViewModel: MessagesViewModel = useMessagesViewModel(
     dialogsViewModel.entity?.type,
@@ -180,6 +210,23 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
       fetchMoreData();
     }
   }, [dialogMessagesCount]);
+  //
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const menuItems = [
+    {
+      title: 'Item 1',
+      action: () => {
+        console.log('Clicked on Item 1');
+      },
+    },
+    {
+      title: 'Item 2',
+      action: () => {
+        console.log('Clicked on Item 2');
+      },
+    },
+    // ... добавьте дополнительные элементы меню
+  ];
   //
 
   const getSenderName = (sender?: UserEntity): string | undefined => {
@@ -357,13 +404,18 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
           <div
             className="message-view-container__incoming-time"
             onClick={() => {
-              // IncomingMessageWidgetToRightPlaceHolder?.textToWidget(
-              //   message.message,
-              // );
+              if (!waitAIWidget) {
+                setWaitAIWidget(true);
+                AIAnswerToMessage?.textToWidget(
+                  message.message,
+                  messageEntitiesToIChatMessageCollection(messagesToView),
+                );
+              }
             }}
           >
-            {/* {IncomingMessageWidgetToRightPlaceHolder?.renderWidget()} */}
+            {AIAnswerToMessage?.renderWidget()}
           </div>
+          {/* <ContextMenu items={menuItems} /> */}
         </div>
       );
     } else {
@@ -634,7 +686,10 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
       setFileToSend(voiceMessage);
       if (useAudioWidget) {
         setUseAudioWidget(false);
-        // InputWidgetToRightPlaceHolder?.fileToWidget(voiceMessage);
+        AITranslation?.fileToWidget(
+          voiceMessage,
+          messageEntitiesToIChatMessageCollection(messagesToView),
+        );
       }
       //
     }
@@ -699,45 +754,45 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
     }
   }
 
-  // useEffect(() => {
-  //   if (
-  //     InputWidgetToLeftPlaceHolder?.textToInput &&
-  //     InputWidgetToLeftPlaceHolder?.textToInput.length > 0
-  //   ) {
-  //     setMessageText(InputWidgetToLeftPlaceHolder?.textToInput);
-  //     setWidgetTextContent(InputWidgetToLeftPlaceHolder?.textToInput);
-  //     setTimeout(() => {
-  //       setWidgetTextContent('');
-  //     }, 45 * 1000);
-  //   }
-  // }, [InputWidgetToLeftPlaceHolder?.textToInput]);
-  //
-  // useEffect(() => {
-  //   if (
-  //     InputWidgetToRightPlaceHolder?.textToInput &&
-  //     InputWidgetToRightPlaceHolder?.textToInput.length > 0
-  //   ) {
-  //     setMessageText(InputWidgetToRightPlaceHolder?.textToInput);
-  //     setWidgetTextContent(InputWidgetToRightPlaceHolder?.textToInput);
-  //     setTimeout(() => {
-  //       setWidgetTextContent('');
-  //     }, 45 * 1000);
-  //   }
-  // }, [InputWidgetToRightPlaceHolder?.textToInput]);
-  //
-  // useEffect(() => {
-  //   if (
-  //     IncomingMessageWidgetToRightPlaceHolder?.textToInput &&
-  //     IncomingMessageWidgetToRightPlaceHolder?.textToInput.length > 0
-  //   ) {
-  //     setWidgetTextContent(
-  //       IncomingMessageWidgetToRightPlaceHolder?.textToInput,
-  //     );
-  //     setTimeout(() => {
-  //       setWidgetTextContent('');
-  //     }, 45 * 1000);
-  //   }
-  // }, [IncomingMessageWidgetToRightPlaceHolder?.textToInput]);
+  useEffect(() => {
+    if (
+      AIEditMessage?.textToContent &&
+      AIEditMessage?.textToContent.length > 0
+    ) {
+      setMessageText(AIEditMessage?.textToContent);
+      setWidgetTextContent(AIEditMessage?.textToContent);
+      setTimeout(() => {
+        setWidgetTextContent('');
+      }, 45 * 1000);
+    }
+  }, [AIEditMessage?.textToContent]);
+
+  useEffect(() => {
+    if (
+      AITranslation?.textToContent &&
+      AITranslation?.textToContent.length > 0
+    ) {
+      setMessageText(AITranslation?.textToContent);
+      setWidgetTextContent(AITranslation?.textToContent);
+      setTimeout(() => {
+        setWidgetTextContent('');
+      }, 45 * 1000);
+    }
+  }, [AITranslation?.textToContent]);
+
+  useEffect(() => {
+    setWaitAIWidget(false);
+    if (
+      AIAnswerToMessage?.textToContent &&
+      AIAnswerToMessage?.textToContent.length > 0
+    ) {
+      setMessageText(AIAnswerToMessage?.textToContent);
+      setWidgetTextContent(AIAnswerToMessage?.textToContent);
+      setTimeout(() => {
+        setWidgetTextContent('');
+      }, 45 * 1000);
+    }
+  }, [AIAnswerToMessage?.textToContent]);
 
   const useSubContent = subHeaderContent || false;
   const useUpContent = upHeaderContent || false;
@@ -850,7 +905,7 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
         }
         className="message-view-container--messages"
       >
-        {messagesViewModel?.error && (
+        {messagesViewModel?.error && !messagesViewModel.loading && (
           <ErrorComponent
             title={messagesViewModel?.error}
             ClickActionHandler={() => {
@@ -872,7 +927,7 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
               autoScrollToBottom={scrollUpToDown}
             />
           )}
-        {messagesViewModel?.loading && (
+        {(messagesViewModel?.loading || waitAIWidget) && (
           <div
             style={{
               height: '44px',
@@ -941,11 +996,11 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
             }}
           />
         </label>
-        {/*  start InputWidgetToRightPlaceHolder */}
-        {/* {InputWidgetToRightPlaceHolder && ( */}
+        {/*  start AITranslation */}
+        {/* {AITranslation && ( */}
         {/*  <div> */}
         {/*    <ActiveSvg */}
-        {/*      content={InputWidgetToRightPlaceHolder.renderWidget()} */}
+        {/*      content={AITranslation.renderWidget()} */}
         {/*      clickAction={() => { */}
         {/*        console.log('click left place golder widget'); */}
         {/*        if (messagesViewModel?.loading) return; */}
@@ -958,7 +1013,7 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
         {/*    /> */}
         {/*  </div> */}
         {/* )} */}
-        {/* end InputWidgetToRightPlaceHolder */}
+        {/* end AITranslation */}
         {!isRecording && (
           <textarea
             style={theme ? { backgroundColor: theme.chatInput() } : {}}
@@ -1003,14 +1058,14 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
             }}
           />
         )}
-        {/* InputWidgetToRightPlaceHolder start InputWidgetToLeftPlaceHolder */}
-        {/* {InputWidgetToLeftPlaceHolder && ( */}
+        {/* AITranslation start AIEditMessage */}
+        {/* {AIEditMessage && ( */}
         {/*  <div> */}
         {/*    <ActiveSvg */}
-        {/*      content={InputWidgetToLeftPlaceHolder.renderWidget()} */}
+        {/*      content={AIEditMessage.renderWidget()} */}
         {/*      clickAction={() => { */}
         {/*        console.log('click left place golder widget'); */}
-        {/*        InputWidgetToLeftPlaceHolder?.textToWidget(messageText); */}
+        {/*        AIEditMessage?.textToWidget(messageText); */}
         {/*      }} */}
         {/*      touchAction={() => { */}
         {/*        console.log('touch left place golder widget'); */}

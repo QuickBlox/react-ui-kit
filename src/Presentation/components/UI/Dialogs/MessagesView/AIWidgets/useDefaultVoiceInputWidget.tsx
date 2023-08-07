@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { InputWidget } from './InputWidget';
+import { AIWidget } from './AIWidget';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import VoiceIcon from '../../../svgs/Icons/Actions/Voice';
 
-export default function useDefaultVoiceInputWidget(): InputWidget {
+export default function useDefaultVoiceInputWidget(): AIWidget {
   const renderWidget = (): JSX.Element => {
     // return <VoiceIcon width="21" height="18" applyZoom color="red" />;
     return (
@@ -77,8 +77,8 @@ export default function useDefaultVoiceInputWidget(): InputWidget {
   };
 
   return {
-    fileToInput: audioFromWidgetToInput,
-    textToInput: textFromWidgetToInput,
+    fileToContent: audioFromWidgetToInput,
+    textToContent: textFromWidgetToInput,
     fileToWidget,
     renderWidget,
     textToWidget,

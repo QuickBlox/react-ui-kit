@@ -314,7 +314,6 @@ const DialogsComponent: React.FC<DialogsProps> = ({
       <ColumnContainer>
         {useUpContent && upHeaderContent}
         {useHeader && HeaderContent}
-        {/* {showSearchDialogs ? renderSearchDialogs() : null} */}
         {useSubContent && subHeaderContent}
         {dialogsViewModel?.loading && (
           // <div style={{ maxHeight: '44px', minHeight: '44px', height: '44px' }}>

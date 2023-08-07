@@ -8,13 +8,12 @@ export const QBConfig = {
   },
   configAIApi: {
     AIAnswerAssistWidgetConfig: {
-      apiKey: '',
+      apiKey: '', // Replace with your real API key
       useDefault: true,
       proxyConfig: {
-        // https://api.openai.com/v1/chat/completions'
         api: 'v1/chat/completions',
-        servername: 'https://myproxy.com',
-        port: '4032',
+        servername: 'https://api.openai.com/',
+        port: '',
         sessionToken: '',
       },
     },

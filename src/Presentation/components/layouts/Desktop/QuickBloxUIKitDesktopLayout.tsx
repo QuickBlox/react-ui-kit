@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-// import { Configuration, OpenAIApi } from 'openai';
 import useQbInitializedDataContext from '../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
 import { DialogEntity } from '../../../../Domain/entity/DialogEntity';
 import { DialogsViewModel } from '../../../Views/Dialogs/DialogViewModel';
@@ -17,23 +16,34 @@ import { Pagination } from '../../../../Domain/repository/Pagination';
 // import { DialogEventInfo } from '../../../../Domain/entity/DialogEventInfo';
 import UiKitTheme from '../../../assets/UiKitTheme';
 import BaseViewModel from '../../../Views/Base/BaseViewModel';
-// import { InputWidget } from '../../UI/Dialogs/MessagesView/InputWidget/InputWidget';
-// import useDefaultTextInputWidget from '../../UI/Dialogs/MessagesView/InputWidget/UseDefaultTextInputWidget';
-// import useDefaultVoiceInputWidget from '../../UI/Dialogs/MessagesView/InputWidget/useDefaultVoiceInputWidget';
-// import UseDefaultIncomingMessageWidget from '../../UI/Dialogs/MessagesView/InputWidget/UseDefaultIncomingMessageWidget';
-// import CompanyLogo from '../TestStage/CompanyLogo/CompanyLogo';
+import { AIWidget } from '../../UI/Dialogs/MessagesView/AIWidgets/AIWidget';
+import { QBConfig } from '../../../../QBconfig';
+import UseDefaultAIAssistAnswerWidgetWithProxy from '../../UI/Dialogs/MessagesView/AIWidgets/UseDefaultAIAssistAnswerWidgetWithProxy';
+
+type AIWidgetPlaceHolder = {
+  enabled: boolean;
+  default: boolean;
+  AIWidget?: AIWidget;
+};
 
 type QuickBloxUIKitDesktopLayoutProps = {
   theme?: UiKitTheme;
-  // InputWidgetToLeftPlaceHolder?: InputWidget;
-  // InputWidgetToRightPlaceHolder?: InputWidget;
-  // IncomingMessageWidgetToRightPlaceHolder?: InputWidget;
+  AIEditMessage?: AIWidgetPlaceHolder;
+  AITranslation?: AIWidgetPlaceHolder;
+  AIAnswerToMessage?: AIWidgetPlaceHolder;
 };
 
 const QuickBloxUIKitDesktopLayout: React.FC<
   QuickBloxUIKitDesktopLayoutProps
   // eslint-disable-next-line @typescript-eslint/no-unused-vars,react/function-component-definition
-> = ({ theme = undefined }: QuickBloxUIKitDesktopLayoutProps) => {
+> = ({
+  theme = undefined,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  AITranslation = undefined,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  AIEditMessage = undefined,
+  AIAnswerToMessage = undefined,
+}: QuickBloxUIKitDesktopLayoutProps) => {
   console.log('create QuickBloxUIKitDesktopLayout');
   const [selectedDialog, setSelectedDialog] =
     React.useState<BaseViewModel<DialogEntity>>();
@@ -46,32 +56,56 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userName;
   const userId =
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId;
+  const sessionToken =
+    currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.sessionToken;
 
   const dialogsViewModel: DialogsViewModel =
     useDialogsViewModel(currentContext);
 
-  // let defaultLeftPlaceHolderInputWidget = InputWidgetToLeftPlaceHolder; // useDefaultTextInputWidget();
-  //
-  // if (!defaultLeftPlaceHolderInputWidget) {
-  //   defaultLeftPlaceHolderInputWidget = useDefaultTextInputWidget();
+  const defaultAIEditMessageWidget = AIEditMessage?.AIWidget; // useDefaultTextInputWidget();
+  const defaultAITranslateWidget = AITranslation?.AIWidget;
+  // if (!defaultAIEditMessageWidget) {
+  //   defaultAIEditMessageWidget = useDefaultTextInputWidget();
   // }
-  // const defaultRightPlaceHolderInputWidget =
-  //   InputWidgetToRightPlaceHolder || useDefaultVoiceInputWidget();
-  // let defaultIncomingMessageWidget = IncomingMessageWidgetToRightPlaceHolder;
-  //
-  // if (!defaultIncomingMessageWidget) {
-  //   const apiKey = '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'; // Замените на ваш реальный ключ API
-  //
-  //   const openAIConfiguration = new Configuration({
-  //     apiKey,
-  //   });
-  //
-  //   const openAIApi = new OpenAIApi(openAIConfiguration);
-  //
-  //   defaultIncomingMessageWidget = UseDefaultIncomingMessageWidget({
-  //     openAIApi,
-  //   });
-  // }
+  // const defaultAITranslateWidget =
+  //   AITranslation?.AIWidget || useDefaultVoiceInputWidget();
+  let defaultAIAnswerToMessageWidget;
+
+  const getAIAssistAnswer = (): void => {
+    if (AIAnswerToMessage?.enabled && !AIAnswerToMessage?.default) {
+      defaultAIAnswerToMessageWidget = AIAnswerToMessage.AIWidget;
+    } else if (
+      AIAnswerToMessage?.enabled ||
+      QBConfig.configAIApi.AIAnswerAssistWidgetConfig.useDefault
+    ) {
+      if (
+        !QBConfig.configAIApi.AIAnswerAssistWidgetConfig.useDefault ||
+        (AIAnswerToMessage && !AIAnswerToMessage?.default)
+      ) {
+        defaultAIAnswerToMessageWidget = undefined;
+      } else {
+        const { apiKey } = QBConfig.configAIApi.AIAnswerAssistWidgetConfig;
+        let token = '';
+
+        if (apiKey) {
+          token = apiKey;
+        } else {
+          token =
+            QBConfig.configAIApi.AIAnswerAssistWidgetConfig.proxyConfig
+              .sessionToken ||
+            sessionToken ||
+            '';
+        }
+        defaultAIAnswerToMessageWidget =
+          UseDefaultAIAssistAnswerWidgetWithProxy({
+            ...QBConfig.configAIApi.AIAnswerAssistWidgetConfig.proxyConfig,
+            sessionToken: token,
+          });
+      }
+    }
+  };
+
+  getAIAssistAnswer();
 
   const selectDialogActions = (item: BaseViewModel<DialogEntity>): void => {
     if (!dialogsViewModel.loading) {
@@ -235,11 +269,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
             maxWidthToResize={
               selectedDialog && needDialogInformation ? undefined : '1040px'
             }
-            // InputWidgetToLeftPlaceHolder={defaultLeftPlaceHolderInputWidget}
-            // InputWidgetToRightPlaceHolder={defaultRightPlaceHolderInputWidget}
-            // IncomingMessageWidgetToRightPlaceHolder={
-            //   defaultIncomingMessageWidget
-            // }
+            AIEditMessage={defaultAIEditMessageWidget}
+            AITranslation={defaultAITranslateWidget}
+            AIAnswerToMessage={defaultAIAnswerToMessageWidget}
             theme={theme}
           /> // 1 Get Messages + 1 Get User by Id
         ) : (

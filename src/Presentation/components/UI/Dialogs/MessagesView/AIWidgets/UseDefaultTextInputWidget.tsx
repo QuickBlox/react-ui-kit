@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { InputWidget } from './InputWidget';
+import { AIWidget } from './AIWidget';
 
-export default function useDefaultTextInputWidget(): InputWidget {
+export default function useDefaultTextInputWidget(): AIWidget {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
   const fileToWidget = (file: File): void => {};
 
@@ -51,8 +51,8 @@ export default function useDefaultTextInputWidget(): InputWidget {
   };
 
   return {
-    fileToInput: undefined,
-    textToInput: textFromWidgetToInput,
+    fileToContent: undefined,
+    textToContent: textFromWidgetToInput,
     fileToWidget,
     renderWidget,
     textToWidget,

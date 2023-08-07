@@ -194,18 +194,6 @@ function App() {
     prepareSDK(currentUser).catch();
   }, []);
 
-  // const { apiKey } = QBConfig.configAIApi.AIAnswerAssistWidgetConfig;
-  // // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  // const openAIConfiguration: Configuration = new Configuration({
-  //   apiKey,
-  // });
-  //
-  // // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  // const openAIApi: OpenAIApi = new OpenAIApi(openAIConfiguration);
-  // const defaultIncomingMessageWidget = UseDefaultIncomingMessageWidget({
-  //   openAIApi,
-  // });
-
   // todo: uncomment authSecret
   return (
     <QuickBloxUIKitProvider
@@ -233,13 +221,6 @@ function App() {
             <Route
               path="/desktop-test-mock"
               element={
-                // <QuickBloxUIKitDesktopLayout
-                //   theme={new DefaultTheme()}
-                //   IncomingMessageWidgetToRightPlaceHolder={
-                //     defaultIncomingMessageWidget
-                //   }
-                // />
-
                 <QuickBloxUIKitDesktopLayout theme={new DefaultTheme()} />
               }
             />

@@ -69,7 +69,15 @@ export type FunctionTypeDialogEntityToBoolean = (
 ) => Promise<boolean>;
 export type FunctionTypeFileToFileEntity = (file: File) => Promise<FileEntity>;
 export type FunctionTypeJSXElement = () => JSX.Element;
-export type FunctionTypeChatMessagesToVoid = (
-  lastMessage: string,
-  messages: IChatMessage,
+// export type FunctionTypeChatMessagesToVoid = (
+//   lastMessage: string,
+//   messages: IChatMessage,
+// ) => void;
+export type FunctionTypeFileWithContextToToVoid = (
+  file: File,
+  context: IChatMessage[],
+) => void;
+export type FunctionTypeStringWithContextToVoid = (
+  value: string,
+  context: IChatMessage[],
 ) => void;
