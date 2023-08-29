@@ -74,7 +74,8 @@ export class MessageRemoteDTOMapper implements IMapper {
     const messageEntity: MessageEntity =
       MessageRemoteDTOMapper.createDefaultMessageEntity();
 
-    messageEntity.id = parseInt(messageDTO.id, 10);
+    // messageEntity.id = parseInt(messageDTO.id, 10);
+    messageEntity.id = messageDTO.id;
     messageEntity.dialogId = messageDTO.dialogId;
     messageEntity.created_at = messageDTO.created_at;
     messageEntity.date_sent = messageDTO.date_sent;
@@ -419,7 +420,7 @@ export class MessageRemoteDTOMapper implements IMapper {
       date_sent: 0,
       delivered_ids: new Array<number>(),
       dialogId: '',
-      id: 0,
+      id: '',
       message: '',
       read: 0,
       read_ids: new Array<number>(),

@@ -364,7 +364,7 @@ export default function useMessagesViewModel(
     const currentUserId =
       currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId || 0;
     const messageToSend: MessageEntity = Stubs.createMessageEntityWithParams(
-      0,
+      '',
       dialog.id,
       newMessage,
       Date.now().toString(),
@@ -401,7 +401,7 @@ export default function useMessagesViewModel(
         // '[attachment]'
         const messageToSend: MessageEntity =
           Stubs.createMessageEntityWithParams(
-            0,
+            '',
             dialog.id,
             // eslint-disable-next-line promise/always-return
             fileMessage.name || '[attachment]',

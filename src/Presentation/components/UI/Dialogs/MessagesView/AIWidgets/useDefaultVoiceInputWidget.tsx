@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { AIWidget } from './AIWidget';
+import { AIAttachmentWidget } from './AIMessageWidget';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import VoiceIcon from '../../../svgs/Icons/Actions/Voice';
 
-export default function useDefaultVoiceInputWidget(): AIWidget {
+export default function useDefaultVoiceInputWidget(): AIAttachmentWidget {
   const renderWidget = (): JSX.Element => {
     // return <VoiceIcon width="21" height="18" applyZoom color="red" />;
     return (
@@ -32,7 +32,7 @@ export default function useDefaultVoiceInputWidget(): AIWidget {
 
   const [audioFromWidgetToInput, setAudioFromWidgetToInput] = useState<File>();
 
-  async function sendFile(file: File): Promise<any> {
+  async function sendFile(file: File): Promise<string> {
     if (file) {
       // Создание объекта FormData и добавление файла
       const formData = new FormData();
@@ -57,8 +57,10 @@ export default function useDefaultVoiceInputWidget(): AIWidget {
         JSON.stringify(data.replaceAll('\n\n', '')),
       );
 
-      return data.replaceAll('\n\n', '');
+      return data.replaceAll('\n\n', '') || '';
     }
+
+    return '';
   }
 
   const fileToWidget = (file: File): void => {
@@ -68,6 +70,7 @@ export default function useDefaultVoiceInputWidget(): AIWidget {
     console.log(fileInfo);
     if (file) {
       // Отправка файла и получение результата
+      // eslint-disable-next-line promise/catch-or-return,promise/always-return
       sendFile(file).then((result) => {
         // Обработка результата
         console.log(result);
@@ -78,9 +81,7 @@ export default function useDefaultVoiceInputWidget(): AIWidget {
 
   return {
     fileToContent: audioFromWidgetToInput,
-    textToContent: textFromWidgetToInput,
     fileToWidget,
     renderWidget,
-    textToWidget,
   };
 }

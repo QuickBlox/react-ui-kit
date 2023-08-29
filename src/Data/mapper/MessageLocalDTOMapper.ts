@@ -67,7 +67,8 @@ export class MessageLocalDTOMapper implements IMapper {
     const messageEntity: MessageEntity =
       MessageLocalDTOMapper.createDefaultMessageEntity();
 
-    messageEntity.id = parseInt(messageDTO.id, 10);
+    // messageEntity.id = parseInt(messageDTO.id, 10);
+    messageEntity.id = messageDTO.id;
     messageEntity.dialogId = messageDTO.dialogId;
     messageEntity.created_at = messageDTO.created_at;
     messageEntity.date_sent = messageDTO.date_sent;
@@ -409,7 +410,7 @@ export class MessageLocalDTOMapper implements IMapper {
 
   private static createDefaultMessageEntity() {
     return {
-      id: 0,
+      id: '',
       dialogId: '',
       created_at: '',
       date_sent: 0,

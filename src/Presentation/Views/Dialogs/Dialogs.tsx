@@ -266,9 +266,9 @@ const DialogsComponent: React.FC<DialogsProps> = ({
   };
 
   const loaderTheme: IconTheme = {
-    color: 'var(--divider)',
-    width: '42',
-    height: '42',
+    color: 'var(--color-background-info)',
+    width: '44',
+    height: '44',
   };
 
   const renderSearchDialogs = () => {
@@ -315,26 +315,42 @@ const DialogsComponent: React.FC<DialogsProps> = ({
         {useUpContent && upHeaderContent}
         {useHeader && HeaderContent}
         {useSubContent && subHeaderContent}
-        {dialogsViewModel?.loading && (
-          // <div style={{ maxHeight: '44px', minHeight: '44px', height: '44px' }}>
-          //   <LoaderComponent width="44" height="44" color="var(--divider)" />
-          // </div>
-          <LoaderComponent
-            width={loaderTheme.width}
-            height={loaderTheme.height}
-            color={loaderTheme.color}
-          />
-        )}
-        {dialogsViewModel?.error && (
-          <ErrorComponent
-            title="Something is wrong."
-            ClickActionHandler={() => {
-              alert('call click retry');
-            }}
-          />
-        )}
         {/* <div className="scroll-box"> */}
         <div className="scroll-box">
+          {dialogsViewModel?.loading && (
+            // <div style={{ maxHeight: '44px', minHeight: '44px', height: '44px' }}>
+            //   <LoaderComponent width="44" height="44" color="var(--divider)" />
+            // </div>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <div
+                style={{
+                  height: '44px',
+                  width: '44px',
+                }}
+              >
+                <LoaderComponent
+                  width={loaderTheme.width}
+                  height={loaderTheme.height}
+                  color={loaderTheme.color}
+                />
+              </div>
+            </div>
+          )}
+          {dialogsViewModel?.error && (
+            <ErrorComponent
+              title="Something is wrong."
+              ClickActionHandler={() => {
+                alert('call click retry');
+              }}
+            />
+          )}
           {showSearchDialogs ? renderSearchDialogs() : null}
           {nameDialogForSearch.length > 0 &&
             dialogsToView

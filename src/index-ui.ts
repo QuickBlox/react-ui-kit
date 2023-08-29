@@ -33,6 +33,10 @@ import QuickBloxUIKitDesktopLayout from './Presentation/components/layouts/Deskt
 import DefaultTheme from './Presentation/assets/DefaultThemes/DefaultTheme';
 import UiKitTheme from './Presentation/assets/UiKitTheme';
 import useQbUIKitDataContext from './Presentation/components/providers/QuickBloxUIKitProvider/useQbUIKitDataContext';
+import { AIMessageWidget } from './Presentation/components/UI/Dialogs/MessagesView/AIWidgets/AIMessageWidget';
+import { AISource, IChatMessage } from './Data/source/AISource';
+import AIWidgetIcon from './Presentation/components/UI/svgs/Icons/AIWidgets/AIWidget';
+import ErrorMessageIcon from './Presentation/components/UI/Dialogs/MessagesView/AIWidgets/ErrorMessageIcon';
 
 export {
   MainButton,
@@ -65,4 +69,9 @@ export {
   QuickBloxUIKitDesktopLayout,
   DefaultTheme,
   type UiKitTheme,
+  type AIMessageWidget,
+  AISource,
+  type IChatMessage,
+  AIWidgetIcon,
+  ErrorMessageIcon,
 };

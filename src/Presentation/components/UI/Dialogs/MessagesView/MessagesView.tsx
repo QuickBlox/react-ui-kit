@@ -15,10 +15,6 @@ import useMessagesViewModel from './useMessagesViewModel';
 import LoaderComponent from '../../Placeholders/LoaderComponent/LoaderComponent';
 import ErrorComponent from '../../Placeholders/ErrorComponent/ErrorComponent';
 import HeaderMessages from './HeaderMessages/HeaderMessages';
-import {
-  FunctionTypeVoidToVoid,
-  IChatMessage,
-} from '../../../../Views/Base/BaseViewModel';
 import VideoAttachmentComponent from './VideoAttachmentComponent/VideoAttachmentComponent';
 import ImageAttachmentComponent from './ImageAttachmentComponent/ImageAttachmentComponent';
 import { DialogType } from '../../../../../Domain/entity/DialogTypes';
@@ -31,32 +27,47 @@ import {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getDateShortFormatEU,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  formatShortTime3,
+  // formatShortTime3,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  formatShortTime4,
-  getTimeShort24hFormat,
+  // formatShortTime4,
+  // getTimeShort24hFormat,
 } from '../../../../../utils/DateTimeFormatter';
-import User from '../../svgs/Icons/Contents/User';
 import ActiveSvg from '../../svgs/ActiveSvg/ActiveSvg';
 import AttachmentIcon from '../../svgs/Icons/Media/Attachment';
 import SendIcon from '../../svgs/Icons/Actions/Send';
 import AudioAttachmentComponent from './AudioAttachmentComponent/AudioAttachmentComponent';
 import AudioFile from '../../svgs/Icons/Media/AudioFile';
 import VoiceIcon from '../../svgs/Icons/Actions/Voice';
-import SentStatusIcon from '../../svgs/Icons/Status/Sent';
-import ViewedDelivered from '../../svgs/Icons/Status/ViewedDelivered';
 import { stringifyError } from '../../../../../utils/parse';
 import VoiceRecordingProgress from './VoiceRecordingProgress/VoiceRecordingProgress';
 import UiKitTheme from '../../../../assets/UiKitTheme';
-import { AIWidget } from './AIWidgets/AIWidget';
+import { AIMessageWidget } from './AIWidgets/AIMessageWidget';
 import { DialogsViewModel } from '../../../../Views/Dialogs/DialogViewModel';
 import { HighLightLink, messageHasUrls } from './HighLightLink/HighLightLink';
 import { loopToLimitTokens } from '../../../../../utils/utils';
+import { OutGoingMessage } from './OutGoingMessage/OutGoingMessage';
+import { InComingMessage } from './InComingMessage/InComingMessage';
+import { Tone } from './AIWidgets/Tone';
+import NecktieIcon from '../../svgs/Icons/AIWidgets/NecktieIcon';
+import HandshakeIcon from '../../svgs/Icons/AIWidgets/HandshakeIcon';
+import WhiteCheckMarkIcon from '../../svgs/Icons/AIWidgets/WhiteCheckMarkIcon';
+import MuscleIcon from '../../svgs/Icons/AIWidgets/MuscleIcon';
+import PalmsUpTogetherIcon from '../../svgs/Icons/AIWidgets/PalmsUpTogetherIcon';
+import NeutralFaceIcon from '../../svgs/Icons/AIWidgets/NeutralFaceIcon';
+import HammerIcon from '../../svgs/Icons/AIWidgets/HammerIcon';
+import BookIcon from '../../svgs/Icons/AIWidgets/BookIcon/BookIcon';
+import PointUpIcon from '../../svgs/Icons/AIWidgets/PointUpIcon';
+import SmirkIcon from '../../svgs/Icons/AIWidgets/SmirkIcon';
+import PerformingArtsIcon from '../../svgs/Icons/AIWidgets/PerformingArtsIcon';
+import { FunctionTypeVoidToVoid } from '../../../../Views/Base/BaseViewModel';
+import { IChatMessage } from '../../../../../Data/source/AISource';
+// import ToneIcon from '../../svgs/Icons/Actions/Tone';
+// import AIWidgetActions from './AIWidgets/AIWidgetActions/AIWidgetActions';
 
 type HeaderDialogsMessagesProps = {
-  AIEditMessage?: AIWidget;
-  AITranslation?: AIWidget;
-  AIAnswerToMessage?: AIWidget;
+  AIRephrase?: AIMessageWidget;
+  AITranslate?: AIMessageWidget;
+  AIAssist?: AIMessageWidget;
   dialogsViewModel: DialogsViewModel;
   onDialogInformationHandler?: FunctionTypeVoidToVoid;
   maxWidthToResize?: string;
@@ -68,11 +79,11 @@ type HeaderDialogsMessagesProps = {
 // eslint-disable-next-line react/function-component-definition
 const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  AIEditMessage,
+  AIRephrase,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  AITranslation,
+  AITranslate,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  AIAnswerToMessage,
+  AIAssist,
   dialogsViewModel,
   onDialogInformationHandler,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -92,6 +103,7 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId;
   const currentUserName =
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userName;
+  // const translations: Record<number, string> = {};
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { connectionRepository, browserOnline } = useQBConnection();
   const [dialogMessagesCount, setDialogMessageCount] = useState(100);
@@ -100,8 +112,8 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   const [messagesToView, setMessagesToView] = React.useState<MessageEntity[]>(
     [],
   );
-  const [waitAIWidget, setWaitAIWidget] = useState<boolean>(false);
 
+  const [waitAIWidget, setWaitAIWidget] = useState<boolean>(false);
   const messageEntitiesToIChatMessageCollection = (
     messageEntities: MessageEntity[],
   ): IChatMessage[] => {
@@ -211,23 +223,6 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
     }
   }, [dialogMessagesCount]);
   //
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const menuItems = [
-    {
-      title: 'Item 1',
-      action: () => {
-        console.log('Clicked on Item 1');
-      },
-    },
-    {
-      title: 'Item 2',
-      action: () => {
-        console.log('Clicked on Item 2');
-      },
-    },
-    // ... добавьте дополнительные элементы меню
-  ];
-  //
 
   const getSenderName = (sender?: UserEntity): string | undefined => {
     if (!sender) return undefined;
@@ -236,6 +231,26 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
       sender.full_name || sender.login || sender.email || sender.id.toString()
     );
   };
+
+  // function sendMessageToTranslate(message: MessageEntity) {
+  //   if (!waitAIWidget) {
+  //     setWaitAIWidget(true);
+  //     AITranslation?.textToWidget(
+  //       message.message,
+  //       messageEntitiesToIChatMessageCollection(messagesToView),
+  //     );
+  //   }
+  // }
+  //
+  // function sendMessageToAIAssistAnswer(message: MessageEntity) {
+  //   if (!waitAIWidget) {
+  //     setWaitAIWidget(true);
+  //     AIAnswerToMessage?.textToWidget(
+  //       message.message,
+  //       messageEntitiesToIChatMessageCollection(messagesToView),
+  //     );
+  //   }
+  // }
 
   const renderMessage = (message: MessageEntity, index: number) => {
     const SystemMessage = 'SystemMessage';
@@ -357,113 +372,56 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
       );
     } else if (messageTypes === IncomingMessage) {
       messageView = (
-        <div
-          className="message-view-container--incoming-message-wrapper"
+        <InComingMessage
           key={message.id}
-        >
-          <div className="message-view-container--incoming-message-wrapper__avatar">
-            <div
-              style={theme ? { backgroundColor: theme.disabledElements() } : {}}
-              className="message-view-container__sender-avatar"
-            >
-              <User
-                width="24"
-                height="24"
-                applyZoom
-                color="var(--secondary-text)"
-              />
-            </div>
-          </div>
-          <div className="message-view-container--incoming-message-container">
-            <div
-              style={theme ? { color: theme.secondaryText() } : {}}
-              className="message-view-container__sender-name"
-            >
-              {getSenderName(message.sender) || message.sender_id.toString()}
-            </div>
-            <div
-              style={
-                theme
-                  ? {
-                      color: theme.mainText(),
-                      backgroundColor: theme.incomingBackground(),
-                    }
-                  : {}
-              }
-              className="message-view-container__sender-message"
-            >
-              {messageContentRender(message)}
-            </div>
-          </div>
-          <div
-            style={theme ? { color: theme.mainText() } : {}}
-            className="message-view-container__incoming-time"
-          >
-            {getTimeShort24hFormat(message.date_sent)}
-          </div>
-          <div
-            className="message-view-container__incoming-time"
-            onClick={() => {
-              if (!waitAIWidget) {
-                setWaitAIWidget(true);
-                AIAnswerToMessage?.textToWidget(
-                  message.message,
-                  messageEntitiesToIChatMessageCollection(messagesToView),
-                );
-              }
-            }}
-          >
-            {AIAnswerToMessage?.renderWidget()}
-          </div>
-          {/* <ContextMenu items={menuItems} /> */}
-        </div>
+          theme={theme}
+          senderName={getSenderName(message.sender)}
+          message={message}
+          // element={messageContentRender(message)}
+          onLoader={() => {
+            // sendMessageToTranslate(message);
+            setWaitAIWidget(true);
+          }}
+          // renderWidget={
+          //   <ContextMenu
+          //     widgetToRender={
+          //       <AIWidgetIcon applyZoom color="var(--main-elements)" />
+          //     }
+          //     items={[
+          //       {
+          //         title: 'AI Assist Answer',
+          //         action: () => {
+          //           sendMessageToAIAssistAnswer(message);
+          //         },
+          //       },
+          //       {
+          //         title: 'AI Translate',
+          //         action: () => {
+          //           sendMessageToTranslate(message);
+          //         },
+          //       },
+          //     ]}
+          //   />
+          // }
+          currentUserId={currentUserId}
+          messagesToView={messagesToView}
+          AITranslation={AITranslate}
+          AIAnswerToMessage={AIAssist}
+          // translationDATA={translations}
+          // index={index}
+          // updateData={(ind: number, v: string) => {
+          //   translations[ind] = v;
+          // }}
+        />
       );
     } else {
       messageView = (
-        <div
-          className="message-view-container--outgoing-message-wrapper"
+        <OutGoingMessage
           key={message.id}
-        >
-          <div className="message-view-container__status-message">
-            <div className="message-view-container__incoming-time">
-              {message.delivered_ids && message.delivered_ids.length > 0 ? (
-                <ViewedDelivered
-                  width="13"
-                  height="13"
-                  applyZoom
-                  color={theme ? theme.mainElements() : 'var(--main-elements)'}
-                />
-              ) : (
-                <SentStatusIcon
-                  width="13"
-                  height="13"
-                  applyZoom
-                  color={theme ? theme.mainElements() : 'var(--main-elements)'}
-                />
-              )}
-            </div>
-            <div
-              style={theme ? { color: theme.mainText() } : {}}
-              className="message-view-container__incoming-time"
-            >
-              {getTimeShort24hFormat(message.date_sent)}
-            </div>
-          </div>
-
-          <div
-            style={
-              theme
-                ? {
-                    color: theme.mainText(),
-                    backgroundColor: theme.outgoingBackground(),
-                  }
-                : {}
-            }
-            className="message-view-container__outgoing-message"
-          >
-            {messageContentRender(message)}
-          </div>
-        </div>
+          message={message}
+          theme={theme}
+          element={messageContentRender(message)}
+        />
       );
     }
 
@@ -686,10 +644,11 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
       setFileToSend(voiceMessage);
       if (useAudioWidget) {
         setUseAudioWidget(false);
-        AITranslation?.fileToWidget(
-          voiceMessage,
-          messageEntitiesToIChatMessageCollection(messagesToView),
-        );
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        // AITranslation?.fileToWidget(
+        //   voiceMessage,
+        //   messageEntitiesToIChatMessageCollection(messagesToView),
+        // );
       }
       //
     }
@@ -755,47 +714,202 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   }
 
   useEffect(() => {
-    if (
-      AIEditMessage?.textToContent &&
-      AIEditMessage?.textToContent.length > 0
-    ) {
-      setMessageText(AIEditMessage?.textToContent);
-      setWidgetTextContent(AIEditMessage?.textToContent);
+    setWaitAIWidget(false);
+    if (AIRephrase?.textToContent && AIRephrase?.textToContent.length > 0) {
+      setMessageText(AIRephrase?.textToContent);
+      setWidgetTextContent(AIRephrase?.textToContent);
       setTimeout(() => {
         setWidgetTextContent('');
       }, 45 * 1000);
     }
-  }, [AIEditMessage?.textToContent]);
-
-  useEffect(() => {
-    if (
-      AITranslation?.textToContent &&
-      AITranslation?.textToContent.length > 0
-    ) {
-      setMessageText(AITranslation?.textToContent);
-      setWidgetTextContent(AITranslation?.textToContent);
-      setTimeout(() => {
-        setWidgetTextContent('');
-      }, 45 * 1000);
-    }
-  }, [AITranslation?.textToContent]);
+  }, [AIRephrase?.textToContent]);
 
   useEffect(() => {
     setWaitAIWidget(false);
-    if (
-      AIAnswerToMessage?.textToContent &&
-      AIAnswerToMessage?.textToContent.length > 0
-    ) {
-      setMessageText(AIAnswerToMessage?.textToContent);
-      setWidgetTextContent(AIAnswerToMessage?.textToContent);
+    // if (
+    //   AITranslation?.textToContent &&
+    //   AITranslation?.textToContent.length > 0
+    // ) {
+    //   setMessageText(AITranslation?.textToContent);
+    //   setWidgetTextContent(AITranslation?.textToContent);
+    //   setTimeout(() => {
+    //     setWidgetTextContent('');
+    //   }, 45 * 1000);
+    // }
+  }, [AITranslate?.textToContent]);
+
+  useEffect(() => {
+    setWaitAIWidget(false);
+    if (AIAssist?.textToContent && AIAssist?.textToContent.length > 0) {
+      setMessageText(AIAssist?.textToContent);
+      setWidgetTextContent(AIAssist?.textToContent);
       setTimeout(() => {
         setWidgetTextContent('');
       }, 45 * 1000);
     }
-  }, [AIAnswerToMessage?.textToContent]);
-
+  }, [AIAssist?.textToContent]);
   const useSubContent = subHeaderContent || false;
   const useUpContent = upHeaderContent || false;
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function getAIEditingMessagesItems() {
+    return [
+      {
+        title: 'Professional Tone',
+        icon: <NecktieIcon />,
+        action: () => {
+          if (messageText && messageText.length > 0 && !waitAIWidget) {
+            setWaitAIWidget(true);
+            AIRephrase?.textToWidget(
+              messageText,
+              messageEntitiesToIChatMessageCollection(messagesToView),
+              { tone: Tone.Professional },
+            );
+          }
+        },
+      },
+      {
+        title: 'Friendly Tone',
+        icon: <HandshakeIcon />,
+        action: () => {
+          if (messageText && messageText.length > 0 && !waitAIWidget) {
+            setWaitAIWidget(true);
+            AIRephrase?.textToWidget(
+              messageText,
+              messageEntitiesToIChatMessageCollection(messagesToView),
+              { tone: Tone.Friendly },
+            );
+          }
+        },
+      },
+      {
+        title: 'Encouraging Tone',
+        icon: <MuscleIcon />,
+        action: () => {
+          if (messageText && messageText.length > 0 && !waitAIWidget) {
+            setWaitAIWidget(true);
+            AIRephrase?.textToWidget(
+              messageText,
+              messageEntitiesToIChatMessageCollection(messagesToView),
+              { tone: Tone.Encouraging },
+            );
+          }
+        },
+      },
+      {
+        title: 'Empathetic Tone',
+        icon: <PalmsUpTogetherIcon />,
+        action: () => {
+          if (messageText && messageText.length > 0 && !waitAIWidget) {
+            setWaitAIWidget(true);
+            AIRephrase?.textToWidget(
+              messageText,
+              messageEntitiesToIChatMessageCollection(messagesToView),
+              { tone: Tone.Empathetic },
+            );
+          }
+        },
+      },
+      {
+        title: 'Neutral Tone',
+        icon: <NeutralFaceIcon />,
+        action: () => {
+          if (messageText && messageText.length > 0 && !waitAIWidget) {
+            setWaitAIWidget(true);
+            AIRephrase?.textToWidget(
+              messageText,
+              messageEntitiesToIChatMessageCollection(messagesToView),
+              { tone: Tone.Neutral },
+            );
+          }
+        },
+      },
+      {
+        title: 'Assertive Tone',
+        icon: <HammerIcon />,
+        action: () => {
+          if (messageText && messageText.length > 0 && !waitAIWidget) {
+            setWaitAIWidget(true);
+            AIRephrase?.textToWidget(
+              messageText,
+              messageEntitiesToIChatMessageCollection(messagesToView),
+              { tone: Tone.Assertive },
+            );
+          }
+        },
+      },
+      {
+        title: 'Instructive Tone',
+        icon: <BookIcon />,
+        action: () => {
+          if (messageText && messageText.length > 0 && !waitAIWidget) {
+            setWaitAIWidget(true);
+            AIRephrase?.textToWidget(
+              messageText,
+              messageEntitiesToIChatMessageCollection(messagesToView),
+              { tone: Tone.Instructive },
+            );
+          }
+        },
+      },
+      {
+        title: 'Persuasive Tone',
+        icon: <PointUpIcon />,
+        action: () => {
+          if (messageText && messageText.length > 0 && !waitAIWidget) {
+            setWaitAIWidget(true);
+            AIRephrase?.textToWidget(
+              messageText,
+              messageEntitiesToIChatMessageCollection(messagesToView),
+              { tone: Tone.Persuasive },
+            );
+          }
+        },
+      },
+      {
+        title: 'Sarcastic/Ironic Tone',
+        icon: <SmirkIcon />,
+        action: () => {
+          if (messageText && messageText.length > 0 && !waitAIWidget) {
+            setWaitAIWidget(true);
+            AIRephrase?.textToWidget(
+              messageText,
+              messageEntitiesToIChatMessageCollection(messagesToView),
+              { tone: Tone.Sarcastic },
+            );
+          }
+        },
+      },
+      {
+        title: 'Poetic Tone',
+        icon: <PerformingArtsIcon />,
+        action: () => {
+          if (messageText && messageText.length > 0 && !waitAIWidget) {
+            setWaitAIWidget(true);
+            AIRephrase?.textToWidget(
+              messageText,
+              messageEntitiesToIChatMessageCollection(messagesToView),
+              { tone: Tone.Poetic },
+            );
+          }
+        },
+      },
+      {
+        title: 'Back to original text',
+        icon: <WhiteCheckMarkIcon />,
+        action: () => {
+          if (messageText && messageText.length > 0 && !waitAIWidget) {
+            setWaitAIWidget(true);
+            AIRephrase?.textToWidget(
+              messageText,
+              messageEntitiesToIChatMessageCollection(messagesToView),
+              { tone: Tone.Unchanged },
+            );
+          }
+        },
+      },
+    ];
+  }
 
   return (
     <div
@@ -927,28 +1041,54 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
               autoScrollToBottom={scrollUpToDown}
             />
           )}
-        {(messagesViewModel?.loading || waitAIWidget) && (
-          <div
-            style={{
-              height: '44px',
-              width: '44px',
-            }}
-          >
-            <LoaderComponent
-              width="44"
-              height="44"
-              color="var(--color-background-info)"
-            />
-          </div>
-        )}
+        {/* {(messagesViewModel?.loading || waitAIWidget) && ( */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {messagesViewModel?.loading && (
+            <div
+              style={{
+                height: '44px',
+                width: '44px',
+              }}
+            >
+              <LoaderComponent
+                width="44"
+                height="44"
+                color="var(--color-background-info)"
+              />
+            </div>
+          )}
+        </div>
+
         <div
           style={theme ? { color: theme.mainElements() } : {}}
           className="message-view-container--warning-error"
         >
           {warningErrorText}
         </div>
+        {/* <div> */}
+        {/*  <SliderMenu */}
+        {/*    width={680} */}
+        {/*    arrowColor="var(--chat-input)" */}
+        {/*    activeArrowColor="var(--divider)" */}
+        {/*    activeItemBorderColor="var(--main-elements)" */}
+        {/*    borderColor="var(--divider)" */}
+        {/*    backgroundColor="white" */}
+        {/*    itemBackgroundColor="var(--divider)" */}
+        {/*    itemWidth={130} */}
+        {/*    itemHeight={20} */}
+        {/*    fontSize={11} // Задаем размер шрифта */}
+        {/*    itemBorder="1px solid var(--divider)" */}
+        {/*    items={getAIEditingMessagesItems()} */}
+        {/*  /> */}
+        {/* </div> */}
       </div>
-
       <div
         style={{
           flex: `flex: 1 1 ${maxWidthToResizing}`,
@@ -996,11 +1136,11 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
             }}
           />
         </label>
-        {/*  start AITranslation */}
-        {/* {AITranslation && ( */}
+        {/*  start InputWidgetToRightPlaceHolder */}
+        {/* {InputWidgetToRightPlaceHolder && ( */}
         {/*  <div> */}
         {/*    <ActiveSvg */}
-        {/*      content={AITranslation.renderWidget()} */}
+        {/*      content={InputWidgetToRightPlaceHolder.renderWidget()} */}
         {/*      clickAction={() => { */}
         {/*        console.log('click left place golder widget'); */}
         {/*        if (messagesViewModel?.loading) return; */}
@@ -1013,33 +1153,54 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
         {/*    /> */}
         {/*  </div> */}
         {/* )} */}
-        {/* end AITranslation */}
+        {/* end InputWidgetToRightPlaceHolder */}
         {!isRecording && (
-          <textarea
-            style={theme ? { backgroundColor: theme.chatInput() } : {}}
-            disabled={messagesViewModel?.loading}
-            value={messageText}
-            onFocus={() => {
-              setVoiceMessage(false);
-            }}
-            onChange={(event) => {
-              setMessageText(event.target.value);
-            }}
-            onInput={() => {
-              messagesViewModel.sendTypingTextMessage();
-            }}
-            onKeyDown={(e) => {
-              console.log(
-                `onKeyDown: ${e.key} shift ${
-                  e.shiftKey ? 'true' : 'false'
-                } ctrl ${e.ctrlKey ? 'true' : 'false'}`,
-              );
-              if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
-                sendTextMessageActions();
-              }
-            }}
-            placeholder="enter text to send"
-          />
+          <div className="input-text-message">
+            <div className="type-message">
+              <textarea
+                style={theme ? { backgroundColor: theme.chatInput() } : {}}
+                disabled={messagesViewModel?.loading}
+                value={messageText}
+                onFocus={() => {
+                  setVoiceMessage(false);
+                }}
+                onChange={(event) => {
+                  setMessageText(event.target.value);
+                }}
+                onInput={() => {
+                  messagesViewModel.sendTypingTextMessage();
+                }}
+                onKeyDown={(e) => {
+                  console.log(
+                    `onKeyDown: ${e.key} shift ${
+                      e.shiftKey ? 'true' : 'false'
+                    } ctrl ${e.ctrlKey ? 'true' : 'false'}`,
+                  );
+                  if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
+                    sendTextMessageActions();
+                  }
+                }}
+                placeholder="enter text to send"
+              />
+            </div>
+            {/* <div className="right"> */}
+            {/*  {AIRephrase && ( */}
+            {/*    <div className="icon"> */}
+            {/*      <AIWidgetActions */}
+            {/*        widgetToRender={ */}
+            {/*          <ToneIcon */}
+            {/*            width="24" */}
+            {/*            height="24" */}
+            {/*            applyZoom */}
+            {/*            color={theme ? theme.mainText() : 'var(--main-text)'} */}
+            {/*          /> */}
+            {/*        } */}
+            {/*        items={getAIEditingMessagesItems()} */}
+            {/*      /> */}
+            {/*    </div> */}
+            {/*  )} */}
+            {/* </div> */}
+          </div>
         )}
 
         {isRecording && (
@@ -1058,23 +1219,192 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
             }}
           />
         )}
-        {/* AITranslation start AIEditMessage */}
-        {/* {AIEditMessage && ( */}
+        {/* {AIRephrase && ( */}
         {/*  <div> */}
-        {/*    <ActiveSvg */}
-        {/*      content={AIEditMessage.renderWidget()} */}
-        {/*      clickAction={() => { */}
-        {/*        console.log('click left place golder widget'); */}
-        {/*        AIEditMessage?.textToWidget(messageText); */}
-        {/*      }} */}
-        {/*      touchAction={() => { */}
-        {/*        console.log('touch left place golder widget'); */}
-        {/*      }} */}
+        {/*    /!* <ContextMenu *!/ */}
+        {/*    /!*  widgetToRender={ *!/ */}
+        {/*    /!*    <AIWidgetIcon *!/ */}
+        {/*    /!*      applyZoom *!/ */}
+        {/*    /!*      color="var(--main-elements)" *!/ */}
+        {/*    /!*      width="24" *!/ */}
+        {/*    /!*      height="24" *!/ */}
+        {/*    /!*    /> *!/ */}
+        {/*    /!*  } *!/ */}
+        {/*    /!*  items={[ *!/ */}
+        {/*    /!*    // { *!/ */}
+        {/*    /!*    //   title: 'AI Chat Summary', *!/ */}
+        {/*    /!*    //   // eslint-disable-next-line @typescript-eslint/no-empty-function *!/ */}
+        {/*    /!*    //   action: () => {}, *!/ */}
+        {/*    /!*    // }, *!/ */}
+        {/*    /!*    { *!/ */}
+        {/*    /!*      title: 'AI Translate', *!/ */}
+        {/*    /!*      action: () => { *!/ */}
+        {/*    /!*        if ( *!/ */}
+        {/*    /!*          messageText && *!/ */}
+        {/*    /!*          messageText.length > 0 && *!/ */}
+        {/*    /!*          !waitAIWidget *!/ */}
+        {/*    /!*        ) { *!/ */}
+        {/*    /!*          setWaitAIWidget(true); *!/ */}
+        {/*    /!*          AITranslation?.textToWidget( *!/ */}
+        {/*    /!*            messageText, *!/ */}
+        {/*    /!*            messageEntitiesToIChatMessageCollection(messagesToView), *!/ */}
+        {/*    /!*          ); *!/ */}
+        {/*    /!*        } *!/ */}
+        {/*    /!*      }, *!/ */}
+        {/*    /!*    }, *!/ */}
+        {/*    /!*  ]} *!/ */}
+        {/*    /!* /> *!/ */}
+        {/*    /!* <AIWidgetActions *!/ */}
+        {/*    /!*  widgetToRender={ *!/ */}
+        {/*    /!*    <AIWidgetIcon *!/ */}
+        {/*    /!*      applyZoom *!/ */}
+        {/*    /!*      color="var(--main-elements)" *!/ */}
+        {/*    /!*      width="16" *!/ */}
+        {/*    /!*      height="16" *!/ */}
+        {/*    /!*    /> *!/ */}
+        {/*    /!*  } *!/ */}
+        {/*    /!*  items={[ *!/ */}
+        {/*    /!*    { *!/ */}
+        {/*    /!*      title: 'English', *!/ */}
+        {/*    /!*      // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-misused-promises *!/ */}
+        {/*    /!*      action: async () => { *!/ */}
+        {/*    /!*        if ( *!/ */}
+        {/*    /!*          messageText && *!/ */}
+        {/*    /!*          messageText.length > 0 && *!/ */}
+        {/*    /!*          !waitAIWidget *!/ */}
+        {/*    /!*        ) { *!/ */}
+        {/*    /!*          setWaitAIWidget(true); *!/ */}
+        {/*    /!*          const translation = await AITranslation?.textToWidget( *!/ */}
+        {/*    /!*            messageText, *!/ */}
+        {/*    /!*            messageEntitiesToIChatMessageCollection(messagesToView), *!/ */}
+        {/*    /!*            { *!/ */}
+        {/*    /!*              language: *!/ */}
+        {/*    /!*                'English' || *!/ */}
+        {/*    /!*                QBConfig.configAIApi.AITranslateWidgetConfig *!/ */}
+        {/*    /!*                  .defaultLanguage, *!/ */}
+        {/*    /!*            }, *!/ */}
+        {/*    /!*          ); *!/ */}
+
+        {/*    /!*          setMessageText(translation || ''); *!/ */}
+        {/*    /!*        } *!/ */}
+        {/*    /!*      }, *!/ */}
+        {/*    /!*    }, *!/ */}
+        {/*    /!*    { *!/ */}
+        {/*    /!*      title: 'Ukrainian', *!/ */}
+        {/*    /!*      // eslint-disable-next-line @typescript-eslint/no-misused-promises *!/ */}
+        {/*    /!*      action: async () => { *!/ */}
+        {/*    /!*        if ( *!/ */}
+        {/*    /!*          messageText && *!/ */}
+        {/*    /!*          messageText.length > 0 && *!/ */}
+        {/*    /!*          !waitAIWidget *!/ */}
+        {/*    /!*        ) { *!/ */}
+        {/*    /!*          setWaitAIWidget(true); *!/ */}
+        {/*    /!*          const translation = await AITranslation?.textToWidget( *!/ */}
+        {/*    /!*            messageText, *!/ */}
+        {/*    /!*            messageEntitiesToIChatMessageCollection(messagesToView), *!/ */}
+        {/*    /!*            { *!/ */}
+        {/*    /!*              language: *!/ */}
+        {/*    /!*                'Ukrainian' || *!/ */}
+        {/*    /!*                QBConfig.configAIApi.AITranslateWidgetConfig *!/ */}
+        {/*    /!*                  .defaultLanguage, *!/ */}
+        {/*    /!*            }, *!/ */}
+        {/*    /!*          ); *!/ */}
+
+        {/*    /!*          setMessageText(translation || ''); *!/ */}
+        {/*    /!*        } *!/ */}
+        {/*    /!*      }, *!/ */}
+        {/*    /!*    }, *!/ */}
+        {/*    /!*    { *!/ */}
+        {/*    /!*      title: 'Spanish', *!/ */}
+        {/*    /!*      // eslint-disable-next-line @typescript-eslint/no-misused-promises *!/ */}
+        {/*    /!*      action: async () => { *!/ */}
+        {/*    /!*        if ( *!/ */}
+        {/*    /!*          messageText && *!/ */}
+        {/*    /!*          messageText.length > 0 && *!/ */}
+        {/*    /!*          !waitAIWidget *!/ */}
+        {/*    /!*        ) { *!/ */}
+        {/*    /!*          setWaitAIWidget(true); *!/ */}
+        {/*    /!*          const translation = await AITranslation?.textToWidget( *!/ */}
+        {/*    /!*            messageText, *!/ */}
+        {/*    /!*            messageEntitiesToIChatMessageCollection(messagesToView), *!/ */}
+        {/*    /!*            { *!/ */}
+        {/*    /!*              language: *!/ */}
+        {/*    /!*                'Spanish' || *!/ */}
+        {/*    /!*                QBConfig.configAIApi.AITranslateWidgetConfig *!/ */}
+        {/*    /!*                  .defaultLanguage, *!/ */}
+        {/*    /!*            }, *!/ */}
+        {/*    /!*          ); *!/ */}
+
+        {/*    /!*          setMessageText(translation || ''); *!/ */}
+        {/*    /!*        } *!/ */}
+        {/*    /!*      }, *!/ */}
+        {/*    /!*    }, *!/ */}
+        {/*    /!*    { *!/ */}
+        {/*    /!*      title: 'Portuguese', *!/ */}
+        {/*    /!*      // eslint-disable-next-line @typescript-eslint/no-misused-promises *!/ */}
+        {/*    /!*      action: async () => { *!/ */}
+        {/*    /!*        if ( *!/ */}
+        {/*    /!*          messageText && *!/ */}
+        {/*    /!*          messageText.length > 0 && *!/ */}
+        {/*    /!*          !waitAIWidget *!/ */}
+        {/*    /!*        ) { *!/ */}
+        {/*    /!*          setWaitAIWidget(true); *!/ */}
+        {/*    /!*          const translation = await AITranslation?.textToWidget( *!/ */}
+        {/*    /!*            messageText, *!/ */}
+        {/*    /!*            messageEntitiesToIChatMessageCollection(messagesToView), *!/ */}
+        {/*    /!*            { *!/ */}
+        {/*    /!*              language: *!/ */}
+        {/*    /!*                'Portuguese' || *!/ */}
+        {/*    /!*                QBConfig.configAIApi.AITranslateWidgetConfig *!/ */}
+        {/*    /!*                  .defaultLanguage, *!/ */}
+        {/*    /!*            }, *!/ */}
+        {/*    /!*          ); *!/ */}
+
+        {/*    /!*          setMessageText(translation || ''); *!/ */}
+        {/*    /!*        } *!/ */}
+        {/*    /!*      }, *!/ */}
+        {/*    /!*    }, *!/ */}
+        {/*    /!*    { *!/ */}
+        {/*    /!*      title: 'French', *!/ */}
+        {/*    /!*      // eslint-disable-next-line @typescript-eslint/no-misused-promises *!/ */}
+        {/*    /!*      action: async () => { *!/ */}
+        {/*    /!*        if ( *!/ */}
+        {/*    /!*          messageText && *!/ */}
+        {/*    /!*          messageText.length > 0 && *!/ */}
+        {/*    /!*          !waitAIWidget *!/ */}
+        {/*    /!*        ) { *!/ */}
+        {/*    /!*          setWaitAIWidget(true); *!/ */}
+        {/*    /!*          const translation = await AITranslation?.textToWidget( *!/ */}
+        {/*    /!*            messageText, *!/ */}
+        {/*    /!*            messageEntitiesToIChatMessageCollection(messagesToView), *!/ */}
+        {/*    /!*            { *!/ */}
+        {/*    /!*              language: *!/ */}
+        {/*    /!*                'French' || *!/ */}
+        {/*    /!*                QBConfig.configAIApi.AITranslateWidgetConfig *!/ */}
+        {/*    /!*                  .defaultLanguage, *!/ */}
+        {/*    /!*            }, *!/ */}
+        {/*    /!*          ); *!/ */}
+
+        {/*    /!*          setMessageText(translation || ''); *!/ */}
+        {/*    /!*        } *!/ */}
+        {/*    /!*      }, *!/ */}
+        {/*    /!*    }, *!/ */}
+        {/*    /!*    // { *!/ */}
+        {/*    /!*    //   title: 'German', *!/ */}
+        {/*    /!*    //   action: () => {}, *!/ */}
+        {/*    /!*    // }, *!/ */}
+        {/*    /!*  ]} *!/ */}
+        {/*    /!* /> *!/ */}
+        {/*    <AIWidgetActions */}
+        {/*      title="AI Rephrase Message" */}
+        {/*      widgetToRender={ */}
+        {/*        <AIWidgetIcon applyZoom color="blue" width="24" height="24" /> */}
+        {/*      } */}
+        {/*      items={getAIEditingMessagesItems()} */}
         {/*    /> */}
         {/*  </div> */}
         {/* )} */}
-        {/* end InputWidgetLeftPlaceHolder */}
-        {!isVoiceMessage && (
+        {!isVoiceMessage && !waitAIWidget && (
           <div>
             <ActiveSvg
               content={
@@ -1095,29 +1425,42 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
             />
           </div>
         )}
-        {isVoiceMessage && (
-          <div>
-            <ActiveSvg
-              content={
-                <VoiceIcon
-                  width="21"
-                  height="18"
-                  applyZoom
-                  color={isRecording ? 'var(--error)' : 'var(--input-elements)'}
-                />
-              }
-              clickAction={() => {
-                console.log('click send voice message');
-                if (messagesViewModel?.loading) return;
-                setIsRecording(!isRecording);
-              }}
-              touchAction={() => {
-                console.log('touch send message');
-                if (messagesViewModel?.loading) return;
-                setIsRecording(!isRecording);
-              }}
-            />
+        {waitAIWidget ? (
+          <div
+            style={{
+              height: '44px',
+              width: '24px',
+            }}
+          >
+            <LoaderComponent width="24" height="24" color="var(--caption)" />
           </div>
+        ) : (
+          isVoiceMessage && (
+            <div>
+              <ActiveSvg
+                content={
+                  <VoiceIcon
+                    width="21"
+                    height="18"
+                    applyZoom
+                    color={
+                      isRecording ? 'var(--error)' : 'var(--input-elements)'
+                    }
+                  />
+                }
+                clickAction={() => {
+                  console.log('click send voice message');
+                  if (messagesViewModel?.loading) return;
+                  setIsRecording(!isRecording);
+                }}
+                touchAction={() => {
+                  console.log('touch send message');
+                  if (messagesViewModel?.loading) return;
+                  setIsRecording(!isRecording);
+                }}
+              />
+            </div>
+          )
         )}
       </div>
       {/* <div className="message-view-container--warning-error"> */}

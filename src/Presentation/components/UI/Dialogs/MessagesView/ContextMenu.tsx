@@ -7,6 +7,7 @@ type MenuItem = {
 };
 
 type ContextMenuProps = {
+  widgetToRender?: JSX.Element;
   items?: MenuItem[];
 };
 
@@ -14,8 +15,8 @@ const ContextMenuStyles: { [key: string]: CSSProperties } = {
   contextMenuIcon: {
     display: 'inline-block',
     position: 'relative',
-    width: '42px',
-    height: '42px',
+    maxWidth: '42px',
+    maxHeight: '42px',
     cursor: 'pointer',
   },
   contextMenuContent: {
@@ -32,7 +33,7 @@ const ContextMenuStyles: { [key: string]: CSSProperties } = {
   },
 };
 
-function ContextMenu({ items }: ContextMenuProps) {
+function ContextMenu({ items, widgetToRender }: ContextMenuProps) {
   const [menuVisible, setMenuVisible] = useState(false);
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
 
@@ -68,9 +69,7 @@ function ContextMenu({ items }: ContextMenuProps) {
         ...ContextMenuStyles.contextMenuIcon,
       }}
     >
-      <div onClick={handleClick}>
-        <EditDots />
-      </div>
+      <div onClick={handleClick}>{widgetToRender || <EditDots />}</div>
       {menuVisible && (
         <div ref={contextMenuRef} style={ContextMenuStyles.contextMenuContent}>
           {items?.map((item, index) => (

@@ -193,6 +193,12 @@ function App() {
     console.log('0. APP INIT');
     prepareSDK(currentUser).catch();
   }, []);
+  //
+  // const { proxyConfig } = QBConfig.configAIApi.AIAnswerAssistWidgetConfig;
+  //
+  // const defaultAIAnswer = UseDefaultAIAssistAnswerWidget({
+  //   ...proxyConfig,
+  // });
 
   // todo: uncomment authSecret
   return (
@@ -221,7 +227,14 @@ function App() {
             <Route
               path="/desktop-test-mock"
               element={
-                <QuickBloxUIKitDesktopLayout theme={new DefaultTheme()} />
+                <QuickBloxUIKitDesktopLayout
+                  theme={new DefaultTheme()}
+                  // AIAssist={{
+                  //   enabled: true,
+                  //   default: true,
+                  //   AIWidget: defaultAIAnswer,
+                  // }}
+                />
               }
             />
 

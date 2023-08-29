@@ -3,7 +3,7 @@ import { UserEntity } from './UserEntity';
 import { DialogType } from './DialogTypes';
 
 export interface MessageEntity {
-  id: number;
+  id: string;
   dialogId: string;
   dialogType?: DialogType;
   // TODO: check ChatMessageAttachmentEntity

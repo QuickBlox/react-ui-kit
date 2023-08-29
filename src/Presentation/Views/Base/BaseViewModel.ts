@@ -2,6 +2,7 @@ import { Pagination } from '../../../Domain/repository/Pagination';
 import { GroupDialogEntity } from '../../../Domain/entity/GroupDialogEntity';
 import { DialogEntity } from '../../../Domain/entity/DialogEntity';
 import { FileEntity } from '../../../Domain/entity/FileEntity';
+import { IChatMessage } from '../../../Data/source/AISource';
 
 export default class BaseViewModel<TResult> {
   get entity(): TResult {
@@ -49,10 +50,7 @@ export type EditDialogParams = {
   dialogTitle: string;
   dialogAvatar: File | string | null;
 };
-export interface IChatMessage {
-  role: string;
-  content: string;
-}
+
 export type FunctionTypeFileToToVoid = (file: File) => void;
 export type FunctionTypePaginationToVoid = (pagination: Pagination) => void;
 export type FunctionTypeVoidToVoid = () => void;
@@ -76,8 +74,15 @@ export type FunctionTypeJSXElement = () => JSX.Element;
 export type FunctionTypeFileWithContextToToVoid = (
   file: File,
   context: IChatMessage[],
+  additionalSettings?: { [key: string]: any },
 ) => void;
 export type FunctionTypeStringWithContextToVoid = (
   value: string,
   context: IChatMessage[],
+  additionalSettings?: { [key: string]: any },
 ) => void;
+export type FunctionTypeStringWithContextToString = (
+  value: string,
+  context: IChatMessage[],
+  additionalSettings?: { [key: string]: any },
+) => Promise<string>;

@@ -76,7 +76,7 @@ export class MessageDTOMapper implements IDTOMapper {
     dto.dialogId = qbMessage.chat_dialog_id;
     dto.message = qbMessage.message;
     dto.created_at = qbMessage.created_at;
-    dto.date_sent = qbMessage.date_sent;
+    dto.date_sent = qbMessage.date_sent * 1000;
     dto.delivered_ids = qbMessage.delivered_ids ? qbMessage.delivered_ids : [];
     dto.read_ids = qbMessage.read_ids ? qbMessage.read_ids : [];
 

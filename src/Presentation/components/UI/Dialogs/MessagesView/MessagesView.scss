@@ -9,6 +9,7 @@ $message-view-container-sender-message-background-color: var(--incoming-backgrou
 $message-view-container-outgoing-message-background-color: var(--outgoing-background);
 $message-view-container-message-text-color: var(--main-text);
 $message-view-container-date-time-text-color: var(--secondary-text);
+$message-view-container-ai-translate-text-color: var(--tertiary-elements);
 .message-view-container{
   // width: 100%;
   min-height: $message-view-container-wrapper-max-height;
@@ -104,12 +105,24 @@ $message-view-container-date-time-text-color: var(--secondary-text);
   &--incoming-message-wrapper{
     // border: 2px solid green;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: nowrap;
     justify-content: flex-start;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
     gap: 8px;
+
+    &__message{
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      gap: 8px;
+    }
+
     &__avatar{
-    // border: 2px solid red;
+      // border: 2px solid red;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
@@ -160,6 +173,20 @@ $message-view-container-date-time-text-color: var(--secondary-text);
     padding: 8px 12px;
     color: $message-view-container-message-text-color;
   }
+  &__widget-ai-translate{
+    text-align: left;
+    margin-left: 46px;
+    font-family: Roboto;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 145.455% */
+    letter-spacing: 0.5px;
+    color: $message-view-container-ai-translate-text-color;
+    align-self: self-start;
+    white-space: nowrap;
+    cursor: pointer;
+  }
   &__incoming-time{
    // border: 2px solid burlywood;
     display: flex;
@@ -182,6 +209,8 @@ $message-view-container-date-time-text-color: var(--secondary-text);
     flex-wrap: nowrap;
     justify-content: flex-end;
     gap: 8px;
+    margin-bottom: 10px;
+    margin-top: 10px;
   }
   &__outgoing-message{
     background: $message-view-container-outgoing-message-background-color;
@@ -273,7 +302,7 @@ $message-view-container-date-time-text-color: var(--secondary-text);
     //border-top: 1px solid var(--divider);
     // flex: 1 1 $message-view-container-wrapper-min-width;
     min-height: $message-view-container-chat-input-min-height;
-    max-height: $message-view-container-chat-input-min-height;
+    max-height: calc(2 * $message-view-container-header-min-height + $message-view-container-chat-input-min-height);
     height: $message-view-container-chat-input-min-height;
 
     width: 100%;
@@ -296,7 +325,7 @@ $message-view-container-date-time-text-color: var(--secondary-text);
       width: 100%;
       height: 44px;
       min-Height: 44px;
-      max-Height: $message-view-container-header-min-height;
+      max-Height: calc(2 * $message-view-container-header-min-height);
       background-Color: var(--chat-input);
       border-Radius: 4px;
       padding-left: 16px;
@@ -312,6 +341,61 @@ $message-view-container-date-time-text-color: var(--secondary-text);
 
   }
 }
+
+.input-text-message * {
+  box-sizing: border-box;
+}
+.input-text-message {
+  background: var(--primary-primary-a-200, #f7f9ff);
+  border-radius: 4px;
+  //padding: 10px 8px 10px 16px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: flex-end;
+  justify-content: flex-start;
+  flex: 1;
+  position: relative;
+}
+
+.type-message {
+  color: var(--secondary-secondary-200, #90979f);
+  text-align: left;
+  font: var(--body-body-large, 400 16px/24px "Roboto", sans-serif);
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.right {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  position: relative;
+  margin-bottom: 5px;
+}
+.icon {
+  border-radius: 4px;
+  padding: 4px;
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  position: relative;
+  cursor: pointer;
+}
+
+//
+
 
 //textarea::-webkit-scrollbar {
 //  width: 1em;

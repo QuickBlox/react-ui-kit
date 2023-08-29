@@ -54,9 +54,9 @@ const HeaderDialogs: React.FC<HeaderDialogsProps> = ({
   const buttonsStyle = {
     background: 'none',
     svg: {
-      width: '44',
-      height: '44',
-      viewBox: '0 0 44 44',
+      width: '24',
+      height: '24',
+      viewBox: '0 0 24 24',
       path: {
         fill: theme?.mainElements(),
       },
@@ -83,7 +83,7 @@ const HeaderDialogs: React.FC<HeaderDialogsProps> = ({
       </div>
       <div style={buttonsStyle} className="header-dialogs-container__buttons">
         <ActiveSvg
-          content={<Search />}
+          content={<Search width="24" height="24" applyZoom />}
           touchAction={() => {
             console.log('touchSearchDialogsHandler');
             if (touchSearchHandler) touchSearchHandler();
@@ -94,7 +94,7 @@ const HeaderDialogs: React.FC<HeaderDialogsProps> = ({
           }}
         />
         <ActiveSvg
-          content={<NewChat />}
+          content={<NewChat width="24" height="24" applyZoom />}
           touchAction={() => {
             console.log('touchAction: Hello from component 1');
             if (TouchActionHandler) TouchActionHandler();

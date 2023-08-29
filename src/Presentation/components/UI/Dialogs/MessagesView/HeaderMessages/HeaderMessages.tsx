@@ -3,7 +3,6 @@ import React from 'react';
 import { FunctionTypeVoidToVoid } from '../../../../../Views/Base/BaseViewModel';
 import { DialogEntity } from '../../../../../../Domain/entity/DialogEntity';
 import GroupChat from '../../../svgs/Icons/Contents/GroupChat';
-import Phone from '../../../svgs/Icons/Actions/Phone';
 import InformationFill from '../../../svgs/Icons/Status/InformationFill';
 import ActiveSvg from '../../../svgs/ActiveSvg/ActiveSvg';
 import { DialogType } from '../../../../../../Domain/entity/DialogTypes';
@@ -26,6 +25,7 @@ const HeaderMessages: React.FC<HeaderMessagesProps> = ({
   dialog,
   countMembers = 0,
   InformationHandler,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   CallHandler,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   theme = undefined,
@@ -101,16 +101,19 @@ const HeaderMessages: React.FC<HeaderMessagesProps> = ({
           </div>
         </div>
         <div className="message-header-container--info-wrapper__detail-button">
-          <div className="message-header-container--info-wrapper__detail-button__call">
-            <ActiveSvg
-              content={<Phone width="32" height="32" applyZoom />}
-              clickAction={() => {
-                if (CallHandler) CallHandler();
-              }}
-              touchAction={() => {
-                if (CallHandler) CallHandler();
-              }}
-            />
+          <div
+            className="message-header-container--info-wrapper__detail-button__call"
+            style={{ width: '32px' }}
+          >
+            {/* <ActiveSvg */}
+            {/*  content={<Phone width="32" height="32" applyZoom />} */}
+            {/*  clickAction={() => { */}
+            {/*    if (CallHandler) CallHandler(); */}
+            {/*  }} */}
+            {/*  touchAction={() => { */}
+            {/*    if (CallHandler) CallHandler(); */}
+            {/*  }} */}
+            {/* /> */}
           </div>
           <div className="message-header-container--info-wrapper__detail-button__info">
             <ActiveSvg

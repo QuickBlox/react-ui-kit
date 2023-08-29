@@ -16,21 +16,27 @@ import { Pagination } from '../../../../Domain/repository/Pagination';
 // import { DialogEventInfo } from '../../../../Domain/entity/DialogEventInfo';
 import UiKitTheme from '../../../assets/UiKitTheme';
 import BaseViewModel from '../../../Views/Base/BaseViewModel';
-import { AIWidget } from '../../UI/Dialogs/MessagesView/AIWidgets/AIWidget';
+import { AIMessageWidget } from '../../UI/Dialogs/MessagesView/AIWidgets/AIMessageWidget';
 import { QBConfig } from '../../../../QBconfig';
-import UseDefaultAIAssistAnswerWidgetWithProxy from '../../UI/Dialogs/MessagesView/AIWidgets/UseDefaultAIAssistAnswerWidgetWithProxy';
+import UseDefaultAIAssistAnswerWidget from '../../UI/Dialogs/MessagesView/AIWidgets/UseDefaultAIAssistAnswerWidget';
+import UseDefaultAITranslateWidget from '../../UI/Dialogs/MessagesView/AIWidgets/UseDefaultAITranslateWidget';
+import UseDefaultAIRephraseMessageWidget from '../../UI/Dialogs/MessagesView/AIWidgets/UseDefaultAIRephraseMessageWidget';
+import {
+  DefaultConfigurations,
+  ProxyConfig,
+} from '../../../../Data/DefaultConfigurations';
 
 type AIWidgetPlaceHolder = {
   enabled: boolean;
   default: boolean;
-  AIWidget?: AIWidget;
+  AIWidget?: AIMessageWidget;
 };
 
 type QuickBloxUIKitDesktopLayoutProps = {
   theme?: UiKitTheme;
-  AIEditMessage?: AIWidgetPlaceHolder;
-  AITranslation?: AIWidgetPlaceHolder;
-  AIAnswerToMessage?: AIWidgetPlaceHolder;
+  AIRephrase?: AIWidgetPlaceHolder;
+  AITranslate?: AIWidgetPlaceHolder;
+  AIAssist?: AIWidgetPlaceHolder;
 };
 
 const QuickBloxUIKitDesktopLayout: React.FC<
@@ -39,10 +45,10 @@ const QuickBloxUIKitDesktopLayout: React.FC<
 > = ({
   theme = undefined,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  AITranslation = undefined,
+  AITranslate = undefined,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  AIEditMessage = undefined,
-  AIAnswerToMessage = undefined,
+  AIRephrase = undefined,
+  AIAssist = undefined,
 }: QuickBloxUIKitDesktopLayoutProps) => {
   console.log('create QuickBloxUIKitDesktopLayout');
   const [selectedDialog, setSelectedDialog] =
@@ -62,25 +68,20 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   const dialogsViewModel: DialogsViewModel =
     useDialogsViewModel(currentContext);
 
-  const defaultAIEditMessageWidget = AIEditMessage?.AIWidget; // useDefaultTextInputWidget();
-  const defaultAITranslateWidget = AITranslation?.AIWidget;
-  // if (!defaultAIEditMessageWidget) {
-  //   defaultAIEditMessageWidget = useDefaultTextInputWidget();
-  // }
-  // const defaultAITranslateWidget =
-  //   AITranslation?.AIWidget || useDefaultVoiceInputWidget();
-  let defaultAIAnswerToMessageWidget;
+  let defaultAIEditMessageWidget = AIRephrase?.AIWidget; // useDefaultTextInputWidget();
+  let defaultAITranslateWidget = AITranslate?.AIWidget;
+  let defaultAIAnswerToMessageWidget = AIAssist?.AIWidget;
 
   const getAIAssistAnswer = (): void => {
-    if (AIAnswerToMessage?.enabled && !AIAnswerToMessage?.default) {
-      defaultAIAnswerToMessageWidget = AIAnswerToMessage.AIWidget;
+    if (AIAssist?.enabled && !AIAssist?.default) {
+      defaultAIAnswerToMessageWidget = AIAssist.AIWidget;
     } else if (
-      AIAnswerToMessage?.enabled ||
+      AIAssist?.enabled ||
       QBConfig.configAIApi.AIAnswerAssistWidgetConfig.useDefault
     ) {
       if (
         !QBConfig.configAIApi.AIAnswerAssistWidgetConfig.useDefault ||
-        (AIAnswerToMessage && !AIAnswerToMessage?.default)
+        (AIAssist && !AIAssist?.default)
       ) {
         defaultAIAnswerToMessageWidget = undefined;
       } else {
@@ -96,15 +97,95 @@ const QuickBloxUIKitDesktopLayout: React.FC<
             sessionToken ||
             '';
         }
-        defaultAIAnswerToMessageWidget =
-          UseDefaultAIAssistAnswerWidgetWithProxy({
-            ...QBConfig.configAIApi.AIAnswerAssistWidgetConfig.proxyConfig,
-            sessionToken: token,
-          });
+        const proxyConfig: ProxyConfig =
+          QBConfig.configAIApi.AIAnswerAssistWidgetConfig.proxyConfig ||
+          DefaultConfigurations.getDefaultProxyConfig();
+
+        defaultAIAnswerToMessageWidget = UseDefaultAIAssistAnswerWidget({
+          ...proxyConfig,
+          sessionToken: token,
+          apiKey,
+        });
+      }
+    }
+  };
+  const getAITranslate = (): void => {
+    if (AITranslate?.enabled && !AITranslate?.default) {
+      defaultAITranslateWidget = AITranslate.AIWidget;
+    } else if (
+      AITranslate?.enabled ||
+      QBConfig.configAIApi.AITranslateWidgetConfig.useDefault
+    ) {
+      if (
+        !QBConfig.configAIApi.AITranslateWidgetConfig.useDefault ||
+        (AITranslate && !AITranslate?.default)
+      ) {
+        defaultAITranslateWidget = undefined;
+      } else {
+        const { apiKey } = QBConfig.configAIApi.AITranslateWidgetConfig;
+        let token = '';
+
+        if (apiKey) {
+          token = apiKey;
+        } else {
+          token =
+            QBConfig.configAIApi.AITranslateWidgetConfig.proxyConfig
+              .sessionToken ||
+            sessionToken ||
+            '';
+        }
+        const proxyConfig: ProxyConfig =
+          QBConfig.configAIApi.AITranslateWidgetConfig.proxyConfig ||
+          DefaultConfigurations.getDefaultProxyConfig();
+
+        defaultAITranslateWidget = UseDefaultAITranslateWidget({
+          ...proxyConfig,
+          sessionToken: token,
+          apiKey,
+        });
+      }
+    }
+  };
+  const getAIRephrase = (): void => {
+    if (AIRephrase?.enabled && !AIRephrase?.default) {
+      defaultAIEditMessageWidget = AIRephrase.AIWidget;
+    } else if (
+      AIRephrase?.enabled ||
+      QBConfig.configAIApi.AIRephraseWidgetConfig.useDefault
+    ) {
+      if (
+        !QBConfig.configAIApi.AIRephraseWidgetConfig.useDefault ||
+        (AIRephrase && !AIRephrase?.default)
+      ) {
+        defaultAIEditMessageWidget = undefined;
+      } else {
+        const { apiKey } = QBConfig.configAIApi.AIRephraseWidgetConfig;
+        let token = '';
+
+        if (apiKey) {
+          token = apiKey;
+        } else {
+          token =
+            QBConfig.configAIApi.AIRephraseWidgetConfig.proxyConfig
+              .sessionToken ||
+            sessionToken ||
+            '';
+        }
+        const proxyConfig: ProxyConfig =
+          QBConfig.configAIApi.AIRephraseWidgetConfig.proxyConfig ||
+          DefaultConfigurations.getDefaultProxyConfig();
+
+        defaultAIEditMessageWidget = UseDefaultAIRephraseMessageWidget({
+          ...proxyConfig,
+          sessionToken: token,
+          apiKey,
+        });
       }
     }
   };
 
+  getAITranslate();
+  getAIRephrase();
   getAIAssistAnswer();
 
   const selectDialogActions = (item: BaseViewModel<DialogEntity>): void => {
@@ -269,9 +350,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
             maxWidthToResize={
               selectedDialog && needDialogInformation ? undefined : '1040px'
             }
-            AIEditMessage={defaultAIEditMessageWidget}
-            AITranslation={defaultAITranslateWidget}
-            AIAnswerToMessage={defaultAIAnswerToMessageWidget}
+            AIRephrase={defaultAIEditMessageWidget}
+            AITranslate={defaultAITranslateWidget}
+            AIAssist={defaultAIAnswerToMessageWidget}
             theme={theme}
           /> // 1 Get Messages + 1 Get User by Id
         ) : (

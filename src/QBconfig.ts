@@ -8,12 +8,41 @@ export const QBConfig = {
   },
   configAIApi: {
     AIAnswerAssistWidgetConfig: {
-      apiKey: '', // Replace with your real API key
+      apiKey: '',
       useDefault: true,
       proxyConfig: {
         api: 'v1/chat/completions',
-        servername: 'https://api.openai.com/',
-        port: '',
+        servername: 'http://localhost',
+        port: '3001',
+        sessionToken: '',
+      },
+    },
+    AITranslateWidgetConfig: {
+      apiKey: '',
+      useDefault: true,
+      defaultLanguage: 'English',
+      languages: [
+        'English',
+        'Spanish',
+        'French',
+        'Portuguese',
+        'German',
+        'Ukrainian',
+      ],
+      proxyConfig: {
+        api: 'v1/chat/completions',
+        servername: 'http://localhost',
+        port: '3001',
+        sessionToken: '',
+      },
+    },
+    AIRephraseWidgetConfig: {
+      apiKey: '',
+      useDefault: true,
+      proxyConfig: {
+        api: 'v1/chat/completions',
+        servername: 'http://localhost',
+        port: '3001',
         sessionToken: '',
       },
     },

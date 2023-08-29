@@ -145,7 +145,7 @@ export class Stubs {
     for (let i = 0; i < 47; i += 1) {
       const newMessageEntity: MessageEntity =
         Stubs.createMessageEntityWithParams(
-          i,
+          i.toString(),
           '103',
           i % 9 === 0
             ? `${
@@ -171,7 +171,7 @@ export class Stubs {
     for (let i = 47; i < 100; i += 1) {
       const newMessageEntity: MessageEntity =
         Stubs.createMessageEntityWithParams(
-          i,
+          i.toString(),
           '103',
           `${i + 1} test message for dialog 103`,
           '31.03.2023',
@@ -744,7 +744,7 @@ export class Stubs {
   }
 
   static createMessageEntityWithParams(
-    id: number,
+    id: string,
     dialogId: string,
     message: string,
     created_at: string,
@@ -876,7 +876,7 @@ export class Stubs {
     const messages: Array<MessageEntity> = new Array<MessageEntity>();
     // shot text message
     const message102_1 = Stubs.createMessageEntityWithParams(
-      1021,
+      '1021',
       '102',
       '1 test message for dialog 102',
       '31.03.2023',
@@ -890,7 +890,7 @@ export class Stubs {
     );
     // long text message
     const message102_2 = Stubs.createMessageEntityWithParams(
-      1022,
+      '1022',
       '102',
       '2 test message for dialog 102',
       '31.03.2023',
@@ -917,7 +917,7 @@ export class Stubs {
     };
     const photoAttachments: ChatMessageAttachmentEntity[] = [photo];
     const message102_3 = Stubs.createMessageEntityWithParams(
-      1023,
+      '1023',
       '102',
       '3 test message for dialog 102',
       '31.03.2023',
@@ -945,7 +945,7 @@ export class Stubs {
     };
     const videoAttachments: ChatMessageAttachmentEntity[] = [video];
     const message102_4 = Stubs.createMessageEntityWithParams(
-      1024,
+      '1024',
       '102',
       '3 test message for dialog 102',
       '31.03.2023',
@@ -973,7 +973,7 @@ export class Stubs {
     };
     const audioAttachments: ChatMessageAttachmentEntity[] = [audio];
     const message102_5 = Stubs.createMessageEntityWithParams(
-      1025,
+      '1025',
       '102',
       '3 test message for dialog 102',
       '31.03.2023',
@@ -1001,7 +1001,7 @@ export class Stubs {
     };
     const textAttachments: ChatMessageAttachmentEntity[] = [text];
     const message102_6 = Stubs.createMessageEntityWithParams(
-      1026,
+      '1026',
       '102',
       '3 test message for dialog 102',
       '31.03.2023',
@@ -1023,7 +1023,7 @@ export class Stubs {
     messages.push(message102_6); // text
 
     const message112_1 = Stubs.createMessageEntityWithParams(
-      1121,
+      '1121',
       '112',
       '1 test message for dialog 112',
       '31.03.2023',
@@ -1037,7 +1037,7 @@ export class Stubs {
     );
 
     const message112_2 = Stubs.createMessageEntityWithParams(
-      1122,
+      '1122',
       '112',
       '2 test message for dialog 112',
       '31.03.2023',
@@ -1051,7 +1051,7 @@ export class Stubs {
     );
 
     const message112_3 = Stubs.createMessageEntityWithParams(
-      1123,
+      '1123',
       '112',
       '3 test message for dialog 112',
       '31.03.2023',
@@ -1069,7 +1069,7 @@ export class Stubs {
     messages.push(message112_3);
 
     const message113_1 = Stubs.createMessageEntityWithParams(
-      1131,
+      '1131',
       '113',
       '1 test message for dialog 113',
       '31.03.2023',
@@ -1083,7 +1083,7 @@ export class Stubs {
     );
 
     const message113_2 = Stubs.createMessageEntityWithParams(
-      1132,
+      '1132',
       '113',
       '2 test message for dialog 113',
       '31.03.2023',
@@ -1097,7 +1097,7 @@ export class Stubs {
     );
 
     const message113_3 = Stubs.createMessageEntityWithParams(
-      1133,
+      '1133',
       '113',
       '3 test message for dialog 113',
       '31.03.2023',
