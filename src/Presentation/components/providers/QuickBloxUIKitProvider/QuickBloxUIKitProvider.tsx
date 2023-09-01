@@ -10,12 +10,10 @@ import {
 import DialogsRepository from '../../../../Data/repository/DialogsRepository';
 import { SyncDialogsUseCase } from '../../../../Domain/use_cases/SyncDialogsUseCase';
 import { BaseUseCase } from '../../../../Domain/use_cases/base/BaseUseCase';
-import { QBConfig } from '../../../../QBconfig';
 import ConnectionRepository from '../../../../Data/repository/ConnectionRepository';
 import EventMessagesRepository from '../../../../Data/repository/EventMessagesRepository';
 import { CallBackFunction } from '../../../../Domain/use_cases/base/IUseCase';
-
-// import packageInfo from '../../../../../package.json';
+import { DefaultConfigurations } from '../../../../Data/DefaultConfigurations';
 
 const initialValues = {
   LOCAL_DATA_SOURCE: new LocalDataSource(), // localstorage or session storage
@@ -57,7 +55,7 @@ type AccountData = {
 export type InitParams = {
   maxFileSize: number;
   accountData: AccountData;
-  qbConfig?: QBConfig;
+  qbConfig: QBConfig;
   loginData?: LoginData;
 };
 
@@ -106,8 +104,10 @@ const initDataContext: QBDataContextType = {
     // ),
   },
   InitParams: {
-    accountData: QBConfig.credentials,
-    maxFileSize: QBConfig.appConfig.maxFileSize,
+    accountData: DefaultConfigurations.getDefaultQBConfig().credentials,
+    maxFileSize:
+      DefaultConfigurations.getDefaultQBConfig().appConfig.maxFileSize,
+    qbConfig: DefaultConfigurations.getDefaultQBConfig(),
   },
   updateQBInitParams: (InitParams: InitParams) => {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -240,6 +240,7 @@ function QuickBloxUIKitProvider({
       password: loginData?.password || '',
     },
     maxFileSize,
+    qbConfig,
   });
 
   console.log('have InitParams useState completed');

@@ -8,23 +8,13 @@ import DesktopLayout from './DesktopLayout';
 import MessagesView from '../../UI/Dialogs/MessagesView/MessagesView';
 import useDialogsViewModel from '../../../Views/Dialogs/useDialogsViewModel';
 import { Pagination } from '../../../../Domain/repository/Pagination';
-// import { SubscribeToDialogEventsUseCase } from '../../../../Domain/use_cases/SubscribeToDialogEventsUseCase';
-// import useEventMessagesRepository from '../../providers/QuickBloxUIKitProvider/useEventMessagesRepository';
-// import EventMessageType from '../../../../Domain/entity/EventMessageType';
-// import { NotificationTypes } from '../../../../Domain/entity/NotificationTypes';
-// import { stringifyError } from '../../../../utils/parse';
-// import { DialogEventInfo } from '../../../../Domain/entity/DialogEventInfo';
 import UiKitTheme from '../../../assets/UiKitTheme';
 import BaseViewModel from '../../../Views/Base/BaseViewModel';
 import { AIMessageWidget } from '../../UI/Dialogs/MessagesView/AIWidgets/AIMessageWidget';
-import { QBConfig } from '../../../../QBconfig';
 import UseDefaultAIAssistAnswerWidget from '../../UI/Dialogs/MessagesView/AIWidgets/UseDefaultAIAssistAnswerWidget';
 import UseDefaultAITranslateWidget from '../../UI/Dialogs/MessagesView/AIWidgets/UseDefaultAITranslateWidget';
 import UseDefaultAIRephraseMessageWidget from '../../UI/Dialogs/MessagesView/AIWidgets/UseDefaultAIRephraseMessageWidget';
-import {
-  DefaultConfigurations,
-  ProxyConfig,
-} from '../../../../Data/DefaultConfigurations';
+import { DefaultConfigurations } from '../../../../Data/DefaultConfigurations';
 
 type AIWidgetPlaceHolder = {
   enabled: boolean;
@@ -55,6 +45,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     React.useState<BaseViewModel<DialogEntity>>();
 
   const currentContext = useQbInitializedDataContext();
+  const QBConfig =
+    currentContext.InitParams.qbConfig ||
+    DefaultConfigurations.getDefaultQBConfig();
   // const eventMessaging = useEventMessagesRepository();
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore

@@ -44,7 +44,7 @@ export function isQBError(error: unknown): error is QBError {
   return typeof error === 'object' && error !== null && 'message' in error;
 }
 
-export function stringifyError(error: unknown) {
+export function stringifyError(error: unknown): string {
   if (typeof error === 'string') return error;
 
   if (error && typeof error === 'object') {

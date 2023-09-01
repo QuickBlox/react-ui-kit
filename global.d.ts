@@ -17,14 +17,56 @@ interface DateRange {
   to: Date;
 }
 
+type ProxyConfig = {
+  api: string;
+  servername: string;
+  port: string;
+  sessionToken: string;
+};
+interface WidgetConfig {
+  apiKey: string;
+  useDefault: boolean;
+  proxyConfig: ProxyConfig;
+}
+
+interface AITranslateWidgetConfig extends WidgetConfig{
+  defaultLanguage: string; languages: string[];
+}
+
+interface AIRephraseWidgetConfig extends WidgetConfig {
+  defaultTone: string
+}
+
 interface QBConfig {
-  debug: boolean;
-  endpoints: {
-    chat?: string;
-    api?: string;
+  credentials: {
+    appId: number;
+    accountKey: string;
+    authKey: string;
+    authSecret: string;
+    sessionToken: string;
   };
-  webrtc?: {
-    iceServers?: RTCIceServer[];
+  configAIApi: {
+    AIAnswerAssistWidgetConfig: WidgetConfig;
+    AITranslateWidgetConfig: AITranslateWidgetConfig;
+    AIRephraseWidgetConfig: AIRephraseWidgetConfig;
+  };
+  appConfig: {
+    maxFileSize: number;
+    sessionTimeOut: number;
+    chatProtocol: {
+      active: number;
+    };
+    debug: boolean;
+    endpoints: {
+      api: string;
+      chat: string;
+    };
+    // on: {
+    //   sessionExpired: (handleResponse: any, retry: any) => Promise<void>;
+    // };
+    streamManagement: {
+      enable: boolean;
+    };
   };
 }
 

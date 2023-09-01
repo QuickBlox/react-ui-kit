@@ -1,4 +1,4 @@
-import { QBConfig } from '../QBconfig';
+import { ProxyConfig, QBConfig } from '../CommonTypes/FunctionResult';
 
 const supportedLanguagesForIATranslate: string[] = [
   'English',
@@ -74,13 +74,6 @@ const getDefaultSystemLanguage = () => {
   return language;
 };
 
-export type ProxyConfig = {
-  api: string;
-  servername: string;
-  port: string;
-  sessionToken: string;
-};
-
 export class DefaultConfigurations {
   static getDefaultProxyConfig(): ProxyConfig {
     return {
@@ -93,7 +86,9 @@ export class DefaultConfigurations {
 
   static getDefaultLanguageForAITranslate(): string {
     let languageForAITranslate = 'English';
-    const { defaultLanguage } = QBConfig.configAIApi.AITranslateWidgetConfig;
+    const { defaultLanguage } =
+      DefaultConfigurations.getDefaultQBConfig().configAIApi
+        .AITranslateWidgetConfig;
 
     if (
       defaultLanguage.length > 0 &&
@@ -113,7 +108,9 @@ export class DefaultConfigurations {
 
   static getAdditionalLanguagesForAITranslate(): string[] {
     const additionalLanguages: string[] = [];
-    const { languages } = QBConfig.configAIApi.AITranslateWidgetConfig;
+    const { languages } =
+      DefaultConfigurations.getDefaultQBConfig().configAIApi
+        .AITranslateWidgetConfig;
 
     languages.forEach((item) => {
       if (supportedLanguagesForIATranslate.includes(item)) {
@@ -125,4 +122,76 @@ export class DefaultConfigurations {
 
     return additionalLanguages;
   }
+
+  //
+  static getDefaultQBConfig(): QBConfig {
+    return {
+      credentials: {
+        appId: -1,
+        accountKey: '',
+        authKey: '',
+        authSecret: '',
+        sessionToken: '',
+      },
+      configAIApi: {
+        AIAnswerAssistWidgetConfig: {
+          apiKey: '',
+          useDefault: true,
+          proxyConfig: {
+            api: 'v1/chat/completions',
+            servername: 'https://api.openai.com/',
+            port: '',
+            sessionToken: '',
+          },
+        },
+        AITranslateWidgetConfig: {
+          apiKey: '',
+          useDefault: true,
+          defaultLanguage: 'English',
+          languages: [
+            'English',
+            'Spanish',
+            'French',
+            'Portuguese',
+            'German',
+            'Ukrainian',
+          ],
+          proxyConfig: {
+            api: 'v1/chat/completions',
+            servername: 'https://api.openai.com/',
+            port: '',
+            sessionToken: '',
+          },
+        },
+        AIRephraseWidgetConfig: {
+          apiKey: '',
+          useDefault: true,
+          defaultTone: 'Professional',
+          proxyConfig: {
+            api: 'v1/chat/completions',
+            servername: 'https://api.openai.com/',
+            port: '',
+            sessionToken: '',
+          },
+        },
+      },
+      appConfig: {
+        maxFileSize: 10 * 1024 * 1024,
+        sessionTimeOut: 122,
+        chatProtocol: {
+          active: 2,
+        },
+        debug: true,
+        endpoints: {
+          api: 'api.quickblox.com',
+          chat: 'chat.quickblox.com',
+        },
+        streamManagement: {
+          enable: true,
+        },
+      },
+    };
+  }
+
+  //
 }

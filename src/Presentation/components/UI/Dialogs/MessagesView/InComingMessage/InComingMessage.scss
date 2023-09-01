@@ -31,7 +31,7 @@
   box-sizing: border-box;
 }
 .incoming-text-message {
-  background: var(--primary-primary-a-100, #ffffff);
+  background: var(--secondary-background);
   padding: 0px 16px 8px 8px;
   display: flex;
   flex-direction: row;
@@ -241,7 +241,7 @@
   position: relative;
 }
 .chat-bubble-background {
-  background: var(--secondary-secondary-50, #e4e6e8);
+  background: var(--incoming-background);
   border-radius: 22px 22px 22px 0px;
   padding: 8px 12px 8px 12px;
   display: flex;

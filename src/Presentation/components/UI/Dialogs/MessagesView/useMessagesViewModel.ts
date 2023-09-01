@@ -295,7 +295,7 @@ export default function useMessagesViewModel(
   const sendTypingTextMessage = () => {
     console.log('call release in MessagesViewModelWithMockUseCase');
     userTypingMessageUseCase.execute().catch((reason) => {
-      const errorMessage = stringifyError(reason);
+      const errorMessage: string = stringifyError(reason);
 
       console.log('have exception in sendTypingTextMessage: ', errorMessage);
 
@@ -344,7 +344,7 @@ export default function useMessagesViewModel(
     sendTextMessageUseCase
       .execute()
       .catch((reason) => {
-        const errorMessage = stringifyError(reason);
+        const errorMessage: string = stringifyError(reason);
 
         console.log(
           'exception in sendMessage in useMessagesViewModel',
@@ -421,11 +421,13 @@ export default function useMessagesViewModel(
         messageToSend.dialogType = dialog.type;
         const attachments: ChatMessageAttachmentEntity[] = [
           {
-            id: fileMessage.uid,
+            id: fileMessage.id as string,
+            uid: fileMessage.uid,
             type: fileMessage.type!,
             file: fileMessage,
             name: fileMessage.name,
             size: fileMessage.size,
+            url: fileMessage.url,
           },
         ];
 

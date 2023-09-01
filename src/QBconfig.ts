@@ -13,7 +13,7 @@ export const QBConfig = {
       proxyConfig: {
         api: 'v1/chat/completions',
         servername: 'http://localhost',
-        port: '3001',
+        port: '3011',
         sessionToken: '',
       },
     },
@@ -32,17 +32,18 @@ export const QBConfig = {
       proxyConfig: {
         api: 'v1/chat/completions',
         servername: 'http://localhost',
-        port: '3001',
+        port: '3011',
         sessionToken: '',
       },
     },
     AIRephraseWidgetConfig: {
       apiKey: '',
       useDefault: true,
+      defaultTone: 'Professional',
       proxyConfig: {
         api: 'v1/chat/completions',
         servername: 'http://localhost',
-        port: '3001',
+        port: '3011',
         sessionToken: '',
       },
     },

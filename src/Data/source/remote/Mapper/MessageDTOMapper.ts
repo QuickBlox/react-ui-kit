@@ -47,14 +47,14 @@ export class MessageDTOMapper implements IDTOMapper {
         size: item.size,
         type: item.type,
         uid: item.uid,
-        url: item.id.toString() && QB.content.privateUrl(item.id.toString()),
+        url: item.uid && QB.content.privateUrl(item.uid),
         file: {
           id: item.id,
           name: item.name,
           size: item.size,
           type: item.type,
           uid: item.uid || '',
-          url: item.id.toString() && QB.content.privateUrl(item.id.toString()),
+          url: item.uid && QB.content.privateUrl(item.uid),
         },
       };
 

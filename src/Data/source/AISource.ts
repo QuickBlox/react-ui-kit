@@ -45,7 +45,7 @@ export class AISource {
 
       return outputMessage;
     } catch (err) {
-      const outputMessage = stringifyError(err);
+      const outputMessage: string = stringifyError(err);
 
       throw new RepositoryException(outputMessage, -1);
     }
@@ -85,7 +85,7 @@ export class AISource {
 
       return outputMessage;
     } catch (err) {
-      const outputMessage = stringifyError(err);
+      const outputMessage: string = stringifyError(err);
 
       throw new RepositoryException(outputMessage, -1);
     }
@@ -125,7 +125,7 @@ export class AISource {
 
       return outputMessage;
     } catch (err) {
-      const outputMessage = stringifyError(err);
+      const outputMessage: string = stringifyError(err);
 
       throw new RepositoryException(outputMessage, -1);
     }

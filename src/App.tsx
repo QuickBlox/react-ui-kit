@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import './App.scss';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import { QBConfig } from './QBconfig';
 import useQBConnection from './Presentation/components/providers/QuickBloxUIKitProvider/useQBConnection';
 import { LocalDataSource } from './Data/source/local/LocalDataSource';
 import Login from './Presentation/components/layouts/TestStage/LoginView/Login';
@@ -15,6 +14,7 @@ import {
 import QuickBloxUIKitDesktopLayout from './Presentation/components/layouts/Desktop/QuickBloxUIKitDesktopLayout';
 import DefaultTheme from './Presentation/assets/DefaultThemes/DefaultTheme';
 import useQbUIKitDataContext from './Presentation/components/providers/QuickBloxUIKitProvider/useQbUIKitDataContext';
+import { QBConfig } from './QBconfig';
 
 function App() {
   // const currentContext = React.useContext(qbDataContext);
@@ -28,8 +28,8 @@ function App() {
   const { connectionRepository } = useQBConnection();
 
   const initLoginData: LoginData = {
-    login: '',
-    password: '',
+    login: 'artimed', // vit1
+    password: 'quickblox',
   };
 
   const [currentUser, setCurrentUser] = React.useState(initLoginData);
@@ -70,7 +70,7 @@ function App() {
           authKeyOrAppId: currentContext.InitParams.accountData.authKey,
           authSecret: currentContext.InitParams.accountData.authSecret,
           accountKey: currentContext.InitParams.accountData.accountKey,
-          config: QBConfig.appConfig,
+          config: QBConfig,
         },
         authData,
       );
@@ -175,7 +175,7 @@ function App() {
             authKeyOrAppId: currentContext.InitParams.accountData.authKey,
             authSecret: currentContext.InitParams.accountData.authSecret,
             accountKey: currentContext.InitParams.accountData.accountKey,
-            config: QBConfig.appConfig,
+            config: QBConfig,
           },
           data,
         );
@@ -206,14 +206,7 @@ function App() {
       maxFileSize={QBConfig.appConfig.maxFileSize}
       // SDK={QB} //init SDK
       accountData={{ ...QBConfig.credentials, sessionToken: '' }}
-      // qbConfig={{
-      //   debug: true,
-      //   endpoints: {
-      //     api: 'apilpsgdev.quickblox.com',
-      //     chat: 'chatlpsgdev.quickblox.com',
-      //   },
-      //   webrtc: {},
-      // }}
+      qbConfig={{ ...QBConfig }}
       loginData={{
         login: currentUser.login,
         password: currentUser.password,
