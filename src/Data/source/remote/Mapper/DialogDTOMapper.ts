@@ -61,6 +61,9 @@ export class DialogDTOMapper implements IDTOMapper {
     dto.lastMessageId = qbDialog.last_message_id || '';
     dto.lastMessageText = qbDialog.last_message as string;
     dto.lastMessageDateSent = qbDialog.last_message_date_sent as string;
+    // dto.lastMessageDateSent = (
+    //   parseInt(qbDialog.last_message_date_sent || '0', 10) * 1000
+    // ).toString();
     dto.lastMessageUserId =
       qbDialog.last_message_user_id === null
         ? ''

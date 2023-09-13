@@ -291,7 +291,7 @@ function QuickBloxUIKitProvider({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   // storage.SYNC_DIALOGS_USE_CASE.execute(() => {});
 
-  // todo: MUST use sessionToken or login/pass to re-init
+  // todo: MUST use apiKeyOrSessionToken or login/pass to re-init
   // const remoteDataSourceMock: RemoteDataSource =
   //   storage.REMOTE_DATA_SOURCE as RemoteDataSource;
   // // remoteDataSourceMock

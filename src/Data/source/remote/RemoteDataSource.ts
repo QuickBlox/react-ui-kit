@@ -371,7 +371,7 @@ export class RemoteDataSource implements IRemoteDataSource {
       const resultMessage = new RemoteMessageDTO();
 
       resultMessage.id = message.id;
-      resultMessage.message = message.body;
+      resultMessage.message = MessageDTOMapper.formatMessage(message.body);
       resultMessage.markable = message.markable
         ? message.markable.toString()
         : '0';
@@ -394,6 +394,7 @@ export class RemoteDataSource implements IRemoteDataSource {
 
       // resultMessage.attachments = message.extension.attachments || [];
       resultMessage.attachments = MessageDTOMapper.transformAttachment(
+        message.body,
         message.extension.attachments ? message.extension.attachments : [],
       );
 

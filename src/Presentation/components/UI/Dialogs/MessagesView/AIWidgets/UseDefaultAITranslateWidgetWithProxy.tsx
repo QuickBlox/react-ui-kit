@@ -15,7 +15,7 @@ import { AISource, IChatMessage } from '../../../../../../Data/source/AISource';
 //   apiKeyOrSessionToken: string;
 //   apiKey: string;
 // }
-export default function UseDefaultAITranslateWidget({
+export default function UseDefaultAITranslateWidgetWithProxy({
   servername,
   api,
   port,
@@ -62,7 +62,7 @@ export default function UseDefaultAITranslateWidget({
       }
 
       // eslint-disable-next-line no-return-await
-      return await AISource.getData(
+      return await AISource.getDataWithProxyServer(
         prompt,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         context,

@@ -399,12 +399,18 @@ export default function useMessagesViewModel(
       .then((fileMessage: FileEntity) => {
         console.log(JSON.stringify(fileMessage));
         // '[attachment]'
+        const recipientId =
+          dialog.type === DialogType.private
+            ? (dialog as PrivateDialogEntity).participantId
+            : currentUserId;
+
+        // eslint-disable-next-line promise/always-return
+        const messageBody = fileMessage.name || '[attachment]';
         const messageToSend: MessageEntity =
           Stubs.createMessageEntityWithParams(
             '',
             dialog.id,
-            // eslint-disable-next-line promise/always-return
-            fileMessage.name || '[attachment]',
+            messageBody,
             Date.now().toString(),
             Date.now(),
             Date.now().toString(),
@@ -412,7 +418,8 @@ export default function useMessagesViewModel(
             [],
             1,
             currentUserId,
-            currentUserId,
+            // eslint-disable-next-line promise/always-return
+            recipientId,
             [],
             '',
             DialogType.group,
@@ -433,6 +440,9 @@ export default function useMessagesViewModel(
 
         messageToSend.attachments = attachments;
 
+        messageToSend.message = `MediaContentEntity|${messageBody}|${
+          fileMessage.uid
+        }|${fileMessage.type!.toString()}`;
         sendMessage(messageToSend);
         //
       })

@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import { AIMessageWidget, MessageWidgetProps } from './AIMessageWidget';
 import AIWidgetIcon from '../../../svgs/Icons/AIWidgets/AIWidget';
 import ErrorMessageIcon from './ErrorMessageIcon';
-import { AIMessageWidget, MessageWidgetProps } from './AIMessageWidget';
 import { AISource, IChatMessage } from '../../../../../../Data/source/AISource';
 
 // interface MessageWidgetProps {
@@ -15,7 +15,7 @@ import { AISource, IChatMessage } from '../../../../../../Data/source/AISource';
 //   apiKeyOrSessionToken: string;
 //   apiKey: string;
 // }
-export default function UseDefaultAITranslateWidget({
+export default function UseDefaultAIAssistAnswerWidgetWithProxy({
   servername,
   api,
   port,
@@ -48,21 +48,12 @@ export default function UseDefaultAITranslateWidget({
   const textToWidget = async (
     textToSend: string,
     context: IChatMessage[],
-    additionalSettings?: { [key: string]: any },
   ): Promise<string> => {
     if (textToSend && textToSend.length > 0) {
-      // eslint-disable-next-line no-return-await
-      let prompt = `Please, translate the next text in english and give me just only translated text. Text to translate is: "${textToSend}"`;
-      const { language } = additionalSettings || {};
-
-      if (language) {
-        prompt = `Please, translate the next text in ${
-          language as string
-        } and give me just only translated text. Text to translate is: "${textToSend}"`;
-      }
+      const prompt = `You are a customer support chat operator. Your goal is to provide helpful and informative responses to customer inquiries. Give a response to the next user's query, considering the entire conversation context, and use grammar and vocabulary at the A2-B2 level. Answer in the format of simple sentences. Do not include question in answer. Please, provide answer for this issue:"${textToSend}"`;
 
       // eslint-disable-next-line no-return-await
-      return await AISource.getData(
+      return await AISource.getDataWithProxyServer(
         prompt,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         context,

@@ -67,7 +67,10 @@ export default function useDialogsViewModel(
 
   const dialogUpdateHandler = (dialogInfo: DialogEventInfo) => {
     console.log('call dialogUpdateHandler in useDialogsViewModel');
-    if (dialogInfo.eventMessageType === EventMessageType.SystemMessage) {
+    if (
+      dialogInfo.eventMessageType === EventMessageType.SystemMessage
+      // || dialogInfo.eventMessageType === EventMessageType.RegularMessage
+    ) {
       if (dialogInfo.notificationTypes === NotificationTypes.UPDATE_DIALOG) {
         if (dialogInfo.messageInfo) {
           const { dialogId } = dialogInfo.messageInfo;

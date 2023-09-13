@@ -1,21 +1,20 @@
 import { useState } from 'react';
-import AIWidgetIcon from '../../../svgs/Icons/AIWidgets/AIWidget';
-import ErrorMessageIcon from './ErrorMessageIcon';
 import { AIMessageWidget, MessageWidgetProps } from './AIMessageWidget';
-import { AISource, IChatMessage } from '../../../../../../Data/source/AISource';
+import ErrorMessageIcon from './ErrorMessageIcon';
+import AIWidgetIcon from '../../../svgs/Icons/AIWidgets/AIWidget';
+import { Tone } from './Tone';
+import { IChatMessage } from '../../../../../../Data/source/AISource';
+import { AIRephraseWithProxyUseCase } from '../../../../../../Domain/use_cases/ai/AIRephraseWithProxyUseCase';
 
 // interface MessageWidgetProps {
-//   // https://api.openai.com/v1/chat/completions'
-//   // api: 'v1/chat/completions',
-//   // servername: 'https://myproxy.com',
-//   // https://func270519800.azurewebsites.net/api/TranslateTextToEng
 //   servername: string;
 //   api: string;
 //   port: string;
 //   apiKeyOrSessionToken: string;
 //   apiKey: string;
 // }
-export default function UseDefaultAITranslateWidget({
+
+export default function UseDefaultAIRephraseMessageWidgetWithProxy({
   servername,
   api,
   port,
@@ -45,38 +44,37 @@ export default function UseDefaultAITranslateWidget({
   };
 
   const [textFromWidgetToContent, setTextFromWidgetToContent] = useState('');
+
   const textToWidget = async (
     textToSend: string,
     context: IChatMessage[],
     additionalSettings?: { [key: string]: any },
   ): Promise<string> => {
     if (textToSend && textToSend.length > 0) {
-      // eslint-disable-next-line no-return-await
-      let prompt = `Please, translate the next text in english and give me just only translated text. Text to translate is: "${textToSend}"`;
-      const { language } = additionalSettings || {};
+      const { tone } = additionalSettings || {};
 
-      if (language) {
-        prompt = `Please, translate the next text in ${
-          language as string
-        } and give me just only translated text. Text to translate is: "${textToSend}"`;
-      }
+      const openAIModel = 'gpt-3.5-turbo';
 
-      // eslint-disable-next-line no-return-await
-      return await AISource.getData(
-        prompt,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const useCaseAIRephrase = new AIRephraseWithProxyUseCase(
+        textToSend,
+        tone as Tone,
         context,
         servername,
         api,
         port,
         apiKeyOrSessionToken,
-      ).then((data) => {
+        openAIModel,
+      );
+
+      // eslint-disable-next-line no-return-await
+      return await useCaseAIRephrase.execute().then((data) => {
         setTextFromWidgetToContent(data);
 
         return data;
       });
     }
 
+    //
     return '';
   };
 

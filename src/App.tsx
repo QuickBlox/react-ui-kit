@@ -191,7 +191,9 @@ function App() {
 
   useEffect(() => {
     console.log('0. APP INIT');
-    prepareSDK(currentUser).catch();
+    prepareSDK(currentUser).catch((er) => {
+      console.log(er);
+    });
   }, []);
   //
   // const { proxyConfig } = QBConfig.configAIApi.AIAnswerAssistWidgetConfig;

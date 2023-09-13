@@ -191,7 +191,7 @@ const DialogsComponent: React.FC<DialogsProps> = ({
         if (Number.isNaN(dateInt)) {
           return formattedValue;
         }
-        formattedValue = getTimeShort24hFormat(dateInt);
+        formattedValue = getTimeShort24hFormat(dateInt * 1000);
       }
 
       return formattedValue;

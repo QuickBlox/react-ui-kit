@@ -39,7 +39,10 @@ export class MessageDTOMapper implements IDTOMapper {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  public static transformAttachment(qbAtts: ChatMessageAttachment[]) {
+  public static transformAttachment(
+    qbMessage: string,
+    qbAtts: ChatMessageAttachment[],
+  ) {
     const result: ChatMessageAttachmentEntity[] = qbAtts.map((item) => {
       const newItem: ChatMessageAttachmentEntity = {
         id: item.id,
@@ -57,6 +60,25 @@ export class MessageDTOMapper implements IDTOMapper {
           url: item.uid && QB.content.privateUrl(item.uid),
         },
       };
+      const messageParts = MessageDTOMapper.getMessageParts(qbMessage);
+
+      if (messageParts && messageParts.length > 0) {
+        // val messageBody = "${MediaContentEntity::class.java.simpleName}|$fileName|$uid|$fileMimeType"
+        // 0, 1, 2, 3
+        // eslint-disable-next-line prefer-destructuring
+        newItem.uid = messageParts[2];
+        // eslint-disable-next-line prefer-destructuring
+        newItem.name = messageParts[1];
+        // eslint-disable-next-line prefer-destructuring
+        newItem.type = messageParts[3];
+        newItem.url = newItem.uid && QB.content.privateUrl(newItem.uid);
+        if (newItem.file) {
+          newItem.file.uid = newItem.uid;
+          newItem.file.name = newItem.name;
+          newItem.file.url = newItem.uid && QB.content.privateUrl(newItem.uid);
+          newItem.file.type = newItem.type;
+        }
+      }
 
       return newItem;
     });
@@ -74,7 +96,7 @@ export class MessageDTOMapper implements IDTOMapper {
 
     dto.id = qbMessage._id;
     dto.dialogId = qbMessage.chat_dialog_id;
-    dto.message = qbMessage.message;
+    dto.message = MessageDTOMapper.formatMessage(qbMessage.message);
     dto.created_at = qbMessage.created_at;
     dto.date_sent = qbMessage.date_sent * 1000;
     dto.delivered_ids = qbMessage.delivered_ids ? qbMessage.delivered_ids : [];
@@ -82,6 +104,7 @@ export class MessageDTOMapper implements IDTOMapper {
 
     dto.recipient_id = qbMessage.recipient_id ? qbMessage.recipient_id : 0;
     dto.attachments = MessageDTOMapper.transformAttachment(
+      qbMessage.message,
       qbMessage.attachments ? qbMessage.attachments : [],
     );
     dto.read = qbMessage.read;
@@ -96,6 +119,36 @@ export class MessageDTOMapper implements IDTOMapper {
       : '';
 
     return Promise.resolve(dto as TResult);
+  }
+
+  public static formatMessage(qbMessage: string) {
+    if (
+      qbMessage.includes('MediaContentEntity') ||
+      qbMessage.includes('[Attachment]')
+    ) {
+      const messageParts = qbMessage.split('|');
+
+      // val messageBody = "${MediaContentEntity::class.java.simpleName}|$fileName|$uid|$fileMimeType"
+      // 0, 1, 2, 3
+      return messageParts[1] || '';
+    }
+
+    return qbMessage;
+  }
+
+  private static getMessageParts(qbMessage: string) {
+    if (
+      qbMessage.includes('MediaContentEntity') ||
+      qbMessage.includes('[Attachment]')
+    ) {
+      const messageParts = qbMessage.split('|');
+
+      // val messageBody = "${MediaContentEntity::class.java.simpleName}|$fileName|$uid|$fileMimeType"
+      // 0, 1, 2, 3
+      return messageParts;
+    }
+
+    return [];
   }
 
   private static validateDTO(messageDTO: RemoteMessageDTO) {

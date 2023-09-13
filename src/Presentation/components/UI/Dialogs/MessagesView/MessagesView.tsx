@@ -61,6 +61,8 @@ import SmirkIcon from '../../svgs/Icons/AIWidgets/SmirkIcon';
 import PerformingArtsIcon from '../../svgs/Icons/AIWidgets/PerformingArtsIcon';
 import { FunctionTypeVoidToVoid } from '../../../../Views/Base/BaseViewModel';
 import { IChatMessage } from '../../../../../Data/source/AISource';
+import AIWidgetActions from './AIWidgets/AIWidgetActions/AIWidgetActions';
+import ToneIcon from '../../svgs/Icons/Actions/Tone';
 // import ToneIcon from '../../svgs/Icons/Actions/Tone';
 // import AIWidgetActions from './AIWidgets/AIWidgetActions/AIWidgetActions';
 
@@ -1183,23 +1185,23 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
                 placeholder="enter text to send"
               />
             </div>
-            {/* <div className="right"> */}
-            {/*  {AIRephrase && ( */}
-            {/*    <div className="icon"> */}
-            {/*      <AIWidgetActions */}
-            {/*        widgetToRender={ */}
-            {/*          <ToneIcon */}
-            {/*            width="24" */}
-            {/*            height="24" */}
-            {/*            applyZoom */}
-            {/*            color={theme ? theme.mainText() : 'var(--main-text)'} */}
-            {/*          /> */}
-            {/*        } */}
-            {/*        items={getAIEditingMessagesItems()} */}
-            {/*      /> */}
-            {/*    </div> */}
-            {/*  )} */}
-            {/* </div> */}
+            <div className="right">
+              {AIRephrase && (
+                <div className="icon">
+                  <AIWidgetActions
+                    widgetToRender={
+                      <ToneIcon
+                        width="24"
+                        height="24"
+                        applyZoom
+                        color={theme ? theme.mainText() : 'var(--main-text)'}
+                      />
+                    }
+                    items={getAIEditingMessagesItems()}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         )}
 

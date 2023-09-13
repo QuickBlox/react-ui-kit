@@ -15,6 +15,9 @@ import UseDefaultAIAssistAnswerWidget from '../../UI/Dialogs/MessagesView/AIWidg
 import UseDefaultAITranslateWidget from '../../UI/Dialogs/MessagesView/AIWidgets/UseDefaultAITranslateWidget';
 import UseDefaultAIRephraseMessageWidget from '../../UI/Dialogs/MessagesView/AIWidgets/UseDefaultAIRephraseMessageWidget';
 import { DefaultConfigurations } from '../../../../Data/DefaultConfigurations';
+import UseDefaultAIAssistAnswerWidgetWithProxy from '../../UI/Dialogs/MessagesView/AIWidgets/UseDefaultAIAssistAnswerWidgetWithProxy';
+import UseDefaultAITranslateWidgetWithProxy from '../../UI/Dialogs/MessagesView/AIWidgets/UseDefaultAITranslateWidgetWithProxy';
+import UseDefaultAIRephraseMessageWidgetWithProxy from '../../UI/Dialogs/MessagesView/AIWidgets/UseDefaultAIRephraseMessageWidgetWithProxy';
 
 type AIWidgetPlaceHolder = {
   enabled: boolean;
@@ -80,25 +83,28 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       } else {
         const { apiKey } = QBConfig.configAIApi.AIAnswerAssistWidgetConfig;
         let token = '';
+        const proxyConfig: ProxyConfig =
+          QBConfig.configAIApi.AIAnswerAssistWidgetConfig.proxyConfig ||
+          DefaultConfigurations.getDefaultProxyConfig();
 
         if (apiKey) {
           token = apiKey;
+          defaultAIAnswerToMessageWidget = UseDefaultAIAssistAnswerWidget({
+            ...proxyConfig,
+            apiKeyOrSessionToken: token,
+          });
         } else {
           token =
             QBConfig.configAIApi.AIAnswerAssistWidgetConfig.proxyConfig
               .sessionToken ||
             sessionToken ||
             '';
+          defaultAIAnswerToMessageWidget =
+            UseDefaultAIAssistAnswerWidgetWithProxy({
+              ...proxyConfig,
+              apiKeyOrSessionToken: token,
+            });
         }
-        const proxyConfig: ProxyConfig =
-          QBConfig.configAIApi.AIAnswerAssistWidgetConfig.proxyConfig ||
-          DefaultConfigurations.getDefaultProxyConfig();
-
-        defaultAIAnswerToMessageWidget = UseDefaultAIAssistAnswerWidget({
-          ...proxyConfig,
-          sessionToken: token,
-          apiKey,
-        });
       }
     }
   };
@@ -117,25 +123,27 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       } else {
         const { apiKey } = QBConfig.configAIApi.AITranslateWidgetConfig;
         let token = '';
+        const proxyConfig: ProxyConfig =
+          QBConfig.configAIApi.AITranslateWidgetConfig.proxyConfig ||
+          DefaultConfigurations.getDefaultProxyConfig();
 
         if (apiKey) {
           token = apiKey;
+          defaultAITranslateWidget = UseDefaultAITranslateWidget({
+            ...proxyConfig,
+            apiKeyOrSessionToken: token,
+          });
         } else {
           token =
             QBConfig.configAIApi.AITranslateWidgetConfig.proxyConfig
               .sessionToken ||
             sessionToken ||
             '';
+          defaultAITranslateWidget = UseDefaultAITranslateWidgetWithProxy({
+            ...proxyConfig,
+            apiKeyOrSessionToken: token,
+          });
         }
-        const proxyConfig: ProxyConfig =
-          QBConfig.configAIApi.AITranslateWidgetConfig.proxyConfig ||
-          DefaultConfigurations.getDefaultProxyConfig();
-
-        defaultAITranslateWidget = UseDefaultAITranslateWidget({
-          ...proxyConfig,
-          sessionToken: token,
-          apiKey,
-        });
       }
     }
   };
@@ -154,25 +162,28 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       } else {
         const { apiKey } = QBConfig.configAIApi.AIRephraseWidgetConfig;
         let token = '';
+        const proxyConfig: ProxyConfig =
+          QBConfig.configAIApi.AIRephraseWidgetConfig.proxyConfig ||
+          DefaultConfigurations.getDefaultProxyConfig();
 
         if (apiKey) {
           token = apiKey;
+          defaultAIEditMessageWidget = UseDefaultAIRephraseMessageWidget({
+            ...proxyConfig,
+            apiKeyOrSessionToken: token,
+          });
         } else {
           token =
             QBConfig.configAIApi.AIRephraseWidgetConfig.proxyConfig
               .sessionToken ||
             sessionToken ||
             '';
+          defaultAIEditMessageWidget =
+            UseDefaultAIRephraseMessageWidgetWithProxy({
+              ...proxyConfig,
+              apiKeyOrSessionToken: token,
+            });
         }
-        const proxyConfig: ProxyConfig =
-          QBConfig.configAIApi.AIRephraseWidgetConfig.proxyConfig ||
-          DefaultConfigurations.getDefaultProxyConfig();
-
-        defaultAIEditMessageWidget = UseDefaultAIRephraseMessageWidget({
-          ...proxyConfig,
-          sessionToken: token,
-          apiKey,
-        });
       }
     }
   };
