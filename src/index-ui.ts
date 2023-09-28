@@ -37,7 +37,7 @@ import { AIMessageWidget } from './Presentation/components/UI/Dialogs/MessagesVi
 import { AISource, IChatMessage } from './Data/source/AISource';
 import AIWidgetIcon from './Presentation/components/UI/svgs/Icons/AIWidgets/AIWidget';
 import ErrorMessageIcon from './Presentation/components/UI/Dialogs/MessagesView/AIWidgets/ErrorMessageIcon';
-
+import PreviewDialogViewModel from './Presentation/components/UI/Dialogs/PreviewDialog/PreviewDialogViewModel';
 export {
   MainButton,
   TypeButton,
@@ -74,4 +74,9 @@ export {
   type IChatMessage,
   AIWidgetIcon,
   ErrorMessageIcon,
+  PreviewDialogViewModel,
 };
+
+export type FunctionTypeViewModelToVoid<TResult> = ( // had trouble with this re-exporting this one
+  it: BaseViewModel<TResult>,
+) => void;
