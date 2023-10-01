@@ -38,6 +38,9 @@ import { AISource, IChatMessage } from './Data/source/AISource';
 import AIWidgetIcon from './Presentation/components/UI/svgs/Icons/AIWidgets/AIWidget';
 import ErrorMessageIcon from './Presentation/components/UI/Dialogs/MessagesView/AIWidgets/ErrorMessageIcon';
 import PreviewDialogViewModel from './Presentation/components/UI/Dialogs/PreviewDialog/PreviewDialogViewModel';
+import {AvatarContentIncomingUserProps} from './Presentation/components/UI/Dialogs/MessagesView/InComingMessage/AvatarContentIncomingUser/AvatarContentIncomingUser';
+import {FunctionTypeViewModelToVoid} from './Presentation/Views/Base/BaseViewModel';
+import {GetUserNameFct} from './Presentation/components/UI/Dialogs/MessagesView/InComingMessage/InComingMessage';
 export {
   MainButton,
   TypeButton,
@@ -75,8 +78,7 @@ export {
   AIWidgetIcon,
   ErrorMessageIcon,
   PreviewDialogViewModel,
+  type FunctionTypeViewModelToVoid,
+  type AvatarContentIncomingUserProps,
+  type GetUserNameFct
 };
-
-export type FunctionTypeViewModelToVoid<TResult> = ( // had trouble with this re-exporting this one
-  it: BaseViewModel<TResult>,
-) => void;
