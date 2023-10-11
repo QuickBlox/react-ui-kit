@@ -21,12 +21,15 @@ import { IChatMessage } from '../../../../../../Data/source/AISource';
 import AssistAnswer from '../../../svgs/Icons/Actions/AssistAnswer';
 import AIWidgetActions from '../AIWidgets/AIWidgetActions/AIWidgetActions';
 import TranslateIcon from '../../../svgs/Icons/Media/Translate';
-import AvatarContentIncomingUser from './AvatarContentIncomingUser/AvatarContentIncomingUser';
+import AvatarContentIncomingUser, { AvatarContentIncomingUserProps } from './AvatarContentIncomingUser/AvatarContentIncomingUser';
 import { DefaultConfigurations } from '../../../../../../Data/DefaultConfigurations';
+import { UserEntity } from '../../../../../../Domain/entity/UserEntity';
+
+export type GetUserNameFct = (props: { userId?: number, sender?: UserEntity }) => Promise<string | undefined>;
 
 export function InComingMessage(props: {
   theme: UiKitTheme | undefined;
-  senderName: string | undefined;
+  senderNameFct: GetUserNameFct;
   message: MessageEntity;
   // element: JSX.Element;
   onLoader: () => void;
@@ -35,6 +38,7 @@ export function InComingMessage(props: {
   messagesToView: MessageEntity[];
   AITranslation?: AIMessageWidget;
   AIAnswerToMessage?: AIMessageWidget;
+  userIconRenderer?: (props: AvatarContentIncomingUserProps) => React.ReactElement;
   // index?: number;
   // updateData?: (index: number, text: string) => void;
   // translationDATA?: Record<number, string>;
@@ -47,6 +51,13 @@ export function InComingMessage(props: {
     useState<boolean>(false);
   const [widgetTextContent, setWidgetTextContent] = useState<string>('');
   const [originalTextMessage, setOriginalTextMessage] = useState<boolean>(true);
+  const [senderName, setSenderName] = useState<string | undefined>('');
+  useEffect(() => {
+    props.senderNameFct({ userId: props.message.sender_id, sender: props.message.sender }).then((name) => {
+      setSenderName(name);
+    });
+  }, [props.message.sender_id]);
+
   // const [errorAITranslate, setErrorAITranslate] = useState<boolean>(false);
 
   // useEffect(() => {
@@ -560,12 +571,14 @@ export function InComingMessage(props: {
       onMouseEnter={() => setHaveHover(true)}
       onMouseLeave={() => setHaveHover(false)}
     >
-      <AvatarContentIncomingUser />
+      {props.userIconRenderer ?
+        props.userIconRenderer({ userId: props.message.sender_id }) :
+        (<AvatarContentIncomingUser userId={props.message.sender_id} />)}
       <div className="incoming">
         <div className="name">
           <div className="caption">
             <div className="name2">
-              {props.senderName || props.message.sender_id.toString()}
+              {senderName || props.message.sender_id.toString()}
             </div>
           </div>
         </div>

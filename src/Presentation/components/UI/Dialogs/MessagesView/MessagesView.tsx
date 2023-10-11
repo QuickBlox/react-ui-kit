@@ -46,7 +46,7 @@ import { DialogsViewModel } from '../../../../Views/Dialogs/DialogViewModel';
 import { HighLightLink, messageHasUrls } from './HighLightLink/HighLightLink';
 import { loopToLimitTokens } from '../../../../../utils/utils';
 import { OutGoingMessage } from './OutGoingMessage/OutGoingMessage';
-import { InComingMessage } from './InComingMessage/InComingMessage';
+import { GetUserNameFct, InComingMessage } from './InComingMessage/InComingMessage';
 import { Tone } from './AIWidgets/Tone';
 import NecktieIcon from '../../svgs/Icons/AIWidgets/NecktieIcon';
 import HandshakeIcon from '../../svgs/Icons/AIWidgets/HandshakeIcon';
@@ -63,6 +63,7 @@ import { FunctionTypeVoidToVoid } from '../../../../Views/Base/BaseViewModel';
 import { IChatMessage } from '../../../../../Data/source/AISource';
 import AIWidgetActions from './AIWidgets/AIWidgetActions/AIWidgetActions';
 import ToneIcon from '../../svgs/Icons/Actions/Tone';
+import { AvatarContentIncomingUserProps } from './InComingMessage/AvatarContentIncomingUser/AvatarContentIncomingUser';
 // import ToneIcon from '../../svgs/Icons/Actions/Tone';
 // import AIWidgetActions from './AIWidgets/AIWidgetActions/AIWidgetActions';
 
@@ -74,8 +75,13 @@ type HeaderDialogsMessagesProps = {
   onDialogInformationHandler?: FunctionTypeVoidToVoid;
   maxWidthToResize?: string;
   theme?: UiKitTheme;
-  subHeaderContent?: React.ReactNode;
-  upHeaderContent?: React.ReactNode;
+  headerContent?: React.ReactNode;
+  subHeaderContent?: React.ReactNode; // I recommend removing this as it can be done with headerContent
+  upHeaderContent?: React.ReactNode; // I recommend removing this as it can be done with headerContent
+  rootStyles?: React.CSSProperties;
+  messagesContainerStyles?: React.CSSProperties;
+  userIconRenderer?: (props: AvatarContentIncomingUserProps) => React.ReactElement;
+  getSenderNameFct?: (props: {sender?: UserEntity, userId?: number}) => Promise<string | undefined>;
 };
 
 // eslint-disable-next-line react/function-component-definition
@@ -94,6 +100,11 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   theme = undefined,
   subHeaderContent = undefined,
   upHeaderContent = undefined,
+  headerContent = undefined,
+  rootStyles = {},
+  messagesContainerStyles = {},
+  userIconRenderer = undefined,
+  getSenderNameFct
 }: HeaderDialogsMessagesProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const maxWidthToResizing =
@@ -226,7 +237,8 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   }, [dialogMessagesCount]);
   //
 
-  const getSenderName = (sender?: UserEntity): string | undefined => {
+  const defaultGetSenderName:GetUserNameFct = async (props: {sender?: UserEntity}): Promise<string | undefined> => {
+    const sender = props.sender
     if (!sender) return undefined;
 
     return (
@@ -377,7 +389,8 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
         <InComingMessage
           key={message.id}
           theme={theme}
-          senderName={getSenderName(message.sender)}
+          senderNameFct={getSenderNameFct ? getSenderNameFct:  defaultGetSenderName}
+          userIconRenderer={userIconRenderer}
           message={message}
           // element={messageContentRender(message)}
           onLoader={() => {
@@ -922,27 +935,32 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
               minWidth: `$message-view-container-wrapper-min-width`,
               // width: `${maxWidthToResizing}`,
               width: '100%',
+              ...rootStyles,
             }
-          : {}
+          : rootStyles
       }
       className="message-view-container"
     >
-      <div
-        style={{
-          flexGrow: `1`,
-          flexShrink: `1`,
-          flexBasis: `${maxWidthToResizing}`,
-        }}
-        className="message-view-container--header"
-      >
-        {useUpContent && upHeaderContent}
-        <HeaderMessages
-          dialog={messagesViewModel.entity}
-          InformationHandler={onDialogInformationHandler}
-          countMembers={getCountDialogMembers(dialogsViewModel.entity)}
-        />
-        {useSubContent && subHeaderContent}
-      </div>
+      {headerContent ? (
+        headerContent
+      ) : (
+        <div
+          style={{
+            flexGrow: `1`,
+            flexShrink: `1`,
+            flexBasis: `${maxWidthToResizing}`,
+          }}
+          className="message-view-container--header"
+        >
+          {useUpContent && upHeaderContent}
+          <HeaderMessages
+            dialog={messagesViewModel.entity}
+            InformationHandler={onDialogInformationHandler}
+            countMembers={getCountDialogMembers(dialogsViewModel.entity)}
+          />
+          {useSubContent && subHeaderContent}
+        </div>
+      )}
       {/* <div */}
       {/*  style={{ */}
       {/*    flexGrow: `1`, */}
@@ -1012,11 +1030,13 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
                 flexShrink: `1`,
                 flexBasis: `${maxWidthToResizing}`,
                 backgroundColor: theme.secondaryBackground(), // var(--secondary-background);
+                ...messagesContainerStyles
               }
             : {
                 flexGrow: `1`,
                 flexShrink: `1`,
                 flexBasis: `${maxWidthToResizing}`,
+                ...messagesContainerStyles
               }
         }
         className="message-view-container--messages"
