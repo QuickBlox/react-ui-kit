@@ -1,11 +1,7 @@
 import React from 'react';
 import './AvatarContentIncomingUser.scss';
 
-export interface AvatarContentIncomingUserProps {
-  userId: number;
-}
-
-export default function AvatarContentIncomingUser(props: AvatarContentIncomingUserProps) {
+export default function AvatarContentIncomingUser() {
   return (
     <div className="avatar-wrap">
       <div className="avatar">

@@ -3,6 +3,7 @@ import { GroupDialogEntity } from '../../../Domain/entity/GroupDialogEntity';
 import { DialogEntity } from '../../../Domain/entity/DialogEntity';
 import { FileEntity } from '../../../Domain/entity/FileEntity';
 import { IChatMessage } from '../../../Data/source/AISource';
+import { Tone } from '../../components/UI/Dialogs/MessagesView/AIWidgets/Tone';
 
 export default class BaseViewModel<TResult> {
   get entity(): TResult {
@@ -86,3 +87,4 @@ export type FunctionTypeStringWithContextToString = (
   context: IChatMessage[],
   additionalSettings?: { [key: string]: any },
 ) => Promise<string>;
+export type FunctionTypeVoidToTones = () => Tone[];

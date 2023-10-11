@@ -2,7 +2,7 @@
 
 $preview-dialog-color-divider: var(--color-divider);
 $row-center-container-base-font-size: 12px;
-$row-center-container-base-font-line-height: 24px;
+$row-center-container-base-font-line-height: 32px;
 $row--main-container-min-height: 72px;
 $row--main-container-min-width: 320px;
 $row--main-container-text-title-width: 120px;
@@ -55,7 +55,7 @@ $preview-dialog-avatar-wrapper-background-color-private: var(--caption);
     word-wrap: break-word;
     overflow: hidden;
     max-height: $row-center-container-base-font-line-height; /* (Number of lines you want visible) * (line-height) */
-    line-height: $row-center-container-base-font-size;
+    line-height: 11px; // $row-center-container-base-font-size;
     text-align:justify;
   }
 

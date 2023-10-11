@@ -1,8 +1,9 @@
 import {
   FunctionTypeFileWithContextToToVoid,
   FunctionTypeJSXElement,
-  FunctionTypeStringWithContextToString,
+  FunctionTypeStringWithContextToString, FunctionTypeVoidToTones,
 } from '../../../../../Views/Base/BaseViewModel';
+import {Tone} from "./Tone";
 
 export interface MessageWidgetProps {
   // https://api.openai.com/v1/chat/completions'
@@ -29,7 +30,11 @@ export interface AIFileWidget extends AIWidget {
 export interface AIMessageWidget extends AITextWidget {
   textToWidget: FunctionTypeStringWithContextToString;
 }
-
+//
+export interface AIRephraseWidget extends AIMessageWidget {
+  tonesToWidget: FunctionTypeVoidToTones;
+}
+//
 export interface AIAttachmentWidget extends AIFileWidget {
   fileToWidget: FunctionTypeFileWithContextToToVoid;
 }

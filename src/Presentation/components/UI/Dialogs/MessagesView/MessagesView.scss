@@ -232,7 +232,7 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    justify-content: center;
+    justify-content: left;
     align-items: center;
     margin: 0 auto;
     padding: 0;
@@ -379,7 +379,7 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
   position: relative;
   margin-bottom: 5px;
 }
-.icon {
+.ai-assist-icon {
   border-radius: 4px;
   padding: 4px;
   display: flex;
@@ -391,7 +391,6 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
   width: 24px;
   height: 24px;
   position: relative;
-  cursor: pointer;
 }
 
 //

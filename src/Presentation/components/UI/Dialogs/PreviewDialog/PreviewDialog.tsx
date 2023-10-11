@@ -14,6 +14,10 @@ import PreviewDialogViewModel from './PreviewDialogViewModel';
 import NotifyOff from '../../svgs/Icons/Toggle/NotifyOff';
 import EditDots from '../../svgs/Icons/Actions/EditDots';
 import UiKitTheme from '../../../../assets/UiKitTheme';
+import PreviewImageFile from './PreviewImageFile/PreviewImageFile';
+import PreviewAudioFile from './PreviewAudioFile/PreviewAudioFile';
+import PreviewVideoFile from './PreviewVideoFile/PreviewVideoFile';
+import PreviewDefaultFile from './PreviewDefaultFile/PreviewDefaultFile';
 
 export type ThemeNames = 'light' | 'dark' | 'custom';
 type PreviewDialogsColorTheme = {
@@ -285,6 +289,50 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
     minWidth: '182px',
   };
 
+  const getMessageParts = (message: string) => {
+    if (
+      message.includes('MediaContentEntity') ||
+      message.includes('[Attachment]')
+    ) {
+      const messageParts = message.split('|');
+
+      // val messageBody = "${MediaContentEntity::class.java.simpleName}|$fileName|$uid|$fileMimeType"
+      // 0, 1, 2, 3
+      return messageParts;
+    }
+
+    return [];
+  };
+
+  const getPreviewMessage = (message: string): JSX.Element => {
+    const messageParts = getMessageParts(message);
+
+    if (messageParts && messageParts.length > 0) {
+      const fileName: string = messageParts[1];
+      const fileUid: string = messageParts[2];
+      const fileUrl: string = fileUid && QB.content.privateUrl(fileUid);
+
+      const result: JSX.Element = <div>{message}</div>;
+
+      if (messageParts[3].includes('audio')) {
+        return <PreviewAudioFile fileName={fileName} />;
+      }
+      if (messageParts[3].includes('video')) {
+        return <PreviewVideoFile fileName={fileName} />;
+      }
+      if (messageParts[3].includes('image')) {
+        return <PreviewImageFile fileName={fileName} imgUrl={fileUrl} />;
+      }
+      if (fileName.length > 0 && fileName.includes('.')) {
+        return <PreviewDefaultFile fileName={fileName} />;
+      }
+
+      return result;
+    }
+
+    return <div>{message}</div>;
+  };
+
   return (
     <div
       onMouseEnter={() => setHaveHover(true)}
@@ -388,7 +436,7 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
                 CenterItem={
                   <div className="preview-dialog-container__text-left">
                     <span className="preview-dialog-container__text-concat">
-                      {previewMessage}
+                      {getPreviewMessage(previewMessage || '')}
                     </span>
                   </div>
                 }
@@ -420,7 +468,7 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
                     className={textWrapperContainer}
                   >
                     <span className="preview-dialog-container__text-concat">
-                      {previewMessage}
+                      {getPreviewMessage(previewMessage || '')}
                     </span>
                   </div>
                 }

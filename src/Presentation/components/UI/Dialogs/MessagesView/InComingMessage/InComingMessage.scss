@@ -289,7 +289,7 @@
   font: var(--label-label-small, 500 11px/16px "Roboto", sans-serif);
   position: relative;
 }
-.icon {
+.icon-translate {
   border-radius: 4px;
   display: flex;
   flex-direction: row;
@@ -349,16 +349,15 @@
 }
 
 .ai-translate-action {
-  color: var(--secondary-secondary-300, #636d78);
+  color: var(--tertiary-elements);
   text-align: right;
-  font: var(--label-label-small, 500 11px/16px "Roboto", sans-serif);
+  font: 500 11px/16px "Roboto", sans-serif;
   position: relative;
-  cursor: pointer;
 }
 
 
 // --- AIAssist
-.assist-answer {
+.ai-assist-answer {
   display: flex;
   flex-direction: row;
   gap: 10px;
@@ -367,7 +366,6 @@
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
-  cursor: pointer;
 }
 .icon {
   border-radius: 4px;

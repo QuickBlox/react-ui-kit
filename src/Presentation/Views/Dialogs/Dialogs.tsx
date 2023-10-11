@@ -213,7 +213,7 @@ const DialogsComponent: React.FC<DialogsProps> = ({
       ) {
         const imagePhoto = (currentDialog.entity as GroupDialogEntity).photo;
 
-        console.log('Dialogs: avatar: ', imagePhoto || 'NO FOTO');
+        // console.log('Dialogs: avatar: ', imagePhoto || 'NO FOTO');
         AvatarComponent = imagePhoto ? (
           <img
             style={{ width: '55px', height: '55px', borderRadius: '50%' }}

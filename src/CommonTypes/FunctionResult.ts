@@ -1,3 +1,5 @@
+import {Tone} from "../Presentation/components/UI/Dialogs/MessagesView/AIWidgets/Tone";
+
 export type FunctionResult<T> = {
   result: T | T[] | boolean;
   error: any;
@@ -7,10 +9,12 @@ export type ProxyConfig = {
   api: string;
   servername: string;
   port: string;
-  sessionToken: string;
 };
 export interface WidgetConfig {
+  organizationName: string;
+  openAIModel: string;
   apiKey: string;
+  maxTokens: number;
   useDefault: boolean;
   proxyConfig: ProxyConfig;
 }
@@ -22,6 +26,7 @@ export interface AITranslateWidgetConfig extends WidgetConfig {
 
 export interface AIRephraseWidgetConfig extends WidgetConfig {
   defaultTone: string;
+  Tones: Tone[];
 }
 
 export interface QBConfig {

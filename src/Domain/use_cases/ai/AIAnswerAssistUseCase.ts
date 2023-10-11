@@ -1,13 +1,10 @@
 // eslint-disable-next-line import/extensions
-import { QBAIRephrase } from 'qb-ai-rephrase';
+import { QBAIAnswerAssistant } from 'qb-ai-answer-assistant';
 import { IChatMessage } from '../../../Data/source/AISource';
 import { IUseCase } from '../base/IUseCase';
-import { Tone } from '../../../Presentation/components/UI/Dialogs/MessagesView/AIWidgets/Tone';
 
-export class AIRephraseUseCase implements IUseCase<void, string> {
+export class AIAnswerAssistUseCase implements IUseCase<void, string> {
   private textToSend: string;
-
-  private tone: Tone;
 
   private dialogMessages: IChatMessage[];
 
@@ -23,7 +20,6 @@ export class AIRephraseUseCase implements IUseCase<void, string> {
 
   constructor(
     textToSend: string,
-    tone: Tone,
     dialogMessages: IChatMessage[],
     servername: string,
     api: string,
@@ -37,44 +33,28 @@ export class AIRephraseUseCase implements IUseCase<void, string> {
     this.port = port;
     this.sessionToken = sessionToken;
     this.textToSend = textToSend;
-    this.tone = tone;
     this.servername = servername;
     this.dialogMessages = dialogMessages;
   }
 
   async execute(): Promise<string> {
     console.log('execute AIRephraseUseCase');
-
-    const settings = QBAIRephrase.createDefaultAIRephraseSettings();
+    const settings =
+      QBAIAnswerAssistant.createDefaultAIAnswerAssistantSettings();
 
     settings.apiKey = this.sessionToken;
     // settings.organization = 'Quickblox';
     settings.model = this.openAIModel;
-    settings.tone = this.tone;
 
-    return QBAIRephrase.rephrase(
+    return QBAIAnswerAssistant.createAnswer(
       this.textToSend,
       this.dialogMessages,
       settings,
     );
 
-    /*
-    const settings: AITranslateSettings =
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      QBAITranslate.createDefaultAITranslateSettings();
-
-    settings.apiKey = this.sessionToken;
-    settings.language = this.language;
-
-    return QBAITranslate.translate(
-      this.textToSend,
-      this.dialogMessages,
-      settings,
-    );
-     */
-
-    // const prompt = AIUtils.createRephrasePrompt(this.textToSend, this.tone);
+    // const prompt = AIUtils.createAnswerAssistPrompt(this.textToSend);
     //
+    // //
     // return AISource.getData(
     //   prompt,
     //   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
