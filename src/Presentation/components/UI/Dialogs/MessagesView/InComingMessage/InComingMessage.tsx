@@ -25,7 +25,7 @@ import AvatarContentIncomingUser, { AvatarContentIncomingUserProps } from './Ava
 import { DefaultConfigurations } from '../../../../../../Data/DefaultConfigurations';
 import { UserEntity } from '../../../../../../Domain/entity/UserEntity';
 
-export type GetUserNameFct = (props: { userId?: number, sender?: UserEntity }) => Promise<string | undefined>;
+export type GetUserNameFct = (props: { userId?: number | string, sender?: UserEntity }) => Promise<string | undefined>;
 
 export function InComingMessage(props: {
   theme: UiKitTheme | undefined;

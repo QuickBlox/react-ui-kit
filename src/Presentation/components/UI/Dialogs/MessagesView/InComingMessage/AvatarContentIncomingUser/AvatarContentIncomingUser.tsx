@@ -2,7 +2,7 @@ import React from 'react';
 import './AvatarContentIncomingUser.scss';
 
 export interface AvatarContentIncomingUserProps {
-  userId: number;
+  userId: number | string;
 }
 
 export default function AvatarContentIncomingUser(props: AvatarContentIncomingUserProps) {

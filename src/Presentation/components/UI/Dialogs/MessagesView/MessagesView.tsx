@@ -81,7 +81,7 @@ type HeaderDialogsMessagesProps = {
   rootStyles?: React.CSSProperties;
   messagesContainerStyles?: React.CSSProperties;
   userIconRenderer?: (props: AvatarContentIncomingUserProps) => React.ReactElement;
-  getSenderNameFct?: (props: {sender?: UserEntity, userId?: number}) => Promise<string | undefined>;
+  getSenderNameFct?: (props: {sender?: UserEntity, userId?: number | string}) => Promise<string | undefined>;
 };
 
 // eslint-disable-next-line react/function-component-definition
@@ -274,6 +274,10 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
     console.log('render message: ', JSON.stringify(message), ' index: ', index);
     let messageView: JSX.Element;
     const checkMessageType = (m: MessageEntity): string => {
+      if (!m) {
+        console.error('message is null in renderMessage');
+        return '';
+      }
       if (m.notification_type && m.notification_type.length > 0) {
         return SystemMessage;
       }
@@ -430,14 +434,14 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
         />
       );
     } else {
-      messageView = (
+      messageView = message ? (
         <OutGoingMessage
           key={message.id}
           message={message}
           theme={theme}
           element={messageContentRender(message)}
-        />
-      );
+        />) : <></>
+      
     }
 
     return messageView;
