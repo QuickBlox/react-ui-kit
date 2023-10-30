@@ -1,7 +1,13 @@
 import React from 'react';
 import './AvatarContentIncomingUser.scss';
 
+export interface AvatarContentIncomingUserProps {
+  // eslint-disable-next-line react/no-unused-prop-types
+  userId: number;
+}
+
 export default function AvatarContentIncomingUser() {
+  // props: AvatarContentIncomingUserProps,
   return (
     <div className="avatar-wrap">
       <div className="avatar">

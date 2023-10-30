@@ -19,8 +19,9 @@ export class SendTextMessageUseCase implements IUseCase<void, MessageEntity> {
   async execute(): Promise<MessageEntity> {
     console.log('execute SendTextMessageUseCase');
 
-    await this.messagesRepository.sendMessageToRemote(this.messageToSend);
+    const sentMessage: MessageEntity =
+      await this.messagesRepository.sendMessageToRemote(this.messageToSend);
 
-    return Promise.resolve(this.messageToSend);
+    return Promise.resolve(sentMessage);
   }
 }

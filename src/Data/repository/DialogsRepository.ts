@@ -52,6 +52,10 @@ export default class DialogsRepository implements IDialogsRepository {
     this.dialogLocalDTOMapper = new DialogLocalDTOMapper();
   }
 
+  release() {
+    this.localDataStorage.clearAll();
+  }
+
   subscribeLocalSync(subscriber: FunctionTypeVoidToVoid): void {
     this.localDataStorage.subscribe(subscriber);
   }

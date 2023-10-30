@@ -4,23 +4,24 @@ import { qbDataContext, QBDataContextType } from './QuickBloxUIKitProvider';
 const useQbInitializedDataContext = (): QBDataContextType => {
   const currentQbDataContext = React.useContext(qbDataContext);
 
-  console.log(
-    `call useQbDataContext with init param: ${JSON.stringify(
-      currentQbDataContext.InitParams,
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    )}`,
-  );
+  // console.log(
+  //   `call useQbDataContext with init param: ${JSON.stringify(
+  //     currentQbDataContext.InitParams,
+  //     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  //   )}`,
+  // );
   // todo: throw exception if we have not enough data to start session or login
-  let QuickBloxVersion = '';
+  // let QuickBloxVersion = '';
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   if (!window.QB) {
     throw new Error('HAVE NO SDK');
-  } else {
-    QuickBloxVersion = `Have SDK lib: version ${QB.version} build ${QB.buildNumber}`;
-    console.log(QuickBloxVersion);
   }
+  // else {
+  //   QuickBloxVersion = `Have SDK lib: version ${QB.version} build ${QB.buildNumber}`;
+  //   console.log(QuickBloxVersion);
+  // }
   if (!currentQbDataContext) {
     throw new Error('HAVE NO DATA CONTEXT');
   }
@@ -29,10 +30,10 @@ const useQbInitializedDataContext = (): QBDataContextType => {
   }
   // проверять был ли обработан логин
   // если сведения для логина - ник, пароль или токен сессии
-  console.log(
-    'data context: update init param: ',
-    JSON.stringify(currentQbDataContext.InitParams),
-  );
+  // console.log(
+  //   'data context: update init param: ',
+  //   JSON.stringify(currentQbDataContext.InitParams),
+  // );
   if (
     currentQbDataContext.InitParams.accountData.appId &&
     currentQbDataContext.InitParams.accountData.accountKey &&

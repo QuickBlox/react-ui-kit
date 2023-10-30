@@ -221,18 +221,18 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
     color: $message-view-container-message-text-color;
   }
   &--message-content-wrapper{
-    max-width: 240px;
+    max-width: 300px;
     max-height: 160px;
-    min-width: 240px;
+    min-width: 300px;
     // min-height: 160px;
-    width: 240px;
+    width: 300px;
     // height: 160px;
     // height: 100%;
 
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    justify-content: center;
+    justify-content: left;
     align-items: center;
     margin: 0 auto;
     padding: 0;
@@ -346,7 +346,7 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
   box-sizing: border-box;
 }
 .input-text-message {
-  background: var(--primary-primary-a-200, #f7f9ff);
+  background: var(--chat-input);
   border-radius: 4px;
   //padding: 10px 8px 10px 16px;
   display: flex;
@@ -359,16 +359,21 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
 }
 
 .type-message {
-  color: var(--secondary-secondary-200, #90979f);
+  color: var(--field-border);
   text-align: left;
-  font: var(--body-body-large, 400 16px/24px "Roboto", sans-serif);
+  font: var(--body-body-large);
   position: relative;
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: flex-start;
 }
-
+.type-message textarea{
+  color: var(--input-elements);
+  font: var(--body-body-large);
+  border: none;
+  outline: none;
+}
 .right {
   display: flex;
   flex-direction: row;
@@ -379,7 +384,7 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
   position: relative;
   margin-bottom: 5px;
 }
-.icon {
+.ai-assist-icon {
   border-radius: 4px;
   padding: 4px;
   display: flex;
@@ -391,21 +396,4 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
   width: 24px;
   height: 24px;
   position: relative;
-  cursor: pointer;
 }
-
-//
-
-
-//textarea::-webkit-scrollbar {
-//  width: 1em;
-//}
-//
-//textarea::-webkit-scrollbar-track {
-//  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-//}
-//
-//textarea::-webkit-scrollbar-thumb {
-//  background-color: darkgrey;
-//  outline: 1px solid slategrey;
-//}

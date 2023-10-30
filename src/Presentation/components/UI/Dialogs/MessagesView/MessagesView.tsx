@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './MessagesView.scss';
+import { QBAIRephrase } from 'qb-ai-rephrase';
+import { Tone } from 'qb-ai-rephrase/src/Tone';
 import { DialogEntity } from '../../../../../Domain/entity/DialogEntity';
 import useQBConnection from '../../../providers/QuickBloxUIKitProvider/useQBConnection';
 import ScrollableContainer from '../../../containers/ScrollableContainer/ScrollableContainer';
@@ -44,10 +46,11 @@ import UiKitTheme from '../../../../assets/UiKitTheme';
 import { AIMessageWidget } from './AIWidgets/AIMessageWidget';
 import { DialogsViewModel } from '../../../../Views/Dialogs/DialogViewModel';
 import { HighLightLink, messageHasUrls } from './HighLightLink/HighLightLink';
-import { loopToLimitTokens } from '../../../../../utils/utils';
 import { OutGoingMessage } from './OutGoingMessage/OutGoingMessage';
-import { InComingMessage } from './InComingMessage/InComingMessage';
-import { Tone } from './AIWidgets/Tone';
+import {
+  GetUserNameFct,
+  InComingMessage,
+} from './InComingMessage/InComingMessage';
 import NecktieIcon from '../../svgs/Icons/AIWidgets/NecktieIcon';
 import HandshakeIcon from '../../svgs/Icons/AIWidgets/HandshakeIcon';
 import WhiteCheckMarkIcon from '../../svgs/Icons/AIWidgets/WhiteCheckMarkIcon';
@@ -60,9 +63,16 @@ import PointUpIcon from '../../svgs/Icons/AIWidgets/PointUpIcon';
 import SmirkIcon from '../../svgs/Icons/AIWidgets/SmirkIcon';
 import PerformingArtsIcon from '../../svgs/Icons/AIWidgets/PerformingArtsIcon';
 import { FunctionTypeVoidToVoid } from '../../../../Views/Base/BaseViewModel';
-import { IChatMessage } from '../../../../../Data/source/AISource';
-import AIWidgetActions from './AIWidgets/AIWidgetActions/AIWidgetActions';
+import AIWidgetActions, {
+  MenuItem,
+} from './AIWidgets/AIWidgetActions/AIWidgetActions';
 import ToneIcon from '../../svgs/Icons/Actions/Tone';
+import DefaultAttachmentComponent from './DefaultAttachmentComponent/DefaultAttachmentComponent';
+import { AIUtils } from '../../../../../utils/utils';
+import { ErrorToast } from './ErrorToast/ErrorToast';
+import { AvatarContentIncomingUserProps } from './InComingMessage/AvatarContentIncomingUser/AvatarContentIncomingUser';
+import { SystemMessageBanner } from './SystemMessageBanner/SystemMessageBanner';
+import { SystemDateBanner } from './SystemDateBanner/SystemDateBanner';
 // import ToneIcon from '../../svgs/Icons/Actions/Tone';
 // import AIWidgetActions from './AIWidgets/AIWidgetActions/AIWidgetActions';
 
@@ -74,8 +84,18 @@ type HeaderDialogsMessagesProps = {
   onDialogInformationHandler?: FunctionTypeVoidToVoid;
   maxWidthToResize?: string;
   theme?: UiKitTheme;
-  subHeaderContent?: React.ReactNode;
-  upHeaderContent?: React.ReactNode;
+  headerContent?: React.ReactNode;
+  subHeaderContent?: React.ReactNode; // I recommend removing this as it can be done with headerContent
+  upHeaderContent?: React.ReactNode; // I recommend removing this as it can be done with headerContent
+  rootStyles?: React.CSSProperties;
+  messagesContainerStyles?: React.CSSProperties;
+  userIconRenderer?: (
+    props: AvatarContentIncomingUserProps,
+  ) => React.ReactElement;
+  getSenderNameFct?: (props: {
+    sender?: UserEntity;
+    userId?: number;
+  }) => Promise<string | undefined>;
 };
 
 // eslint-disable-next-line react/function-component-definition
@@ -94,6 +114,11 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   theme = undefined,
   subHeaderContent = undefined,
   upHeaderContent = undefined,
+  headerContent = undefined,
+  rootStyles = {},
+  messagesContainerStyles = {},
+  userIconRenderer = undefined,
+  getSenderNameFct,
 }: HeaderDialogsMessagesProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const maxWidthToResizing =
@@ -114,32 +139,18 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   const [messagesToView, setMessagesToView] = React.useState<MessageEntity[]>(
     [],
   );
+  const [showErrorToast, setShowErrorToast] = useState<boolean>(true);
+  const [messageErrorToast, setMessageErrorToast] = useState<string>('');
 
   const [waitAIWidget, setWaitAIWidget] = useState<boolean>(false);
-  const messageEntitiesToIChatMessageCollection = (
-    messageEntities: MessageEntity[],
-  ): IChatMessage[] => {
-    const MAX_TOKENS = 3584;
-    const items = messageEntities.filter(
-      (it) =>
-        !it.notification_type ||
-        (it.notification_type && it.notification_type.length === 0),
-    );
-    const messages = loopToLimitTokens(
-      MAX_TOKENS,
-      items,
-      ({ message }) => message || '',
-    ).reverse();
-    const chatCompletionMessages: IChatMessage[] = messages.map(
-      ({ message, sender_id }) => ({
-        role: sender_id === currentUserId ? 'user' : 'assistant',
-        content: message,
-      }),
-    );
+  const [prevTextMessage, setPrevTextMessage] = useState<string>('');
 
-    //
-    return chatCompletionMessages;
-  };
+  const maxTokensForAIRephrase =
+    currentContext.InitParams.qbConfig.configAIApi.AIRephraseWidgetConfig
+      .maxTokens;
+
+  const rephraseTones: Tone[] =
+    currentContext.InitParams.qbConfig.configAIApi.AIRephraseWidgetConfig.Tones;
 
   const messagesViewModel: MessagesViewModel = useMessagesViewModel(
     dialogsViewModel.entity?.type,
@@ -147,6 +158,15 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   );
 
   const { maxFileSize } = currentContext.InitParams;
+
+  useEffect(() => {
+    if (showErrorToast) {
+      setTimeout(() => {
+        setShowErrorToast(false);
+        setMessageErrorToast('');
+      }, 1800);
+    }
+  }, [showErrorToast]);
 
   useEffect(() => {
     console.log('HAVE NEW DIALOG');
@@ -226,12 +246,20 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   }, [dialogMessagesCount]);
   //
 
-  const getSenderName = (sender?: UserEntity): string | undefined => {
-    if (!sender) return undefined;
+  const defaultGetSenderName: GetUserNameFct = (props: {
+    sender?: UserEntity;
+  }): Promise<string | undefined> => {
+    let result = 'undefined user';
+    // eslint-disable-next-line react/prop-types
+    const { sender } = props;
 
-    return (
-      sender.full_name || sender.login || sender.email || sender.id.toString()
-    );
+    if (!sender) return Promise.resolve(result);
+    // eslint-disable-next-line react/prop-types
+    result =
+      // eslint-disable-next-line react/prop-types
+      sender.full_name || sender.login || sender.email || sender.id.toString();
+
+    return Promise.resolve(result);
   };
 
   // function sendMessageToTranslate(message: MessageEntity) {
@@ -282,7 +310,14 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
       let messageContent: JSX.Element = messageText;
 
       const attachmentContentRender = (att: ChatMessageAttachmentEntity) => {
-        let contentPlaceHolder: JSX.Element = <div>{att.type.toString()}</div>;
+        // let contentPlaceHolder: JSX.Element = <div>{att.type.toString()}</div>;
+
+        let contentPlaceHolder: JSX.Element = (
+          <DefaultAttachmentComponent
+            fileName={att.file?.name || ''}
+            fileUrl={att.file?.url || ''}
+          />
+        );
 
         if (att.type.toString().includes(FileType.video)) {
           contentPlaceHolder = att.file ? (
@@ -307,9 +342,13 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
         }
         if (att.type.toString().includes(FileType.text)) {
           contentPlaceHolder = att.file ? (
-            <div>TEXT</div>
+            // <div>TEXT</div>
+            <DefaultAttachmentComponent
+              fileName={att.file?.name || ''}
+              fileUrl={att.file?.url || ''}
+            />
           ) : (
-            <ImageFile applyZoom />
+            <ImageFile width="24" height="24" applyZoom />
           );
         }
         let contentResult: JSX.Element = (
@@ -341,7 +380,6 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
             {mc.attachments.map((attachment) =>
               attachmentContentRender(attachment),
             )}
-            {messageText}
           </ColumnContainer>
         );
       }
@@ -366,10 +404,11 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
             style={theme ? { backgroundColor: theme.disabledElements() } : {}}
             className="message-view-container--system-message-wrapper__date_container"
           >
-            <div>{getDateShortFormatEU(message.date_sent)},</div>
+            <SystemDateBanner text={getDateShortFormatEU(message.date_sent)} />
+            {/* <div>{getDateShortFormatEU(message.date_sent)},</div> */}
           </div>
           {/* <div>{getTimeShort24hFormat(message.date_sent)}</div> */}
-          <div>{message.message}</div>
+          <SystemMessageBanner messageText={message.message} />
         </div>
       );
     } else if (messageTypes === IncomingMessage) {
@@ -377,12 +416,19 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
         <InComingMessage
           key={message.id}
           theme={theme}
-          senderName={getSenderName(message.sender)}
+          senderNameFct={getSenderNameFct || defaultGetSenderName}
+          userIconRenderer={userIconRenderer}
           message={message}
           // element={messageContentRender(message)}
-          onLoader={() => {
-            // sendMessageToTranslate(message);
+          onStartLoader={() => {
             setWaitAIWidget(true);
+          }}
+          onStopLoader={() => {
+            setWaitAIWidget(false);
+          }}
+          onErrorToast={(messageError) => {
+            setShowErrorToast(true);
+            setMessageErrorToast(messageError);
           }}
           // renderWidget={
           //   <ContextMenu
@@ -482,7 +528,15 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
     const flag = fileToSend?.size && fileToSend?.size < MAXSIZE;
 
     if (fileToSend?.size && fileToSend?.size < MAXSIZE) {
-      messagesViewModel.sendAttachmentMessage(fileToSend);
+      // eslint-disable-next-line promise/catch-or-return
+      messagesViewModel
+        .sendAttachmentMessage(fileToSend)
+        .then((resultOperation) => {
+          // eslint-disable-next-line promise/always-return
+          if (!resultOperation) {
+            showErrorMessage(`Incorrect data`);
+          }
+        });
     } else if (fileToSend) {
       showErrorMessage(
         `file size ${fileToSend?.size} must be less then ${MAXSIZE_FOR_MESSAGE} mb.`,
@@ -539,31 +593,29 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/require-await
   const startRecording = async () => {
     if (!stream) return;
-    // const mimeTypes = [
-    //   'audio/aac',
-    //   'audio/mp4',
-    //   'audio/mpeg',
-    //   'audio/ogg',
-    //   'audio/wav',
-    //   'audio/webm',
-    //   'audio/3gpp',
-    //   'audio/flac',
-    //   'audio/x-aiff',
-    //   'audio/x-m4a',
-    // ];
-    //
-    // console.log('MIME TYPES: ');
-    // mimeTypes.forEach((mimeType) => {
-    //   if (MediaRecorder.isTypeSupported(mimeType)) {
-    //     console.log(`${mimeType} is supported`);
-    //   } else {
-    //     console.log(`${mimeType} is not supported`);
-    //   }
-    // });
+    const mimeTypes = [
+      'audio/aac',
+      'audio/mp4',
+      'audio/mpeg',
+      'audio/ogg',
+      'audio/wav',
+      'audio/webm',
+      'audio/3gpp',
+      'audio/flac',
+      'audio/x-aiff',
+      'audio/x-m4a',
+    ];
+
+    console.log('MIME TYPES: ');
+    mimeTypes.forEach((mType) => {
+      if (MediaRecorder.isTypeSupported(mimeType)) {
+        console.log(`${mType} is supported`);
+      } else {
+        console.log(`${mType} is not supported`);
+      }
+    });
     // audio/mp4;codecs=mp4a audio/webm;codecs=opus audio/webm;codecs=vp9,opus
-    const mimeContent = window.MediaRecorder.isTypeSupported(
-      'audio/mp4;codecs=mp4a',
-    )
+    const mimeContent = window.MediaRecorder.isTypeSupported('audio/mp4')
       ? 'audio/mp4;codecs=mp4a'
       : 'audio/webm;codecs=opus';
 
@@ -604,7 +656,8 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
       // const mp4Blob = new Blob(recordedChunks, { type: 'video/mp4' });
 
       // const audioBlob = new Blob(audioChunks, { type: 'video/mp4' }); // mimeType
-      const audioBlob = new Blob(audioChunks, { type: 'audio/mp4' }); // mimeType
+      // const audioBlob = new Blob(audioChunks, { type: 'audio/mp4' }); // mimeType
+      const audioBlob = new Blob(audioChunks, { type: 'audio/mp4' });
 
       setResultAudioBlob(audioBlob);
 
@@ -754,163 +807,494 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
   const useUpContent = upHeaderContent || false;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function getAIEditingMessagesItems() {
-    return [
-      {
-        title: 'Professional Tone',
-        icon: <NecktieIcon />,
-        action: () => {
-          if (messageText && messageText.length > 0 && !waitAIWidget) {
-            setWaitAIWidget(true);
-            AIRephrase?.textToWidget(
-              messageText,
-              messageEntitiesToIChatMessageCollection(messagesToView),
-              { tone: Tone.Professional },
-            );
-          }
-        },
-      },
-      {
-        title: 'Friendly Tone',
-        icon: <HandshakeIcon />,
-        action: () => {
-          if (messageText && messageText.length > 0 && !waitAIWidget) {
-            setWaitAIWidget(true);
-            AIRephrase?.textToWidget(
-              messageText,
-              messageEntitiesToIChatMessageCollection(messagesToView),
-              { tone: Tone.Friendly },
-            );
-          }
-        },
-      },
-      {
-        title: 'Encouraging Tone',
-        icon: <MuscleIcon />,
-        action: () => {
-          if (messageText && messageText.length > 0 && !waitAIWidget) {
-            setWaitAIWidget(true);
-            AIRephrase?.textToWidget(
-              messageText,
-              messageEntitiesToIChatMessageCollection(messagesToView),
-              { tone: Tone.Encouraging },
-            );
-          }
-        },
-      },
-      {
-        title: 'Empathetic Tone',
-        icon: <PalmsUpTogetherIcon />,
-        action: () => {
-          if (messageText && messageText.length > 0 && !waitAIWidget) {
-            setWaitAIWidget(true);
-            AIRephrase?.textToWidget(
-              messageText,
-              messageEntitiesToIChatMessageCollection(messagesToView),
-              { tone: Tone.Empathetic },
-            );
-          }
-        },
-      },
-      {
-        title: 'Neutral Tone',
-        icon: <NeutralFaceIcon />,
-        action: () => {
-          if (messageText && messageText.length > 0 && !waitAIWidget) {
-            setWaitAIWidget(true);
-            AIRephrase?.textToWidget(
-              messageText,
-              messageEntitiesToIChatMessageCollection(messagesToView),
-              { tone: Tone.Neutral },
-            );
-          }
-        },
-      },
-      {
-        title: 'Assertive Tone',
-        icon: <HammerIcon />,
-        action: () => {
-          if (messageText && messageText.length > 0 && !waitAIWidget) {
-            setWaitAIWidget(true);
-            AIRephrase?.textToWidget(
-              messageText,
-              messageEntitiesToIChatMessageCollection(messagesToView),
-              { tone: Tone.Assertive },
-            );
-          }
-        },
-      },
-      {
-        title: 'Instructive Tone',
-        icon: <BookIcon />,
-        action: () => {
-          if (messageText && messageText.length > 0 && !waitAIWidget) {
-            setWaitAIWidget(true);
-            AIRephrase?.textToWidget(
-              messageText,
-              messageEntitiesToIChatMessageCollection(messagesToView),
-              { tone: Tone.Instructive },
-            );
-          }
-        },
-      },
-      {
-        title: 'Persuasive Tone',
-        icon: <PointUpIcon />,
-        action: () => {
-          if (messageText && messageText.length > 0 && !waitAIWidget) {
-            setWaitAIWidget(true);
-            AIRephrase?.textToWidget(
-              messageText,
-              messageEntitiesToIChatMessageCollection(messagesToView),
-              { tone: Tone.Persuasive },
-            );
-          }
-        },
-      },
-      {
-        title: 'Sarcastic/Ironic Tone',
-        icon: <SmirkIcon />,
-        action: () => {
-          if (messageText && messageText.length > 0 && !waitAIWidget) {
-            setWaitAIWidget(true);
-            AIRephrase?.textToWidget(
-              messageText,
-              messageEntitiesToIChatMessageCollection(messagesToView),
-              { tone: Tone.Sarcastic },
-            );
-          }
-        },
-      },
-      {
-        title: 'Poetic Tone',
-        icon: <PerformingArtsIcon />,
-        action: () => {
-          if (messageText && messageText.length > 0 && !waitAIWidget) {
-            setWaitAIWidget(true);
-            AIRephrase?.textToWidget(
-              messageText,
-              messageEntitiesToIChatMessageCollection(messagesToView),
-              { tone: Tone.Poetic },
-            );
-          }
-        },
-      },
-      {
-        title: 'Back to original text',
-        icon: <WhiteCheckMarkIcon />,
-        action: () => {
-          if (messageText && messageText.length > 0 && !waitAIWidget) {
-            setWaitAIWidget(true);
-            AIRephrase?.textToWidget(
-              messageText,
-              messageEntitiesToIChatMessageCollection(messagesToView),
-              { tone: Tone.Unchanged },
-            );
-          }
-        },
-      },
+  // function getAIEditingMessagesItems() {
+  //   return [
+  //     {
+  //       title: 'Professional Tone',
+  //       icon: <NecktieIcon />,
+  //       action: () => {
+  //         if (messageText && messageText.length > 0 && !waitAIWidget) {
+  //           setWaitAIWidget(true);
+  //           AIRephrase?.textToWidget(
+  //             messageText,
+  //             AIUtils.messageEntitiesToIChatMessageCollection(
+  //               messagesToView,
+  //               currentUserId,
+  //               maxTokensForAIRephrase,
+  //             ),
+  //             {
+  //               tone: QBAIRephrase.defaultTones()[0],
+  //               // tone: {
+  //               //   name: 'Professional Tone',
+  //               //   description: '',
+  //               //   iconEmoji: '',
+  //               // },
+  //             },
+  //           )
+  //             .then((answerText) => {
+  //               // eslint-disable-next-line promise/always-return
+  //               if (answerText === 'Rephrase failed.') {
+  //                 setMessageErrorToast('Rephrase failed.');
+  //                 setShowErrorToast(true);
+  //               }
+  //               setWaitAIWidget(false);
+  //             })
+  //             .catch(() => {
+  //               setMessageErrorToast('Rephrase failed.');
+  //               setShowErrorToast(true);
+  //               setWaitAIWidget(false);
+  //             });
+  //         }
+  //       },
+  //     },
+  //     {
+  //       title: 'Friendly Tone',
+  //       icon: <HandshakeIcon />,
+  //       action: () => {
+  //         if (messageText && messageText.length > 0 && !waitAIWidget) {
+  //           setWaitAIWidget(true);
+  //           AIRephrase?.textToWidget(
+  //             messageText,
+  //             AIUtils.messageEntitiesToIChatMessageCollection(
+  //               messagesToView,
+  //               currentUserId,
+  //               maxTokensForAIRephrase,
+  //             ),
+  //             {
+  //               // tone: { name: 'Friendly Tone', description: '', iconEmoji: '' },
+  //               tone: QBAIRephrase.defaultTones()[1],
+  //             },
+  //           )
+  //             .then((answerText) => {
+  //               // eslint-disable-next-line promise/always-return
+  //               if (answerText === 'Rephrase failed.') {
+  //                 setMessageErrorToast('Rephrase failed.');
+  //                 setShowErrorToast(true);
+  //               }
+  //               setWaitAIWidget(false);
+  //             })
+  //             .catch(() => {
+  //               setMessageErrorToast('Rephrase failed.');
+  //               setShowErrorToast(true);
+  //               setWaitAIWidget(false);
+  //             });
+  //         }
+  //       },
+  //     },
+  //     {
+  //       title: 'Encouraging Tone',
+  //       icon: <MuscleIcon />,
+  //       action: () => {
+  //         if (messageText && messageText.length > 0 && !waitAIWidget) {
+  //           setWaitAIWidget(true);
+  //           AIRephrase?.textToWidget(
+  //             messageText,
+  //             AIUtils.messageEntitiesToIChatMessageCollection(
+  //               messagesToView,
+  //               currentUserId,
+  //               maxTokensForAIRephrase,
+  //             ),
+  //             {
+  //               tone: QBAIRephrase.defaultTones()[2],
+  //               // tone: {
+  //               //   name: 'Encouraging Tone',
+  //               //   description: '',
+  //               //   iconEmoji: '',
+  //               // },
+  //             },
+  //           )
+  //             .then((answerText) => {
+  //               // eslint-disable-next-line promise/always-return
+  //               if (answerText === 'Rephrase failed.') {
+  //                 setMessageErrorToast('Rephrase failed.');
+  //                 setShowErrorToast(true);
+  //               }
+  //               setWaitAIWidget(false);
+  //             })
+  //             .catch(() => {
+  //               setMessageErrorToast('Rephrase failed.');
+  //               setShowErrorToast(true);
+  //               setWaitAIWidget(false);
+  //             });
+  //         }
+  //       },
+  //     },
+  //     {
+  //       title: 'Empathetic Tone',
+  //       icon: <PalmsUpTogetherIcon />,
+  //       action: () => {
+  //         if (messageText && messageText.length > 0 && !waitAIWidget) {
+  //           setWaitAIWidget(true);
+  //           AIRephrase?.textToWidget(
+  //             messageText,
+  //             AIUtils.messageEntitiesToIChatMessageCollection(
+  //               messagesToView,
+  //               currentUserId,
+  //               maxTokensForAIRephrase,
+  //             ),
+  //             {
+  //               tone: QBAIRephrase.defaultTones()[3],
+  //               // tone: {
+  //               //   name: 'Empathetic Tone',
+  //               //   description: '',
+  //               //   iconEmoji: '',
+  //               // },
+  //             },
+  //           )
+  //             .then((answerText) => {
+  //               // eslint-disable-next-line promise/always-return
+  //               if (answerText === 'Rephrase failed.') {
+  //                 setMessageErrorToast('Rephrase failed.');
+  //                 setShowErrorToast(true);
+  //               }
+  //               setWaitAIWidget(false);
+  //             })
+  //             .catch(() => {
+  //               setMessageErrorToast('Rephrase failed.');
+  //               setShowErrorToast(true);
+  //               setWaitAIWidget(false);
+  //             });
+  //         }
+  //       },
+  //     },
+  //     {
+  //       title: 'Neutral Tone',
+  //       icon: <NeutralFaceIcon />,
+  //       action: () => {
+  //         if (messageText && messageText.length > 0 && !waitAIWidget) {
+  //           setWaitAIWidget(true);
+  //           AIRephrase?.textToWidget(
+  //             messageText,
+  //             AIUtils.messageEntitiesToIChatMessageCollection(
+  //               messagesToView,
+  //               currentUserId,
+  //               maxTokensForAIRephrase,
+  //             ),
+  //             {
+  //               // tone: { name: 'Neutral Tone', description: '', iconEmoji: '' },
+  //               tone: QBAIRephrase.defaultTones()[4],
+  //             },
+  //           )
+  //             .then((answerText) => {
+  //               // eslint-disable-next-line promise/always-return
+  //               if (answerText === 'Rephrase failed.') {
+  //                 setMessageErrorToast('Rephrase failed.');
+  //                 setShowErrorToast(true);
+  //               }
+  //               setWaitAIWidget(false);
+  //             })
+  //             .catch(() => {
+  //               setMessageErrorToast('Rephrase failed.');
+  //               setShowErrorToast(true);
+  //               setWaitAIWidget(false);
+  //             });
+  //         }
+  //       },
+  //     },
+  //     {
+  //       title: 'Assertive Tone',
+  //       icon: <HammerIcon />,
+  //       action: () => {
+  //         if (messageText && messageText.length > 0 && !waitAIWidget) {
+  //           setWaitAIWidget(true);
+  //           AIRephrase?.textToWidget(
+  //             messageText,
+  //             AIUtils.messageEntitiesToIChatMessageCollection(
+  //               messagesToView,
+  //               currentUserId,
+  //               maxTokensForAIRephrase,
+  //             ),
+  //             {
+  //               tone: QBAIRephrase.defaultTones()[5],
+  //               // tone: {
+  //               //   name: 'Assertive Tone',
+  //               //   description: '',
+  //               //   iconEmoji: '',
+  //               // },
+  //             },
+  //           )
+  //             .then((answerText) => {
+  //               // eslint-disable-next-line promise/always-return
+  //               if (answerText === 'Rephrase failed.') {
+  //                 setMessageErrorToast('Rephrase failed.');
+  //                 setShowErrorToast(true);
+  //               }
+  //               setWaitAIWidget(false);
+  //             })
+  //             .catch(() => {
+  //               setMessageErrorToast('Rephrase failed.');
+  //               setShowErrorToast(true);
+  //               setWaitAIWidget(false);
+  //             });
+  //         }
+  //       },
+  //     },
+  //     {
+  //       title: 'Instructive Tone',
+  //       icon: <BookIcon />,
+  //       action: () => {
+  //         if (messageText && messageText.length > 0 && !waitAIWidget) {
+  //           setWaitAIWidget(true);
+  //           AIRephrase?.textToWidget(
+  //             messageText,
+  //             AIUtils.messageEntitiesToIChatMessageCollection(
+  //               messagesToView,
+  //               currentUserId,
+  //               maxTokensForAIRephrase,
+  //             ),
+  //             {
+  //               tone: QBAIRephrase.defaultTones()[6],
+  //               // tone: {
+  //               //   name: 'Instructive Tone',
+  //               //   description: '',
+  //               //   iconEmoji: '',
+  //               // },
+  //             },
+  //           )
+  //             .then((answerText) => {
+  //               // eslint-disable-next-line promise/always-return
+  //               if (answerText === 'Rephrase failed.') {
+  //                 setMessageErrorToast('Rephrase failed.');
+  //                 setShowErrorToast(true);
+  //               }
+  //               setWaitAIWidget(false);
+  //             })
+  //             .catch(() => {
+  //               setMessageErrorToast('Rephrase failed.');
+  //               setShowErrorToast(true);
+  //               setWaitAIWidget(false);
+  //             });
+  //         }
+  //       },
+  //     },
+  //     {
+  //       title: 'Persuasive Tone',
+  //       icon: <PointUpIcon />,
+  //       action: () => {
+  //         if (messageText && messageText.length > 0 && !waitAIWidget) {
+  //           setWaitAIWidget(true);
+  //           AIRephrase?.textToWidget(
+  //             messageText,
+  //             AIUtils.messageEntitiesToIChatMessageCollection(
+  //               messagesToView,
+  //               currentUserId,
+  //               maxTokensForAIRephrase,
+  //             ),
+  //             {
+  //               tone: QBAIRephrase.defaultTones()[7],
+  //               // tone: {
+  //               //   name: 'Persuasive Tone',
+  //               //   description: '',
+  //               //   iconEmoji: '',
+  //               // },
+  //             },
+  //           )
+  //             .then((answerText) => {
+  //               // eslint-disable-next-line promise/always-return
+  //               if (answerText === 'Rephrase failed.') {
+  //                 setMessageErrorToast('Rephrase failed.');
+  //                 setShowErrorToast(true);
+  //               }
+  //               setWaitAIWidget(false);
+  //             })
+  //             .catch(() => {
+  //               setMessageErrorToast('Rephrase failed.');
+  //               setShowErrorToast(true);
+  //               setWaitAIWidget(false);
+  //             });
+  //         }
+  //       },
+  //     },
+  //     {
+  //       title: 'Sarcastic/Ironic Tone',
+  //       icon: <SmirkIcon />,
+  //       action: () => {
+  //         if (messageText && messageText.length > 0 && !waitAIWidget) {
+  //           setWaitAIWidget(true);
+  //           AIRephrase?.textToWidget(
+  //             messageText,
+  //             AIUtils.messageEntitiesToIChatMessageCollection(
+  //               messagesToView,
+  //               currentUserId,
+  //               maxTokensForAIRephrase,
+  //             ),
+  //             {
+  //               tone: QBAIRephrase.defaultTones()[8],
+  //               // tone: {
+  //               //   name: 'Sarcastic/Ironic Tone',
+  //               //   description: '',
+  //               //   iconEmoji: '',
+  //               // },
+  //             },
+  //           )
+  //             .then((answerText) => {
+  //               // eslint-disable-next-line promise/always-return
+  //               if (answerText === 'Rephrase failed.') {
+  //                 setMessageErrorToast('Rephrase failed.');
+  //                 setShowErrorToast(true);
+  //               }
+  //               setWaitAIWidget(false);
+  //             })
+  //             .catch(() => {
+  //               setMessageErrorToast('Rephrase failed.');
+  //               setShowErrorToast(true);
+  //               setWaitAIWidget(false);
+  //             });
+  //         }
+  //       },
+  //     },
+  //     {
+  //       title: 'Poetic Tone',
+  //       icon: <PerformingArtsIcon />,
+  //       action: () => {
+  //         if (messageText && messageText.length > 0 && !waitAIWidget) {
+  //           setWaitAIWidget(true);
+  //           AIRephrase?.textToWidget(
+  //             messageText,
+  //             AIUtils.messageEntitiesToIChatMessageCollection(
+  //               messagesToView,
+  //               currentUserId,
+  //               maxTokensForAIRephrase,
+  //             ),
+  //             {
+  //               tone: QBAIRephrase.defaultTones()[9],
+  //               // tone: { name: 'Poetic Tone', description: '', iconEmoji: '' }
+  //             },
+  //           )
+  //             .then((answerText) => {
+  //               // eslint-disable-next-line promise/always-return
+  //               if (answerText === 'Rephrase failed.') {
+  //                 setMessageErrorToast('Rephrase failed.');
+  //                 setShowErrorToast(true);
+  //               }
+  //               setWaitAIWidget(false);
+  //             })
+  //             .catch(() => {
+  //               setMessageErrorToast('Rephrase failed.');
+  //               setShowErrorToast(true);
+  //               setWaitAIWidget(false);
+  //             });
+  //         }
+  //       },
+  //     },
+  //     {
+  //       title: 'Back to original text',
+  //       icon: <WhiteCheckMarkIcon />,
+  //       action: () => {
+  //         if (messageText && messageText.length > 0 && !waitAIWidget) {
+  //           setWaitAIWidget(true);
+  //           AIRephrase?.textToWidget(
+  //             messageText,
+  //             AIUtils.messageEntitiesToIChatMessageCollection(
+  //               messagesToView,
+  //               currentUserId,
+  //               maxTokensForAIRephrase,
+  //             ),
+  //             {
+  //               tone: {
+  //                 name: 'Unchanged',
+  //                 description: 'Unchanged',
+  //                 iconEmoji: '',
+  //               },
+  //             },
+  //           )
+  //             .then((answerText) => {
+  //               // eslint-disable-next-line promise/always-return
+  //               if (answerText === 'Rephrase failed.') {
+  //                 setMessageErrorToast('Rephrase failed.');
+  //                 setShowErrorToast(true);
+  //               }
+  //               setWaitAIWidget(false);
+  //             })
+  //             .catch(() => {
+  //               setMessageErrorToast('Rephrase failed.');
+  //               setShowErrorToast(true);
+  //               setWaitAIWidget(false);
+  //             });
+  //         }
+  //       },
+  //     },
+  //   ];
+  // }
+
+  function getDefaultIcon(index: number) {
+    const defaultIcons = [
+      <NecktieIcon />,
+      <HandshakeIcon />,
+      <MuscleIcon />,
+      <PalmsUpTogetherIcon />,
+      <NeutralFaceIcon />,
+      <HammerIcon />,
+      <BookIcon />,
+      <PointUpIcon />,
+      <SmirkIcon />,
+      <PerformingArtsIcon />,
     ];
+
+    return defaultIcons[index] || <NeutralFaceIcon />;
+  }
+
+  function getAIEditingMessagesItems() {
+    const items: MenuItem[] = [];
+
+    const tones = rephraseTones || QBAIRephrase.defaultTones();
+
+    for (let i = 0; i < tones.length; i += 1) {
+      const tone = tones[i];
+      const title = tone.name;
+      const icon = getDefaultIcon(i) || <NeutralFaceIcon />;
+
+      const action = () => {
+        if (messageText && messageText.length > 0 && !waitAIWidget) {
+          setWaitAIWidget(true);
+          setPrevTextMessage(messageText);
+          AIRephrase?.textToWidget(
+            messageText,
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-argument
+            AIUtils.messageEntitiesToIChatMessageCollection(
+              messagesToView,
+              currentUserId,
+              maxTokensForAIRephrase,
+            ),
+            {
+              tone,
+            },
+          )
+            .then((answerText) => {
+              // eslint-disable-next-line promise/always-return
+              if (answerText === 'Rephrase failed.') {
+                setMessageErrorToast('Rephrase failed.');
+                setShowErrorToast(true);
+              }
+              setWaitAIWidget(false);
+            })
+            .catch(() => {
+              setMessageErrorToast('Rephrase failed.');
+              setShowErrorToast(true);
+              setWaitAIWidget(false);
+            });
+        }
+      };
+
+      items.push({
+        title,
+        icon,
+        action,
+      });
+    }
+    //
+    items.push({
+      title: 'Back to prev.',
+      icon: <WhiteCheckMarkIcon />,
+      action: () => {
+        if (messageText && messageText.length > 0 && !waitAIWidget) {
+          setMessageText(prevTextMessage);
+        }
+      },
+    });
+
+    //
+    return items;
   }
 
   return (
@@ -922,27 +1306,50 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
               minWidth: `$message-view-container-wrapper-min-width`,
               // width: `${maxWidthToResizing}`,
               width: '100%',
+              ...rootStyles,
             }
-          : {}
+          : rootStyles
       }
       className="message-view-container"
     >
-      <div
-        style={{
-          flexGrow: `1`,
-          flexShrink: `1`,
-          flexBasis: `${maxWidthToResizing}`,
-        }}
-        className="message-view-container--header"
-      >
-        {useUpContent && upHeaderContent}
-        <HeaderMessages
-          dialog={messagesViewModel.entity}
-          InformationHandler={onDialogInformationHandler}
-          countMembers={getCountDialogMembers(dialogsViewModel.entity)}
-        />
-        {useSubContent && subHeaderContent}
-      </div>
+      {headerContent || (
+        <div
+          style={{
+            flexGrow: `1`,
+            flexShrink: `1`,
+            flexBasis: `${maxWidthToResizing}`,
+          }}
+          className="message-view-container--header"
+        >
+          {useUpContent && upHeaderContent}
+          <HeaderMessages
+            dialog={messagesViewModel.entity}
+            InformationHandler={onDialogInformationHandler}
+            countMembers={getCountDialogMembers(dialogsViewModel.entity)}
+          />
+          {useSubContent && subHeaderContent}
+        </div>
+      )}
+      {/* <div */}
+      {/*  style={{ */}
+      {/*    flexGrow: `1`, */}
+      {/*    flexShrink: `1`, */}
+      {/*    flexBasis: `${maxWidthToResizing}`, */}
+      {/*  }} */}
+      {/*  className="message-view-container--header" */}
+      {/* > */}
+      {/*  {useUpContent && upHeaderContent} */}
+      {/*  <HeaderMessages */}
+      {/*    dialog={messagesViewModel.entity} */}
+      {/*    InformationHandler={onDialogInformationHandler} */}
+      {/*    countMembers={getCountDialogMembers(dialogsViewModel.entity)} */}
+      {/*  /> */}
+      {/*  {useSubContent && subHeaderContent} */}
+      {/* </div> */}
+      {showErrorToast && !messagesViewModel?.loading ? (
+        <ErrorToast messageText={messageErrorToast} />
+      ) : null}
+
       {/* <div */}
       {/*  style={{ */}
       {/*    flexGrow: `1`, */}
@@ -1012,11 +1419,13 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
                 flexShrink: `1`,
                 flexBasis: `${maxWidthToResizing}`,
                 backgroundColor: theme.secondaryBackground(), // var(--secondary-background);
+                ...messagesContainerStyles,
               }
             : {
                 flexGrow: `1`,
                 flexShrink: `1`,
                 flexBasis: `${maxWidthToResizing}`,
+                ...messagesContainerStyles,
               }
         }
         className="message-view-container--messages"
@@ -1131,7 +1540,7 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
           <input
             id="btnUploadAttachment"
             type="file"
-            accept="image/*, audio/*, video/*, .pdf, .txt,"
+            accept="image/*, audio/*, video/*, .pdf, .txt, .apk, .zip, .ipa, .ppt, .pptx, .doc, .docx, .xls, .xlsx, .json, .log"
             style={{ display: 'none' }}
             onChange={(event) => {
               ChangeFileHandler(event);
@@ -1187,7 +1596,12 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
             </div>
             <div className="right">
               {AIRephrase && (
-                <div className="icon">
+                <div
+                  className="icon"
+                  style={{
+                    cursor: !waitAIWidget ? 'pointer' : '',
+                  }}
+                >
                   <AIWidgetActions
                     widgetToRender={
                       <ToneIcon
@@ -1221,191 +1635,6 @@ const MessagesView: React.FC<HeaderDialogsMessagesProps> = ({
             }}
           />
         )}
-        {/* {AIRephrase && ( */}
-        {/*  <div> */}
-        {/*    /!* <ContextMenu *!/ */}
-        {/*    /!*  widgetToRender={ *!/ */}
-        {/*    /!*    <AIWidgetIcon *!/ */}
-        {/*    /!*      applyZoom *!/ */}
-        {/*    /!*      color="var(--main-elements)" *!/ */}
-        {/*    /!*      width="24" *!/ */}
-        {/*    /!*      height="24" *!/ */}
-        {/*    /!*    /> *!/ */}
-        {/*    /!*  } *!/ */}
-        {/*    /!*  items={[ *!/ */}
-        {/*    /!*    // { *!/ */}
-        {/*    /!*    //   title: 'AI Chat Summary', *!/ */}
-        {/*    /!*    //   // eslint-disable-next-line @typescript-eslint/no-empty-function *!/ */}
-        {/*    /!*    //   action: () => {}, *!/ */}
-        {/*    /!*    // }, *!/ */}
-        {/*    /!*    { *!/ */}
-        {/*    /!*      title: 'AI Translate', *!/ */}
-        {/*    /!*      action: () => { *!/ */}
-        {/*    /!*        if ( *!/ */}
-        {/*    /!*          messageText && *!/ */}
-        {/*    /!*          messageText.length > 0 && *!/ */}
-        {/*    /!*          !waitAIWidget *!/ */}
-        {/*    /!*        ) { *!/ */}
-        {/*    /!*          setWaitAIWidget(true); *!/ */}
-        {/*    /!*          AITranslation?.textToWidget( *!/ */}
-        {/*    /!*            messageText, *!/ */}
-        {/*    /!*            messageEntitiesToIChatMessageCollection(messagesToView), *!/ */}
-        {/*    /!*          ); *!/ */}
-        {/*    /!*        } *!/ */}
-        {/*    /!*      }, *!/ */}
-        {/*    /!*    }, *!/ */}
-        {/*    /!*  ]} *!/ */}
-        {/*    /!* /> *!/ */}
-        {/*    /!* <AIWidgetActions *!/ */}
-        {/*    /!*  widgetToRender={ *!/ */}
-        {/*    /!*    <AIWidgetIcon *!/ */}
-        {/*    /!*      applyZoom *!/ */}
-        {/*    /!*      color="var(--main-elements)" *!/ */}
-        {/*    /!*      width="16" *!/ */}
-        {/*    /!*      height="16" *!/ */}
-        {/*    /!*    /> *!/ */}
-        {/*    /!*  } *!/ */}
-        {/*    /!*  items={[ *!/ */}
-        {/*    /!*    { *!/ */}
-        {/*    /!*      title: 'English', *!/ */}
-        {/*    /!*      // eslint-disable-next-line @typescript-eslint/no-empty-function,@typescript-eslint/no-misused-promises *!/ */}
-        {/*    /!*      action: async () => { *!/ */}
-        {/*    /!*        if ( *!/ */}
-        {/*    /!*          messageText && *!/ */}
-        {/*    /!*          messageText.length > 0 && *!/ */}
-        {/*    /!*          !waitAIWidget *!/ */}
-        {/*    /!*        ) { *!/ */}
-        {/*    /!*          setWaitAIWidget(true); *!/ */}
-        {/*    /!*          const translation = await AITranslation?.textToWidget( *!/ */}
-        {/*    /!*            messageText, *!/ */}
-        {/*    /!*            messageEntitiesToIChatMessageCollection(messagesToView), *!/ */}
-        {/*    /!*            { *!/ */}
-        {/*    /!*              language: *!/ */}
-        {/*    /!*                'English' || *!/ */}
-        {/*    /!*                QBConfig.configAIApi.AITranslateWidgetConfig *!/ */}
-        {/*    /!*                  .defaultLanguage, *!/ */}
-        {/*    /!*            }, *!/ */}
-        {/*    /!*          ); *!/ */}
-
-        {/*    /!*          setMessageText(translation || ''); *!/ */}
-        {/*    /!*        } *!/ */}
-        {/*    /!*      }, *!/ */}
-        {/*    /!*    }, *!/ */}
-        {/*    /!*    { *!/ */}
-        {/*    /!*      title: 'Ukrainian', *!/ */}
-        {/*    /!*      // eslint-disable-next-line @typescript-eslint/no-misused-promises *!/ */}
-        {/*    /!*      action: async () => { *!/ */}
-        {/*    /!*        if ( *!/ */}
-        {/*    /!*          messageText && *!/ */}
-        {/*    /!*          messageText.length > 0 && *!/ */}
-        {/*    /!*          !waitAIWidget *!/ */}
-        {/*    /!*        ) { *!/ */}
-        {/*    /!*          setWaitAIWidget(true); *!/ */}
-        {/*    /!*          const translation = await AITranslation?.textToWidget( *!/ */}
-        {/*    /!*            messageText, *!/ */}
-        {/*    /!*            messageEntitiesToIChatMessageCollection(messagesToView), *!/ */}
-        {/*    /!*            { *!/ */}
-        {/*    /!*              language: *!/ */}
-        {/*    /!*                'Ukrainian' || *!/ */}
-        {/*    /!*                QBConfig.configAIApi.AITranslateWidgetConfig *!/ */}
-        {/*    /!*                  .defaultLanguage, *!/ */}
-        {/*    /!*            }, *!/ */}
-        {/*    /!*          ); *!/ */}
-
-        {/*    /!*          setMessageText(translation || ''); *!/ */}
-        {/*    /!*        } *!/ */}
-        {/*    /!*      }, *!/ */}
-        {/*    /!*    }, *!/ */}
-        {/*    /!*    { *!/ */}
-        {/*    /!*      title: 'Spanish', *!/ */}
-        {/*    /!*      // eslint-disable-next-line @typescript-eslint/no-misused-promises *!/ */}
-        {/*    /!*      action: async () => { *!/ */}
-        {/*    /!*        if ( *!/ */}
-        {/*    /!*          messageText && *!/ */}
-        {/*    /!*          messageText.length > 0 && *!/ */}
-        {/*    /!*          !waitAIWidget *!/ */}
-        {/*    /!*        ) { *!/ */}
-        {/*    /!*          setWaitAIWidget(true); *!/ */}
-        {/*    /!*          const translation = await AITranslation?.textToWidget( *!/ */}
-        {/*    /!*            messageText, *!/ */}
-        {/*    /!*            messageEntitiesToIChatMessageCollection(messagesToView), *!/ */}
-        {/*    /!*            { *!/ */}
-        {/*    /!*              language: *!/ */}
-        {/*    /!*                'Spanish' || *!/ */}
-        {/*    /!*                QBConfig.configAIApi.AITranslateWidgetConfig *!/ */}
-        {/*    /!*                  .defaultLanguage, *!/ */}
-        {/*    /!*            }, *!/ */}
-        {/*    /!*          ); *!/ */}
-
-        {/*    /!*          setMessageText(translation || ''); *!/ */}
-        {/*    /!*        } *!/ */}
-        {/*    /!*      }, *!/ */}
-        {/*    /!*    }, *!/ */}
-        {/*    /!*    { *!/ */}
-        {/*    /!*      title: 'Portuguese', *!/ */}
-        {/*    /!*      // eslint-disable-next-line @typescript-eslint/no-misused-promises *!/ */}
-        {/*    /!*      action: async () => { *!/ */}
-        {/*    /!*        if ( *!/ */}
-        {/*    /!*          messageText && *!/ */}
-        {/*    /!*          messageText.length > 0 && *!/ */}
-        {/*    /!*          !waitAIWidget *!/ */}
-        {/*    /!*        ) { *!/ */}
-        {/*    /!*          setWaitAIWidget(true); *!/ */}
-        {/*    /!*          const translation = await AITranslation?.textToWidget( *!/ */}
-        {/*    /!*            messageText, *!/ */}
-        {/*    /!*            messageEntitiesToIChatMessageCollection(messagesToView), *!/ */}
-        {/*    /!*            { *!/ */}
-        {/*    /!*              language: *!/ */}
-        {/*    /!*                'Portuguese' || *!/ */}
-        {/*    /!*                QBConfig.configAIApi.AITranslateWidgetConfig *!/ */}
-        {/*    /!*                  .defaultLanguage, *!/ */}
-        {/*    /!*            }, *!/ */}
-        {/*    /!*          ); *!/ */}
-
-        {/*    /!*          setMessageText(translation || ''); *!/ */}
-        {/*    /!*        } *!/ */}
-        {/*    /!*      }, *!/ */}
-        {/*    /!*    }, *!/ */}
-        {/*    /!*    { *!/ */}
-        {/*    /!*      title: 'French', *!/ */}
-        {/*    /!*      // eslint-disable-next-line @typescript-eslint/no-misused-promises *!/ */}
-        {/*    /!*      action: async () => { *!/ */}
-        {/*    /!*        if ( *!/ */}
-        {/*    /!*          messageText && *!/ */}
-        {/*    /!*          messageText.length > 0 && *!/ */}
-        {/*    /!*          !waitAIWidget *!/ */}
-        {/*    /!*        ) { *!/ */}
-        {/*    /!*          setWaitAIWidget(true); *!/ */}
-        {/*    /!*          const translation = await AITranslation?.textToWidget( *!/ */}
-        {/*    /!*            messageText, *!/ */}
-        {/*    /!*            messageEntitiesToIChatMessageCollection(messagesToView), *!/ */}
-        {/*    /!*            { *!/ */}
-        {/*    /!*              language: *!/ */}
-        {/*    /!*                'French' || *!/ */}
-        {/*    /!*                QBConfig.configAIApi.AITranslateWidgetConfig *!/ */}
-        {/*    /!*                  .defaultLanguage, *!/ */}
-        {/*    /!*            }, *!/ */}
-        {/*    /!*          ); *!/ */}
-
-        {/*    /!*          setMessageText(translation || ''); *!/ */}
-        {/*    /!*        } *!/ */}
-        {/*    /!*      }, *!/ */}
-        {/*    /!*    }, *!/ */}
-        {/*    /!*    // { *!/ */}
-        {/*    /!*    //   title: 'German', *!/ */}
-        {/*    /!*    //   action: () => {}, *!/ */}
-        {/*    /!*    // }, *!/ */}
-        {/*    /!*  ]} *!/ */}
-        {/*    /!* /> *!/ */}
-        {/*    <AIWidgetActions */}
-        {/*      title="AI Rephrase Message" */}
-        {/*      widgetToRender={ */}
-        {/*        <AIWidgetIcon applyZoom color="blue" width="24" height="24" /> */}
-        {/*      } */}
-        {/*      items={getAIEditingMessagesItems()} */}
-        {/*    /> */}
-        {/*  </div> */}
-        {/* )} */}
         {!isVoiceMessage && !waitAIWidget && (
           <div>
             <ActiveSvg

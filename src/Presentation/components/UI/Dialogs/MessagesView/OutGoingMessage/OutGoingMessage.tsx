@@ -92,7 +92,7 @@ export function OutGoingMessage(props: {
         }
         className="message-view-container__outgoing-message"
       >
-        {props.element}
+        <div className="message-in-a-single-line">{props.element}</div>
       </div>
     </div>
   );

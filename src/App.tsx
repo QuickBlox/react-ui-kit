@@ -28,7 +28,7 @@ function App() {
   const { connectionRepository } = useQBConnection();
 
   const initLoginData: LoginData = {
-    login: 'artimed', // vit1
+    login: 'anruaav2', // vit1
     password: 'quickblox',
   };
 

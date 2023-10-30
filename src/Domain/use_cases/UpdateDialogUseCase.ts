@@ -14,15 +14,19 @@ export class UpdateDialogUseCase implements IUseCase<void, DialogEntity> {
 
   private updateDialog: GroupDialogEntity;
 
+  private textInformationMessage: string;
+
   constructor(
     eventMessagesRepository: EventMessagesRepository,
     dialogRepository: DialogsRepository,
     updateDialog: GroupDialogEntity,
+    textInformationMessage: string,
   ) {
     console.log('CONSTRUCTOR UpdateDialogUseCase');
     this.dialogRepository = dialogRepository;
     this.updateDialog = updateDialog;
     this.eventMessagesRepository = eventMessagesRepository;
+    this.textInformationMessage = textInformationMessage;
   }
 
   async execute(): Promise<DialogEntity> {
@@ -37,7 +41,10 @@ export class UpdateDialogUseCase implements IUseCase<void, DialogEntity> {
     remoteMessageDTO.dialogId = result.id;
     remoteMessageDTO.notification_type = NotificationTypes.UPDATE_DIALOG;
     remoteMessageDTO.date_sent = Date.now();
-    remoteMessageDTO.message = `User ${this.updateDialog.ownerId} has updated dialog ${this.updateDialog.name}`;
+    remoteMessageDTO.message =
+      this.textInformationMessage && this.textInformationMessage.length > 0
+        ? this.textInformationMessage
+        : `User ${this.updateDialog.ownerId} has updated dialog ${this.updateDialog.name}`;
 
     this.eventMessagesRepository.dispatchEvent<RemoteMessageDTO>(
       EventMessageType.RegularMessage,

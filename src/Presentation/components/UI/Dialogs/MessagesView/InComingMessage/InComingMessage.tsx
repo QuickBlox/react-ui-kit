@@ -15,30 +15,44 @@ import ImageFile from '../../../svgs/Icons/Media/ImageFile';
 import ColumnContainer from '../../../../containers/ColumnContainer/ColumnContainer';
 import { HighLightLink, messageHasUrls } from '../HighLightLink/HighLightLink';
 import { AIMessageWidget } from '../AIWidgets/AIMessageWidget';
-import { loopToLimitTokens } from '../../../../../../utils/utils';
 import LoaderComponent from '../../../Placeholders/LoaderComponent/LoaderComponent';
-import { IChatMessage } from '../../../../../../Data/source/AISource';
-import AssistAnswer from '../../../svgs/Icons/Actions/AssistAnswer';
 import AIWidgetActions from '../AIWidgets/AIWidgetActions/AIWidgetActions';
 import TranslateIcon from '../../../svgs/Icons/Media/Translate';
-import AvatarContentIncomingUser from './AvatarContentIncomingUser/AvatarContentIncomingUser';
+import AvatarContentIncomingUser, {
+  AvatarContentIncomingUserProps,
+} from './AvatarContentIncomingUser/AvatarContentIncomingUser';
 import { DefaultConfigurations } from '../../../../../../Data/DefaultConfigurations';
+import useQbInitializedDataContext from '../../../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
+import { AIUtils } from '../../../../../../utils/utils';
+import BotIcon from '../../../svgs/Icons/AIWidgets/BotIcon/BotIcon';
+import { UserEntity } from '../../../../../../Domain/entity/UserEntity';
+import DefaultAttachmentComponent from '../DefaultAttachmentComponent/DefaultAttachmentComponent';
+
+export type GetUserNameFct = (props: {
+  userId?: number;
+  sender?: UserEntity;
+}) => Promise<string | undefined>;
 
 export function InComingMessage(props: {
   theme: UiKitTheme | undefined;
-  senderName: string | undefined;
+  senderNameFct: GetUserNameFct;
   message: MessageEntity;
-  // element: JSX.Element;
-  onLoader: () => void;
-  // renderWidget: JSX.Element | undefined;
+  onStartLoader: () => void;
+  // eslint-disable-next-line react/no-unused-prop-types
+  onStopLoader: () => void;
+  onErrorToast: (messageError: string) => void;
   currentUserId?: number;
   messagesToView: MessageEntity[];
   AITranslation?: AIMessageWidget;
   AIAnswerToMessage?: AIMessageWidget;
+  userIconRenderer?: (
+    props: AvatarContentIncomingUserProps,
+  ) => React.ReactElement;
   // index?: number;
   // updateData?: (index: number, text: string) => void;
   // translationDATA?: Record<number, string>;
 }) {
+  const currentContext = useQbInitializedDataContext();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [haveHover, setHaveHover] = useState(false);
   // const [openMenu, setOpenMenu] = useState(false);
@@ -47,21 +61,29 @@ export function InComingMessage(props: {
     useState<boolean>(false);
   const [widgetTextContent, setWidgetTextContent] = useState<string>('');
   const [originalTextMessage, setOriginalTextMessage] = useState<boolean>(true);
+  const [senderName, setSenderName] = useState<string | undefined>('');
+
+  useEffect(() => {
+    props
+      .senderNameFct({
+        userId: props.message.sender_id,
+        sender: props.message.sender,
+      })
+      // eslint-disable-next-line promise/always-return
+      .then((name) => {
+        setSenderName(name);
+      })
+      .catch(() => console.log(`unexpected error: `));
+  }, [props.message.sender_id]);
+
   // const [errorAITranslate, setErrorAITranslate] = useState<boolean>(false);
 
-  // useEffect(() => {
-  //   setWaitAIWidget(false);
-  //   if (
-  //     props.AIRephraseMessage?.textToContent &&
-  //     props.AIRephraseMessage?.textToContent.length > 0
-  //   ) {
-  //     setMessageTextState(props.AIRephraseMessage?.textToContent);
-  //     setWidgetTextContent(props.AIRephraseMessage?.textToContent);
-  //     setTimeout(() => {
-  //       setWidgetTextContent('');
-  //     }, 45 * 1000);
-  //   }
-  // }, [props.AIRephraseMessage?.textToContent]);
+  const maxTokensForAITranslate =
+    currentContext.InitParams.qbConfig.configAIApi.AITranslateWidgetConfig
+      .maxTokens;
+  const maxTokensForAnswerAssist =
+    currentContext.InitParams.qbConfig.configAIApi.AIAnswerAssistWidgetConfig
+      .maxTokens;
 
   useEffect(() => {
     setWaitAIWidget(false);
@@ -91,14 +113,18 @@ export function InComingMessage(props: {
         {!originalTextMessage ? (
           <div>{widgetTextContent}</div>
         ) : (
-          <div>{mc.message}</div>
+          <div className="message-in-a-single-line">{mc.message}</div>
         )}
       </div>
     );
     let messageContent: JSX.Element = messageText;
-
     const attachmentContentRender = (att: ChatMessageAttachmentEntity) => {
-      let contentPlaceHolder: JSX.Element = <div>{att.type.toString()}</div>;
+      let contentPlaceHolder: JSX.Element = (
+        <DefaultAttachmentComponent
+          fileName={att.file?.name || ''}
+          fileUrl={att.file?.url || ''}
+        />
+      );
 
       if (att.type.toString().includes(FileType.video)) {
         contentPlaceHolder = att.file ? (
@@ -123,9 +149,13 @@ export function InComingMessage(props: {
       }
       if (att.type.toString().includes(FileType.text)) {
         contentPlaceHolder = att.file ? (
-          <div>TEXT</div>
+          // <div>TEXT</div>
+          <DefaultAttachmentComponent
+            fileName={att.file?.name || ''}
+            fileUrl={att.file?.url || ''}
+          />
         ) : (
-          <ImageFile applyZoom />
+          <ImageFile width="24" height="24" applyZoom />
         );
       }
       let contentResult: JSX.Element = (
@@ -157,7 +187,6 @@ export function InComingMessage(props: {
           {mc.attachments.map((attachment) =>
             attachmentContentRender(attachment),
           )}
-          {messageText}
         </ColumnContainer>
       );
     }
@@ -172,32 +201,6 @@ export function InComingMessage(props: {
     return messageContent;
   };
 
-  const messageEntitiesToIChatMessageCollection = (
-    messageEntities: MessageEntity[],
-    currentUserId?: number,
-  ): IChatMessage[] => {
-    const MAX_TOKENS = 3584;
-    const items = messageEntities.filter(
-      (it) =>
-        !it.notification_type ||
-        (it.notification_type && it.notification_type.length === 0),
-    );
-    const messages = loopToLimitTokens(
-      MAX_TOKENS,
-      items,
-      ({ message }) => message || '',
-    ).reverse();
-    const chatCompletionMessages: IChatMessage[] = messages.map(
-      ({ message, sender_id }) => ({
-        role: sender_id === currentUserId ? 'user' : 'assistant',
-        content: message,
-      }),
-    );
-
-    //
-    return chatCompletionMessages;
-  };
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function sendMessageToTranslate(
     message: MessageEntity,
@@ -206,31 +209,37 @@ export function InComingMessage(props: {
     AITranslation?: AIMessageWidget,
     selectedLanguage?: string,
   ) {
-    // setErrorAITranslate(false);
     if (!waitAITranslateWidget) {
       setWaitAITranslateWidget(true);
       await AITranslation?.textToWidget(
         message.message,
-        messageEntitiesToIChatMessageCollection(messagesToView, currentUserId),
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-call
+        AIUtils.messageEntitiesToIChatMessageCollection(
+          messagesToView,
+          currentUserId,
+          maxTokensForAITranslate,
+        ),
         {
           language:
             selectedLanguage ||
-            DefaultConfigurations.getDefaultLanguageForAITranslate(),
-          //     language: DefaultConfigurations.getDefaultLanguageForAITranslate()
-          // selectedLanguage ||
-          // QBConfig.configAIApi.AITranslateWidgetConfig.defaultLanguage ||
-          // 'English',
+            DefaultConfigurations.getDefaultLanguageForAITranslate(
+              currentContext.InitParams.qbConfig.configAIApi
+                .AITranslateWidgetConfig,
+            ),
         },
       )
         .then((textTranslate) => {
           // eslint-disable-next-line promise/always-return
           setWidgetTextContent(textTranslate || '');
+          // eslint-disable-next-line promise/always-return
+          if (textTranslate === 'Translation failed.') {
+            props.onErrorToast('Translation failed.');
+          }
           setWaitAITranslateWidget(false);
           setOriginalTextMessage(false);
         })
         .catch(() => {
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          // setErrorAITranslate(true);
+          props.onErrorToast('Translation failed.');
           setWaitAITranslateWidget(false);
           setOriginalTextMessage(true);
         });
@@ -249,11 +258,16 @@ export function InComingMessage(props: {
   ) {
     if (!waitAIWidget) {
       setWaitAIWidget(true);
-      props.onLoader();
+      props.onStartLoader();
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       AIAnswerToMessage?.textToWidget(
         message.message,
-        messageEntitiesToIChatMessageCollection(messagesToView, currentUserId),
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-call
+        AIUtils.messageEntitiesToIChatMessageCollection(
+          messagesToView,
+          currentUserId,
+          maxTokensForAnswerAssist,
+        ),
       );
     }
   }
@@ -270,17 +284,23 @@ export function InComingMessage(props: {
           <div className="caption2">
             <div
               className="ai-translate-action"
+              style={{
+                cursor: !waitAITranslateWidget ? 'pointer' : '',
+              }}
               onClick={() => {
-                if (originalTextMessage) {
-                  sendMessageToTranslate(
-                    mc,
-                    messagesToView,
-                    currentUserId,
-                    AITranslate,
-                  );
-                } else {
-                  setOriginalTextMessage(true);
-                  setWidgetTextContent('');
+                console.log('click translate....');
+                if (!waitAITranslateWidget) {
+                  if (originalTextMessage) {
+                    sendMessageToTranslate(
+                      mc,
+                      messagesToView,
+                      currentUserId,
+                      AITranslate,
+                    );
+                  } else {
+                    setOriginalTextMessage(true);
+                    setWidgetTextContent('');
+                  }
                 }
               }}
             >
@@ -288,8 +308,14 @@ export function InComingMessage(props: {
             </div>
           </div>
           <AIWidgetActions
+            disabled={!waitAITranslateWidget}
             widgetToRender={
-              <div className="icon">
+              <div
+                className="icon-translate"
+                style={{
+                  cursor: !waitAITranslateWidget ? 'pointer' : '',
+                }}
+              >
                 <TranslateIcon
                   width="16"
                   height="16"
@@ -298,11 +324,15 @@ export function InComingMessage(props: {
                 />
               </div>
             }
-            items={DefaultConfigurations.getAdditionalLanguagesForAITranslate().map(
-              (item) => {
-                return {
-                  title: item,
-                  action: () => {
+            items={DefaultConfigurations.getAdditionalLanguagesForAITranslate(
+              currentContext.InitParams.qbConfig.configAIApi
+                .AITranslateWidgetConfig,
+            ).map((item) => {
+              return {
+                title: item,
+                action: () => {
+                  console.log('click translate....');
+                  if (!waitAITranslateWidget) {
                     sendMessageToTranslate(
                       mc,
                       messagesToView,
@@ -310,204 +340,12 @@ export function InComingMessage(props: {
                       AITranslate,
                       item,
                     );
-                  },
-                };
-              },
-            )}
-            // items={[
-            //   {
-            //     title: 'English',
-            //     // eslint-disable-next-line @typescript-eslint/no-empty-function
-            //     action: () => {
-            //       sendMessageToTranslate(
-            //         mc,
-            //         messagesToView,
-            //         currentUserId,
-            //         AITranslation,
-            //         'English',
-            //       );
-            //     },
-            //   },
-            //   {
-            //     title: 'Ukrainian',
-            //     action: () => {
-            //       sendMessageToTranslate(
-            //         mc,
-            //         messagesToView,
-            //         currentUserId,
-            //         AITranslation,
-            //         'Ukrainian',
-            //       );
-            //     },
-            //   },
-            //   {
-            //     title: 'Spanish',
-            //     action: () => {
-            //       sendMessageToTranslate(
-            //         mc,
-            //         messagesToView,
-            //         currentUserId,
-            //         AITranslation,
-            //         'Spanish',
-            //       );
-            //     },
-            //   },
-            //   {
-            //     title: 'Portuguese',
-            //     action: () => {
-            //       sendMessageToTranslate(
-            //         mc,
-            //         messagesToView,
-            //         currentUserId,
-            //         AITranslation,
-            //         'Portuguese',
-            //       );
-            //     },
-            //   },
-            //   {
-            //     title: 'French',
-            //     action: () => {
-            //       sendMessageToTranslate(
-            //         mc,
-            //         messagesToView,
-            //         currentUserId,
-            //         AITranslation,
-            //         'French',
-            //       );
-            //     },
-            //   },
-            //   // {
-            //   //   title: 'German',
-            //   //   action: () => {},
-            //   // },
-            // ]}
+                  }
+                },
+              };
+            })}
           />
         </div>
-        // <div className="widget-ai-translate-with-choice-languages-container">
-        //   <div
-        //     className="widget-ai-translate-with-choice-languages-container--default-language"
-        //     onClick={() => {
-        //       if (originalTextMessage) {
-        //         sendMessageToTranslate(
-        //           mc,
-        //           messagesToView,
-        //           currentUserId,
-        //           AITranslation,
-        //         );
-        //       } else {
-        //         setOriginalTextMessage(true);
-        //         setWidgetTextContent('');
-        //       }
-        //     }}
-        //   >
-        //     {originalTextMessage ? 'Show translation' : 'Show original'}
-        //   </div>
-        //   <div className="widget-ai-translate-with-choice-languages-container--separator">
-        //     {'      '}
-        //   </div>
-        //   <div className="widget-ai-translate-with-choice-languages-container--select-language">
-        //     <AIWidgetActions
-        //       widgetToRender={
-        //         <AIWidgetIcon
-        //           applyZoom
-        //           color="var(--main-elements)"
-        //           width="16"
-        //           height="16"
-        //         />
-        //       }
-        //       items={[
-        //         {
-        //           title: 'English',
-        //           // eslint-disable-next-line @typescript-eslint/no-empty-function
-        //           action: () => {
-        //             sendMessageToTranslate(
-        //               mc,
-        //               messagesToView,
-        //               currentUserId,
-        //               AITranslation,
-        //               'English',
-        //             );
-        //           },
-        //         },
-        //         {
-        //           title: 'Ukrainian',
-        //           action: () => {
-        //             sendMessageToTranslate(
-        //               mc,
-        //               messagesToView,
-        //               currentUserId,
-        //               AITranslation,
-        //               'Ukrainian',
-        //             );
-        //           },
-        //         },
-        //         {
-        //           title: 'Spanish',
-        //           action: () => {
-        //             sendMessageToTranslate(
-        //               mc,
-        //               messagesToView,
-        //               currentUserId,
-        //               AITranslation,
-        //               'Spanish',
-        //             );
-        //           },
-        //         },
-        //         {
-        //           title: 'Portuguese',
-        //           action: () => {
-        //             sendMessageToTranslate(
-        //               mc,
-        //               messagesToView,
-        //               currentUserId,
-        //               AITranslation,
-        //               'Portuguese',
-        //             );
-        //           },
-        //         },
-        //         {
-        //           title: 'French',
-        //           action: () => {
-        //             sendMessageToTranslate(
-        //               mc,
-        //               messagesToView,
-        //               currentUserId,
-        //               AITranslation,
-        //               'French',
-        //             );
-        //           },
-        //         },
-        //         // {
-        //         //   title: 'German',
-        //         //   action: () => {},
-        //         // },
-        //       ]}
-        //     />
-        //   </div>
-        //   {waitAITranslateWidget && (
-        //     <div
-        //       className="widget-ai-translate-with-choice-languages-container--separator"
-        //       style={{
-        //         height: '16px',
-        //         width: '16px',
-        //       }}
-        //     >
-        //       <LoaderComponent
-        //         width="16"
-        //         height="16"
-        //         color="var(--color-background-info)"
-        //       />
-        //     </div>
-        //   )}
-        //   {errorAITranslate && (
-        //     <div className="widget-ai-translate-with-choice-languages-container--separator">
-        //       <ErrorMessageIcon
-        //         errorMessageText="OpenAI server does not response"
-        //         errorsDescriptions={[]}
-        //       />
-        //     </div>
-        //   )}
-        // </div>
       )
     );
   };
@@ -520,9 +358,14 @@ export function InComingMessage(props: {
   ) => {
     return (
       AIAnswer && (
-        <div className="assist-answer">
+        <div
+          className="ai-assist-answer"
+          style={{
+            cursor: !waitAIWidget ? 'pointer' : '',
+          }}
+        >
           <div
-            className="icon"
+            className="ai-assist-icon"
             onClick={() =>
               sendMessageToAIAssistAnswer(
                 mc,
@@ -541,11 +384,11 @@ export function InComingMessage(props: {
                 overflow: 'visible',
               }}
             >
-              <AssistAnswer
+              <BotIcon
                 width="24"
-                height="24"
+                height="25"
                 applyZoom
-                color="var(--main-elements)"
+                color="var(--primary)"
               />
             </div>
           </div>
@@ -560,12 +403,17 @@ export function InComingMessage(props: {
       onMouseEnter={() => setHaveHover(true)}
       onMouseLeave={() => setHaveHover(false)}
     >
-      <AvatarContentIncomingUser />
+      {props.userIconRenderer ? (
+        props.userIconRenderer({ userId: props.message.sender_id })
+      ) : (
+        // <AvatarContentIncomingUser userId={props.message.sender_id} />
+        <AvatarContentIncomingUser />
+      )}
       <div className="incoming">
         <div className="name">
           <div className="caption">
             <div className="name2">
-              {props.senderName || props.message.sender_id.toString()}
+              {senderName || props.message.sender_id.toString()}
             </div>
           </div>
         </div>
@@ -574,11 +422,13 @@ export function InComingMessage(props: {
             <div className="chat-bubble-background">
               {/* <div className="message-in-a-single-line"> */}
               {/* </div> */}
-              {messageContentRender(
-                props.message,
-                widgetTextContent,
-                props.theme,
-              )}
+              <div className="message-in-a-single-line">
+                {messageContentRender(
+                  props.message,
+                  widgetTextContent,
+                  props.theme,
+                )}
+              </div>
             </div>
             {renderWidgetAITranslate(
               props.message,
@@ -626,122 +476,5 @@ export function InComingMessage(props: {
         </div>
       </div>
     </div>
-    // <div
-    //   className="message-view-container--incoming-message-wrapper"
-    //   onMouseEnter={() => setHaveHover(true)}
-    //   onMouseLeave={() => setHaveHover(false)}
-    // >
-    //   <div className="message-view-container--incoming-message-wrapper__message">
-    //     <div className="message-view-container--incoming-message-wrapper__avatar">
-    //       <div
-    //         style={
-    //           props.theme
-    //             ? { backgroundColor: props.theme.disabledElements() }
-    //             : {}
-    //         }
-    //         className="message-view-container__sender-avatar"
-    //       >
-    //         <User
-    //           width="24"
-    //           height="24"
-    //           applyZoom
-    //           color="var(--secondary-text)"
-    //         />
-    //       </div>
-    //     </div>
-    //     <div className="message-view-container--incoming-message-container">
-    //       <div
-    //         style={props.theme ? { color: props.theme.secondaryText() } : {}}
-    //         className="message-view-container__sender-name"
-    //       >
-    //         {props.senderName || props.message.sender_id.toString()}
-    //       </div>
-    //       <div
-    //         style={
-    //           props.theme
-    //             ? {
-    //                 color: props.theme.mainText(),
-    //                 backgroundColor: props.theme.incomingBackground(),
-    //               }
-    //             : {}
-    //         }
-    //         className="message-view-container__sender-message"
-    //       >
-    //         {/* eslint-disable-next-line @typescript-eslint/no-unsafe-argument */}
-    //         {messageContentRender(
-    //           props.message,
-    //           widgetTextContent,
-    //           props.theme,
-    //         )}
-    //       </div>
-    //     </div>
-    //     {haveHover || openMenu ? (
-    //       <div
-    //         className="message-view-container--incoming-message-wrapper--context-menu"
-    //         onClick={() => {
-    //           setOpenMenu(!openMenu);
-    //         }}
-    //       >
-    //         <EditDots
-    //           color={
-    //             props.theme
-    //               ? props.theme.secondaryText()
-    //               : 'var(--secondary-text)'
-    //           }
-    //         />
-    //         {/* {openMenu ? ( */}
-    //         {/*  <DropDownMenu */}
-    //         {/*    items={contextMessageMenu} */}
-    //         {/*    itemsAI={contextMessageMenuAI} */}
-    //         {/*  /> */}
-    //         {/* ) : null} */}
-    //       </div>
-    //     ) : (
-    //       <div
-    //         style={props.theme ? { color: props.theme.mainText() } : {}}
-    //         className="message-view-container__incoming-time"
-    //       >
-    //         {getTimeShort24hFormat(props.message.date_sent)}
-    //       </div>
-    //     )}
-    //
-    //     <div
-    //       className="message-view-container__incoming-time"
-    //       onClick={props.onClick}
-    //     >
-    //       {/* {props.renderWidget} */}
-    //       {renderWidgetAIAssist(
-    //         props.message,
-    //         props.messagesToView,
-    //         props.currentUserId,
-    //         props.AITranslation,
-    //         props.AIAnswerToMessage,
-    //       )}
-    //     </div>
-    //     {waitAIWidget && (
-    //       <div
-    //         className="message-view-container__incoming-time"
-    //         style={{
-    //           height: '24px',
-    //           width: '24px',
-    //         }}
-    //       >
-    //         <LoaderComponent
-    //           width="24"
-    //           height="24"
-    //           color="var(--color-background-info)"
-    //         />
-    //       </div>
-    //     )}
-    //   </div>
-    //   <div className="message-view-container__widget-ai-translate">
-    //     {renderWidgetAITranslate(
-    //       props.message,
-    //       props.messagesToView,
-    //       props.currentUserId,
-    //       props.AITranslation,
-    //     )}
-    //   </div>
-    // </div>
   );
 }

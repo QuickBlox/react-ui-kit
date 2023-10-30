@@ -27,17 +27,21 @@ export class LeaveDialogUseCase implements IUseCase<void, boolean> {
 
   private leaveType: DialogLeaveTypeArcheType;
 
+  private textInformationMessage: string;
+
   constructor(
     eventMessagesRepository: EventMessagesRepository,
     dialogRepository: DialogsRepository,
     dialog: DialogEntity,
     leaveType: DialogLeaveTypeArcheType,
+    textInformationMessage: string,
   ) {
     console.log('CONSTRUCTOR LeaveDialogUseCase');
     this.eventMessagesRepository = eventMessagesRepository;
     this.dialogRepository = dialogRepository;
     this.dialogToLeave = dialog;
     this.leaveType = leaveType;
+    this.textInformationMessage = textInformationMessage;
   }
 
   async execute(): Promise<boolean> {
@@ -59,7 +63,10 @@ export class LeaveDialogUseCase implements IUseCase<void, boolean> {
     remoteMessageDTO.dialogId = this.dialogToLeave.id;
     remoteMessageDTO.notification_type = NotificationTypes.DELETE_LEAVE_DIALOG;
     remoteMessageDTO.date_sent = Date.now();
-    remoteMessageDTO.message = `User ${this.dialogToLeave.ownerId} has left dialog.`;
+    remoteMessageDTO.message =
+      this.textInformationMessage && this.textInformationMessage.length > 0
+        ? this.textInformationMessage
+        : `User ${this.dialogToLeave.ownerId} has left dialog.`;
 
     this.eventMessagesRepository.dispatchEvent<RemoteMessageDTO>(
       EventMessageType.RegularMessage,

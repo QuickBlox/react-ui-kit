@@ -17,7 +17,7 @@ const AudioAttachmentComponent: React.FC<AudioAttachmentComponentProps> = ({
         <source src={audioFile.url} type="audio/mpeg" />
         <source src={audioFile.url} type="audio/ogg" />
       </audio>
-      <a href={audioFile.url} download>
+      <a href={audioFile.url} target="_blank" download rel="noreferrer">
         Download
       </a>
     </div>

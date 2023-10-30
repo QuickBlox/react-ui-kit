@@ -37,4 +37,6 @@ export interface IDialogsRepository {
   isLocalSynced(): Promise<boolean>;
 
   setLocalSynced(synced: boolean): void;
+
+  release(): void;
 }

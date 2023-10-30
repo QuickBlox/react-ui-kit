@@ -161,32 +161,33 @@ export default function useMessagesViewModel(
     console.log('EXECUTE USE CASE MessagesViewModelWithMockUseCase EXECUTED');
   }
 
+  const getSender = async (sender_id: number) => {
+    const getUser: GetUsersByIdsUseCase = new GetUsersByIdsUseCase(
+      new UsersRepository(
+        currentContext.storage.LOCAL_DATA_SOURCE,
+        currentContext.storage.REMOTE_DATA_SOURCE,
+      ),
+      [sender_id],
+    );
+
+    let userEntity: UserEntity | undefined;
+
+    await getUser
+      .execute()
+      // eslint-disable-next-line promise/always-return
+      .then((data) => {
+        // eslint-disable-next-line prefer-destructuring
+        userEntity = data[0];
+      })
+      .catch((e) => {
+        console.log('have ERROR get users :', JSON.stringify(e));
+      });
+
+    return userEntity;
+  };
+
   const dialogUpdateHandler = (dialogInfo: DialogEventInfo) => {
     console.log('call dialogUpdateHandler in useMessagesViewModel');
-    const getSender = async (sender_id: number) => {
-      const getUser: GetUsersByIdsUseCase = new GetUsersByIdsUseCase(
-        new UsersRepository(
-          currentContext.storage.LOCAL_DATA_SOURCE,
-          currentContext.storage.REMOTE_DATA_SOURCE,
-        ),
-        [sender_id],
-      );
-
-      let userEntity: UserEntity | undefined;
-
-      await getUser
-        .execute()
-        // eslint-disable-next-line promise/always-return
-        .then((data) => {
-          // eslint-disable-next-line prefer-destructuring
-          userEntity = data[0];
-        })
-        .catch((e) => {
-          console.log('have ERROR get users :', JSON.stringify(e));
-        });
-
-      return userEntity;
-    };
 
     if (dialogInfo.eventMessageType === EventMessageType.LocalMessage) {
       if (dialogInfo.messageStatus) {
@@ -233,9 +234,20 @@ export default function useMessagesViewModel(
           })
           .finally(() => {
             setMessages((prevState) => {
-              const newState = [...prevState];
+              let newState = [...prevState];
 
-              newState.push(ResultMessage);
+              if (newState.find((it) => it.id === messageId)) {
+                newState = newState.map((elem) => {
+                  const v: MessageEntity = {
+                    ...elem,
+                    delivered_ids: ResultMessage.delivered_ids,
+                  };
+
+                  return v;
+                });
+              } else {
+                newState.push(ResultMessage);
+              }
 
               return newState;
             });
@@ -311,7 +323,7 @@ export default function useMessagesViewModel(
     fileEntity.uid = '';
     fileEntity.name = file.name;
     fileEntity.size = file.size;
-    fileEntity.type = file.type;
+    fileEntity.type = file.type || 'application/zip';
     const uploadFileUseCase: UploadFileUseCase = new UploadFileUseCase(
       new FileRepository(
         currentContext.storage.LOCAL_DATA_SOURCE,
@@ -343,6 +355,27 @@ export default function useMessagesViewModel(
     // eslint-disable-next-line promise/catch-or-return
     sendTextMessageUseCase
       .execute()
+      // eslint-disable-next-line promise/always-return
+      .then((me) => {
+        //
+        // eslint-disable-next-line promise/catch-or-return
+        getSender(me.sender_id)
+          // eslint-disable-next-line promise/always-return
+          .then((user) => {
+            // eslint-disable-next-line no-param-reassign
+            me.sender = user;
+          })
+          .finally(() => {
+            setMessages((prevState) => {
+              const newState = [...prevState];
+
+              newState.push(me);
+
+              return newState;
+            });
+          });
+        //
+      })
       .catch((reason) => {
         const errorMessage: string = stringifyError(reason);
 
@@ -388,70 +421,78 @@ export default function useMessagesViewModel(
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const sendAttachmentMessage = (newMessage: File) => {
+  const sendAttachmentMessage = async (newMessage: File): Promise<boolean> => {
     console.log('call sendTextMessage');
     setLoading(true);
     const currentUserId =
       currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId || 0;
 
-    uploadFile(newMessage)
-      // eslint-disable-next-line promise/always-return
-      .then((fileMessage: FileEntity) => {
-        console.log(JSON.stringify(fileMessage));
-        // '[attachment]'
-        const recipientId =
-          dialog.type === DialogType.private
-            ? (dialog as PrivateDialogEntity).participantId
-            : currentUserId;
-
+    try {
+      await uploadFile(newMessage)
         // eslint-disable-next-line promise/always-return
-        const messageBody = fileMessage.name || '[attachment]';
-        const messageToSend: MessageEntity =
-          Stubs.createMessageEntityWithParams(
-            '',
-            dialog.id,
-            messageBody,
-            Date.now().toString(),
-            Date.now(),
-            Date.now().toString(),
-            [],
-            [],
-            1,
-            currentUserId,
-            // eslint-disable-next-line promise/always-return
-            recipientId,
-            [],
-            '',
-            DialogType.group,
-          );
+        .then((fileMessage: FileEntity) => {
+          console.log(JSON.stringify(fileMessage));
 
-        messageToSend.dialogType = dialog.type;
-        const attachments: ChatMessageAttachmentEntity[] = [
-          {
-            id: fileMessage.id as string,
-            uid: fileMessage.uid,
-            type: fileMessage.type!,
-            file: fileMessage,
-            name: fileMessage.name,
-            size: fileMessage.size,
-            url: fileMessage.url,
-          },
-        ];
+          const recipientId =
+            dialog.type === DialogType.private
+              ? (dialog as PrivateDialogEntity).participantId
+              : currentUserId;
 
-        messageToSend.attachments = attachments;
+          // eslint-disable-next-line promise/always-return
+          const messageBody = fileMessage.name || '[attachment]';
+          const messageToSend: MessageEntity =
+            Stubs.createMessageEntityWithParams(
+              '',
+              dialog.id,
+              messageBody,
+              Date.now().toString(),
+              Date.now(),
+              Date.now().toString(),
+              [],
+              [],
+              1,
+              currentUserId,
+              // eslint-disable-next-line promise/always-return
+              recipientId,
+              [],
+              '',
+              DialogType.group,
+            );
 
-        messageToSend.message = `MediaContentEntity|${messageBody}|${
-          fileMessage.uid
-        }|${fileMessage.type!.toString()}`;
-        sendMessage(messageToSend);
-        //
-      })
-      .catch((reason) => {
-        const errorMessage = stringifyError(reason);
+          messageToSend.dialogType = dialog.type;
+          const attachments: ChatMessageAttachmentEntity[] = [
+            {
+              id: fileMessage.id as string,
+              uid: fileMessage.uid,
+              type: fileMessage.type!,
+              file: fileMessage,
+              name: fileMessage.name,
+              size: fileMessage.size,
+              url: fileMessage.url,
+            },
+          ];
 
-        console.log('EXCEPTION in sendAttachmentMessage');
-        throw new Error(errorMessage);
-      });
+          messageToSend.attachments = attachments;
+
+          messageToSend.message = `MediaContentEntity|${messageBody}|${
+            fileMessage.uid
+          }|${fileMessage.type!.toString()}`;
+          sendMessage(messageToSend);
+          //
+        })
+        .catch((reason) => {
+          setLoading(false);
+          const errorMessage = stringifyError(reason);
+
+          console.log('EXCEPTION in sendAttachmentMessage', errorMessage);
+
+          throw new Error(errorMessage);
+        });
+    } catch (e) {
+      return false;
+    }
+
+    return true;
   };
 
   return {

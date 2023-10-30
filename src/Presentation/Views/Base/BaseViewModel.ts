@@ -3,6 +3,7 @@ import { GroupDialogEntity } from '../../../Domain/entity/GroupDialogEntity';
 import { DialogEntity } from '../../../Domain/entity/DialogEntity';
 import { FileEntity } from '../../../Domain/entity/FileEntity';
 import { IChatMessage } from '../../../Data/source/AISource';
+import { Tone } from '../../components/UI/Dialogs/MessagesView/AIWidgets/Tone';
 
 export default class BaseViewModel<TResult> {
   get entity(): TResult {
@@ -52,6 +53,7 @@ export type EditDialogParams = {
 };
 
 export type FunctionTypeFileToToVoid = (file: File) => void;
+export type FunctionTypeFileToToBoolean = (file: File) => Promise<boolean>;
 export type FunctionTypePaginationToVoid = (pagination: Pagination) => void;
 export type FunctionTypeVoidToVoid = () => void;
 export type FunctionTypeStringToVoid = (value: string) => void;
@@ -86,3 +88,4 @@ export type FunctionTypeStringWithContextToString = (
   context: IChatMessage[],
   additionalSettings?: { [key: string]: any },
 ) => Promise<string>;
+export type FunctionTypeVoidToTones = () => Tone[];

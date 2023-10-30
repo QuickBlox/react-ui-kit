@@ -12,12 +12,14 @@ const ImageAttachmentComponent: React.FC<ImageAttachmentComponentProps> = ({
 }: ImageAttachmentComponentProps) => {
   return (
     <div>
-      <img
-        className="image-body"
-        key={imageFile.id}
-        src={imageFile.url}
-        alt={imageFile.name || 'attached image'}
-      />
+      <a href={imageFile.url} download="file" target="_blank" rel="noreferrer">
+        <img
+          className="image-body"
+          key={imageFile.id}
+          src={imageFile.url}
+          alt={imageFile.name || 'attached image'}
+        />
+      </a>
     </div>
   );
 };

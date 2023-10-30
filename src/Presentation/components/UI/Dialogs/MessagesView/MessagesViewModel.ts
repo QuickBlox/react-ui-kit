@@ -1,5 +1,5 @@
 import BaseViewModel, {
-  FunctionTypeFileToToVoid,
+  FunctionTypeFileToToBoolean,
   FunctionTypePaginationToVoid,
   FunctionTypeStringToVoid,
   FunctionTypeVoidToVoid,
@@ -13,7 +13,7 @@ export interface MessagesViewModel extends BaseViewModel<DialogEntity> {
   messages: MessageEntity[]; // content
   getMessages: FunctionTypePaginationToVoid; // prepareContent
   sendTextMessage: FunctionTypeStringToVoid;
-  sendAttachmentMessage: FunctionTypeFileToToVoid;
+  sendAttachmentMessage: FunctionTypeFileToToBoolean;
   release: FunctionTypeVoidToVoid; // release Content
   sendTypingTextMessage: FunctionTypeVoidToVoid; //
   typingText: string;

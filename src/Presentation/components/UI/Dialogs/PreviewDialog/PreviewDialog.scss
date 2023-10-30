@@ -2,7 +2,7 @@
 
 $preview-dialog-color-divider: var(--color-divider);
 $row-center-container-base-font-size: 12px;
-$row-center-container-base-font-line-height: 24px;
+$row-center-container-base-font-line-height: 32px;
 $row--main-container-min-height: 72px;
 $row--main-container-min-width: 320px;
 $row--main-container-text-title-width: 120px;
@@ -33,6 +33,10 @@ $preview-dialog-avatar-wrapper-background-color-private: var(--caption);
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    color: var(--main-text, #0b121b);
+    text-align: left;
+    font: var(--label-label-medium, 500 12px/16px "Roboto", sans-serif);
+    position: relative;
   }
   &__text {
     position: relative;
@@ -55,8 +59,14 @@ $preview-dialog-avatar-wrapper-background-color-private: var(--caption);
     word-wrap: break-word;
     overflow: hidden;
     max-height: $row-center-container-base-font-line-height; /* (Number of lines you want visible) * (line-height) */
-    line-height: $row-center-container-base-font-size;
-    text-align:justify;
+    line-height: 11px; // $row-center-container-base-font-size;
+    //text-align:justify;
+    color: var(--main-text);
+    text-align: left;
+    font: var(--body-body-small, 400 12px/16px "Roboto", sans-serif);
+    position: relative;
+    align-self: stretch;
+    height: 32px;
   }
 
   //&__text.ellipsis::after {
@@ -96,5 +106,21 @@ $preview-dialog-avatar-wrapper-background-color-private: var(--caption);
   text-align: center;
   margin: 0 auto;
   padding-top: 2px;
+}
+
+.dialog-item-preview-text{
+  color: var(--main-text);
+  text-align: left;
+  font: var(--body-body-small, 400 12px/16px "Roboto", sans-serif);
+  position: relative;
+  align-self: stretch;
+  height: 32px;
+}
+
+.dialog-item-date-time-sent{
+  color: var(--secondary-text);
+  text-align: right;
+  font: var(--label-label-small, 500 11px/16px "Roboto", sans-serif);
+  position: relative;
 }
 

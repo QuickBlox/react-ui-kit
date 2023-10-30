@@ -1,3 +1,9 @@
+interface Tone {
+  name: string;
+  description: string;
+  iconEmoji: string;
+}
+
 type Dictionary<T> = Record<string, T>;
 
 type DictionaryByKey<T, V> = {
@@ -21,20 +27,22 @@ type ProxyConfig = {
   api: string;
   servername: string;
   port: string;
-  sessionToken: string;
 };
 interface WidgetConfig {
   apiKey: string;
   useDefault: boolean;
+  maxTokens: number;
   proxyConfig: ProxyConfig;
 }
 
-interface AITranslateWidgetConfig extends WidgetConfig{
-  defaultLanguage: string; languages: string[];
+interface AITranslateWidgetConfig extends WidgetConfig {
+  defaultLanguage: string;
+  languages: string[];
 }
 
 interface AIRephraseWidgetConfig extends WidgetConfig {
-  defaultTone: string
+  defaultTone: string;
+  Tones: Tone[];
 }
 
 interface QBConfig {

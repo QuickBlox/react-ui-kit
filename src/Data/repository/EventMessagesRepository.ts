@@ -47,6 +47,8 @@ export default class EventMessagesRepository
       new SubscriptionPerformer<MessageEntity>();
     this.subscriptionOnSystemMessages[NotificationTypes.DELETE_LEAVE_DIALOG] =
       new SubscriptionPerformer<MessageEntity>();
+    this.subscriptionOnSystemMessages[NotificationTypes.REMOVE_USER] =
+      new SubscriptionPerformer<MessageEntity>();
     this.subscriptionOnSystemMessages[NotificationTypes.NEW_DIALOG] =
       new SubscriptionPerformer<MessageEntity>();
     this.remoteDs.subscribeOnSystemMessaging(
@@ -60,6 +62,10 @@ export default class EventMessagesRepository
     this.remoteDs.subscribeOnSystemMessaging(
       NotificationTypes.DELETE_LEAVE_DIALOG,
       this.DeleteLeaveDialogEventHandler.bind(this),
+    );
+    this.remoteDs.subscribeOnSystemMessaging(
+      NotificationTypes.REMOVE_USER,
+      this.RemoteUserDialogEventHandler.bind(this),
     );
     this.remoteDs.subscribeOnMessaging(this.NewMessageEventHandler.bind(this));
     this.remoteDs.subscribeOnUpdateMessageStatus(
@@ -144,6 +150,31 @@ export default class EventMessagesRepository
         );
         this.subscriptionOnSystemMessages[
           NotificationTypes.DELETE_LEAVE_DIALOG
+        ].informSubscribers(currentMessage, EventMessageType.SystemMessage);
+      })
+      .catch((reason) => {
+        const errorMessage = stringifyError(reason);
+
+        console.log(
+          'get system message with new dialog with exception:',
+          errorMessage,
+        );
+
+        throw new Error(errorMessage);
+      });
+  }
+
+  protected RemoteUserDialogEventHandler(messageInfo: RemoteMessageDTO): void {
+    this.messageDTOMapper
+      .toEntity<RemoteMessageDTO, MessageEntity>(messageInfo)
+      // eslint-disable-next-line promise/always-return
+      .then((currentMessage: MessageEntity) => {
+        console.log(
+          'have system message new dialog',
+          JSON.stringify(currentMessage),
+        );
+        this.subscriptionOnSystemMessages[
+          NotificationTypes.REMOVE_USER
         ].informSubscribers(currentMessage, EventMessageType.SystemMessage);
       })
       .catch((reason) => {
@@ -273,6 +304,9 @@ export default class EventMessagesRepository
     switch (notificationType) {
       case NotificationTypes.DELETE_LEAVE_DIALOG:
         SystemMessageType = NotificationTypes.DELETE_LEAVE_DIALOG;
+        break;
+      case NotificationTypes.REMOVE_USER:
+        SystemMessageType = NotificationTypes.REMOVE_USER;
         break;
       case NotificationTypes.UPDATE_DIALOG:
         SystemMessageType = NotificationTypes.UPDATE_DIALOG;

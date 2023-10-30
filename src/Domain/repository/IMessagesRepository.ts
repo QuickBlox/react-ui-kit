@@ -3,9 +3,9 @@ import { PaginatedResult, Pagination } from './Pagination';
 import { DialogEntity } from '../entity/DialogEntity'
 
 export interface IMessagesRepository {
-  saveMessageToLocal(message: MessageEntity): Promise<boolean>;
+  saveMessageToLocal(message: MessageEntity): Promise<MessageEntity>;
 
-  sendMessageToRemote(message: MessageEntity): Promise<boolean>;
+  sendMessageToRemote(message: MessageEntity): Promise<MessageEntity>;
 
   getMessagesFromLocal(dialogId: string): Promise<Array<MessageEntity>>;
 

@@ -2,7 +2,8 @@ import { useState } from 'react';
 import AIWidgetIcon from '../../../svgs/Icons/AIWidgets/AIWidget';
 import ErrorMessageIcon from './ErrorMessageIcon';
 import { AIMessageWidget, MessageWidgetProps } from './AIMessageWidget';
-import { AISource, IChatMessage } from '../../../../../../Data/source/AISource';
+import { IChatMessage } from '../../../../../../Data/source/AISource';
+import { AITranslateUseCase } from '../../../../../../Domain/use_cases/ai/AITranslateUseCase';
 
 // interface MessageWidgetProps {
 //   // https://api.openai.com/v1/chat/completions'
@@ -52,25 +53,25 @@ export default function UseDefaultAITranslateWidget({
   ): Promise<string> => {
     if (textToSend && textToSend.length > 0) {
       // eslint-disable-next-line no-return-await
-      let prompt = `Please, translate the next text in english and give me just only translated text. Text to translate is: "${textToSend}"`;
       const { language } = additionalSettings || {};
+      //
+      const openAIModel = 'gpt-3.5-turbo';
 
-      if (language) {
-        prompt = `Please, translate the next text in ${
-          language as string
-        } and give me just only translated text. Text to translate is: "${textToSend}"`;
-      }
-
-      // eslint-disable-next-line no-return-await
-      return await AISource.getData(
-        prompt,
+      // AIRephraseWithProxyUseCase
+      const useCaseAITranslate = new AITranslateUseCase(
+        textToSend,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        language,
         context,
         servername,
         api,
         port,
         apiKeyOrSessionToken,
-      ).then((data) => {
+        openAIModel,
+      );
+
+      // eslint-disable-next-line no-return-await
+      return await useCaseAITranslate.execute().then((data) => {
         setTextFromWidgetToContent(data);
 
         return data;

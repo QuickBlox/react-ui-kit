@@ -94,11 +94,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
             apiKeyOrSessionToken: token,
           });
         } else {
-          token =
-            QBConfig.configAIApi.AIAnswerAssistWidgetConfig.proxyConfig
-              .sessionToken ||
-            sessionToken ||
-            '';
+          token = sessionToken || '';
           defaultAIAnswerToMessageWidget =
             UseDefaultAIAssistAnswerWidgetWithProxy({
               ...proxyConfig,
@@ -134,11 +130,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
             apiKeyOrSessionToken: token,
           });
         } else {
-          token =
-            QBConfig.configAIApi.AITranslateWidgetConfig.proxyConfig
-              .sessionToken ||
-            sessionToken ||
-            '';
+          token = sessionToken || '';
           defaultAITranslateWidget = UseDefaultAITranslateWidgetWithProxy({
             ...proxyConfig,
             apiKeyOrSessionToken: token,
@@ -173,11 +165,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
             apiKeyOrSessionToken: token,
           });
         } else {
-          token =
-            QBConfig.configAIApi.AIRephraseWidgetConfig.proxyConfig
-              .sessionToken ||
-            sessionToken ||
-            '';
+          token = sessionToken || '';
           defaultAIEditMessageWidget =
             UseDefaultAIRephraseMessageWidgetWithProxy({
               ...proxyConfig,

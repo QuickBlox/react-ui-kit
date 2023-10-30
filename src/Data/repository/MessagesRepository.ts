@@ -225,7 +225,7 @@ export default class MessagesRepository implements IMessagesRepository {
     await this.remoteDataSource.typingMessageStop(remoteDialogDTO, senderId);
   }
 
-  async saveMessageToLocal(entity: MessageEntity): Promise<boolean> {
+  async saveMessageToLocal(entity: MessageEntity): Promise<MessageEntity> {
     try {
       const dto: RemoteMessageDTO = await this.messageLocalDTOMapper.fromEntity(
         entity,
@@ -233,26 +233,32 @@ export default class MessagesRepository implements IMessagesRepository {
 
       await this.localDataStorage.saveMessage(dto);
 
-      return Promise.resolve(true);
+      return Promise.resolve(entity);
     } catch (e) {
-      return Promise.resolve(false);
+      // eslint-disable-next-line no-param-reassign
+      entity.delivered_ids = [];
+
+      return Promise.resolve(entity);
     }
   }
 
-  async sendMessageToRemote(entity: MessageEntity): Promise<boolean> {
+  async sendMessageToRemote(entity: MessageEntity): Promise<MessageEntity> {
+    let messageResult: MessageEntity = entity;
+
     try {
-      const dto: RemoteMessageDTO =
+      const dtoParam: RemoteMessageDTO =
         await this.messageRemoteDTOMapper.fromEntity(entity);
 
-      await this.remoteDataSource.sendMessage(dto);
+      const dtoResult: RemoteMessageDTO =
+        await this.remoteDataSource.sendMessage(dtoParam);
 
-      return Promise.resolve(true);
+      messageResult = await this.messageRemoteDTOMapper.toEntity(dtoResult);
+
+      return Promise.resolve(messageResult);
     } catch (e) {
       // eslint-disable-next-line prefer-promise-reject-errors
-      return Promise.reject(false);
+      return Promise.reject(messageResult);
     }
-
-    return Promise.resolve(false);
   }
 
   async updateMessageInLocal(entity: MessageEntity): Promise<boolean> {

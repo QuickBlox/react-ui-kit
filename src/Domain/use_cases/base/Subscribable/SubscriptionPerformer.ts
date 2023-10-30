@@ -35,20 +35,17 @@ export class SubscriptionPerformer<TArg> implements ISubscribable<TArg> {
 
   protected EVENT_TYPE: string = EventMessageType.LocalMessage;
 
+  // eslint-disable-next-line class-methods-use-this
   public release(): void {
-    Object.entries(this.onEventByTypeSubscribers).map((x) => {
-      const eventName = x[0];
-
-      this.onEventByTypeSubscribers[eventName][this.EVENT_NAME] = () => {
-        console.log('ERROR release event in SubscriptionPerformer');
-      };
-
-      return this.onEventByTypeSubscribers[eventName][this.EVENT_NAME];
-    });
+    console.log('SubscriptionPerformer release actions.');
     // Object.entries(this.onEventByTypeSubscribers).map((x) => {
     //   const eventName = x[0];
     //
-    //   return this.onEventByTypeSubscribers[eventName].slice();
+    //   this.onEventByTypeSubscribers[eventName][this.EVENT_NAME] = () => {
+    //     console.log('ERROR release event in SubscriptionPerformer');
+    //   };
+    //
+    //   return this.onEventByTypeSubscribers[eventName][this.EVENT_NAME];
     // });
   }
 

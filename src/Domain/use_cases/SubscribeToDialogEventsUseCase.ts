@@ -52,6 +52,12 @@ export class SubscribeToDialogEventsUseCase extends BaseUseCase<
     );
 
     this.eventMessagesRepository.subscribeOnSystemMessaging(
+      NotificationTypes.REMOVE_USER,
+      this.removeUserDialogEventHandler.bind(this),
+      this.EVENT_NAME,
+    );
+
+    this.eventMessagesRepository.subscribeOnSystemMessaging(
       NotificationTypes.UPDATE_DIALOG,
       this.updateDialogEventHandler.bind(this),
       this.EVENT_NAME,
@@ -117,6 +123,21 @@ export class SubscribeToDialogEventsUseCase extends BaseUseCase<
     const messageInfo: DialogEventInfo = {
       messageInfo: messageEntity,
       notificationTypes: NotificationTypes.DELETE_LEAVE_DIALOG,
+      eventMessageType: EventMessageType.SystemMessage,
+      messageStatus: undefined,
+    };
+
+    this.informSubscribers(messageInfo);
+  }
+
+  removeUserDialogEventHandler(messageEntity: MessageEntity): void {
+    console.log(
+      'execute removeUserDialogEventHandler in SubscribeToDialogEventsUseCase:',
+      JSON.stringify(messageEntity),
+    );
+    const messageInfo: DialogEventInfo = {
+      messageInfo: messageEntity,
+      notificationTypes: NotificationTypes.REMOVE_USER,
       eventMessageType: EventMessageType.SystemMessage,
       messageStatus: undefined,
     };

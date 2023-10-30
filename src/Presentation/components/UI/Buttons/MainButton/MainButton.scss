@@ -31,6 +31,9 @@
 
   /* Light UiKitTheme/System */
   color: var(--main-background);
+
+  border: none;
+  outline: none;
 }
 
 .danger-button {
@@ -61,6 +64,9 @@
   letter-spacing: 0.4px;
   /* Light UiKitTheme/System */
   color: var(--main-background);
+
+  border: none;
+  outline: none;
 }
 
 .secondary-button{
@@ -124,4 +130,7 @@
   letter-spacing: 0.4px;
   /* Light UiKitTheme/Secondary text */
   color: var(--secondary-text);
+
+  border: none;
+  outline: none;
 }
