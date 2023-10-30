@@ -79,9 +79,26 @@ export default function UseDefaultAIRephraseMessageWidget({
     return '';
   };
 
+  // const tonesToWidget = (): Tone[] => {
+  //   return [
+  //     Tone.Professional,
+  //     Tone.Friendly,
+  //     Tone.Encouraging,
+  //     Tone.Empathetic,
+  //     Tone.Assertive,
+  //     Tone.Neutral,
+  //     Tone.Instructive,
+  //     Tone.Persuasive,
+  //     Tone.Sarcastic,
+  //     Tone.Poetic,
+  //     Tone.Unchanged,
+  //   ];
+  // };
+
   return {
     textToContent: textFromWidgetToContent,
     renderWidget,
     textToWidget,
+    // tonesToWidget,
   };
 }

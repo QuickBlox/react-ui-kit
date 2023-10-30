@@ -1,0 +1,61 @@
+.preview-default-file-container,
+.preview-default-file-container * {
+  box-sizing: border-box;
+}
+.preview-default-file-container {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+
+  &--placeholder {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    position: static;
+
+    &__bg {
+      background: var(--incoming-background, #e4e6e8);
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      position: absolute;
+      left: 0px;
+      top: 0px;
+    }
+    &__icon {
+      border-radius: 4px;
+      padding: 4px;
+      display: flex;
+      flex-direction: row;
+      gap: 0px;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      position: absolute;
+      left: 4px;
+      top: 4px;
+    }
+  }
+
+  &--default-file {
+    color: var(--main-text, #0b121b);
+    text-align: left;
+    font: 400 12px/16px "Roboto", sans-serif;
+    position: relative;
+    flex: 1;
+  }
+}
+
+.media-text-document {
+  align-self: stretch;
+  flex: 1;
+  position: relative;
+  overflow: visible;
+}
+

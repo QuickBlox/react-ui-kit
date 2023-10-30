@@ -21,17 +21,21 @@ export class RemoveUsersFromTheDialogUseCase
 
   private usersIds: Array<number>;
 
+  private textInformationMessage: string;
+
   constructor(
     eventMessagesRepository: EventMessagesRepository,
     dialogRepository: DialogsRepository,
     dialog: DialogEntity,
     usersIds: Array<number>,
+    textInformationMessage: string,
   ) {
     console.log('CONSTRUCTOR LeaveDialogUseCase');
     this.eventMessagesRepository = eventMessagesRepository;
     this.dialogRepository = dialogRepository;
     this.dialogToLeave = dialog;
     this.usersIds = usersIds;
+    this.textInformationMessage = textInformationMessage;
   }
 
   async execute(): Promise<boolean> {
@@ -53,13 +57,25 @@ export class RemoveUsersFromTheDialogUseCase
     remoteMessageDTO.dialogId = this.dialogToLeave.id;
     remoteMessageDTO.notification_type = NotificationTypes.DELETE_LEAVE_DIALOG;
     remoteMessageDTO.date_sent = Date.now();
-    remoteMessageDTO.message = `User ${this.dialogToLeave.ownerId} has left dialog.`;
+    remoteMessageDTO.message =
+      this.textInformationMessage && this.textInformationMessage.length > 0
+        ? this.textInformationMessage
+        : `User ${this.dialogToLeave.ownerId} delete other users from dialog.`;
 
-    this.eventMessagesRepository.dispatchEvent<RemoteMessageDTO>(
-      EventMessageType.RegularMessage,
-      remoteMessageDTO,
-      receivers,
-    );
+    const updatedRecivers: number[] = [];
+
+    receivers.forEach((item) => {
+      if (!this.usersIds.includes(item)) {
+        updatedRecivers.push(item);
+      }
+    });
+
+    // send visual message
+    // this.eventMessagesRepository.dispatchEvent<RemoteMessageDTO>(
+    //   EventMessageType.RegularMessage,
+    //   remoteMessageDTO,
+    //   updatedRecivers,
+    // );
     //
 
     await this.dialogRepository
@@ -81,21 +97,28 @@ export class RemoveUsersFromTheDialogUseCase
       console.log('try to delete dialog in local');
 
       remoteMessageDTO.dialogId = this.dialogToLeave.id;
-      remoteMessageDTO.notification_type =
-        NotificationTypes.DELETE_LEAVE_DIALOG;
-
-      await this.dialogRepository.deleteDialogFromLocal(this.dialogToLeave.id);
-      this.eventMessagesRepository.dispatchEvent<RemoteMessageDTO>(
-        EventMessageType.LocalMessage,
-        remoteMessageDTO,
-        [],
-      );
+      remoteMessageDTO.notification_type = NotificationTypes.REMOVE_USER;
 
       this.eventMessagesRepository.dispatchEvent<RemoteMessageDTO>(
         EventMessageType.SystemMessage,
         remoteMessageDTO,
-        receivers,
+        [...this.usersIds], // receivers,
       );
+
+      //
+      remoteMessageDTO.notification_type = NotificationTypes.UPDATE_DIALOG;
+
+      if (updatedRecivers) {
+        if (updatedRecivers.length > 0) {
+          this.eventMessagesRepository.dispatchEvent<RemoteMessageDTO>(
+            EventMessageType.SystemMessage,
+            remoteMessageDTO,
+            updatedRecivers,
+          );
+        }
+      }
+
+      //
     }
 
     return resultOperation;

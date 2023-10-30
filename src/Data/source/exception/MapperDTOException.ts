@@ -15,5 +15,8 @@ export class MapperDTOException extends RepositoryException {
   constructor(message: string, code: number, description = '') {
     super(message, code);
     this._description = description;
+    if (this._description) {
+      this.message += ` ${this._description}`;
+    }
   }
 }

@@ -28,6 +28,9 @@ import { DialogType } from '../../../Domain/entity/DialogTypes';
 import { RemoveUsersFromTheDialogUseCase } from '../../../Domain/use_cases/RemoveUsersFromTheDialogUseCase';
 import { DialogEventInfo } from '../../../Domain/entity/DialogEventInfo';
 import { RemoteDataSource } from '../../../Data/source/remote/RemoteDataSource';
+import { GetUsersByIdsUseCase } from '../../../Domain/use_cases/GetUsersByIdsUseCase';
+import UsersRepository from '../../../Data/repository/UsersRepository';
+import { UserEntity } from '../../../Domain/entity/UserEntity';
 
 export default function useDialogsViewModel(
   currentContext: QBDataContextType,
@@ -43,7 +46,9 @@ export default function useDialogsViewModel(
 
   //
   const currentUserId =
-    currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId;
+    currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId || -1;
+  const currentUserName =
+    currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userName || '';
   // const currentContext = useQbInitializedDataContext();
   const remoteDataSourceMock: RemoteDataSource =
     currentContext.storage.REMOTE_DATA_SOURCE;
@@ -65,53 +70,6 @@ export default function useDialogsViewModel(
       'DialogsViewModel',
     );
 
-  const dialogUpdateHandler = (dialogInfo: DialogEventInfo) => {
-    console.log('call dialogUpdateHandler in useDialogsViewModel');
-    if (
-      dialogInfo.eventMessageType === EventMessageType.SystemMessage
-      // || dialogInfo.eventMessageType === EventMessageType.RegularMessage
-    ) {
-      if (dialogInfo.notificationTypes === NotificationTypes.UPDATE_DIALOG) {
-        if (dialogInfo.messageInfo) {
-          const { dialogId } = dialogInfo.messageInfo;
-
-          const getDialogByIdUseCase: GetDialogByIdUseCase =
-            new GetDialogByIdUseCase(
-              new DialogsRepository(
-                currentContext.storage.LOCAL_DATA_SOURCE,
-                currentContext.storage.REMOTE_DATA_SOURCE,
-              ),
-              dialogId,
-            );
-
-          // eslint-disable-next-line promise/catch-or-return,promise/always-return
-          getDialogByIdUseCase.execute().then((updatedDialog) => {
-            setNewDialog(updatedDialog);
-          });
-        }
-      }
-      //
-      if (
-        dialogInfo.notificationTypes === NotificationTypes.DELETE_LEAVE_DIALOG
-      ) {
-        if (
-          dialogInfo.messageInfo &&
-          dialogInfo.messageInfo.sender_id === currentUserId
-        ) {
-          setNewDialog(undefined);
-        }
-      }
-      //
-    }
-  };
-
-  subscribeToDialogEventsUseCase
-    .execute(dialogUpdateHandler)
-    .catch((reason) => {
-      console.log(stringifyError(reason));
-    });
-
-  // eslint-disable-next-line @typescript-eslint/require-await
   async function getDialogs(currentPagination: Pagination) {
     console.log('getDialogs in useDialogsViewModel');
     console.log(
@@ -155,12 +113,98 @@ export default function useDialogsViewModel(
     });
   }
 
+  const dialogUpdateHandler = (dialogInfo: DialogEventInfo) => {
+    console.log('call dialogUpdateHandler in useDialogsViewModel');
+    if (
+      dialogInfo.eventMessageType === EventMessageType.SystemMessage
+      // || dialogInfo.eventMessageType === EventMessageType.RegularMessage
+    ) {
+      if (dialogInfo.notificationTypes === NotificationTypes.UPDATE_DIALOG) {
+        if (dialogInfo.messageInfo) {
+          const { dialogId } = dialogInfo.messageInfo;
+
+          const getDialogByIdUseCase: GetDialogByIdUseCase =
+            new GetDialogByIdUseCase(
+              new DialogsRepository(
+                currentContext.storage.LOCAL_DATA_SOURCE,
+                currentContext.storage.REMOTE_DATA_SOURCE,
+              ),
+              dialogId,
+            );
+
+          // eslint-disable-next-line promise/catch-or-return,promise/always-return
+          getDialogByIdUseCase.execute().then((updatedDialog) => {
+            setNewDialog(updatedDialog);
+          });
+        }
+      } else if (
+        dialogInfo.notificationTypes === NotificationTypes.DELETE_LEAVE_DIALOG
+      ) {
+        if (
+          dialogInfo.messageInfo &&
+          dialogInfo.messageInfo.sender_id === currentUserId
+        ) {
+          setNewDialog(undefined);
+        }
+      } else if (
+        dialogInfo.notificationTypes === NotificationTypes.REMOVE_USER
+      ) {
+        if (
+          dialogInfo.messageInfo &&
+          dialogInfo.messageInfo.dialogId === newDialog?.id
+        ) {
+          setNewDialog(undefined);
+        }
+        getDialogs(pagination);
+      } else if (
+        dialogInfo.notificationTypes === NotificationTypes.NEW_DIALOG
+      ) {
+        // const pagination: Pagination = new Pagination();
+
+        getDialogs(pagination).catch();
+      }
+    }
+  };
+
+  subscribeToDialogEventsUseCase
+    .execute(dialogUpdateHandler)
+    .catch((reason) => {
+      console.log(stringifyError(reason));
+    });
+
+  // eslint-disable-next-line @typescript-eslint/require-await
+
   const release = () => {
     useCaseSubscribeToDialogsUpdates.release();
   };
 
   const setWaitLoadingStatus = (status: boolean): void => {
     setLoading(status);
+  };
+
+  const getSenders = async (senders: number[]) => {
+    const getUsers: GetUsersByIdsUseCase = new GetUsersByIdsUseCase(
+      new UsersRepository(
+        currentContext.storage.LOCAL_DATA_SOURCE,
+        currentContext.storage.REMOTE_DATA_SOURCE,
+      ),
+      [...senders],
+    );
+
+    let userEntites: UserEntity[] = [];
+
+    await getUsers
+      .execute()
+      // eslint-disable-next-line promise/always-return
+      .then((data) => {
+        // eslint-disable-next-line prefer-destructuring
+        userEntites = data;
+      })
+      .catch((e) => {
+        console.log('have ERROR get users :', JSON.stringify(e));
+      });
+
+    return userEntites;
   };
 
   const createDialog = async (
@@ -170,7 +214,7 @@ export default function useDialogsViewModel(
       'call createDialog in use case with params: ',
       JSON.stringify(dialogInfo),
     );
-
+    const textInformationMessage = `${currentUserName} create the chat`;
     const createDialogUseCase: CreateDialogUseCase = new CreateDialogUseCase(
       eventMessageRepository,
       new DialogsRepository(
@@ -178,6 +222,7 @@ export default function useDialogsViewModel(
         remoteDataSourceMock,
       ),
       dialogInfo,
+      textInformationMessage,
     );
     const resultDialog: DialogEntity = await createDialogUseCase
       .execute()
@@ -201,6 +246,7 @@ export default function useDialogsViewModel(
     // eslint-disable-next-line @typescript-eslint/no-shadow,@typescript-eslint/no-unused-vars
     dialog: GroupDialogEntity,
   ): Promise<DialogEntity> => {
+    const textInformationMessage = `${currentUserName} has updated dialog`;
     const updateDialogUseCase: UpdateDialogUseCase = new UpdateDialogUseCase(
       eventMessageRepository,
       new DialogsRepository(
@@ -208,6 +254,7 @@ export default function useDialogsViewModel(
         remoteDataSourceMock,
       ),
       dialog,
+      textInformationMessage,
     );
 
     const resultDialog: DialogEntity = await updateDialogUseCase
@@ -242,6 +289,7 @@ export default function useDialogsViewModel(
     let leaveResult = false;
 
     if (dialogToDelete.type === DialogType.private) {
+      const textInformationMessage = `${currentUserName} has left dialog`;
       const leaveDialogUseCase: LeaveDialogUseCase = new LeaveDialogUseCase(
         eventMessageRepository,
         new DialogsRepository(
@@ -250,6 +298,7 @@ export default function useDialogsViewModel(
         ),
         dialogToDelete,
         DialogLeaveType.delete,
+        textInformationMessage,
       );
 
       leaveResult = await leaveDialogUseCase.execute().catch((e) => {
@@ -263,6 +312,7 @@ export default function useDialogsViewModel(
         remoteDataSourceMock?.authInformation?.userId || 0;
 
       usersForDeleteFromDialog.push(userToDeleteId);
+      const textInformationMessage = `${currentUserName} has left dialog`;
       const deleteUsersFromDialog: RemoveUsersFromTheDialogUseCase =
         new RemoveUsersFromTheDialogUseCase(
           eventMessageRepository,
@@ -272,6 +322,7 @@ export default function useDialogsViewModel(
           ),
           dialogToDelete,
           usersForDeleteFromDialog,
+          textInformationMessage,
         );
 
       leaveResult = await deleteUsersFromDialog.execute().catch((e) => {
@@ -297,6 +348,15 @@ export default function useDialogsViewModel(
       dialog.participantsToRemoveIds &&
       dialog.participantsToRemoveIds.length > 0
     ) {
+      const usersToDelete: UserEntity[] = await getSenders(
+        dialog.participantsToRemoveIds,
+      );
+      let userNames = '';
+
+      usersToDelete.forEach((u) => {
+        userNames += u.login || u.full_name || u.email;
+      });
+      const textInformationMessage = `${currentUserName} remove ${userNames}`;
       const deleteUsersFromDialog: RemoveUsersFromTheDialogUseCase =
         new RemoveUsersFromTheDialogUseCase(
           eventMessageRepository,
@@ -306,6 +366,7 @@ export default function useDialogsViewModel(
           ),
           dialog,
           dialog.participantsToRemoveIds,
+          textInformationMessage,
         );
 
       leaveResult = await deleteUsersFromDialog.execute().catch((e) => {

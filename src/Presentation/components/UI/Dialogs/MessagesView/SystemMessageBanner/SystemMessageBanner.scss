@@ -1,0 +1,21 @@
+.system-message-chat-banner,
+.system-message-chat-banner * {
+  box-sizing: border-box;
+}
+.system-message-chat-banner {
+  padding: 2px 8px 2px 8px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 328px;
+  position: relative;
+}
+.username-join-this-chat {
+  color: var(--secondary-text);
+  text-align: center;
+  font: var(--label-label-small, 500 11px/16px "Roboto", sans-serif);
+  position: relative;
+}

@@ -21,6 +21,7 @@ export class GetAllDialogsUseCaseWithMock
     const fromRemote: PaginatedResult<DialogEntity> =
       await this.dialogRepository.getDialogsFromRemote(this.pagination);
 
+    this.dialogRepository.release();
     await Promise.all(
       fromRemote.ResultData.map(async (entity) => {
         // eslint-disable-next-line no-return-await

@@ -15,16 +15,20 @@ export class CreateDialogUseCase implements IUseCase<void, DialogEntity> {
 
   private newDialog: GroupDialogEntity;
 
+  private textInformationMessage: string;
+
   // todo: delete synUseCase: BaseUseCase<boolean>, use only dialogRepository
   constructor(
     eventMessagesRepository: EventMessagesRepository,
     dialogRepository: DialogsRepository,
     newDialog: GroupDialogEntity,
+    textInformationMessage: string,
   ) {
     console.log('CONSTRUCTOR CreateDialogUseCase');
     this.dialogRepository = dialogRepository;
     this.newDialog = newDialog;
     this.eventMessagesRepository = eventMessagesRepository;
+    this.textInformationMessage = textInformationMessage;
   }
 
   async execute(): Promise<DialogEntity> {
@@ -60,7 +64,10 @@ export class CreateDialogUseCase implements IUseCase<void, DialogEntity> {
     remoteMessageDTO.dialogId = result.id;
     remoteMessageDTO.notification_type = NotificationTypes.NEW_DIALOG;
     remoteMessageDTO.date_sent = Date.now() / 1000;
-    remoteMessageDTO.message = `User ${this.newDialog.ownerId} create new dialog ${this.newDialog.name}`;
+    remoteMessageDTO.message =
+      this.textInformationMessage && this.textInformationMessage.length > 0
+        ? this.textInformationMessage
+        : `User ${this.newDialog.ownerId} create new dialog ${this.newDialog.name}`;
 
     this.eventMessagesRepository.dispatchEvent<RemoteMessageDTO>(
       EventMessageType.RegularMessage,

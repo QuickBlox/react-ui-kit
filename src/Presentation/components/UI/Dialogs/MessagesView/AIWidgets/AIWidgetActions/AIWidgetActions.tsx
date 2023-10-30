@@ -2,7 +2,7 @@ import React, { useState, CSSProperties, useRef, useEffect } from 'react';
 import './AIWidgetActions.scss';
 import EditDots from '../../../../svgs/Icons/Actions/EditDots';
 
-type MenuItem = {
+export type MenuItem = {
   title: string;
   icon?: JSX.Element; // Добавлено поле для иконки пункта меню
   action: () => void;
@@ -12,6 +12,7 @@ type ContextMenuProps = {
   widgetToRender?: JSX.Element;
   items?: MenuItem[];
   title?: string | null;
+  disabled?: boolean;
 };
 
 const ContextMenuStyles: { [key: string]: CSSProperties } = {
@@ -20,7 +21,7 @@ const ContextMenuStyles: { [key: string]: CSSProperties } = {
     position: 'relative',
     maxWidth: '42px',
     maxHeight: '42px',
-    cursor: 'pointer',
+    // cursor: 'pointer',
   },
   contextMenuContent: {
     position: 'absolute',
@@ -50,12 +51,13 @@ function AIWidgetActions({
   items,
   widgetToRender,
   title = null,
+  disabled = true,
 }: ContextMenuProps) {
   const [menuVisible, setMenuVisible] = useState(false);
   const contextMenuRef = useRef<HTMLDivElement | null>(null);
 
   const handleClick = () => {
-    setMenuVisible(!menuVisible);
+    if (disabled) setMenuVisible(!menuVisible);
   };
 
   const handleMenuItemClick = (action: () => void) => {
@@ -85,7 +87,11 @@ function AIWidgetActions({
       <div onClick={handleClick}>{widgetToRender || <EditDots />}</div>
       {menuVisible && (
         // <div ref={contextMenuRef} style={ContextMenuStyles.contextMenuContent}>
-        <div ref={contextMenuRef} className="dropdown-context-menu-tone">
+        <div
+          ref={contextMenuRef}
+          className="dropdown-context-menu-tone"
+          style={{ cursor: 'pointer' }}
+        >
           {title && <div style={ContextMenuStyles.menuTitle}>{title}</div>}
           {items?.map((item, index) => (
             <div

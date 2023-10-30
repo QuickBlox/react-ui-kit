@@ -35,7 +35,7 @@ QuickBlox UIKit for React provides next functionality:
 The QuickBlox UIKit for React comprises a collection of pre-assembled UI components that enable effortless creation of an in-app chat equipped with all the necessary messaging functionalities. Our development kit encompasses light and dark themes, colors, and various other features. These components can be personalized to fashion an engaging messaging interface that reflects your brand's distinct identity.
 
 The QuickBlox UIKit fully supports both private and group dialogs. To initiate the process of sending a message from the ground up using Java or Kotlin, please refer to the instructions provided in the guide below.
-
+[Additional information with sample](https://docs.quickblox.com/docs/react-uikit-send-your-first-message)
 ## Requirements
 
 The minimum requirements for QuickBlox UIKit for React are:
@@ -293,7 +293,8 @@ and specify selected components:
 # Sample
 
 https://github.com/QuickBlox/quickblox-javascript-sdk/tree/gh-pages/samples/react-chat-ui-kit-init-sample
-
+## Video guide "How to use AI Feature"
+[Youtube video about AI Assistant](https://youtu.be/BneMtDagOy4)
 # License
 [](#license)
 MIT License [here](https://github.com/QuickBlox/react-ui-kit/blob/main/LICENSE.md).
