@@ -67,11 +67,11 @@ export default function useDialogViewModel(
     let participants: Array<number> = [];
     let userDictionary: Record<number, UserEntity> = {};
 
-    if (dialog.type === DialogType.group) {
+    if (dialog?.type === DialogType.group) {
       participants = (dialog as GroupDialogEntity).participantIds;
-    } else if (dialog.type === DialogType.private) {
+    } else if (dialog?.type === DialogType.private) {
       participants = [(dialog as PrivateDialogEntity).participantId];
-    } else if (dialog.type === DialogType.public) {
+    } else if (dialog?.type === DialogType.public) {
       participants = [];
     }
     const getAllUsersFromDialogByIdsUseCase: GetUsersByIdsUseCase =

@@ -777,12 +777,16 @@ const QuickBloxUIKitDesktopLayout: React.FC<
 
   useEffect(() => {
     console.log('HAVE NEW ENTITY');
-    messagesViewModel.getMessages(new Pagination());
+    if (messagesViewModel.entity) {
+      messagesViewModel.getMessages(new Pagination());
+    }
   }, [messagesViewModel.entity]);
   //
   useEffect(() => {
     console.log('HAVE NEW ENTITY');
-    dialogsViewModel.setWaitLoadingStatus(messagesViewModel?.loading);
+    if (messagesViewModel.entity) {
+      dialogsViewModel.setWaitLoadingStatus(messagesViewModel?.loading);
+    }
   }, [messagesViewModel?.loading]);
   //
   function prepareFirstPage(initData: MessageEntity[]) {
