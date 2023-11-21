@@ -2,7 +2,7 @@ import './ErrorComponent.scss';
 import React from 'react';
 import { IconTheme } from '../../svgs/Icons/IconsCommonTypes';
 import Error from '../../svgs/Icons/Status/Error';
-import { FunctionTypeVoidToVoid } from '../../../../Views/Base/BaseViewModel';
+import { FunctionTypeVoidToVoid } from '../../../../../CommonTypes/BaseViewModel';
 import ColumnContainer from '../../../containers/ColumnContainer/ColumnContainer';
 
 type ErrorComponentProps = {
@@ -55,8 +55,8 @@ const ErrorComponent: React.FC<ErrorComponentProps> = ({
     //     <div className="error-container--error-action">
     //       <div
     //         className="error-container--error-action__refresh-icon"
-    //         onClick={ClickActionHandler}
-    //         onTouchStart={TouchActionHandler}
+    //         onClick={onClick}
+    //         onTouchStart={onTouch}
     //       >
     //         <Refresh />
     //       </div>

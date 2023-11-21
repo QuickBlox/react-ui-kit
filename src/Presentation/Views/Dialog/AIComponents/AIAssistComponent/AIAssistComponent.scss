@@ -1,0 +1,32 @@
+// --- AIAssist
+.ai-assist-answer {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+//.icon {
+//  border-radius: 4px;
+//  padding: 4px;
+//  display: flex;
+//  flex-direction: row;
+//  gap: 0px;
+//  align-items: center;
+//  justify-content: center;
+//  flex-shrink: 0;
+//  width: 32px;
+//  height: 32px;
+//  position: relative;
+//}
+.actions-assist-answer {
+  padding: 5px 3px 5px 3px;
+  align-self: stretch;
+  flex: 1;
+  position: relative;
+  overflow: visible;
+}
+

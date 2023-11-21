@@ -65,6 +65,8 @@ interface QBConfig {
       active: number;
     };
     debug: boolean;
+    enableForwarding: boolean;
+    enableReplying: boolean;
     endpoints: {
       api: string;
       chat: string;
@@ -201,6 +203,24 @@ interface QBChatDialog {
   joined?: boolean;
 }
 
+interface QBChatNewMessage {
+  type: 'chat' | 'groupchat';
+  body: string;
+  notification_type?: string;
+  dialog_id?: QBChatDialog['_id'];
+  extension: {
+    attachments?: ChatMessageAttachment[];
+    save_to_history: 0 | 1;
+    dialog_id: QBChatDialog['_id'];
+    notification_type?: string;
+    sender_id?: QBUser['id'];
+    qb_message_action?: string; // 'forward' 'reply'
+    origin_sender_name?: string;
+    qb_original_messages?: string;
+  };
+  markable: 0 | 1;
+}
+
 interface QBChatMessage {
   _id: string;
   attachments: ChatMessageAttachment[];
@@ -218,6 +238,9 @@ interface QBChatMessage {
   /** Date ISO string */
   updated_at: string;
   notification_type?: string;
+  qb_message_action?: string; // 'forward' 'reply'
+  origin_sender_name?: string;
+  qb_original_messages?: string;
 }
 
 interface QBMessageStatusParams {
@@ -226,20 +249,6 @@ interface QBMessageStatusParams {
   userId: QBUser['id'];
 }
 
-interface QBChatNewMessage {
-  type: 'chat' | 'groupchat';
-  body: string;
-  notification_type?: string;
-  dialog_id?: QBChatDialog['_id'];
-  extension: {
-    attachments?: ChatMessageAttachment[];
-    save_to_history: 0 | 1;
-    dialog_id: QBChatDialog['_id'];
-    notification_type?: string;
-    sender_id?: QBUser['id'];
-  };
-  markable: 0 | 1;
-}
 
 interface QBChatXMPPMessage {
   id: string;

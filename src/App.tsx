@@ -1,19 +1,19 @@
 import React, { useEffect } from 'react';
 import './App.scss';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import useQBConnection from './Presentation/components/providers/QuickBloxUIKitProvider/useQBConnection';
+import useQBConnection from './Presentation/providers/QuickBloxUIKitProvider/useQBConnection';
 import { LocalDataSource } from './Data/source/local/LocalDataSource';
-import Login from './Presentation/components/layouts/TestStage/LoginView/Login';
-import QuickBloxUIKitProvider from './Presentation/components/providers/QuickBloxUIKitProvider/QuickBloxUIKitProvider';
-import TestStageMarkup from './Presentation/components/layouts/TestStage/TestStageMarkup';
+import Login from './Presentation/layouts/TestStage/LoginView/Login';
+import QuickBloxUIKitProvider from './Presentation/providers/QuickBloxUIKitProvider/QuickBloxUIKitProvider';
+import TestStageMarkup from './Presentation/layouts/TestStage/TestStageMarkup';
 import { Stubs } from './Data/Stubs';
 import {
   LoginData,
   RemoteDataSource,
 } from './Data/source/remote/RemoteDataSource';
-import QuickBloxUIKitDesktopLayout from './Presentation/components/layouts/Desktop/QuickBloxUIKitDesktopLayout';
-import DefaultTheme from './Presentation/assets/DefaultThemes/DefaultTheme';
-import useQbUIKitDataContext from './Presentation/components/providers/QuickBloxUIKitProvider/useQbUIKitDataContext';
+import QuickBloxUIKitDesktopLayout from './Presentation/layouts/Desktop/QuickBloxUIKitDesktopLayout';
+import DefaultTheme from './Presentation/themes/DefaultThemes/DefaultTheme';
+import useQbUIKitDataContext from './Presentation/providers/QuickBloxUIKitProvider/useQbUIKitDataContext';
 import { QBConfig } from './QBconfig';
 
 function App() {
@@ -28,7 +28,7 @@ function App() {
   const { connectionRepository } = useQBConnection();
 
   const initLoginData: LoginData = {
-    login: 'anruaav2', // vit1
+    login: 'artimed', // vit1
     password: 'quickblox',
   };
 

@@ -1,4 +1,4 @@
-import {Tone} from "../Presentation/components/UI/Dialogs/MessagesView/AIWidgets/Tone";
+import { Tone } from '../Presentation/Views/Dialog/AIWidgets/Tone';
 
 export type FunctionResult<T> = {
   result: T | T[] | boolean;
@@ -49,6 +49,8 @@ export interface QBConfig {
       active: number;
     };
     debug: boolean;
+    enableForwarding: boolean;
+    enableReplying: boolean;
     endpoints: {
       api: string;
       chat: string;

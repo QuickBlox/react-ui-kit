@@ -2,7 +2,7 @@
 import { QBAIRephrase } from 'qb-ai-rephrase';
 import { IChatMessage } from '../../../Data/source/AISource';
 import { IUseCase } from '../base/IUseCase';
-import { Tone } from '../../../Presentation/components/UI/Dialogs/MessagesView/AIWidgets/Tone';
+import { Tone } from '../../../Presentation/Views/Dialog/AIWidgets/Tone';
 
 export class AIRephraseWithProxyUseCase implements IUseCase<void, string> {
   private textToSend: string;

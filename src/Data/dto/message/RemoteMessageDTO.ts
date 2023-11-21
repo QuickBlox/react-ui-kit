@@ -33,6 +33,13 @@ export class RemoteMessageDTO {
 
   public attachments: ChatMessageAttachmentEntity[];
 
+  public qb_message_action?: string; // 'forward' 'reply'
+
+  public origin_sender_name?: string;
+
+  // eslint-disable-next-line no-use-before-define
+  public qb_original_messages?: RemoteMessageDTO[];
+
   constructor() {
     this.id = new Date().getTime().toString();
     this.dialogId = '';

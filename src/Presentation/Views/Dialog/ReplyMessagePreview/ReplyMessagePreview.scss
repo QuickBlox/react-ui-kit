@@ -1,0 +1,192 @@
+//.reply-message-preview,
+//.forward-message-preview * {
+//  box-sizing: border-box;
+//}
+//.reply-message-preview {
+//  display: flex;
+//  flex-direction: column;
+//  gap: 4px;
+//  align-items: flex-start;
+//  justify-content: center;
+//  flex: 1;
+//  position: relative;
+//}
+//.reply-message-preview-caption {
+//  display: flex;
+//  flex-direction: row;
+//  gap: 0px;
+//  align-items: flex-start;
+//  justify-content: flex-start;
+//  flex-shrink: 0;
+//  position: relative;
+//}
+//.reply-message-preview-caption-info {
+//  display: flex;
+//  flex-direction: row;
+//  gap: 2px;
+//  align-items: center;
+//  justify-content: flex-start;
+//  flex-shrink: 0;
+//  position: relative;
+//}
+//.reply-message-preview-caption-info-icon {
+//  border-radius: 4px;
+//  display: flex;
+//  flex-direction: row;
+//  gap: 0px;
+//  align-items: center;
+//  justify-content: center;
+//  flex-shrink: 0;
+//  width: 16px;
+//  height: 16px;
+//  position: relative;
+//}
+//.reply-message-from-name {
+//  color: var(--tertiary-elements, #636d78);
+//  text-align: left;
+//  font: var(500 12px/16px "Roboto", sans-serif);
+//  position: relative;
+//}
+//.reply-message-text {
+//  color: var(--main-text, #0b1b0f);
+//  text-align: center;
+//  font: var(400 16px/24px "Roboto", sans-serif);
+//  position: relative;
+//  display: flex;
+//  align-items: center;
+//  justify-content: center;
+//}
+
+
+/////
+
+.reply-message-preview-row,
+.reply-message-preview-row * {
+  box-sizing: border-box;
+}
+.reply-message-preview-row {
+  padding: 10px 12px 10px 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.reply-message-preview-row-card {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.reply-message-preview-placeholder {
+  background: var(--incoming-background, #e4e6e8);
+  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.reply-message-preview-placeholder-icon {
+  border-radius: 4px;
+  padding: 4px;
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  position: relative;
+}
+.reply-message-media-text-document {
+  align-self: stretch;
+  flex: 1;
+  position: relative;
+  overflow: visible;
+}
+.reply-message-preview-message {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+.reply-message-preview-message-caption {
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.reply-message-preview-message-caption-info {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.reply-message-preview-message-caption-info-icon {
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  position: relative;
+}
+.actions-reply-filled {
+  align-self: stretch;
+  flex: 1;
+  position: relative;
+  overflow: visible;
+}
+.reply-message-preview-message-caption-info-replied-to-name {
+  color: var(--tertiary-elements, #636d78);
+  text-align: left;
+  font: var(--label-label-medium, 500 12px/16px "Roboto", sans-serif);
+  position: relative;
+}
+.reply-message-preview-message-caption-info-file {
+  color: var(--caption, #90979f);
+  text-align: center;
+  font: var(--body-body-small, 400 12px/16px "Roboto", sans-serif);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.reply-message-preview-message-caption-info-text {
+  color: var(--main-text, #0b1b0f);
+  text-align: center;
+  font: var(--body-body-large, 400 16px/24px "Roboto", sans-serif);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reply-message-preview-message-navigation-close {
+  align-self: stretch;
+  // flex: 1;
+  position: relative;
+  overflow: visible;
+}

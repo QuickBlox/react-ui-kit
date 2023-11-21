@@ -128,6 +128,8 @@ export const QBConfig = {
       active: 2,
     },
     debug: true,
+    enableForwarding: true,
+    enableReplying: true,
     endpoints: {
       api: 'api.quickblox.com',
       chat: 'chat.quickblox.com',

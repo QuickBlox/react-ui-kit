@@ -3,7 +3,7 @@ import { LocalDialogsDTO } from '../../dto/dialog/LocalDialogsDTO';
 import { LocalUserDTO } from '../../dto/user/LocalUserDTO';
 import { LocalMessageDTO } from '../../dto/message/LocalMessageDTO';
 import { LocalMessagesDTO } from '../../dto/message/LocalMessagesDTO';
-import { FunctionTypeVoidToVoid } from '../../../Presentation/Views/Base/BaseViewModel';
+import { FunctionTypeVoidToVoid } from '../../../CommonTypes/BaseViewModel';
 import { Pagination } from '../../../Domain/repository/Pagination';
 
 export interface ILocalDataSource {

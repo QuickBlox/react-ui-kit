@@ -1,6 +1,6 @@
 import React from 'react';
 import './SwitchButton.scss';
-import { FunctionTypeVoidToVoid } from '../../../../Views/Base/BaseViewModel';
+import { FunctionTypeVoidToVoid } from '../../../../../CommonTypes/BaseViewModel';
 
 type SwitchButtonProps = {
   disabled?: boolean;

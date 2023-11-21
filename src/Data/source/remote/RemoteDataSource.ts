@@ -1155,50 +1155,11 @@ export class RemoteDataSource implements IRemoteDataSource {
   // eslint-disable-next-line @typescript-eslint/require-await,class-methods-use-this,@typescript-eslint/no-unused-vars
   async sendMessage(dto: RemoteMessageDTO): Promise<RemoteMessageDTO> {
     console.log('call sendMessage');
-    // const qbEntity: QBChatNewMessage = await this.messageDTOMapper.fromDTO<
-    //   RemoteMessageDTO,
-    //   QBChatNewMessage
-    // >(dto);
+    //
 
-    /*
-
-     msg.type = 'groupchat';
-      msg.body = `${this.userService.user.full_name} left the chat.`;
-      msg.extension.notification_type = 3;
-      msg.extension.save_to_history = 1;
-      msg.dialog_id = dialog._id;
-      msg.extension.dialog_id = dialog._id;
-      msg.extension.dialog_updated_at = Date.now() / 1000;
-
-     */
-    // notification_type: 3,
-    // dialog_updated_at: Date.now() / 1000,
+    //
     const messageText = dto.message;
 
-    // switch (dto.notification_type) {
-    //   case NotificationTypes.DELETE_LEAVE_DIALOG: {
-    //     messageText = `${
-    //       this.authInformation?.userName || 'owner'
-    //     } has left the chat.`;
-    //     break;
-    //   }
-    //   case NotificationTypes.NEW_DIALOG: {
-    //     messageText = `${
-    //       this.authInformation?.userName || 'owner'
-    //     } create the chat`;
-    //     break;
-    //   }
-    //   case NotificationTypes.UPDATE_DIALOG: {
-    //     messageText = `${
-    //       this.authInformation?.userName || 'owner'
-    //     } update the chat`;
-    //     break;
-    //   }
-    //   default: {
-    //     messageText = dto.message;
-    //     break;
-    //   }
-    // }
     const qbEntity: QBChatNewMessage = {
       type: dto.dialog_type === DialogType.private ? 'chat' : 'groupchat',
       body: messageText,
@@ -1209,6 +1170,13 @@ export class RemoteDataSource implements IRemoteDataSource {
         dialog_id: dto.dialogId,
         notification_type: dto.notification_type,
         sender_id: dto.sender_id || dto.recipient_id,
+        qb_message_action: dto.qb_message_action, // 'forward' 'reply' 'related'
+        origin_sender_name: dto.origin_sender_name,
+        qb_original_messages: MessageDTOMapper.translateOriginalDataToJSON(
+          MessageDTOMapper.convertToQBChatNewMessage(
+            dto.qb_original_messages || [],
+          ) || [],
+        ),
       },
       markable: 1,
     };
@@ -1257,6 +1225,8 @@ export class RemoteDataSource implements IRemoteDataSource {
 
     return Promise.resolve(dto);
   }
+
+  // eslint-disable-next-line class-methods-use-this
 
   // eslint-disable-next-line class-methods-use-this
   async sendSystemMessage(dto: RemoteMessageDTO): Promise<boolean> {

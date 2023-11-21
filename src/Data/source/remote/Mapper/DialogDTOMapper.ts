@@ -29,7 +29,9 @@ export class DialogDTOMapper implements IDTOMapper {
     const dialog: QBChatDialog = {
       _id: dialogDTO.id,
       created_at: '',
-      last_message: dialogDTO.lastMessageText,
+      last_message: DialogDTOMapper.formatLastMessageText(
+        dialogDTO.lastMessageText,
+      ),
       last_message_date_sent: dialogDTO.lastMessageDateSent,
       last_message_id: null,
       last_message_user_id: parseInt(dialogDTO.lastMessageUserId, 10),
@@ -414,5 +416,13 @@ export class DialogDTOMapper implements IDTOMapper {
         INCORRECT_DATA_MAPPER_DTO_EXCEPTION_CODE,
         'field {user_id} does not exist or empty',
       );
+  }
+
+  private static formatLastMessageText(lastMessageText: string) {
+    if (lastMessageText.includes('[Forwarded_Message]')) {
+      return 'Forwarded message';
+    }
+
+    return lastMessageText;
   }
 }

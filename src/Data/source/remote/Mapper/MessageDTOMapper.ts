@@ -62,7 +62,7 @@ export class MessageDTOMapper implements IDTOMapper {
       };
       const messageParts = MessageDTOMapper.getMessageParts(qbMessage);
 
-      if (messageParts && messageParts.length > 0) {
+      if (messageParts && messageParts.length > 3) {
         // val messageBody = "${MediaContentEntity::class.java.simpleName}|$fileName|$uid|$fileMimeType"
         // 0, 1, 2, 3
         // eslint-disable-next-line prefer-destructuring
@@ -90,36 +90,192 @@ export class MessageDTOMapper implements IDTOMapper {
   toTDO<TArg, TResult>(entity: TArg): Promise<TResult> {
     const qbMessage: QBChatMessage = entity as unknown as QBChatMessage;
 
-    MessageDTOMapper.validateQBMessage(qbMessage);
+    const dto = this.QBChatMessageToRemoteMessageDTO(qbMessage);
 
-    const dto: RemoteMessageDTO = new RemoteMessageDTO();
+    //
+    let operationResult = true;
 
-    dto.id = qbMessage._id;
-    dto.dialogId = qbMessage.chat_dialog_id;
-    dto.message = MessageDTOMapper.formatMessage(qbMessage.message);
-    dto.created_at = qbMessage.created_at;
-    dto.date_sent = qbMessage.date_sent * 1000;
-    dto.delivered_ids = qbMessage.delivered_ids ? qbMessage.delivered_ids : [];
-    dto.read_ids = qbMessage.read_ids ? qbMessage.read_ids : [];
+    dto.qb_original_messages = MessageDTOMapper.translateJSONToOriginalData(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      qbMessage.qb_original_messages,
+    )?.map((item) => {
+      let result: RemoteMessageDTO;
 
-    dto.recipient_id = qbMessage.recipient_id ? qbMessage.recipient_id : 0;
-    dto.attachments = MessageDTOMapper.transformAttachment(
-      qbMessage.message,
-      qbMessage.attachments ? qbMessage.attachments : [],
-    );
-    dto.read = qbMessage.read;
-    dto.sender_id = qbMessage.sender_id;
-    dto.updated_at = qbMessage.updated_at;
-    // // notification_type markable
-    dto.notification_type = qbMessage.notification_type
-      ? qbMessage.notification_type
-      : '';
-    dto.markable = qbMessage.notification_type
-      ? qbMessage.notification_type
-      : '';
+      try {
+        result = this.QBChatMessageToRemoteMessageDTO(item, true);
+      } catch (e) {
+        operationResult = false;
+        console.log(e);
+      }
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return result;
+    });
+    dto.qb_message_action = qbMessage.qb_message_action;
+    dto.origin_sender_name = qbMessage.origin_sender_name;
+    if (!operationResult) {
+      dto.qb_original_messages = undefined;
+      dto.qb_message_action = undefined;
+      dto.origin_sender_name = undefined;
+    }
 
     return Promise.resolve(dto as TResult);
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  private QBChatMessageToRemoteMessageDTO(
+    qbMessage: QBChatMessage,
+    offValidate = false,
+  ): RemoteMessageDTO {
+    const dto: RemoteMessageDTO = new RemoteMessageDTO();
+
+    if (!offValidate) {
+      // original version
+      MessageDTOMapper.validateQBMessage(qbMessage);
+
+      dto.id = qbMessage._id;
+      dto.dialogId = qbMessage.chat_dialog_id;
+      dto.message = MessageDTOMapper.formatMessage(qbMessage.message);
+      dto.created_at = qbMessage.created_at;
+      dto.date_sent = qbMessage.date_sent * 1000;
+      dto.delivered_ids = qbMessage.delivered_ids
+        ? qbMessage.delivered_ids
+        : [];
+      dto.read_ids = qbMessage.read_ids ? qbMessage.read_ids : [];
+
+      dto.recipient_id = qbMessage.recipient_id ? qbMessage.recipient_id : 0;
+      dto.attachments = MessageDTOMapper.transformAttachment(
+        qbMessage.message,
+        qbMessage.attachments ? qbMessage.attachments : [],
+      );
+      dto.read = qbMessage.read;
+      dto.sender_id = qbMessage.sender_id;
+      dto.updated_at = qbMessage.updated_at;
+      // // notification_type markable
+      dto.notification_type = qbMessage.notification_type
+        ? qbMessage.notification_type
+        : '';
+      dto.markable = qbMessage.notification_type
+        ? qbMessage.notification_type
+        : '';
+    } else {
+      dto.id = qbMessage._id;
+      dto.dialogId = qbMessage.chat_dialog_id;
+
+      dto.message = MessageDTOMapper.formatMessage(qbMessage.message); // todo: check
+      dto.created_at = qbMessage.created_at || Date.now().toString(); // todo: check
+      dto.date_sent = qbMessage.date_sent || Date.now() * 1000; // todo: check
+      dto.delivered_ids = qbMessage.delivered_ids
+        ? qbMessage.delivered_ids
+        : [];
+      dto.read_ids = qbMessage.read_ids ? qbMessage.read_ids : [];
+
+      dto.recipient_id = qbMessage.recipient_id ? qbMessage.recipient_id : 0;
+      dto.attachments = MessageDTOMapper.transformAttachment(
+        qbMessage.message,
+        qbMessage.attachments ? qbMessage.attachments : [],
+      );
+      dto.read = qbMessage.read || 1; // todo: check
+      dto.sender_id = qbMessage.sender_id;
+      dto.updated_at = qbMessage.updated_at || Date.now().toString(); // todo: check
+      // // notification_type markable
+      dto.notification_type = qbMessage.notification_type
+        ? qbMessage.notification_type
+        : '';
+      dto.markable = qbMessage.notification_type
+        ? qbMessage.notification_type
+        : '';
+    }
+
+    return dto;
+  }
+
+  //
+  public static convertAttachment(
+    attachment: ChatMessageAttachmentEntity,
+  ): ChatMessageAttachment {
+    return {
+      id: attachment.id.toString(),
+      uid: attachment.uid || '',
+      type: attachment.type.toString(),
+      url: attachment.url || '',
+      name: attachment.name || '',
+      size: attachment.size || 0,
+    };
+  }
+
+  public static convertToQBChatNewMessage(
+    messages: RemoteMessageDTO[],
+  ): QBChatMessage[] {
+    return messages.map((message) => {
+      const qbMessage: QBChatMessage = {
+        _id: message.id,
+        attachments:
+          message.attachments?.map((attachment) =>
+            MessageDTOMapper.convertAttachment(attachment),
+          ) || [],
+        chat_dialog_id: message.dialogId,
+        created_at: message.created_at,
+        date_sent: message.date_sent,
+        delivered_ids: message.delivered_ids,
+        message: message.message,
+        read_ids: message.read_ids,
+        read: message.read,
+        recipient_id: message.recipient_id,
+        sender_id: message.sender_id,
+        updated_at: message.updated_at,
+        notification_type: message.notification_type,
+        qb_message_action: message.qb_message_action,
+        origin_sender_name: message.origin_sender_name,
+        qb_original_messages: message.qb_original_messages
+          ? MessageDTOMapper.translateOriginalDataToJSON(
+              MessageDTOMapper.convertToQBChatNewMessage(
+                message.qb_original_messages || [],
+              ) || [],
+            )
+          : undefined,
+      };
+
+      return qbMessage;
+    });
+  }
+
+  //
+  //
+  public static translateOriginalDataToJSON(
+    qb_original_message: QBChatMessage[] | undefined,
+  ) {
+    if (qb_original_message && qb_original_message.length > 0) {
+      return JSON.stringify(qb_original_message);
+    }
+
+    return '';
+  }
+
+  public static translateJSONToOriginalData(
+    json_data: string | undefined,
+  ): QBChatMessage[] | undefined {
+    if (json_data) {
+      try {
+        const originalData = JSON.parse(json_data);
+
+        // Проверка, что результат является массивом объектов QBChatNewMessage
+        if (
+          Array.isArray(originalData) &&
+          originalData.every((item) => item instanceof Object)
+        ) {
+          return originalData as QBChatMessage[];
+        }
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+      }
+    }
+
+    return undefined;
+  }
+
+  //
 
   public static formatMessage(qbMessage: string) {
     if (
@@ -131,6 +287,9 @@ export class MessageDTOMapper implements IDTOMapper {
       // val messageBody = "${MediaContentEntity::class.java.simpleName}|$fileName|$uid|$fileMimeType"
       // 0, 1, 2, 3
       return messageParts[1] || '';
+    }
+    if (qbMessage.includes('[Forwarded_Message]')) {
+      return '';
     }
 
     return qbMessage;

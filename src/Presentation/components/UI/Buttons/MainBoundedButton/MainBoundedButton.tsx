@@ -1,6 +1,6 @@
 import React from 'react';
 import './MainBoundedButton.scss';
-import { FunctionTypeVoidToVoid } from '../../../../Views/Base/BaseViewModel';
+import { FunctionTypeVoidToVoid } from '../../../../../CommonTypes/BaseViewModel';
 
 type MainBoundedButtonProps = {
   title: string;

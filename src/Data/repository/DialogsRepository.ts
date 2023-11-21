@@ -22,7 +22,7 @@ import { RemoteDialogsDTO } from '../dto/dialog/RemoteDialogsDTO';
 import { DialogLocalDTOMapper } from '../mapper/DialogLocalDTOMapper';
 import { LocalDialogDTO } from '../dto/dialog/LocalDialogDTO';
 import { LocalDialogsDTO } from '../dto/dialog/LocalDialogsDTO';
-import { FunctionTypeVoidToVoid } from '../../Presentation/Views/Base/BaseViewModel';
+import { FunctionTypeVoidToVoid } from '../../CommonTypes/BaseViewModel';
 import { MapperDTOException } from '../source/exception/MapperDTOException';
 import {
   PaginatedResult,

@@ -22,4 +22,7 @@ export interface MessageEntity {
   sender_id: number;
   sender?: UserEntity;
   updated_at: string;
+  qb_message_action?: string; // 'forward' 'reply'
+  origin_sender_name?: string;
+  qb_original_messages?: MessageEntity[];
 }

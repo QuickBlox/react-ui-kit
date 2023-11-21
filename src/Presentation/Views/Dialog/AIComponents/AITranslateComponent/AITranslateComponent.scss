@@ -1,0 +1,47 @@
+.translate-wrapper {
+  padding: 0px 12px 0px 0px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.translate-caption {
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+  position: relative;
+}
+
+.ai-translate-action {
+  color: var(--tertiary-elements);
+  text-align: right;
+  font: 500 11px/16px "Roboto", sans-serif;
+  position: relative;
+}
+
+.icon-translate {
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  position: relative;
+}
+.media-translate {
+  align-self: stretch;
+  flex: 1;
+  position: relative;
+  overflow: visible;
+}

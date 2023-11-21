@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import CreateDialog from '../../components/UI/Dialogs/CreateDialog/CreateDialog';
+import CreateDialog from '../CreateDialog/CreateDialog';
 import { DialogType } from '../../../Domain/entity/DialogTypes';
-import EditDialog, {
-  TypeOpenDialog,
-} from '../../components/UI/Dialogs/EditDialog/EditDialog';
-import InviteMembers from '../../components/UI/Dialogs/InviteMembers/InviteMembers';
-import { ModalContext } from '../../components/providers/ModalContextProvider/Modal';
-import { DialogsViewModel } from '../Dialogs/DialogViewModel';
+import EditDialog, { TypeOpenDialog } from '../EditDialog/EditDialog';
+import InviteMembers from '../InviteMembers/InviteMembers';
+import { ModalContext } from '../../providers/ModalContextProvider/Modal';
+import { DialogListViewModel } from '../DialogList/DialogListViewModel';
 import { GroupDialogEntity } from '../../../Domain/entity/GroupDialogEntity';
 import { Stubs } from '../../../Data/Stubs';
 import { stringifyError } from '../../../utils/parse';
-import { EditDialogParams } from '../Base/BaseViewModel';
+import { EditDialogParams } from '../../../CommonTypes/BaseViewModel';
 import { FileEntity } from '../../../Domain/entity/FileEntity';
-import { qbDataContext } from '../../components/providers/QuickBloxUIKitProvider/QuickBloxUIKitProvider';
+import { qbDataContext } from '../../providers/QuickBloxUIKitProvider/QuickBloxUIKitProvider';
 import { RemoteDataSource } from '../../../Data/source/remote/RemoteDataSource';
 
 type CreateNewDialogFlowProps = {
-  dialogsViewModel: DialogsViewModel;
+  dialogsViewModel: DialogListViewModel;
 };
 
 // eslint-disable-next-line react/function-component-definition

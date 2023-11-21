@@ -1,6 +1,6 @@
 import React from 'react';
 import './MainButton.scss';
-import { FunctionTypeVoidToVoid } from '../../../../Views/Base/BaseViewModel';
+import { FunctionTypeVoidToVoid } from '../../../../../CommonTypes/BaseViewModel';
 
 export const TypeButton = {
   default: 'default',

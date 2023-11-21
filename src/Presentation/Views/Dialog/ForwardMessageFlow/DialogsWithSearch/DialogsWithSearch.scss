@@ -1,0 +1,40 @@
+.dialogs-with-search-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.dialogs-with-search-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  width: 332px;
+  max-height: 260px;
+  height: 260px;
+  min-height: 260px;
+  position: relative;
+}
+
+.dialogs-with-search-list-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.dialogs-with-search-list-divider {
+  flex-shrink: 0;
+  position: relative;
+  overflow: visible;
+}

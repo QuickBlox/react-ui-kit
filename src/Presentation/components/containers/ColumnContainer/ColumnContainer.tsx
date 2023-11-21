@@ -1,6 +1,6 @@
 import React from 'react';
 import './ColumnContainer.scss';
-import { ContainerProps } from '../../layouts/LayoutCommonTypes';
+import { ContainerProps } from '../../../layouts/LayoutCommonTypes';
 
 // eslint-disable-next-line react/function-component-definition
 const ColumnContainer: React.FC<ContainerProps> = ({

@@ -5,7 +5,7 @@ import { IChatMessage } from '../Data/source/AISource';
 import {
   Tone,
   toneToString,
-} from '../Presentation/components/UI/Dialogs/MessagesView/AIWidgets/Tone';
+} from '../Presentation/Views/Dialog/AIWidgets/Tone';
 
 export const completeSentence = (text?: string) =>
   text?.replace(/([^.!?;]+)[^.!?;]*$/, ' ...') || '';

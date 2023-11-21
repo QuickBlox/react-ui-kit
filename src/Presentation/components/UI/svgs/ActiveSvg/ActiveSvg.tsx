@@ -1,5 +1,5 @@
 import React from 'react';
-import { FunctionTypeVoidToVoid } from '../../../../Views/Base/BaseViewModel';
+import { FunctionTypeVoidToVoid } from '../../../../../CommonTypes/BaseViewModel';
 import './ActiveSvg.scss';
 
 type ActiveSvgContainerProps = {

@@ -26,7 +26,24 @@ export class MessageRemoteDTOMapper implements IMapper {
         'entity is null or undefined',
       );
     }
+    const messageDTO = this.MessageEntityToRemoteMessageDTO(messageEntity);
 
+    const messagesDTO: RemoteMessageDTO[] =
+      messageEntity.qb_original_messages?.map((it) => {
+        const tmpDTO = this.MessageEntityToRemoteMessageDTO(it);
+
+        return tmpDTO;
+      }) || [];
+
+    messageDTO.qb_original_messages = messagesDTO;
+    messageDTO.qb_message_action = messageEntity.qb_message_action;
+    messageDTO.origin_sender_name = messageEntity.origin_sender_name;
+
+    return Promise.resolve(messageDTO as TResult);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  private MessageEntityToRemoteMessageDTO(messageEntity: MessageEntity) {
     const messageDTO: RemoteMessageDTO = new RemoteMessageDTO();
 
     MessageRemoteDTOMapper.validateEntity(messageEntity);
@@ -54,7 +71,7 @@ export class MessageRemoteDTOMapper implements IMapper {
       });
     }
 
-    return Promise.resolve(messageDTO as TResult);
+    return messageDTO;
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -68,7 +85,24 @@ export class MessageRemoteDTOMapper implements IMapper {
         'messageDTO is null or undefined',
       );
     }
+    const messageEntity = this.remoteMessageDTOToMessageEntity(messageDTO);
+    //
+    const messagesEntity: MessageEntity[] =
+      messageDTO.qb_original_messages?.map((it) => {
+        const tmpEntity = this.remoteMessageDTOToMessageEntity(it);
 
+        return tmpEntity;
+      }) || [];
+
+    messageEntity.qb_original_messages = messagesEntity;
+    messageEntity.qb_message_action = messageDTO.qb_message_action;
+    messageEntity.origin_sender_name = messageDTO.origin_sender_name;
+
+    return Promise.resolve(messageEntity as TResult);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  private remoteMessageDTOToMessageEntity(messageDTO: RemoteMessageDTO) {
     MessageRemoteDTOMapper.validateDTO(messageDTO);
 
     const messageEntity: MessageEntity =
@@ -99,9 +133,8 @@ export class MessageRemoteDTOMapper implements IMapper {
       ? messageDTO?.notification_type
       : '';
     messageEntity.markable = messageDTO?.markable ? messageDTO?.markable : '';
-    //
 
-    return Promise.resolve(messageEntity as TResult);
+    return messageEntity;
   }
 
   private static validateEntity(messageEntity: MessageEntity) {

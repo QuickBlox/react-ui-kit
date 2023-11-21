@@ -1,0 +1,26 @@
+.detail-button{
+  flex: 1 1 80px;
+  min-width: 80px;
+  max-width: 80px;
+  display: flex;
+  flex-direction: row;
+  //justify-content: flex-end;
+  align-items: flex-end;
+  padding: 0px;
+  gap: 16px;
+
+  min-height: 32px;
+  min-width: 80px;
+  margin: 16px 16px 16px 0px;
+  // flex: 1 1 40px;
+
+  // border: 1px solid green;
+
+  &__call {
+    // border: 1px solid orange;
+  }
+
+  &__info {
+    // border: 1px solid blue;
+  }
+}

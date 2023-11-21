@@ -1,5 +1,5 @@
 import React from 'react';
-import { FunctionTypeVoidToVoid } from '../../../../Views/Base/BaseViewModel';
+import { FunctionTypeVoidToVoid } from '../../../../../CommonTypes/BaseViewModel';
 
 type ActiveButtonContainerProps = {
   content: React.ReactNode;

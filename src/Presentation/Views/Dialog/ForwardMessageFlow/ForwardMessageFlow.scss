@@ -1,0 +1,159 @@
+.forward-message-flow,
+.forward-message-flow * {
+  box-sizing: border-box;
+}
+.forward-message-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  position: relative;
+}
+.forward-message-flow-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  align-items: flex-start;
+  justify-content: center;
+  align-self: stretch;
+  flex-shrink: 0;
+  height: 32px;
+  position: relative;
+}
+.forward-message-flow-tabs-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: flex-start;
+  justify-content: center;
+  align-self: stretch;
+  flex: 1;
+  position: relative;
+}
+.active-tab-button {
+  border-style: solid;
+  border-color: var(--light-theme-mainelements, #3978fc);
+  border-width: 0px 0px 3px 0px;
+  padding: 8px 16px 8px 16px;
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  flex: 1;
+  position: relative;
+}
+.active-tab-button-content {
+  color: var(--light-theme-mainelements, #3978fc);
+  text-align: left;
+  font: var(--button-default, 700 14px/16px "Roboto", sans-serif);
+  position: relative;
+}
+.no-active-tab-button {
+  padding: 8px 16px 8px 16px;
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  flex: 1;
+  position: relative;
+  cursor: pointer;
+}
+.no-active-tab-button-content {
+  color: var(--light-theme-tertiaryelements, #636d78);
+  text-align: left;
+  font: var(--button-default, 700 14px/16px "Roboto", sans-serif);
+  position: relative;
+}
+.forward-message-flow-tabs-buttons-divider {
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+  overflow: visible;
+}
+.forward-message-flow-message-input {
+  background: var(--light-theme-mainbackground, #ffffff);
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  align-items: flex-start;
+  justify-content: center;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.forward-message-flow-message-input-row {
+  padding: 10px 12px 10px 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.forward2 {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  justify-content: center;
+  flex: 1;
+  position: relative;
+}
+.caption {
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.forward3 {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.icon2 {
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  position: relative;
+}
+.actions-forward-filled {
+  align-self: stretch;
+  flex: 1;
+  position: relative;
+  overflow: visible;
+}
+.forwarded-from-name {
+  color: var(--light-theme-tertiaryelements, #636d78);
+  text-align: left;
+  font: var(--label-label-medium, 500 12px/16px "Roboto", sans-serif);
+  position: relative;
+}
+.i-like-you-new-presentation-style-it-s-very {
+  color: var(--light-theme-maintext, #0b1b0f);
+  text-align: center;
+  font: var(--body-body-large, 400 16px/24px "Roboto", sans-serif);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+

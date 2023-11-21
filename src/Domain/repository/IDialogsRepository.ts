@@ -1,5 +1,5 @@
 import { DialogEntity } from '../entity/DialogEntity';
-import { FunctionTypeVoidToVoid } from '../../Presentation/Views/Base/BaseViewModel';
+import { FunctionTypeVoidToVoid } from '../../CommonTypes/BaseViewModel';
 import { PaginatedResult, Pagination } from './Pagination';
 
 export interface IDialogsRepository {
