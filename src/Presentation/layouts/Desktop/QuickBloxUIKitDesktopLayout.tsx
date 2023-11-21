@@ -514,6 +514,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
         const replyData: ReplyMessagesParams = {
           messagesToReply,
           relatedFileMessage: fileToSend,
+          relatedTextMessage: messageText || '[Replied_Message]',
         };
 
         repliedActions(replyData);

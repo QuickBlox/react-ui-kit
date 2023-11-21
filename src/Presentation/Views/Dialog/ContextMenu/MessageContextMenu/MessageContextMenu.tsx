@@ -19,7 +19,7 @@ function MessageContextMenu(props: {
 
   if (props.enableReplying) {
     menuItems.push({
-      title: 'Replay',
+      title: 'Reply',
       action: () => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (props.onReply) props.onReply(props.message);
