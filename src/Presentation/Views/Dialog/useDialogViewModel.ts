@@ -33,6 +33,7 @@ import {
 } from '../../../CommonTypes/BaseViewModel';
 import { ForwardMessagesUseCase } from '../../../Domain/use_cases/ForwardMessagesUseCase';
 import { ReplyMessagesUseCase } from '../../../Domain/use_cases/ReplyMessagesUseCase';
+import { Creator, MessageEntityParams } from '../../../Data/Creator';
 
 export default function useDialogViewModel(
   dialogType: DialogType,
@@ -41,7 +42,7 @@ export default function useDialogViewModel(
   console.log('useDialogViewModel');
   const [loading, setLoading] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [error, setError] = useState('error: wrong message list');
+  const [error, setError] = useState('');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [messages, setMessages] = useState<MessageEntity[]>([]);
   // const [users, setUsers] = useState<Record<number, UserEntity>>();
@@ -50,13 +51,14 @@ export default function useDialogViewModel(
 
   const currentContext = useQbInitializedDataContext();
   const eventMessaging = useEventMessagesRepository();
+  const { REMOTE_DATA_SOURCE, LOCAL_DATA_SOURCE } = currentContext.storage;
 
   const subscribeToDialogEventsUseCase: SubscribeToDialogEventsUseCase =
     new SubscribeToDialogEventsUseCase(eventMessaging, 'MessagesViewModel');
 
   const [typingText, setTypingText] = useState<string>('');
 
-  async function getMessages() {
+  async function getMessages(pagination?: Pagination) {
     console.log(
       'call getMessages in MessagesViewModelWithMockUseCase for dialog: ',
       JSON.stringify(dialog),
@@ -76,10 +78,7 @@ export default function useDialogViewModel(
     }
     const getAllUsersFromDialogByIdsUseCase: GetUsersByIdsUseCase =
       new GetUsersByIdsUseCase(
-        new UsersRepository(
-          currentContext.storage.LOCAL_DATA_SOURCE,
-          currentContext.storage.REMOTE_DATA_SOURCE,
-        ),
+        new UsersRepository(LOCAL_DATA_SOURCE, REMOTE_DATA_SOURCE),
         participants,
       );
 
@@ -121,12 +120,9 @@ export default function useDialogViewModel(
     //
     const getDialogMessages: GetAllMessagesForDialogMock =
       new GetAllMessagesForDialogMock(
-        new MessagesRepository(
-          currentContext.storage.LOCAL_DATA_SOURCE,
-          currentContext.storage.REMOTE_DATA_SOURCE,
-        ),
+        new MessagesRepository(LOCAL_DATA_SOURCE, REMOTE_DATA_SOURCE),
         dialog.id,
-        new Pagination(),
+        pagination || new Pagination(),
       );
 
     //
@@ -271,10 +267,7 @@ export default function useDialogViewModel(
 
           const getDialogByIdUseCase: GetDialogByIdUseCase =
             new GetDialogByIdUseCase(
-              new DialogsRepository(
-                currentContext.storage.LOCAL_DATA_SOURCE,
-                currentContext.storage.REMOTE_DATA_SOURCE,
-              ),
+              new DialogsRepository(LOCAL_DATA_SOURCE, REMOTE_DATA_SOURCE),
               dialogId,
             );
 
@@ -302,12 +295,9 @@ export default function useDialogViewModel(
 
   const userTypingMessageUseCase: UserTypingMessageUseCase =
     new UserTypingMessageUseCase(
-      new MessagesRepository(
-        currentContext.storage.LOCAL_DATA_SOURCE,
-        currentContext.storage.REMOTE_DATA_SOURCE,
-      ),
+      new MessagesRepository(LOCAL_DATA_SOURCE, REMOTE_DATA_SOURCE),
       dialog || dialogEntity,
-      currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId || 0,
+      REMOTE_DATA_SOURCE.authInformation?.userId || 0,
     );
 
   const sendTypingTextMessage = () => {
@@ -323,7 +313,7 @@ export default function useDialogViewModel(
 
   const uploadFile = async (file: File): Promise<FileEntity> => {
     console.log('call uploadFile(), file: ', file);
-    const fileEntity: FileEntity = Stubs.createFileEntityWithDefaultValues();
+    const fileEntity: FileEntity = Creator.createFileEntity();
 
     fileEntity.data = file;
     fileEntity.uid = '';
@@ -331,10 +321,7 @@ export default function useDialogViewModel(
     fileEntity.size = file.size;
     fileEntity.type = file.type || 'application/zip';
     const uploadFileUseCase: UploadFileUseCase = new UploadFileUseCase(
-      new FileRepository(
-        currentContext.storage.LOCAL_DATA_SOURCE,
-        currentContext.storage.REMOTE_DATA_SOURCE,
-      ),
+      new FileRepository(LOCAL_DATA_SOURCE, REMOTE_DATA_SOURCE),
       fileEntity,
     );
 
@@ -351,10 +338,7 @@ export default function useDialogViewModel(
   function sendMessage(messageToSend: MessageEntity) {
     const sendTextMessageUseCase: SendTextMessageUseCase =
       new SendTextMessageUseCase(
-        new MessagesRepository(
-          currentContext.storage.LOCAL_DATA_SOURCE,
-          currentContext.storage.REMOTE_DATA_SOURCE,
-        ),
+        new MessagesRepository(LOCAL_DATA_SOURCE, REMOTE_DATA_SOURCE),
         messageToSend,
       );
 
@@ -362,20 +346,18 @@ export default function useDialogViewModel(
     sendTextMessageUseCase
       .execute()
       // eslint-disable-next-line promise/always-return
-      .then((me) => {
+      .then((messageEntity) => {
         //
         // eslint-disable-next-line promise/catch-or-return
-        getSender(me.sender_id)
+        getSender(messageEntity.sender_id)
           // eslint-disable-next-line promise/always-return
           .then((user) => {
             // eslint-disable-next-line no-param-reassign
-            me.sender = user;
+            messageEntity.sender = user;
           })
           .finally(() => {
             setMessages((prevState) => {
-              const newState = [...prevState];
-
-              newState.push(me);
+              const newState = [...prevState, messageEntity];
 
               return newState;
             });
@@ -400,26 +382,19 @@ export default function useDialogViewModel(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const sendTextMessage = (newMessage: string) => {
     setLoading(true);
-    const currentUserId =
-      currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId || 0;
-    const messageToSend: MessageEntity = Stubs.createMessageEntityWithParams(
-      '',
-      dialog.id,
-      newMessage,
-      Date.now().toString(),
-      Date.now(),
-      Date.now().toString(),
-      [],
-      [],
-      1,
-      currentUserId, // artan 22.06.23
-      dialog.type === DialogType.private
-        ? (dialog as PrivateDialogEntity).participantId
-        : currentUserId,
-      [],
-      '',
-      DialogType.group,
-    );
+    const currentUserId = REMOTE_DATA_SOURCE.authInformation?.userId || 0;
+    const messageEntityParams: MessageEntityParams = {
+      dialogId: dialog.id,
+      message: newMessage,
+      sender_id: currentUserId,
+      recipient_id:
+        dialog.type === DialogType.private
+          ? (dialog as PrivateDialogEntity).participantId
+          : currentUserId,
+      dialog_type: DialogType.group,
+    };
+    const messageToSend: MessageEntity =
+      Creator.createMessageEntity(messageEntityParams);
 
     messageToSend.dialogType = dialog.type;
 
@@ -430,8 +405,7 @@ export default function useDialogViewModel(
   const sendAttachmentMessage = async (newMessage: File): Promise<boolean> => {
     console.log('call sendTextMessage');
     setLoading(true);
-    const currentUserId =
-      currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId || 0;
+    const currentUserId = REMOTE_DATA_SOURCE.authInformation?.userId || 0;
 
     try {
       await uploadFile(newMessage)
@@ -507,14 +481,10 @@ export default function useDialogViewModel(
     relatedMessage: MessageEntity,
   ): void => {
     //
-    const userName =
-      currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userName || '';
+    const userName = REMOTE_DATA_SOURCE.authInformation?.userName || '';
     const forwardMessagesUseCase: ForwardMessagesUseCase =
       new ForwardMessagesUseCase(
-        new MessagesRepository(
-          currentContext.storage.LOCAL_DATA_SOURCE,
-          currentContext.storage.REMOTE_DATA_SOURCE,
-        ),
+        new MessagesRepository(LOCAL_DATA_SOURCE, REMOTE_DATA_SOURCE),
         targetDialogs,
         messagesToForward,
         relatedMessage,
@@ -548,10 +518,7 @@ export default function useDialogViewModel(
   ): void => {
     //
     const replyMessagesUseCase: ReplyMessagesUseCase = new ReplyMessagesUseCase(
-      new MessagesRepository(
-        currentContext.storage.LOCAL_DATA_SOURCE,
-        currentContext.storage.REMOTE_DATA_SOURCE,
-      ),
+      new MessagesRepository(LOCAL_DATA_SOURCE, REMOTE_DATA_SOURCE),
       messagesToReply,
       relatedMessage,
     );
@@ -560,20 +527,18 @@ export default function useDialogViewModel(
     replyMessagesUseCase
       .execute()
       // eslint-disable-next-line promise/always-return
-      .then((me) => {
+      .then((messageEntity) => {
         //
         // eslint-disable-next-line promise/catch-or-return
-        getSender(me.sender_id)
+        getSender(messageEntity.sender_id)
           // eslint-disable-next-line promise/always-return
           .then((user) => {
             // eslint-disable-next-line no-param-reassign
-            me.sender = user;
+            messageEntity.sender = user;
           })
           .finally(() => {
             setMessages((prevState) => {
-              const newState = [...prevState];
-
-              newState.push(me);
+              const newState = [...prevState, messageEntity];
 
               return newState;
             });
@@ -602,8 +567,7 @@ export default function useDialogViewModel(
     // eslint-disable-next-line @typescript-eslint/require-await
   ): Promise<boolean> => {
     setLoading(true);
-    const currentUserId =
-      currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId || 0;
+    const currentUserId = REMOTE_DATA_SOURCE.authInformation?.userId || 0;
     const relatedMessage: MessageEntity = Stubs.createMessageEntityWithParams(
       '',
       dialog.id,
@@ -640,8 +604,7 @@ export default function useDialogViewModel(
     // eslint-disable-next-line @typescript-eslint/require-await
   ): Promise<boolean> => {
     setLoading(true);
-    const currentUserId =
-      currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId || 0;
+    const currentUserId = REMOTE_DATA_SOURCE.authInformation?.userId || 0;
     const relatedMessage: MessageEntity = Stubs.createMessageEntityWithParams(
       '',
       dialog.id,

@@ -44,7 +44,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
                 color="var(--secondary-elements)"
               />
             }
-            clickAction={() => {
+            onClick={() => {
               if (clickRemoveAvatarHandler) {
                 clickRemoveAvatarHandler();
               }

@@ -38,9 +38,9 @@ import { AISource, IChatMessage } from './Data/source/AISource';
 import AIWidgetIcon from './Presentation/components/UI/svgs/Icons/AIWidgets/AIWidget';
 import ErrorMessageIcon from './Presentation/Views/Dialog/AIWidgets/ErrorMessageIcon';
 import PreviewDialogViewModel from './Presentation/Views/PreviewDialog/PreviewDialogViewModel';
-import {AvatarContentIncomingUserProps} from './Presentation/Views/Dialog/IncomingMessage/AvatarContentIncomingUser/AvatarContentIncomingUser';
+import {AvatarContentIncomingUserProps} from './Presentation/Views/Dialog/Message/IncomingMessage/AvatarContentIncomingUser/AvatarContentIncomingUser';
 import {FunctionTypeViewModelToVoid} from './CommonTypes/BaseViewModel';
-import {GetUserNameFct} from './Presentation/Views/Dialog/IncomingMessage/IncomingMessage';
+import {GetUserNameFct} from './Presentation/Views/Dialog/Message/IncomingMessage/IncomingMessage';
 export {
   MainButton,
   TypeButton,

@@ -102,7 +102,7 @@ interface QBUser {
   last_request_at: string;
   external_user_id: null;
   facebook_id: string | null;
-  blob_id: null;
+  blob_id: number | string | null;
   custom_data: string | null;
   age_over16: boolean;
   allow_statistics_analysis: boolean;
@@ -214,7 +214,7 @@ interface QBChatNewMessage {
     dialog_id: QBChatDialog['_id'];
     notification_type?: string;
     sender_id?: QBUser['id'];
-    qb_message_action?: string; // 'forward' 'reply'
+    qb_message_action?: 'forward' | 'reply';
     origin_sender_name?: string;
     qb_original_messages?: string;
   };
@@ -238,7 +238,7 @@ interface QBChatMessage {
   /** Date ISO string */
   updated_at: string;
   notification_type?: string;
-  qb_message_action?: string; // 'forward' 'reply'
+  qb_message_action?: 'forward' | 'reply';
   origin_sender_name?: string;
   qb_original_messages?: string;
 }
@@ -248,7 +248,6 @@ interface QBMessageStatusParams {
   dialogId: QBChatDialog['_id'];
   userId: QBUser['id'];
 }
-
 
 interface QBChatXMPPMessage {
   id: string;
@@ -611,7 +610,7 @@ interface QBUsersModule {
 interface QBGetUserMediaParams {
   audio: MediaStreamConstraints['audio'];
   video: MediaStreamConstraints['video'];
-  /** Id attribute of HTMLVideoElement */
+  /** id attribute of HTMLVideoElement */
   elemId?: string;
   options?: {
     muted?: boolean;

@@ -45542,7 +45542,7 @@ function ChatProxy(service) {
      * @memberOf QB.chat
      * @param {String} messageId - Read message id
      * @param {String} dialogId - The dialog id
-     * @param {Number} userId - User Id
+     * @param {Number} userId - User id
      **/
 
     /**
@@ -48002,7 +48002,7 @@ Helpers.prototype = {
      * Get user id from dialog's full jid.
      * @memberof QB.chat.helpers
      * @param {String} jid - dialog's full jid.
-     * @returns {String} user_id - User Id.
+     * @returns {String} user_id - User id.
      * */
     getIdFromResource: function (jid) {
         var s = jid.split('/');
@@ -48124,7 +48124,7 @@ var qbChatHelpers = {
     MARKERS: MARKERS,
     ChatNotConnectedError: ChatNotConnectedError,
     /**
-     * @param {params} this object may contains Jid or Id property
+     * @param {params} this object may contains Jid or id property
      * @return {string} jid of user
      */
     buildUserJid: function(params) {
@@ -51751,7 +51751,7 @@ module.exports = WebRTCHelpers;
  * @typedef {Object} MediaParams
  * @property {boolean | MediaTrackConstraints} [params.audio]
  * @property {boolean | MediaTrackConstraints} [params.video]
- * @property {string} [params.elemId] - Id of HTMLVideoElement.
+ * @property {string} [params.elemId] - id of HTMLVideoElement.
  * @property {Object} [params.options]
  * @property {boolean} [params.options.muted]
  * @property {boolean} [params.options.mirror]
@@ -51883,7 +51883,7 @@ WebRTCSession.prototype.connectionStateForUser = function (userID) {
  * Attach media stream to audio/video element({@link https://docs.quickblox.com/docs/js-video-calling#attach-local-media-stream read more}).
  * @function attachMediaStream
  * @memberof QB.webrtc.WebRTCSession
- * @param {string} elementId - The Id of an ellement to attach a stream.
+ * @param {string} elementId - The id of an ellement to attach a stream.
  * @param {MediaStream} stream - The stream to attach.
  * @param {Object} [options] - The additional options.
  * @param {boolean} [options.muted] - Whether video element should be muted.
@@ -51917,7 +51917,7 @@ WebRTCSession.prototype.attachMediaStream = function (elementId, stream, options
             throw new Error('Cannot attach media stream to element with id "' + elementId + '" because it is not of type HTMLMediaElement');
         }
     } else {
-        throw new Error('Unable to attach media stream, cannot find element by Id "' + elementId + '"');
+        throw new Error('Unable to attach media stream, cannot find element by id "' + elementId + '"');
     }
 };
 
@@ -51925,7 +51925,7 @@ WebRTCSession.prototype.attachMediaStream = function (elementId, stream, options
  * Detach media stream from audio/video element.
  * @function detachMediaStream
  * @memberof QB.webrtc.WebRTCSession
- * @param {string} elementId - The Id of an element to detach a stream.
+ * @param {string} elementId - The id of an element to detach a stream.
  */
 WebRTCSession.prototype.detachMediaStream = function (elementId) {
     var elem = document.getElementById(elementId);
@@ -52246,7 +52246,7 @@ WebRTCSession.prototype.stop = function (extension) {
  * Close connection with a user.
  * @function closeConnection
  * @memberof QB.webrtc.WebRTCSession
- * @param  {Number} userId - Id of a user.
+ * @param  {Number} userId - id of a user.
  */
 WebRTCSession.prototype.closeConnection = function (userId) {
     var self = this,
@@ -52391,7 +52391,7 @@ WebRTCSession.prototype.processOnAccept = function (userID, extension) {
         }
     } else {
         Helpers.traceError(
-            "Ignore 'OnAccept': peer connection for user with Id " +
+            "Ignore 'OnAccept': peer connection for user with id " +
             userID + " was not found"
         );
     }
@@ -52456,7 +52456,7 @@ WebRTCSession.prototype.processOnUpdate = function (userID, extension) {
             }
         } else {
             Helpers.traceError(
-                "Ignore 'OnUpdate': peer connection for user with Id " +
+                "Ignore 'OnUpdate': peer connection for user with id " +
                 userID + " was not found"
             );
         }

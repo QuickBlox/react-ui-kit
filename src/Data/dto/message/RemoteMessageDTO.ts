@@ -33,7 +33,7 @@ export class RemoteMessageDTO {
 
   public attachments: ChatMessageAttachmentEntity[];
 
-  public qb_message_action?: string; // 'forward' 'reply'
+  public qb_message_action?: 'forward' | 'reply';
 
   public origin_sender_name?: string;
 

@@ -1,16 +1,16 @@
 export const QBConfig = {
   credentials: {
-    appId: -1,
-    accountKey: '',
-    authKey: '',
-    authSecret: '',
+    appId: 75949,
+    accountKey: 'uK_8uinNyz8-npTNB6tx',
+    authKey: 'DdS7zxMEm5Q7DaS',
+    authSecret: 'g88RhdOjnDOqFkv',
     sessionToken: '',
   },
   configAIApi: {
     AIAnswerAssistWidgetConfig: {
       organizationName: 'Quickblox',
       openAIModel: 'gpt-3.5-turbo',
-      apiKey: '',
+      apiKey: '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',
       maxTokens: 3584,
       useDefault: true,
       proxyConfig: {
@@ -22,7 +22,7 @@ export const QBConfig = {
     AITranslateWidgetConfig: {
       organizationName: 'Quickblox',
       openAIModel: 'gpt-3.5-turbo',
-      apiKey: '',
+      apiKey: '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',
       maxTokens: 3584,
       useDefault: true,
       defaultLanguage: '',
@@ -48,7 +48,7 @@ export const QBConfig = {
     AIRephraseWidgetConfig: {
       organizationName: 'Quickblox',
       openAIModel: 'gpt-3.5-turbo',
-      apiKey: '',
+      apiKey: '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',
       maxTokens: 3584,
       useDefault: true,
       defaultTone: 'Professional',

@@ -94,8 +94,8 @@ DropDownMenuProps) => {
       {/*          key={indexAI} */}
       {/*          item={itemAI.title} */}
       {/*          icon={itemAI.icon} */}
-      {/*          clickAction={itemAI.clickHandler} */}
-      {/*          touchAction={itemAI.touchHandler} */}
+      {/*          onClick={itemAI.clickHandler} */}
+      {/*          onTouch={itemAI.touchHandler} */}
       {/*        /> */}
       {/*      ); */}
       {/*    }) */}

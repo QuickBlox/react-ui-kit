@@ -89,15 +89,15 @@ const ForwardMessageFlow: React.FC<ForwardMessageFlowProps> = ({
           </div>
           <div
             className={
-              !activeChatsTab ? 'active-tab-button' : 'no-active-tab-button'
+              activeChatsTab ? 'no-active-tab-button' : 'active-tab-button'
             }
             style={{ display: 'none' }}
           >
             <div
               className={
-                !activeChatsTab
-                  ? 'active-tab-button-content'
-                  : 'no-active-tab-button-content'
+                activeChatsTab
+                  ? 'no-active-tab-button-content'
+                  : 'active-tab-button-content'
               }
             >
               Contacts

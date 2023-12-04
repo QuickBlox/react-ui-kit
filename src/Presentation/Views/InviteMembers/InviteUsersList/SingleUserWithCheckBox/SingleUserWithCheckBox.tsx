@@ -46,10 +46,10 @@ const SingleUserWithCheckBox: React.FC<SingleUserWithCheckBoxProps> = ({
               />
             </div>
           }
-          clickAction={() => {
+          onClick={() => {
             console.log('user click...');
           }}
-          touchAction={() => {
+          onTouch={() => {
             console.log('user touch...');
           }}
         />

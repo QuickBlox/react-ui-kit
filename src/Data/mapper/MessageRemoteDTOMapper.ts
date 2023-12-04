@@ -87,14 +87,12 @@ export class MessageRemoteDTOMapper implements IMapper {
     }
     const messageEntity = this.remoteMessageDTOToMessageEntity(messageDTO);
     //
-    const messagesEntity: MessageEntity[] =
+    const messageEntities: MessageEntity[] =
       messageDTO.qb_original_messages?.map((it) => {
-        const tmpEntity = this.remoteMessageDTOToMessageEntity(it);
-
-        return tmpEntity;
+        return this.remoteMessageDTOToMessageEntity(it);
       }) || [];
 
-    messageEntity.qb_original_messages = messagesEntity;
+    messageEntity.qb_original_messages = messageEntities;
     messageEntity.qb_message_action = messageDTO.qb_message_action;
     messageEntity.origin_sender_name = messageDTO.origin_sender_name;
 
@@ -129,9 +127,11 @@ export class MessageRemoteDTOMapper implements IMapper {
         messageEntity.attachments?.push(newAtt);
       });
     }
-    messageEntity.notification_type = messageDTO?.notification_type
-      ? messageDTO?.notification_type
-      : '';
+    messageEntity.notification_type =
+      messageDTO?.notification_type &&
+      !messageDTO.notification_type.includes('undefined')
+        ? messageDTO?.notification_type
+        : '';
     messageEntity.markable = messageDTO?.markable ? messageDTO?.markable : '';
 
     return messageEntity;

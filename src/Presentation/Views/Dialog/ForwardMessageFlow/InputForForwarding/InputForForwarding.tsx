@@ -34,7 +34,7 @@ const InputForForwarding: React.FC<InputForForwardingProps> = ({
       <div className="forwarding-message-input-icon-send">
         <ActiveSvg
           content={<SendIcon width="24" height="24" />}
-          clickAction={onSend}
+          onClick={onSend}
         />
       </div>
     </div>

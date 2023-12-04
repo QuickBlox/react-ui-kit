@@ -273,7 +273,7 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
           <div className="dialog-information-container__dialog-information-close">
             <ActiveSvg
               content={<Close applyZoom color="var(--secondary-elements)" />}
-              clickAction={() => {
+              onClick={() => {
                 if (onCloseDialogInformationHandler) {
                   onCloseDialogInformationHandler();
                 }
@@ -313,7 +313,7 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
                       );
                     }}
                     touchAction={() => {
-                      console.log('call touchAction');
+                      console.log('call onTouch');
                     }}
                   />
                 </div>
@@ -393,8 +393,8 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
                         />
                       )
                     }
-                    clickAction={() => showMembersDialogHandler()}
-                    touchAction={() => console.log('showMembersDialogHandler')}
+                    onClick={() => showMembersDialogHandler()}
+                    onTouch={() => console.log('showMembersDialogHandler')}
                   />
                 </div>
               </div>
@@ -542,8 +542,8 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
           <div className="dialog-information-container--search-wrapper__search-icon">
             <ActiveSvg
               content={<Search width="24" height="24" applyZoom />}
-              clickAction={() => searchDialogHandler()}
-              touchAction={() => searchDialogHandler()}
+              onClick={() => searchDialogHandler()}
+              onTouch={() => searchDialogHandler()}
             />
           </div>
           <div className="dialog-information-container--search-wrapper__search-text">
@@ -556,10 +556,10 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
               content={
                 <Leave width="24" height="24" applyZoom color="var(--error)" />
               }
-              clickAction={() => {
+              onClick={() => {
                 leaveDialogHandler();
               }}
-              touchAction={() => {
+              onTouch={() => {
                 leaveDialogHandler();
               }}
             />

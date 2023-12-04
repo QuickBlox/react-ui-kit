@@ -88,6 +88,11 @@ export class UserLocalDTOMapper implements IMapper {
 
         return result.length >= 0;
       },
+      photo(v: unknown): v is UserEntity['photo'] {
+        const { photo } = v as UserEntity;
+
+        return photo !== undefined && photo !== null && photo.length > 0;
+      },
       created_at(v: unknown): v is UserEntity['created_at'] {
         const { created_at } = v as UserEntity;
 
@@ -376,6 +381,7 @@ export class UserLocalDTOMapper implements IMapper {
       updated_at: '',
       user_tags: '',
       blob_id: '',
+      photo: '',
     };
   }
 }

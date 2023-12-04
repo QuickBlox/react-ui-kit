@@ -3,26 +3,30 @@ import './AIAssistComponent.scss';
 import BotIcon from '../../../../components/UI/svgs/Icons/AIWidgets/BotIcon/BotIcon';
 import { FunctionTypeVoidToVoid } from '../../../../../CommonTypes/BaseViewModel';
 
-function AIAssistComponent(props: {
+interface AIAssistComponentProps {
   onAssistAnswer: FunctionTypeVoidToVoid;
   waitAIWidget: boolean;
-}) {
+}
+
+export default function AIAssistComponent(props: AIAssistComponentProps) {
+  const { onAssistAnswer, waitAIWidget } = props;
+
   return (
     <div
       className="ai-assist-answer"
       style={{
-        cursor: !props.waitAIWidget ? 'pointer' : '',
+        cursor: waitAIWidget ? '' : 'pointer',
       }}
     >
-      <div className="ai-assist-icon" onClick={props.onAssistAnswer}>
+      <div className="ai-assist-icon" onClick={onAssistAnswer}>
         <div
-          style={{
-            padding: '5px 3px 5px 3px',
-            alignSelf: 'stretch',
-            flex: '1',
-            position: 'relative',
-            overflow: 'visible',
-          }}
+        // style={{
+        //   padding: '5px 3px 5px 3px',
+        //   alignSelf: 'stretch',
+        //   flex: '1',
+        //   position: 'relative',
+        //   overflow: 'visible',
+        // }}
         >
           <BotIcon width="24" height="25" applyZoom color="var(--primary)" />
         </div>
@@ -30,5 +34,3 @@ function AIAssistComponent(props: {
     </div>
   );
 }
-
-export default AIAssistComponent;

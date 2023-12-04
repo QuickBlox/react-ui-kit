@@ -4,7 +4,7 @@ import { DialogEntity } from '../../../../../Domain/entity/DialogEntity';
 // eslint-disable-next-line import/named
 import { FunctionTypeStringToVoid } from '../../../../../CommonTypes/BaseViewModel';
 import SearchComponent from './SearchComponent/SearchComponent';
-import ItemDialogList from './ItemForListComponent/ItemDialogList';
+import DialogListItem from './DialogListItem/DialogListItem';
 import ScrollableContainer from '../../../../components/containers/ScrollableContainer/ScrollableContainer';
 import { DialogType } from '../../../../../Domain/entity/DialogTypes';
 import { PublicDialogEntity } from '../../../../../Domain/entity/PublicDialogEntity';
@@ -24,9 +24,11 @@ const DialogsWithSearch: React.FC<DialogsWithSearchProps> = ({
   onSelect,
 }: DialogsWithSearchProps) => {
   const [stringForFilter, setStringForFilter] = useState('');
-  const [filteredDialogs, setFilteredDialogs] = useState(dialogs);
+  const [filteredDialogs, setFilteredDialogs] = useState([
+    ...dialogs.filter((u) => u.id !== currentDialog.id),
+  ]);
 
-  function filterDialogs(
+  function filterDialogsByName(
     filter: string,
     idCurrentDialogs: string,
   ): DialogEntity[] {
@@ -41,25 +43,25 @@ const DialogsWithSearch: React.FC<DialogsWithSearchProps> = ({
       return [...newFilteredData];
     }
 
-    return [...dialogs];
+    return [...dialogs.filter((u) => u.id !== currentDialog.id)];
   }
 
   useEffect(() => {
-    setFilteredDialogs(filterDialogs(stringForFilter, currentDialog.id));
+    setFilteredDialogs(filterDialogsByName(stringForFilter, currentDialog.id));
   }, [stringForFilter]);
-  const renderItem = (item: DialogEntity, index: number) => {
+  const renderItem = (item: DialogEntity) => {
     return (
-      <div className="dialogs-with-search-list-item" key={index}>
-        <ItemDialogList
-          itemName={item.name}
-          itemId={item.id}
-          itemAvatar={
+      <div className="dialogs-with-search-list-item" key={item.id}>
+        <DialogListItem
+          name={item.name}
+          id={item.id}
+          avatar={
             item.type === DialogType.group
               ? (item as PublicDialogEntity).photo
               : ''
           }
           typeDialog={item.type}
-          isElementChecked={selectedDialogs.includes(item.id)}
+          checked={selectedDialogs.includes(item.id)}
           onSelect={() => onSelect(item.id)}
         />
         <svg

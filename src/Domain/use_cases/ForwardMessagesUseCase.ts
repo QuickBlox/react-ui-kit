@@ -88,7 +88,8 @@ export class ForwardMessagesUseCase implements IUseCase<void, boolean> {
     });
 
     const sentMessages: Awaited<MessageEntity | undefined>[] =
-      await Promise.all(promises);
+      await Promise.all(promises); // all - нужно, чтобы все промисы выполнились, а
+    // Promise.allSettled(promises);// any - чтобы хотя бы один выполнился
 
     const allMessagesSent = sentMessages?.every(
       (message) => message && message.id && message.id.length > 0,

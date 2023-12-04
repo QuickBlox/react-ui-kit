@@ -11,6 +11,7 @@ export interface UserEntity {
   // external_user_id: null;
   // facebook_id: string | null;
   blob_id: string | null;
+  photo: string | null;
   custom_data: string | null;
   // age_over16: boolean;
   // allow_statistics_analysis: boolean;

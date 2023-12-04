@@ -3,7 +3,6 @@ import './Dialog.scss';
 import useQBConnection from '../../providers/QuickBloxUIKitProvider/useQBConnection';
 import { DialogViewModel } from './DialogViewModel';
 import LoaderComponent from '../../components/UI/Placeholders/LoaderComponent/LoaderComponent';
-import ErrorComponent from '../../components/UI/Placeholders/ErrorComponent/ErrorComponent';
 import UiKitTheme from '../../themes/UiKitTheme';
 import { ErrorToast } from './ErrorToast/ErrorToast';
 
@@ -222,14 +221,24 @@ const Dialog: React.FC<DialogProps> = ({
         }
         className="message-view-container--messages"
       >
-        {messagesViewModel?.error && !messagesViewModel.loading && (
-          <ErrorComponent
-            title={messagesViewModel?.error}
-            ClickActionHandler={() => {
-              alert('call click retry');
-            }}
-          />
-        )}
+        {/* {messagesViewModel?.error && !messagesViewModel.loading && ( */}
+        {/*  <ErrorComponent */}
+        {/*    // title={messagesViewModel?.error} */}
+        {/*    title="!!!!!!!!!!!!!!!!!!" */}
+        {/*    ClickActionHandler={() => { */}
+        {/*      alert('call click retry'); */}
+        {/*    }} */}
+        {/*  /> */}
+        {/* )} */}
+
+        {/* <ErrorComponent */}
+        {/*  // title={messagesViewModel?.error} */}
+        {/*  title="!!!!!!!!!!!!!!!!!!" */}
+        {/*  ClickActionHandler={() => { */}
+        {/*    alert('call click retry'); */}
+        {/*  }} */}
+        {/* /> */}
+
         {renderMessageList}
         {/* {(messagesViewModel?.loading || waitAIWidget) && ( */}
         <div
@@ -295,10 +304,10 @@ const Dialog: React.FC<DialogProps> = ({
       {/*           } */}
       {/*         /> */}
       {/*       } */}
-      {/*       clickAction={() => { */}
+      {/*       onClick={() => { */}
       {/*         console.log('click send message'); */}
       {/*       }} */}
-      {/*       touchAction={() => { */}
+      {/*       onTouch={() => { */}
       {/*         console.log('touch send message'); */}
       {/*       }} */}
       {/*     /> */}
@@ -318,13 +327,13 @@ const Dialog: React.FC<DialogProps> = ({
       {/* /!*  <div> *!/ */}
       {/* /!*    <ActiveSvg *!/ */}
       {/* /!*      content={InputWidgetToRightPlaceHolder.renderWidget()} *!/ */}
-      {/* /!*      clickAction={() => { *!/ */}
+      {/* /!*      onClick={() => { *!/ */}
       {/* /!*        console.log('click left place golder widget'); *!/ */}
       {/* /!*        if (messagesViewModel?.loading) return; *!/ */}
       {/* /!*        setIsRecording(!isRecording); *!/ */}
       {/* /!*        setUseAudioWidget(true); *!/ */}
       {/* /!*      }} *!/ */}
-      {/* /!*      touchAction={() => { *!/ */}
+      {/* /!*      onTouch={() => { *!/ */}
       {/* /!*        console.log('touch left place golder widget'); *!/ */}
       {/* /!*      }} *!/ */}
       {/* /!*    /> *!/ */}
@@ -412,11 +421,11 @@ const Dialog: React.FC<DialogProps> = ({
       {/*           color={theme ? theme.mainElements() : 'var(--main-elements)'} */}
       {/*         /> */}
       {/*       } */}
-      {/*       clickAction={() => { */}
+      {/*       onClick={() => { */}
       {/*         console.log('click send message'); */}
       {/*         sendTextMessageActions(); */}
       {/*       }} */}
-      {/*       touchAction={() => { */}
+      {/*       onTouch={() => { */}
       {/*         console.log('touch send message'); */}
       {/*       }} */}
       {/*     /> */}
@@ -445,12 +454,12 @@ const Dialog: React.FC<DialogProps> = ({
       {/*             } */}
       {/*           /> */}
       {/*         } */}
-      {/*         clickAction={() => { */}
+      {/*         onClick={() => { */}
       {/*           console.log('click send voice message'); */}
       {/*           if (messagesViewModel?.loading) return; */}
       {/*           setIsRecording(!isRecording); */}
       {/*         }} */}
-      {/*         touchAction={() => { */}
+      {/*         onTouch={() => { */}
       {/*           console.log('touch send message'); */}
       {/*           if (messagesViewModel?.loading) return; */}
       {/*           setIsRecording(!isRecording); */}

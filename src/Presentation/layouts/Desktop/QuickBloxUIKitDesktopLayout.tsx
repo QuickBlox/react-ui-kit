@@ -35,7 +35,7 @@ import PublicChannel from '../../components/UI/svgs/Icons/Contents/PublicChannel
 import RenderDialogHeaderNavigator from '../../Views/Dialog/RenderDialogHeaderNavigator/RenderDialogHeaderNavigator';
 import MessageInput from '../../Views/Dialog/MessageInput/MessageInput';
 import SendIcon from '../../components/UI/svgs/Icons/Actions/Send';
-import AttachmentMessage from '../../Views/Dialog/AttachmentMessage/AttachmentMessage';
+import AttachmentUploader from '../../Views/Dialog/AttachmentUploader/AttachmentUploader';
 import AttachmentIcon from '../../components/UI/svgs/Icons/Media/Attachment';
 import VoiceMessage from '../../Views/Dialog/VoiceMessage/VoiceMessage';
 import VoiceIcon from '../../components/UI/svgs/Icons/Actions/Voice';
@@ -45,11 +45,14 @@ import { DialogViewModel } from '../../Views/Dialog/DialogViewModel';
 import useDialogViewModel from '../../Views/Dialog/useDialogViewModel';
 import { MessageEntity } from '../../../Domain/entity/MessageEntity';
 import { stringifyError } from '../../../utils/parse';
-import ScrollableContainer from '../../components/containers/ScrollableContainer/ScrollableContainer';
 import Message from '../../Views/Dialog/Message/Message';
 import ReplyMessagePreview from '../../Views/Dialog/ReplyMessagePreview/ReplyMessagePreview';
 import ForwardMessageFlow from '../../Views/Dialog/ForwardMessageFlow/ForwardMessageFlow';
 import { ModalContext } from '../../providers/ModalContextProvider/Modal';
+import SectionList from '../../components/containers/SectionList';
+import { SectionItem } from '../../components/containers/SectionList/useComponent';
+import { SystemDateBanner } from '../../Views/Dialog/SystemDateBanner/SystemDateBanner';
+import { formatDate } from '../../../utils/DateTimeFormatter';
 
 type AIWidgetPlaceHolder = {
   enabled: boolean;
@@ -931,6 +934,31 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     );
   };
 
+  function getSectionData(messages2View: MessageEntity[]) {
+    const groupMessages: { [date: string]: MessageEntity[] } = {};
+
+    messages2View.forEach((message) => {
+      const date = new Date(message.created_at);
+
+      date.setUTCHours(0, 0, 0, 0);
+
+      const dateString = date.toISOString();
+
+      groupMessages[dateString] = [
+        ...(groupMessages[dateString] || []),
+        message,
+      ];
+    });
+    const sections: SectionItem<MessageEntity>[] = Object.keys(
+      groupMessages,
+    ).map((date) => ({
+      title: date,
+      data: { [date]: groupMessages[date] },
+    }));
+
+    return sections;
+  }
+
   return (
     <DesktopLayout
       theme={theme}
@@ -978,11 +1006,35 @@ const QuickBloxUIKitDesktopLayout: React.FC<
               messagesViewModel.messages.length > 0 &&
               messagesToView &&
               messagesToView.length > 0 && (
-                <ScrollableContainer
-                  data={messagesToView}
-                  renderItem={(message: MessageEntity) => {
-                    return (
+                <SectionList
+                  resetScroll={scrollUpToDown}
+                  className="messages-container"
+                  onEndReached={fetchMoreData}
+                  onEndReachedThreshold={0.95}
+                  refreshing={messagesViewModel?.loading}
+                  renderSectionHeader={(section) => (
+                    // <div className="date">{section.title}</div>
+                    <div
+                      className="message-view-container--system-message-wrapper"
+                      key={new Date().getTime().toString()}
+                    >
+                      <div
+                        style={
+                          theme
+                            ? { backgroundColor: theme.disabledElements() }
+                            : {}
+                        }
+                        className="message-view-container--system-message-wrapper__date_container"
+                      >
+                        {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call */}
+                        <SystemDateBanner text={formatDate(section.title)} />
+                      </div>
+                    </div>
+                  )}
+                  renderItem={([key, groupMessages]) =>
+                    groupMessages.map((message) => (
                       <Message
+                        key={key}
                         theme={theme}
                         setShowErrorToast={setShowErrorToast}
                         setWaitAIWidget={setWaitAIWidget}
@@ -1001,13 +1053,40 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                         enableReplying={enableReplying}
                         enableForwarding={enableForwarding}
                       />
-                    );
-                  }}
-                  onEndReached={fetchMoreData}
-                  onEndReachedThreshold={0.8}
-                  refreshing={messagesViewModel?.loading}
-                  autoScrollToBottom={scrollUpToDown}
+                    ))
+                  }
+                  sections={getSectionData(messagesToView)}
                 />
+                // <ScrollableContainer
+                //   data={messagesToView}
+                //   renderItem={(message: MessageEntity) => {
+                //     return (
+                //       <Message
+                //         theme={theme}
+                //         setShowErrorToast={setShowErrorToast}
+                //         setWaitAIWidget={setWaitAIWidget}
+                //         setMessageErrorToast={setMessageErrorToast}
+                //         AIAssistWidget={defaultAIAssistWidget!}
+                //         AITranslateWidget={defaultAITranslateWidget!}
+                //         message={message}
+                //         onReply={(m: MessageEntity) => {
+                //           handleOnReply(m);
+                //         }}
+                //         onForward={(m: MessageEntity) => {
+                //           handleForward(m);
+                //         }}
+                //         messagesToView={messagesToView}
+                //         userId={userId || -1}
+                //         enableReplying={enableReplying}
+                //         enableForwarding={enableForwarding}
+                //       />
+                //     );
+                //   }}
+                //   onEndReached={fetchMoreData}
+                //   onEndReachedThreshold={0.8}
+                //   refreshing={messagesViewModel?.loading}
+                //   autoScrollToBottom={scrollUpToDown}
+                // />
               )
             }
             renderReplyMessagesPreview={
@@ -1045,7 +1124,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                   />
                 }
                 renderAttachment={
-                  <AttachmentMessage
+                  <AttachmentUploader
                     icon={
                       <AttachmentIcon
                         width="32"
@@ -1122,7 +1201,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
             }
             maxWidthToResize={maxWidthToResizing}
             theme={theme}
-          /> // 1 Get Messages + 1 Get User by Id
+          /> // 1 Get Messages + 1 Get User by id
         ) : (
           <div
             style={{

@@ -24,10 +24,10 @@ const UserSingle: React.FC<UserSingleProps> = ({ user, keyValue }) => {
               />
             </div>
           }
-          clickAction={() => {
+          onClick={() => {
             console.log('user click...');
           }}
-          touchAction={() => {
+          onTouch={() => {
             console.log('user touch...');
           }}
         />

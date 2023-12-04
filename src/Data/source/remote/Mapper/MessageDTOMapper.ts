@@ -139,26 +139,19 @@ export class MessageDTOMapper implements IDTOMapper {
       dto.message = MessageDTOMapper.formatMessage(qbMessage.message);
       dto.created_at = qbMessage.created_at;
       dto.date_sent = qbMessage.date_sent * 1000;
-      dto.delivered_ids = qbMessage.delivered_ids
-        ? qbMessage.delivered_ids
-        : [];
-      dto.read_ids = qbMessage.read_ids ? qbMessage.read_ids : [];
+      dto.delivered_ids = qbMessage.delivered_ids || [];
+      dto.read_ids = qbMessage.read_ids || [];
 
-      dto.recipient_id = qbMessage.recipient_id ? qbMessage.recipient_id : 0;
+      dto.recipient_id = qbMessage.recipient_id || 0;
       dto.attachments = MessageDTOMapper.transformAttachment(
         qbMessage.message,
-        qbMessage.attachments ? qbMessage.attachments : [],
+        qbMessage.attachments || [],
       );
       dto.read = qbMessage.read;
       dto.sender_id = qbMessage.sender_id;
       dto.updated_at = qbMessage.updated_at;
-      // // notification_type markable
-      dto.notification_type = qbMessage.notification_type
-        ? qbMessage.notification_type
-        : '';
-      dto.markable = qbMessage.notification_type
-        ? qbMessage.notification_type
-        : '';
+      dto.notification_type = qbMessage.notification_type || '';
+      dto.markable = qbMessage.notification_type || '';
     } else {
       dto.id = qbMessage._id;
       dto.dialogId = qbMessage.chat_dialog_id;
@@ -166,26 +159,19 @@ export class MessageDTOMapper implements IDTOMapper {
       dto.message = MessageDTOMapper.formatMessage(qbMessage.message); // todo: check
       dto.created_at = qbMessage.created_at || Date.now().toString(); // todo: check
       dto.date_sent = qbMessage.date_sent || Date.now() * 1000; // todo: check
-      dto.delivered_ids = qbMessage.delivered_ids
-        ? qbMessage.delivered_ids
-        : [];
-      dto.read_ids = qbMessage.read_ids ? qbMessage.read_ids : [];
+      dto.delivered_ids = qbMessage.delivered_ids || [];
+      dto.read_ids = qbMessage.read_ids || [];
 
-      dto.recipient_id = qbMessage.recipient_id ? qbMessage.recipient_id : 0;
+      dto.recipient_id = qbMessage.recipient_id || 0;
       dto.attachments = MessageDTOMapper.transformAttachment(
         qbMessage.message,
-        qbMessage.attachments ? qbMessage.attachments : [],
+        qbMessage.attachments || [],
       );
       dto.read = qbMessage.read || 1; // todo: check
       dto.sender_id = qbMessage.sender_id;
       dto.updated_at = qbMessage.updated_at || Date.now().toString(); // todo: check
-      // // notification_type markable
-      dto.notification_type = qbMessage.notification_type
-        ? qbMessage.notification_type
-        : '';
-      dto.markable = qbMessage.notification_type
-        ? qbMessage.notification_type
-        : '';
+      dto.notification_type = qbMessage.notification_type || '';
+      dto.markable = qbMessage.notification_type || '';
     }
 
     return dto;
@@ -244,7 +230,7 @@ export class MessageDTOMapper implements IDTOMapper {
   //
   //
   public static translateOriginalDataToJSON(
-    qb_original_message: QBChatMessage[] | undefined,
+    qb_original_message?: QBChatMessage[],
   ) {
     if (qb_original_message && qb_original_message.length > 0) {
       return JSON.stringify(qb_original_message);
@@ -254,7 +240,7 @@ export class MessageDTOMapper implements IDTOMapper {
   }
 
   public static translateJSONToOriginalData(
-    json_data: string | undefined,
+    json_data?: string,
   ): QBChatMessage[] | undefined {
     if (json_data) {
       try {

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import React from 'react';
+import React, { useEffect } from 'react';
 import './PreviewDialog.scss';
 import ColumnContainer from '../../components/containers/ColumnContainer/ColumnContainer';
 import RowCenterContainer from '../../components/containers/RowCenterContainer/RowCenterContainer';
@@ -18,6 +18,7 @@ import PreviewImageFile from './PreviewImageFile/PreviewImageFile';
 import PreviewAudioFile from './PreviewAudioFile/PreviewAudioFile';
 import PreviewVideoFile from './PreviewVideoFile/PreviewVideoFile';
 import PreviewDefaultFile from './PreviewDefaultFile/PreviewDefaultFile';
+import { Creator } from '../../../Data/Creator';
 
 export type ThemeNames = 'light' | 'dark' | 'custom';
 type PreviewDialogsColorTheme = {
@@ -304,13 +305,46 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
     return [];
   };
 
+  const [fileUrl, setFileUrl] = React.useState('');
+
+  async function getFileForPreview() {
+    const messageParts = getMessageParts(previewMessage || '');
+
+    if (
+      messageParts &&
+      messageParts.length > 0 &&
+      messageParts[3].includes('image')
+    ) {
+      const fileUid: string = messageParts[2];
+      let tmpFileUrl: string = fileUid && QB.content.privateUrl(fileUid);
+      const { blobFile } = await Creator.createBlobFromUrl(tmpFileUrl);
+
+      tmpFileUrl = blobFile ? URL.createObjectURL(blobFile) : tmpFileUrl || '';
+      setFileUrl(tmpFileUrl);
+    }
+  }
+
+  useEffect(() => {
+    getFileForPreview();
+
+    return () => {
+      if (fileUrl) {
+        URL.revokeObjectURL(fileUrl);
+      }
+    };
+  }, []);
+
   const getPreviewMessage = (message: string): JSX.Element => {
     const messageParts = getMessageParts(message);
 
     if (messageParts && messageParts.length > 0) {
       const fileName: string = messageParts[1];
-      const fileUid: string = messageParts[2];
-      const fileUrl: string = fileUid && QB.content.privateUrl(fileUid);
+      // const fileUid: string = messageParts[2];
+      // const fileUrl: string = fileUid && QB.content.privateUrl(fileUid);
+      // let fileUrl: string = fileUid && QB.content.privateUrl(fileUid);
+      // const { blobFile } = await Creator.createBlobFromUrl(fileUrl);
+      //
+      // fileUrl = blobFile ? URL.createObjectURL(blobFile) : fileUrl || '';
 
       const result: JSX.Element = (
         <div className="dialog-item-preview-text">{message}</div>

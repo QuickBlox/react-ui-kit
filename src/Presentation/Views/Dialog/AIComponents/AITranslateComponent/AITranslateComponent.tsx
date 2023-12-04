@@ -7,41 +7,51 @@ import {
   FunctionTypeVoidToVoid,
 } from '../../../../../CommonTypes/BaseViewModel';
 
-function AITranslateComponent(props: {
+interface AITranslateComponentProps {
   onTranslate: FunctionTypeStringToVoid;
   onClickOriginalText: FunctionTypeVoidToVoid;
   originalTextMessage: boolean;
   waitAITranslateWidget: boolean;
   languagesForAITranslate: string[];
-}) {
+}
+
+export default function AITranslateComponent(props: AITranslateComponentProps) {
+  const {
+    onTranslate,
+    onClickOriginalText,
+    originalTextMessage,
+    waitAITranslateWidget,
+    languagesForAITranslate,
+  } = props;
+
   return (
     <div className="translate-wrapper">
       <div className="translate-caption">
         <div
           className="ai-translate-action"
           style={{
-            cursor: !props.waitAITranslateWidget ? 'pointer' : '',
+            cursor: waitAITranslateWidget ? '' : 'pointer',
           }}
           onClick={() => {
-            if (!props.waitAITranslateWidget) {
-              if (props.originalTextMessage) {
-                props.onTranslate('');
-              } else {
-                props.onClickOriginalText();
-              }
+            if (waitAITranslateWidget) return;
+
+            if (originalTextMessage) {
+              onTranslate('');
+            } else {
+              onClickOriginalText();
             }
           }}
         >
-          {props.originalTextMessage ? 'Show translation' : 'Show original'}
+          {originalTextMessage ? 'Show translation' : 'Show original'}
         </div>
       </div>
       <AIWidgetActions
-        disabled={!props.waitAITranslateWidget}
+        disabled={!waitAITranslateWidget}
         widgetToRender={
           <div
             className="icon-translate"
             style={{
-              cursor: !props.waitAITranslateWidget ? 'pointer' : '',
+              cursor: waitAITranslateWidget ? '' : 'pointer',
             }}
           >
             <TranslateIcon
@@ -52,7 +62,7 @@ function AITranslateComponent(props: {
             />
           </div>
         }
-        items={props.languagesForAITranslate.map((item) => {
+        items={languagesForAITranslate.map((item) => {
           return {
             title: item,
             action: () => {
@@ -66,5 +76,3 @@ function AITranslateComponent(props: {
     </div>
   );
 }
-
-export default AITranslateComponent;

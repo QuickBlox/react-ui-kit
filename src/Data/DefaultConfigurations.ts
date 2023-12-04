@@ -133,17 +133,17 @@ export class DefaultConfigurations {
   static getDefaultQBConfig(): QBConfig {
     return {
       credentials: {
-        appId: -1,
-        accountKey: '',
-        authKey: '',
-        authSecret: '',
+        appId: 75949,
+        accountKey: 'uK_8uinNyz8-npTNB6tx',
+        authKey: 'DdS7zxMEm5Q7DaS',
+        authSecret: 'g88RhdOjnDOqFkv',
         sessionToken: '',
       },
       configAIApi: {
         AIAnswerAssistWidgetConfig: {
           organizationName: 'Quickblox',
           openAIModel: 'gpt-3.5-turbo',
-          apiKey: '',
+          apiKey: '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_',
           maxTokens: 3584,
           useDefault: true,
           proxyConfig: {
@@ -155,7 +155,7 @@ export class DefaultConfigurations {
         AITranslateWidgetConfig: {
           organizationName: 'Quickblox',
           openAIModel: 'gpt-3.5-turbo',
-          apiKey: '',
+          apiKey: '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_',
           maxTokens: 3584,
           useDefault: true,
           defaultLanguage: 'English',
@@ -174,7 +174,7 @@ export class DefaultConfigurations {
         AIRephraseWidgetConfig: {
           organizationName: 'Quickblox',
           openAIModel: 'gpt-3.5-turbo',
-          apiKey: '',
+          apiKey: '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_',
           maxTokens: 3584,
           useDefault: true,
           defaultTone: 'Professional',

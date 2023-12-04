@@ -45,10 +45,10 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
           >
             {/* <ActiveSvg */}
             {/*  content={<Phone width="32" height="32" applyZoom />} */}
-            {/*  clickAction={() => { */}
+            {/*  onClick={() => { */}
             {/*    if (CallHandler) CallHandler(); */}
             {/*  }} */}
-            {/*  touchAction={() => { */}
+            {/*  onTouch={() => { */}
             {/*    if (CallHandler) CallHandler(); */}
             {/*  }} */}
             {/* /> */}
@@ -64,11 +64,11 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
           {/*        color="var(--secondary-background)" */}
           {/*      /> */}
           {/*    } */}
-          {/*    clickAction={() => { */}
+          {/*    onClick={() => { */}
           {/*      setShowDialogInformation(!showDialogInformation); */}
           {/*      if (onClickInfo) onClickInfo(); */}
           {/*    }} */}
-          {/*    touchAction={() => { */}
+          {/*    onTouch={() => { */}
           {/*      setShowDialogInformation(!showDialogInformation); */}
           {/*      if (onClickInfo) onClickInfo(); */}
           {/*    }} */}

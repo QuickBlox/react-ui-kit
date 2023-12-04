@@ -84,23 +84,23 @@ const DialogListHeader: React.FC<DialogListHeaderProps> = ({
       <div style={buttonsStyle} className="header-dialogs-container__buttons">
         <ActiveSvg
           content={<Search width="24" height="24" applyZoom />}
-          touchAction={() => {
+          onTouch={() => {
             console.log('touchSearchDialogsHandler');
             if (touchSearchHandler) touchSearchHandler();
           }}
-          clickAction={() => {
+          onClick={() => {
             console.log('clickSearchDialogsHandler');
             if (clickSearchHandler) clickSearchHandler();
           }}
         />
         <ActiveSvg
           content={<NewChat width="24" height="24" applyZoom />}
-          touchAction={() => {
-            console.log('touchAction: Hello from component 1');
+          onTouch={() => {
+            console.log('onTouch: Hello from component 1');
             if (TouchActionHandler) TouchActionHandler();
           }}
-          clickAction={() => {
-            console.log('clickAction: Hello from component 2');
+          onClick={() => {
+            console.log('onClick: Hello from component 2');
             if (ClickActionHandler) ClickActionHandler();
           }}
         />

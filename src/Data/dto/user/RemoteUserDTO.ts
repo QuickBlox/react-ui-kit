@@ -19,7 +19,7 @@ export class RemoteUserDTO {
 
   public user_tags: string | null;
 
-  public blob_id: string | null;
+  public blob_id: number | string | null;
 
   constructor() {
     this.id = '';

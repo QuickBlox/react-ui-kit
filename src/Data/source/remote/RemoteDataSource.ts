@@ -1170,7 +1170,7 @@ export class RemoteDataSource implements IRemoteDataSource {
         dialog_id: dto.dialogId,
         notification_type: dto.notification_type,
         sender_id: dto.sender_id || dto.recipient_id,
-        qb_message_action: dto.qb_message_action, // 'forward' 'reply' 'related'
+        qb_message_action: dto.qb_message_action, // 'forward' 'reply'
         origin_sender_name: dto.origin_sender_name,
         qb_original_messages: MessageDTOMapper.translateOriginalDataToJSON(
           MessageDTOMapper.convertToQBChatNewMessage(

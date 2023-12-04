@@ -14,7 +14,7 @@ export const MESSAGE_ENTITY_REPOSITORY_EXCEPTION_MESSAGE =
 export const MESSAGE_ENTITY_REPOSITORY_EXCEPTION_CODE = 103;
 
 export const FILE_ENTITY_REPOSITORY_EXCEPTION_MESSAGE =
-  'Error. Id raise File Entity exception.';
+  'Error. id raise File Entity exception.';
 export const FILE_ENTITY_REPOSITORY_EXCEPTION_CODE = 104;
 
 export default class RepositoryException extends Error {

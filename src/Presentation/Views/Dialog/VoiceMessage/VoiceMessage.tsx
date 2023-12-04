@@ -13,7 +13,7 @@ const VoiceMessage: React.FC<VoiceMessageProps> = ({
 }: VoiceMessageProps) => {
   return (
     <div>
-      <ActiveSvg content={icon} clickAction={onClick} touchAction={onClick} />
+      <ActiveSvg content={icon} onClick={onClick} onTouch={onClick} />
     </div>
   );
 };

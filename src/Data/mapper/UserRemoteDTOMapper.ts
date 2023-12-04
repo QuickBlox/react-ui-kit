@@ -8,6 +8,7 @@ import {
   UNEXPECTED_MAPPER_DTO_EXCEPTION_EXCEPTION_CODE,
   UNEXPECTED_MAPPER_DTO_EXCEPTION_MESSAGE,
 } from '../source/exception/MapperDTOException';
+import { Creator } from '../Creator';
 
 type DtoValidator<T> = {
   [key in keyof T]: (v: unknown) => v is T[key];
@@ -52,7 +53,7 @@ export class UserRemoteDTOMapper implements IMapper {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  toEntity<TArg, TResult>(data: TArg): Promise<TResult> {
+  async toEntity<TArg, TResult>(data: TArg): Promise<TResult> {
     const userDTO = data as unknown as RemoteUserDTO;
 
     if (userDTO === null || userDTO === undefined) {
@@ -85,9 +86,15 @@ export class UserRemoteDTOMapper implements IMapper {
     userEntity.custom_data = userDTO.custom_data;
 
     userEntity.user_tags = userDTO.user_tags;
+    //
+    if (userDTO.blob_id) {
+      userEntity.photo = await Creator.createPhotoByBlob(userDTO.blob_id);
+    }
 
     return Promise.resolve(userEntity as TResult);
   }
+
+  // eslint-disable-next-line class-methods-use-this
 
   private static validateEntity(userEntity: UserEntity) {
     const userEntityValidator: DtoValidator<UserEntity> = {
@@ -96,6 +103,11 @@ export class UserRemoteDTOMapper implements IMapper {
         const result = (blob_id as unknown as string) || '';
 
         return result.length >= 0;
+      },
+      photo(v: unknown): v is UserEntity['photo'] {
+        const { photo } = v as UserEntity;
+
+        return photo !== undefined && photo !== null && photo.length > 0;
       },
       created_at(v: unknown): v is UserEntity['created_at'] {
         const { created_at } = v as UserEntity;
@@ -245,7 +257,7 @@ export class UserRemoteDTOMapper implements IMapper {
         const { blob_id } = v as RemoteUserDTO;
         const result = (blob_id as unknown as string) || '';
 
-        return result.length >= 0;
+        return (result && result.length && result.length >= 0) || true;
       },
       created_at(v: unknown): v is RemoteUserDTO['created_at'] {
         const { created_at } = v as RemoteUserDTO;
@@ -388,6 +400,7 @@ export class UserRemoteDTOMapper implements IMapper {
       updated_at: '',
       user_tags: '',
       blob_id: '',
+      photo: '',
     };
   }
 }

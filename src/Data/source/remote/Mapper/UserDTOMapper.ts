@@ -22,7 +22,7 @@ export class UserDTOMapper implements IDTOMapper {
       age_over16: true,
       allow_sales_activities: false,
       allow_statistics_analysis: false,
-      blob_id: null,
+      blob_id: userDTO.blob_id,
       created_at: userDTO.created_at,
       custom_data: userDTO.custom_data,
       email: userDTO.email,
@@ -61,6 +61,7 @@ export class UserDTOMapper implements IDTOMapper {
     dto.id = qbUser.id.toString();
     dto.updated_at = qbUser.updated_at;
     dto.user_tags = qbUser.user_tags;
+    dto.blob_id = qbUser.blob_id;
 
     return Promise.resolve(dto as TResult);
   }
@@ -69,9 +70,9 @@ export class UserDTOMapper implements IDTOMapper {
     const userDTOValidator: DtoValidator<RemoteUserDTO> = {
       blob_id(v: unknown): v is RemoteUserDTO['blob_id'] {
         const { blob_id } = v as RemoteUserDTO;
-        const result = (blob_id as unknown as string) || '';
+        const result: string = (blob_id as unknown as string) || '';
 
-        return result.length >= 0;
+        return (result && result.length && result.length >= 0) || true;
       },
       created_at(v: unknown): v is RemoteUserDTO['created_at'] {
         const { created_at } = v as RemoteUserDTO;
@@ -208,9 +209,9 @@ export class UserDTOMapper implements IDTOMapper {
     const qbUserValidator: DtoValidator<QBUser> = {
       blob_id(v: unknown): v is QBUser['blob_id'] {
         const { blob_id } = v as QBUser;
-        const result = (blob_id as unknown as string) || '';
+        const result: string = (blob_id as unknown as string) || '';
 
-        return result.length >= 0;
+        return (result && result.length && result.length >= 0) || true;
       },
       created_at(v: unknown): v is QBUser['created_at'] {
         const { created_at } = v as QBUser;

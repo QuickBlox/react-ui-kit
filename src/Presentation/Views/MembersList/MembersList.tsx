@@ -51,7 +51,7 @@ const MembersList: React.FC<MembersListProps> = ({
           <div className="members-container--members-information-wrapper__members-close">
             <ActiveSvg
               content={<Close applyZoom color="var(--secondary-elements)" />}
-              clickAction={() => {
+              onClick={() => {
                 if (closeInformationHandler) {
                   closeInformationHandler();
                 }

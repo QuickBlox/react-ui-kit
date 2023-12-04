@@ -22,6 +22,52 @@ import { LocalDataSource } from './source/local/LocalDataSource';
 import { FileEntity } from '../Domain/entity/FileEntity';
 
 export class Stubs {
+  static createMessageEntityWithParams(
+    id: string,
+    dialogId: string,
+    message: string,
+    created_at: string,
+    date_sent: number,
+    updated_at: string,
+    delivered_ids: Array<number>,
+    read_ids: Array<number>,
+    read: number,
+    sender_id: number,
+    recipient_id: number,
+    attachments?: ChatMessageAttachmentEntity[],
+    notification_type?: string,
+    dialog_type?: DialogType,
+  ): MessageEntity {
+    return {
+      created_at,
+      date_sent,
+      delivered_ids,
+      dialogId,
+      id,
+      message,
+      read,
+      read_ids,
+      recipient_id,
+      sender_id,
+      updated_at,
+      attachments,
+      notification_type,
+      dialogType: dialog_type,
+    };
+  }
+
+  public static createFileEntityWithDefaultValues(): FileEntity {
+    return {
+      id: '0',
+      uid: '',
+      url: '',
+      name: '',
+      size: 0,
+      type: FileType.image,
+      data: '',
+    };
+  }
+
   public static async initializeWithUsersMockData(
     ds: LocalDataSource,
   ): Promise<void> {
@@ -716,6 +762,7 @@ export class Stubs {
     custom_data: string | null = null,
     user_tags: string | null = null,
     blob_id = '',
+    photo = '',
   ): UserEntity {
     const userEntity: UserEntity = {
       id,
@@ -730,6 +777,7 @@ export class Stubs {
       // external_user_id: null;
       // facebook_id: string | null;
       blob_id,
+      photo,
       custom_data,
       // age_over16: boolean;
       // allow_statistics_analysis: boolean;
@@ -741,40 +789,6 @@ export class Stubs {
     };
 
     return userEntity;
-  }
-
-  static createMessageEntityWithParams(
-    id: string,
-    dialogId: string,
-    message: string,
-    created_at: string,
-    date_sent: number,
-    updated_at: string,
-    delivered_ids: Array<number>,
-    read_ids: Array<number>,
-    read: number,
-    sender_id: number,
-    recipient_id: number,
-    attachments?: ChatMessageAttachmentEntity[],
-    notification_type?: string,
-    dialog_type?: DialogType,
-  ): MessageEntity {
-    return {
-      created_at,
-      date_sent,
-      delivered_ids,
-      dialogId,
-      id,
-      message,
-      read,
-      read_ids,
-      recipient_id,
-      sender_id,
-      updated_at,
-      attachments,
-      notification_type,
-      dialogType: dialog_type,
-    };
   }
 
   static createDialogsForTest(): Array<DialogEntity> {
@@ -1115,17 +1129,5 @@ export class Stubs {
     messages.push(message113_3);
 
     return messages;
-  }
-
-  public static createFileEntityWithDefaultValues(): FileEntity {
-    return {
-      id: '0',
-      uid: '',
-      url: '',
-      name: '',
-      size: 0,
-      type: FileType.image,
-      data: '',
-    };
   }
 }

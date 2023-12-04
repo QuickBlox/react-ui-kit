@@ -21,10 +21,10 @@ const RenderDialogHeaderNavigator: React.FC<
       <div className="detail-button__call" style={{ width: '32px' }}>
         {/* <ActiveSvg */}
         {/*  content={<Phone width="32" height="32" applyZoom />} */}
-        {/*  clickAction={() => { */}
+        {/*  onClick={() => { */}
         {/*    if (CallHandler) CallHandler(); */}
         {/*  }} */}
-        {/*  touchAction={() => { */}
+        {/*  onTouch={() => { */}
         {/*    if (CallHandler) CallHandler(); */}
         {/*  }} */}
         {/* /> */}
@@ -39,10 +39,10 @@ const RenderDialogHeaderNavigator: React.FC<
               color="var(--secondary-background)"
             />
           }
-          clickAction={() => {
+          onClick={() => {
             if (onClickInfo) onClickInfo();
           }}
-          touchAction={() => {
+          onTouch={() => {
             if (onClickInfo) onClickInfo();
           }}
         />

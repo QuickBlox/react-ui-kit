@@ -5,20 +5,21 @@ import {
   FunctionTypeStringToVoid,
 } from '../../../../CommonTypes/BaseViewModel';
 import { MessageEntity } from '../../../../Domain/entity/MessageEntity';
-import { SystemDateBanner } from '../SystemDateBanner/SystemDateBanner';
-import { getDateShortFormatEU } from '../../../../utils/DateTimeFormatter';
+import { getTimeShort24hFormat } from '../../../../utils/DateTimeFormatter';
 import { SystemMessageBanner } from '../SystemMessageBanner/SystemMessageBanner';
-import {
-  GetUserNameFct,
-  IncomingMessage,
-} from '../IncomingMessage/IncomingMessage';
-import { OutgoingMessage } from '../OutgoingMessage/OutgoingMessage';
 import UiKitTheme from '../../../themes/UiKitTheme';
 import { UserEntity } from '../../../../Domain/entity/UserEntity';
 import { AIMessageWidget } from '../AIWidgets/AIMessageWidget';
-import IncomingForwardedRepliedMessage from '../IncomingForwardedRepliedMessage/IncomingForwardedRepliedMessage';
-import OutgoingForwardedRepliedMessage from '../OutgoingForwardedRepliedMessage/OutgoingForwardedRepliedMessage';
-import MessageContentComponent from '../IncomingMessage/MessageContentComponent/MessageContentComponent';
+import {
+  GetUserNameFct,
+  IncomingMessage,
+} from './IncomingMessage/IncomingMessage';
+import IncomingForwardedMessage from './IncomingForwardedMessage/IncomingForwardedMessage';
+import OutgoingRepliedMessage from './OutgoingRepliedMessage/OutgoingRepliedMessage';
+import { OutgoingMessage } from './OutgoingMessage/OutgoingMessage';
+import MessageContentComponent from './IncomingMessage/MessageContentComponent/MessageContentComponent';
+import OutgoingForwardedMessage from './OutgoinForwardedMessage/OutgoinForwardedMessage';
+import IncomingRepliedMessage from './IncomingRepliedMessage/IncomingRepliedMessage';
 
 type MessageProps = {
   message: MessageEntity;
@@ -96,14 +97,12 @@ const Message: React.FC<MessageProps> = ({
         className="message-view-container--system-message-wrapper"
         key={message.id}
       >
-        <div
-          style={theme ? { backgroundColor: theme.disabledElements() } : {}}
-          className="message-view-container--system-message-wrapper__date_container"
-        >
-          <SystemDateBanner text={getDateShortFormatEU(message.date_sent)} />
-          {/* <div>{getDateShortFormatEU(message.date_sent)},</div> */}
-        </div>
-        {/* <div>{getTimeShort24hFormat(message.date_sent)}</div> */}
+        {/* <div */}
+        {/*  style={theme ? { backgroundColor: theme.disabledElements() } : {}} */}
+        {/*  className="message-view-container--system-message-wrapper__date_container" */}
+        {/* > */}
+        {/*  <SystemDateBanner text={getDateShortFormatEU(message.date_sent)} /> */}
+        {/* </div> */}
         <SystemMessageBanner messageText={message.message} />
       </div>
     );
@@ -116,66 +115,122 @@ const Message: React.FC<MessageProps> = ({
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         message.qb_message_action?.includes('forward') ? 'forward' : 'reply';
 
-      messageView = (
-        <IncomingForwardedRepliedMessage
-          enableReplying={enableReplying}
-          enableForwarding={enableForwarding}
-          theme={theme}
-          messages={message.qb_original_messages}
-          repliedUserName={message.origin_sender_name || 'undefined user'}
-          onReply={onReply}
-          onForward={onForward}
-          typeMessage={typeMessage}
-          onStartLoader={() => {
-            setWaitAIWidget(true);
-          }}
-          onStopLoader={() => {
-            setWaitAIWidget(false);
-          }}
-          onErrorToast={(messageError: string) => {
-            setShowErrorToast(true);
-            setMessageErrorToast(messageError);
-          }}
-          currentUserId={userId}
-          messagesToView={messagesToView}
-          AITranslation={AITranslateWidget}
-          AIAnswerToMessage={AIAssistWidget}
-          renderOringinalMessage={
-            <IncomingMessage
-              key={message.id}
-              theme={theme}
-              senderNameFct={defaultGetSenderName}
-              message={message}
-              onReply={onReply}
-              onForward={onForward}
-              // element={messageContentRender(message)}
-              onStartLoader={() => {
-                setWaitAIWidget(true);
-              }}
-              onStopLoader={() => {
-                setWaitAIWidget(false);
-              }}
-              onErrorToast={(messageError: string) => {
-                setShowErrorToast(true);
-                setMessageErrorToast(messageError);
-              }}
-              currentUserId={userId}
-              messagesToView={messagesToView}
-              AITranslation={AITranslateWidget}
-              AIAnswerToMessage={AIAssistWidget}
-              enableReplying={enableReplying}
-              enableForwarding={enableForwarding}
-            />
-          }
-        />
-      );
+      if (typeMessage === 'reply') {
+        messageView = (
+          <IncomingRepliedMessage
+            enableReplying={enableReplying}
+            enableForwarding={enableForwarding}
+            theme={theme}
+            messages={message.qb_original_messages}
+            date_sent={getTimeShort24hFormat(message.date_sent)}
+            repliedUserName={message.origin_sender_name || ''}
+            onReply={onReply}
+            onForward={onForward}
+            onStartLoader={() => {
+              setWaitAIWidget(true);
+            }}
+            onStopLoader={() => {
+              setWaitAIWidget(false);
+            }}
+            onErrorToast={(messageError: string) => {
+              setShowErrorToast(true);
+              setMessageErrorToast(messageError);
+            }}
+            currentUserId={userId}
+            messagesToView={messagesToView}
+            AITranslation={AITranslateWidget}
+            AIAnswerToMessage={AIAssistWidget}
+            renderOringinalMessage={
+              <IncomingMessage
+                theme={theme}
+                senderNameFct={defaultGetSenderName}
+                message={message}
+                date_sent={getTimeShort24hFormat(message.date_sent)}
+                onReply={onReply}
+                onForward={onForward}
+                // element={messageContentRender(message)}
+                onStartLoader={() => {
+                  setWaitAIWidget(true);
+                }}
+                onStopLoader={() => {
+                  setWaitAIWidget(false);
+                }}
+                onErrorToast={(messageError: string) => {
+                  setShowErrorToast(true);
+                  setMessageErrorToast(messageError);
+                }}
+                currentUserId={userId}
+                messagesToView={messagesToView}
+                AITranslation={AITranslateWidget}
+                AIAnswerToMessage={AIAssistWidget}
+                enableReplying={enableReplying}
+                enableForwarding={enableForwarding}
+              />
+            }
+          />
+        );
+      } else {
+        messageView = (
+          <IncomingForwardedMessage
+            enableReplying={enableReplying}
+            enableForwarding={enableForwarding}
+            theme={theme}
+            messages={message.qb_original_messages}
+            repliedUserName={message.origin_sender_name || ''}
+            onReply={onReply}
+            onForward={onForward}
+            date_sent={getTimeShort24hFormat(message.date_sent)}
+            onStartLoader={() => {
+              setWaitAIWidget(true);
+            }}
+            onStopLoader={() => {
+              setWaitAIWidget(false);
+            }}
+            onErrorToast={(messageError: string) => {
+              setShowErrorToast(true);
+              setMessageErrorToast(messageError);
+            }}
+            currentUserId={userId}
+            messagesToView={messagesToView}
+            AITranslation={AITranslateWidget}
+            AIAnswerToMessage={AIAssistWidget}
+            renderOringinalMessage={
+              <IncomingMessage
+                theme={theme}
+                senderNameFct={defaultGetSenderName}
+                message={message}
+                date_sent={getTimeShort24hFormat(message.date_sent)}
+                onReply={onReply}
+                onForward={onForward}
+                // element={messageContentRender(message)}
+                onStartLoader={() => {
+                  setWaitAIWidget(true);
+                }}
+                onStopLoader={() => {
+                  setWaitAIWidget(false);
+                }}
+                onErrorToast={(messageError: string) => {
+                  setShowErrorToast(true);
+                  setMessageErrorToast(messageError);
+                }}
+                currentUserId={userId}
+                messagesToView={messagesToView}
+                AITranslation={AITranslateWidget}
+                AIAnswerToMessage={AIAssistWidget}
+                enableReplying={enableReplying}
+                enableForwarding={enableForwarding}
+              />
+            }
+          />
+        );
+      }
     } else {
       messageView = (
         <IncomingMessage
-          key={message.id}
           theme={theme}
           senderNameFct={defaultGetSenderName}
           message={message}
+          date_sent={getTimeShort24hFormat(message.date_sent)}
           onReply={onReply}
           onForward={onForward}
           // element={messageContentRender(message)}
@@ -206,44 +261,80 @@ const Message: React.FC<MessageProps> = ({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       message.qb_message_action?.includes('forward') ? 'forward' : 'reply';
 
-    messageView = (
-      <OutgoingForwardedRepliedMessage
-        enableReplying={enableReplying}
-        enableForwarding={enableForwarding}
-        messages={message.qb_original_messages}
-        repliedUserName={message.origin_sender_name || 'undefined user'}
-        typeMessage={typeMessage}
-        onReply={onReply}
-        onForward={onForward}
-        theme={theme}
-        renderOringinalMessage={
-          <OutgoingMessage
-            enableReplying={enableReplying}
-            enableForwarding={enableForwarding}
-            key={message.id}
-            message={message}
-            onReply={onReply}
-            onForward={onForward}
-            theme={theme}
-            element={
-              <MessageContentComponent
-                theme={theme}
-                mc={message}
-                originalTextMessage
-                widgetTextContent=""
-              />
-            }
-          />
-        }
-      />
-    );
+    if (typeMessage === 'reply') {
+      messageView = (
+        <OutgoingRepliedMessage
+          enableReplying={enableReplying}
+          enableForwarding={enableForwarding}
+          messages={message.qb_original_messages}
+          repliedUserName={message.origin_sender_name || '!!!UserName!!!'}
+          onReply={onReply}
+          onForward={onForward}
+          theme={theme}
+          renderOringinalMessage={
+            <OutgoingMessage
+              enableReplying={enableReplying}
+              enableForwarding={enableForwarding}
+              key={message.id}
+              message={message}
+              date_sent={getTimeShort24hFormat(message.date_sent)}
+              onReply={onReply}
+              onForward={onForward}
+              theme={theme}
+              element={
+                <MessageContentComponent
+                  theme={theme}
+                  messageEntity={message}
+                  originalTextMessage
+                  widgetTextContent=""
+                />
+              }
+            />
+          }
+        />
+      );
+    } else {
+      messageView = (
+        <OutgoingForwardedMessage
+          enableReplying={enableReplying}
+          enableForwarding={enableForwarding}
+          messages={message.qb_original_messages}
+          repliedUserName={message.origin_sender_name || '!!!UserName!!!'}
+          date_sent={getTimeShort24hFormat(message.date_sent)}
+          status_message={message.delivered_ids && message.delivered_ids.length}
+          onReply={onReply}
+          onForward={onForward}
+          theme={theme}
+          renderOringinalMessage={
+            <OutgoingMessage
+              enableReplying={enableReplying}
+              enableForwarding={enableForwarding}
+              key={message.id}
+              message={message}
+              date_sent={getTimeShort24hFormat(message.date_sent)}
+              onReply={onReply}
+              onForward={onForward}
+              theme={theme}
+              element={
+                <MessageContentComponent
+                  theme={theme}
+                  messageEntity={message}
+                  originalTextMessage
+                  widgetTextContent=""
+                />
+              }
+            />
+          }
+        />
+      );
+    }
   } else {
     messageView = (
       <OutgoingMessage
         enableReplying={enableReplying}
         enableForwarding={enableForwarding}
-        key={message.id}
         message={message}
+        date_sent={getTimeShort24hFormat(message.date_sent)}
         onReply={onReply}
         onForward={onForward}
         theme={theme}
@@ -251,7 +342,7 @@ const Message: React.FC<MessageProps> = ({
         element={
           <MessageContentComponent
             theme={theme}
-            mc={message}
+            messageEntity={message}
             originalTextMessage
             widgetTextContent=""
           />

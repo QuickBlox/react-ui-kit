@@ -68,13 +68,13 @@ const MessageInput: React.FC<MessageInputProps> = ({
       {/*  <div> */}
       {/*    <ActiveSvg */}
       {/*      content={InputWidgetToRightPlaceHolder.renderWidget()} */}
-      {/*      clickAction={() => { */}
+      {/*      onClick={() => { */}
       {/*        console.log('click left place golder widget'); */}
       {/*        if (messagesViewModel?.loading) return; */}
       {/*        setIsRecording(!isRecording); */}
       {/*        setUseAudioWidget(true); */}
       {/*      }} */}
-      {/*      touchAction={() => { */}
+      {/*      onTouch={() => { */}
       {/*        console.log('touch left place golder widget'); */}
       {/*      }} */}
       {/*    /> */}
@@ -120,11 +120,11 @@ const MessageInput: React.FC<MessageInputProps> = ({
         <div>
           <ActiveSvg
             content={renderSendIcon}
-            clickAction={() => {
+            onClick={() => {
               console.log('click send message');
               sendTextMessageActions();
             }}
-            touchAction={() => {
+            onTouch={() => {
               console.log('touch send message');
             }}
           />
