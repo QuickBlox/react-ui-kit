@@ -1,0 +1,249 @@
+.incoming-forward-message,
+.incoming-forward-message * {
+  box-sizing: border-box;
+}
+.incoming-forward-message {
+  background: var(--color-background, #ffffff);
+  padding: 0px 16px 8px 8px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: flex-end;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.incoming-forward-message-avatar-wrap {
+  padding: 0px 0px 16px 0px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: flex-end;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.incoming-forward-message-avatar {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  position: relative;
+}
+.incoming-forward-message-avatar-rectangle {
+  position: absolute;
+  right: 0%;
+  left: 0%;
+  width: 100%;
+  bottom: 0%;
+  top: 0%;
+  height: 100%;
+}
+.incoming-forward-message-avatar-ellipse {
+  border-radius: 50%;
+  position: absolute;
+  right: 0%;
+  left: 0%;
+  width: 100%;
+  bottom: 0%;
+  top: 0%;
+  height: 100%;
+}
+.ncoming-forward-message-incoming {
+  display: flex;
+  width: 480px;
+  max-width: 480px;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  position: relative;
+}
+.incoming-forward-message-incoming-name {
+  // padding: 0px 16px 0px 16px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.incoming-forward-message-incoming-name-caption {
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.incoming-forward-message-incoming-name-caption-forward {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.incoming-forward-message-incoming-name-caption-forward-icon {
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  position: relative;
+}
+.actions-forward-filled {
+  align-self: stretch;
+  flex: 1;
+  height: auto;
+  position: relative;
+  overflow: visible;
+}
+.incoming-forward-message-incoming-name-caption-forward-from-name {
+  color: var(--tertiary-elements, #636d78);
+  text-align: left;
+  font: var(--label-label-medium, 500 12px/16px "Roboto-Medium", sans-serif);
+  position: relative;
+}
+.incoming-forward-message-incoming-message {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: flex-end;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.incoming-forward-message-incoming-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  justify-content: flex-end;
+  // flex-shrink: 0;
+  position: relative;
+  max-width: 480px;
+}
+.incoming-forward-message-incoming-bubble-background {
+  background: var(--incoming-background, #e4e6e8);
+  border-radius: 22px 22px 22px 0px;
+  padding: 8px 12px 8px 12px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.incoming-forward-message-incoming-bubble-background-line {
+  color: var(--main-tex, #0b1b0f);
+  text-align: left;
+  font: var(--body-body-medium, 400 14px/20px "Roboto-Regular", sans-serif);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.incoming-forward-message-incoming-bubble-translate {
+  padding: 0px 12px 0px 0px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.incoming-forward-message-incoming-bubble-translate-translate {
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+  position: relative;
+}
+.incoming-forward-message-incoming-bubble-translate-translate-show {
+  color: var(--secondary-text, #636d78);
+  text-align: right;
+  font: var(--label-label-small, 500 11px/16px "Roboto-Medium", sans-serif);
+  position: relative;
+}
+.incoming-forward-message-incoming-bubble-translate-icon {
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  position: relative;
+}
+
+.media-translate {
+  align-self: stretch;
+  flex: 1;
+  height: auto;
+  position: relative;
+  overflow: visible;
+}
+.incoming-forward-ai-transcribe {
+  padding: 0px 0px 20px 0px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.incoming-forward-ai-transcribe-icon {
+  border-radius: 4px;
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  position: relative;
+}
+.actions-assist-answer {
+  padding: 5px 3px 5px 3px;
+  align-self: stretch;
+  flex: 1;
+  height: auto;
+  position: relative;
+  overflow: visible;
+}
+.incoming-forward-message-incoming-message-caption {
+  padding: 0px 0px 16px 0px;
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.incoming-forward-message-incoming-message-caption-time {
+  color: var(--secondary-text, #636d78);
+  text-align: right;
+  font: var(--label-label-small, 500 11px/16px "Roboto-Medium", sans-serif);
+  position: relative;
+}
+

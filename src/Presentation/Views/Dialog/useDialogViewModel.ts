@@ -628,52 +628,58 @@ export default function useDialogViewModel(
   ): Promise<boolean> => {
     setLoading(true);
     const currentUserId = REMOTE_DATA_SOURCE.authInformation?.userId || 0;
+    const messageEntityParams: MessageEntityParams = {
+      dialogId: dialog.id,
+      message: replyData.relatedTextMessage || '',
+      sender_id: currentUserId,
+      recipient_id:
+        // eslint-disable-next-line promise/always-return
+        dialog.type === DialogType.private
+          ? (dialog as PrivateDialogEntity).participantId
+          : currentUserId,
+      dialog_type: DialogType.group,
+    };
+    const relatedMessage: MessageEntity =
+      Creator.createMessageEntity(messageEntityParams);
 
-    try {
-      await uploadFile(replyData.relatedFileMessage!)
-        .then((fileMessage: FileEntity) => {
-          const messageEntityParams: MessageEntityParams = {
-            dialogId: dialog.id,
-            message: replyData.relatedTextMessage || '',
-            sender_id: currentUserId,
-            recipient_id:
-              // eslint-disable-next-line promise/always-return
-              dialog.type === DialogType.private
-                ? (dialog as PrivateDialogEntity).participantId
-                : currentUserId,
-            dialog_type: DialogType.group,
-          };
-          const relatedMessage: MessageEntity =
-            Creator.createMessageEntity(messageEntityParams);
+    relatedMessage.dialogType = dialog.type;
 
-          relatedMessage.dialogType = dialog.type;
-          const attachments: ChatMessageAttachmentEntity[] = [
-            {
-              id: fileMessage.id as string,
-              uid: fileMessage.uid,
-              type: fileMessage.type!,
-              file: fileMessage,
-              name: fileMessage.name,
-              size: fileMessage.size,
-              url: fileMessage.url,
-            },
-          ];
+    if (replyData.relatedFileMessage) {
+      try {
+        await uploadFile(replyData.relatedFileMessage)
+          .then((fileMessage: FileEntity) => {
+            const attachments: ChatMessageAttachmentEntity[] = [
+              {
+                id: fileMessage.id as string,
+                uid: fileMessage.uid,
+                type: fileMessage.type!,
+                file: fileMessage,
+                name: fileMessage.name,
+                size: fileMessage.size,
+                url: fileMessage.url,
+              },
+            ];
 
-          relatedMessage.attachments = attachments;
+            relatedMessage.attachments = attachments;
 
-          replyMessage(replyData.messagesToReply, relatedMessage);
-          //
-        })
-        .catch((reason) => {
-          setLoading(false);
-          const errorMessage = stringifyError(reason);
+            replyMessage(replyData.messagesToReply, relatedMessage);
 
-          console.log('EXCEPTION in sendAttachmentMessage', errorMessage);
+            return true;
+            //
+          })
+          .catch((reason) => {
+            setLoading(false);
+            const errorMessage = stringifyError(reason);
 
-          throw new Error(errorMessage);
-        });
-    } catch (e) {
-      return false;
+            console.log('EXCEPTION in sendAttachmentMessage', errorMessage);
+
+            throw new Error(errorMessage);
+          });
+      } catch (e) {
+        return false;
+      }
+    } else {
+      replyMessage(replyData.messagesToReply, relatedMessage);
     }
 
     return true;

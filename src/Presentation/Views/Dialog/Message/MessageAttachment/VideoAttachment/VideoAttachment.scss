@@ -1,0 +1,22 @@
+.message-attachment-video-body{
+  // border: 1px solid red;
+  //max-height: 300px;
+  //max-width: 100%;
+  max-width: 300px;
+  max-height: 130px;
+  min-width: 300px;
+  width: 300px;
+  padding: 0;
+  border-radius: 4px;
+}
+
+.message-attachment-video {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+  max-width: 300px;
+  max-height: 160px;
+  min-width: 300px;
+  width: 300px;
+}
