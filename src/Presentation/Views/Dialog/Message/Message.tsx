@@ -95,14 +95,8 @@ const Message: React.FC<MessageProps> = ({
     messageView = (
       <div
         className="message-view-container--system-message-wrapper"
-        key={message.id}
+        key={Date.now().toString()}
       >
-        {/* <div */}
-        {/*  style={theme ? { backgroundColor: theme.disabledElements() } : {}} */}
-        {/*  className="message-view-container--system-message-wrapper__date_container" */}
-        {/* > */}
-        {/*  <SystemDateBanner text={getDateShortFormatEU(message.date_sent)} /> */}
-        {/* </div> */}
         <SystemMessageBanner messageText={message.message} />
       </div>
     );
@@ -275,7 +269,6 @@ const Message: React.FC<MessageProps> = ({
             <OutgoingMessage
               enableReplying={enableReplying}
               enableForwarding={enableForwarding}
-              key={message.id}
               message={message}
               date_sent={getTimeShort24hFormat(message.date_sent)}
               onReply={onReply}
@@ -309,7 +302,6 @@ const Message: React.FC<MessageProps> = ({
             <OutgoingMessage
               enableReplying={enableReplying}
               enableForwarding={enableForwarding}
-              key={message.id}
               message={message}
               date_sent={getTimeShort24hFormat(message.date_sent)}
               onReply={onReply}

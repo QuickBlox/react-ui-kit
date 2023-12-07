@@ -13,7 +13,6 @@ import { GetAllMessagesForDialogMock } from '../../../Domain/use_cases/GetAllMes
 import MessagesRepository from '../../../Data/repository/MessagesRepository';
 import { Pagination } from '../../../Domain/repository/Pagination';
 import { FileEntity } from '../../../Domain/entity/FileEntity';
-import { Stubs } from '../../../Data/Stubs';
 import { UploadFileUseCase } from '../../../Domain/use_cases/UploadFileUseCase';
 import { FileRepository } from '../../../Data/repository/FileRepository';
 import { stringifyError } from '../../../utils/parse';
@@ -420,24 +419,35 @@ export default function useDialogViewModel(
 
           // eslint-disable-next-line promise/always-return
           const messageBody = fileMessage.name || '[attachment]';
+          // const messageToSend: MessageEntity =
+          //   Stubs.createMessageEntityWithParams(
+          //     '',
+          //     dialog.id,
+          //     messageBody,
+          //     Date.now().toString(),
+          //     Date.now(),
+          //     Date.now().toString(),
+          //     [],
+          //     [],
+          //     1,
+          //     currentUserId,
+          //     // eslint-disable-next-line promise/always-return
+          //     recipientId,
+          //     [],
+          //     '',
+          //     DialogType.group,
+          //   );
+          //
+          const messageEntityParams: MessageEntityParams = {
+            dialogId: dialog.id,
+            message: messageBody,
+            sender_id: currentUserId,
+            recipient_id: recipientId,
+            dialog_type: DialogType.group,
+          };
           const messageToSend: MessageEntity =
-            Stubs.createMessageEntityWithParams(
-              '',
-              dialog.id,
-              messageBody,
-              Date.now().toString(),
-              Date.now(),
-              Date.now().toString(),
-              [],
-              [],
-              1,
-              currentUserId,
-              // eslint-disable-next-line promise/always-return
-              recipientId,
-              [],
-              '',
-              DialogType.group,
-            );
+            Creator.createMessageEntity(messageEntityParams);
+          //
 
           messageToSend.dialogType = dialog.type;
           const attachments: ChatMessageAttachmentEntity[] = [
@@ -568,24 +578,37 @@ export default function useDialogViewModel(
   ): Promise<boolean> => {
     setLoading(true);
     const currentUserId = REMOTE_DATA_SOURCE.authInformation?.userId || 0;
-    const relatedMessage: MessageEntity = Stubs.createMessageEntityWithParams(
-      '',
-      dialog.id,
-      forwardingData.relatedTextMessage || '',
-      Date.now().toString(),
-      Date.now(),
-      Date.now().toString(),
-      [],
-      [],
-      1,
-      currentUserId,
-      dialog.type === DialogType.private
-        ? (dialog as PrivateDialogEntity).participantId
-        : currentUserId,
-      [],
-      '',
-      DialogType.group,
-    );
+    // const relatedMessage: MessageEntity = Stubs.createMessageEntityWithParams(
+    //   '',
+    //   dialog.id,
+    //   forwardingData.relatedTextMessage || '',
+    //   new Date().toISOString(),
+    //   Date.now(),
+    //   new Date().toISOString(),
+    //   [],
+    //   [],
+    //   1,
+    //   currentUserId,
+    //   dialog.type === DialogType.private
+    //     ? (dialog as PrivateDialogEntity).participantId
+    //     : currentUserId,
+    //   [],
+    //   '',
+    //   DialogType.group,
+    // );
+
+    const messageEntityParams: MessageEntityParams = {
+      dialogId: dialog.id,
+      message: forwardingData.relatedTextMessage || '',
+      sender_id: currentUserId,
+      recipient_id:
+        dialog.type === DialogType.private
+          ? (dialog as PrivateDialogEntity).participantId
+          : currentUserId,
+      dialog_type: DialogType.group,
+    };
+    const relatedMessage: MessageEntity =
+      Creator.createMessageEntity(messageEntityParams);
 
     relatedMessage.dialogType = dialog.type;
 
@@ -605,28 +628,53 @@ export default function useDialogViewModel(
   ): Promise<boolean> => {
     setLoading(true);
     const currentUserId = REMOTE_DATA_SOURCE.authInformation?.userId || 0;
-    const relatedMessage: MessageEntity = Stubs.createMessageEntityWithParams(
-      '',
-      dialog.id,
-      replyData.relatedTextMessage || '',
-      Date.now().toString(),
-      Date.now(),
-      Date.now().toString(),
-      [],
-      [],
-      1,
-      currentUserId,
-      dialog.type === DialogType.private
-        ? (dialog as PrivateDialogEntity).participantId
-        : currentUserId,
-      [],
-      '',
-      DialogType.group,
-    );
 
-    relatedMessage.dialogType = dialog.type;
+    try {
+      await uploadFile(replyData.relatedFileMessage!)
+        .then((fileMessage: FileEntity) => {
+          const messageEntityParams: MessageEntityParams = {
+            dialogId: dialog.id,
+            message: replyData.relatedTextMessage || '',
+            sender_id: currentUserId,
+            recipient_id:
+              // eslint-disable-next-line promise/always-return
+              dialog.type === DialogType.private
+                ? (dialog as PrivateDialogEntity).participantId
+                : currentUserId,
+            dialog_type: DialogType.group,
+          };
+          const relatedMessage: MessageEntity =
+            Creator.createMessageEntity(messageEntityParams);
 
-    replyMessage(replyData.messagesToReply, relatedMessage);
+          relatedMessage.dialogType = dialog.type;
+          const attachments: ChatMessageAttachmentEntity[] = [
+            {
+              id: fileMessage.id as string,
+              uid: fileMessage.uid,
+              type: fileMessage.type!,
+              file: fileMessage,
+              name: fileMessage.name,
+              size: fileMessage.size,
+              url: fileMessage.url,
+            },
+          ];
+
+          relatedMessage.attachments = attachments;
+
+          replyMessage(replyData.messagesToReply, relatedMessage);
+          //
+        })
+        .catch((reason) => {
+          setLoading(false);
+          const errorMessage = stringifyError(reason);
+
+          console.log('EXCEPTION in sendAttachmentMessage', errorMessage);
+
+          throw new Error(errorMessage);
+        });
+    } catch (e) {
+      return false;
+    }
 
     return true;
   };

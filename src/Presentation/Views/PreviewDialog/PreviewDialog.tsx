@@ -19,6 +19,7 @@ import PreviewAudioFile from './PreviewAudioFile/PreviewAudioFile';
 import PreviewVideoFile from './PreviewVideoFile/PreviewVideoFile';
 import PreviewDefaultFile from './PreviewDefaultFile/PreviewDefaultFile';
 import { Creator } from '../../../Data/Creator';
+import UserAvatar from '../EditDialog/UserAvatar/UserAvatar';
 
 export type ThemeNames = 'light' | 'dark' | 'custom';
 type PreviewDialogsColorTheme = {
@@ -75,6 +76,7 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
   //   .getComputedStyle(document.documentElement)
   //   .getPropertyValue('--color-icon')
   //   .trim();
+  const [dialogAvatarUrl, setDialogAvatarUrl] = React.useState('');
 
   const colorIcon = theme?.colorTheme
     ? theme?.colorTheme.mainElements()
@@ -211,7 +213,12 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
       );
       break;
     case DialogType.private:
-      avatar = (
+      avatar = dialogAvatarUrl ? (
+        <UserAvatar
+          urlAvatar={dialogAvatarUrl}
+          iconTheme={{ width: '40px', height: '40px' }}
+        />
+      ) : (
         <User
           color={itemTheme.color}
           width={itemTheme.width}
@@ -324,12 +331,43 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
     }
   }
 
+  const getUserAvatarUid = () => {
+    return '';
+  };
+
+  async function getDialogPhotoFileForPreview() {
+    const fileUid: string = getUserAvatarUid();
+
+    if (fileUid && fileUid.length > 0) {
+      let tmpFileUrl: string = fileUid && QB.content.privateUrl(fileUid);
+      const { blobFile } = await Creator.createBlobFromUrl(tmpFileUrl);
+
+      tmpFileUrl = blobFile ? URL.createObjectURL(blobFile) : tmpFileUrl || '';
+      setDialogAvatarUrl(tmpFileUrl);
+    }
+    /*
+                let tmpFileUrl = '';
+  
+            if (dialog.photo && dialog.photo !== 'null') {
+              const { blobFile } = await Creator.createBlobFromUrl(
+                dialog.photo && QB.content.privateUrl(dialog.photo),
+              );
+  
+              tmpFileUrl = blobFile ? URL.createObjectURL(blobFile) : '';
+            }
+             */
+  }
+
   useEffect(() => {
     getFileForPreview();
+    getDialogPhotoFileForPreview();
 
     return () => {
       if (fileUrl) {
         URL.revokeObjectURL(fileUrl);
+      }
+      if (dialogAvatarUrl) {
+        URL.revokeObjectURL(dialogAvatarUrl);
       }
     };
   }, []);
@@ -368,6 +406,9 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
 
     if (message.includes('[Forwarded_Message]')) {
       return <div>Forwarded message</div>;
+    }
+    if (message.includes('[Replied_Message]')) {
+      return <div>Replied Message</div>;
     }
 
     return <div>{message}</div>;

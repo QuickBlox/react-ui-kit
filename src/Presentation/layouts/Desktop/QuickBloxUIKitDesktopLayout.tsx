@@ -449,6 +449,15 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     [],
   );
 
+  useEffect(() => {
+    if (showErrorToast || messageErrorToast) {
+      setTimeout(() => {
+        setShowErrorToast(false);
+        setMessageErrorToast('');
+      }, 1800);
+    }
+  }, [showErrorToast]);
+
   const [useAudioWidget, setUseAudioWidget] = useState<boolean>(false);
 
   const [fileToSend, setFileToSend] = useState<File | null>(null);
@@ -489,15 +498,21 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       .then((opResult: boolean) => {
         // eslint-disable-next-line promise/always-return
         if (opResult) {
-          showErrorMessage('Messages have been replied');
+          setShowErrorToast(true);
+          setMessageErrorToast('Message have been replied');
+          // showErrorMessage('Messages have been replied');
         } else {
-          showErrorMessage('Messages have not been replied');
+          setShowErrorToast(true);
+          setMessageErrorToast('Message have not been replied');
+          // showErrorMessage('Messages have not been replied');
         }
       })
       .catch((reason) => {
         const errorMessage = stringifyError(reason);
 
-        showErrorMessage(errorMessage);
+        setShowErrorToast(true);
+        setMessageErrorToast(errorMessage);
+        // showErrorMessage(errorMessage);
       })
       .finally(() => {
         setMessageText('');
@@ -506,7 +521,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   };
 
   useEffect(() => {
-    console.log('have Attachments');
     const MAXSIZE = maxFileSize || 90 * 1000000;
     const MAXSIZE_FOR_MESSAGE = MAXSIZE / (1024 * 1024);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -528,14 +542,20 @@ const QuickBloxUIKitDesktopLayout: React.FC<
           .then((resultOperation) => {
             // eslint-disable-next-line promise/always-return
             if (!resultOperation) {
-              showErrorMessage(`Incorrect data`);
+              setShowErrorToast(true);
+              setMessageErrorToast(`Incorrect data`);
+              // showErrorMessage(`Incorrect data`);
             }
           });
       }
     } else if (fileToSend) {
-      showErrorMessage(
+      setShowErrorToast(true);
+      setMessageErrorToast(
         `file size ${fileToSend?.size} must be less then ${MAXSIZE_FOR_MESSAGE} mb.`,
       );
+      // showErrorMessage(
+      //   `file size ${fileToSend?.size} must be less then ${MAXSIZE_FOR_MESSAGE} mb.`,
+      // );
     }
   }, [fileToSend]);
 
@@ -794,10 +814,12 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   }, [messagesViewModel?.loading]);
   //
   function prepareFirstPage(initData: MessageEntity[]) {
-    const firstPageSize =
-      messagesViewModel.messages.length < 47
-        ? messagesViewModel.messages.length
-        : 47;
+    // const firstPageSize =
+    //   messagesViewModel.messages.length < 47
+    //     ? messagesViewModel.messages.length
+    //     : 47;
+
+    const firstPageSize = messagesViewModel.messages.length;
 
     // for (let i = 0; i < firstPageSize; i += 1) {
     for (let i = firstPageSize - 1; i >= 0; i -= 1) {
@@ -836,6 +858,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
           messagesViewModel.messages[prevState.length];
 
         newState.push(newMessageEntity);
+        // newState.unshift(newMessageEntity);
 
         return newState;
       });
@@ -890,10 +913,10 @@ const QuickBloxUIKitDesktopLayout: React.FC<
         currentUserName={userName || ''}
         dialogs={dialogsViewModel.dialogs}
         onSendData={(dialogsForForward, messagesForForward, relatedText) => {
-          console.log('call send data (Forward),');
-          console.log('Dialogs: ', dialogsForForward);
-          console.log('Messages: ', messagesForForward);
-          console.log('RelatedTex: ', relatedText);
+          // console.log('call send data (Forward),');
+          // console.log('Dialogs: ', dialogsForForward);
+          // console.log('Messages: ', messagesForForward);
+          // console.log('RelatedTex: ', relatedText);
           const forwardingData: ForwardMessagesParams = {
             messagesToForward: messagesForForward,
             targetDialogs: dialogsForForward,
@@ -906,9 +929,13 @@ const QuickBloxUIKitDesktopLayout: React.FC<
             .then((opResult: boolean) => {
               // eslint-disable-next-line promise/always-return
               if (opResult) {
-                showErrorMessage('Messages have been forwarded');
+                setShowErrorToast(true);
+                setMessageErrorToast('Message have been forwarded');
+                // showErrorMessage('Messages have been forwarded');
               } else {
-                showErrorMessage('Messages have not been forwarded');
+                setShowErrorToast(true);
+                setMessageErrorToast('Message have not been forwarded');
+                // showErrorMessage('Messages have not been forwarded');
               }
             })
             .catch((reason) => {
@@ -948,6 +975,10 @@ const QuickBloxUIKitDesktopLayout: React.FC<
         ...(groupMessages[dateString] || []),
         message,
       ];
+    });
+    // Сортировка каждого массива внутри groupMessages[date]
+    Object.keys(groupMessages).forEach((date) => {
+      groupMessages[date].sort((a, b) => a.date_sent - b.date_sent);
     });
     const sections: SectionItem<MessageEntity>[] = Object.keys(
       groupMessages,
@@ -1014,10 +1045,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                   refreshing={messagesViewModel?.loading}
                   renderSectionHeader={(section) => (
                     // <div className="date">{section.title}</div>
-                    <div
-                      className="message-view-container--system-message-wrapper"
-                      key={new Date().getTime().toString()}
-                    >
+                    <div className="message-view-container--system-message-wrapper">
                       <div
                         style={
                           theme
@@ -1031,10 +1059,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                       </div>
                     </div>
                   )}
-                  renderItem={([key, groupMessages]) =>
+                  renderItem={([, groupMessages]) =>
                     groupMessages.map((message) => (
                       <Message
-                        key={key}
                         theme={theme}
                         setShowErrorToast={setShowErrorToast}
                         setWaitAIWidget={setWaitAIWidget}
@@ -1057,36 +1084,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                   }
                   sections={getSectionData(messagesToView)}
                 />
-                // <ScrollableContainer
-                //   data={messagesToView}
-                //   renderItem={(message: MessageEntity) => {
-                //     return (
-                //       <Message
-                //         theme={theme}
-                //         setShowErrorToast={setShowErrorToast}
-                //         setWaitAIWidget={setWaitAIWidget}
-                //         setMessageErrorToast={setMessageErrorToast}
-                //         AIAssistWidget={defaultAIAssistWidget!}
-                //         AITranslateWidget={defaultAITranslateWidget!}
-                //         message={message}
-                //         onReply={(m: MessageEntity) => {
-                //           handleOnReply(m);
-                //         }}
-                //         onForward={(m: MessageEntity) => {
-                //           handleForward(m);
-                //         }}
-                //         messagesToView={messagesToView}
-                //         userId={userId || -1}
-                //         enableReplying={enableReplying}
-                //         enableForwarding={enableForwarding}
-                //       />
-                //     );
-                //   }}
-                //   onEndReached={fetchMoreData}
-                //   onEndReachedThreshold={0.8}
-                //   refreshing={messagesViewModel?.loading}
-                //   autoScrollToBottom={scrollUpToDown}
-                // />
               )
             }
             renderReplyMessagesPreview={
@@ -1185,6 +1182,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                     theme={theme}
                     AIRephrase={defaultAIRephraseWidget}
                     setWaitAIWidget={setWaitAIWidget}
+                    setPrevValueText={(prevValue) => {
+                      setMessageText(prevValue);
+                    }}
                     setMessageErrorToast={(e: string) => {
                       setMessageErrorToast(e);
                     }}

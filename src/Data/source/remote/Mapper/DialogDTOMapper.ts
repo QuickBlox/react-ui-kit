@@ -422,6 +422,9 @@ export class DialogDTOMapper implements IDTOMapper {
     if (lastMessageText.includes('[Forwarded_Message]')) {
       return 'Forwarded message';
     }
+    if (lastMessageText.includes('[Replied_Message]')) {
+      return 'Replied Message';
+    }
 
     return lastMessageText;
   }

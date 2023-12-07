@@ -17,9 +17,7 @@ ErrorToastProps) => {
     // </div>
 
     <div className="error-toast">
-      <div className="translation-failed-try-again">
-        {messageText} Try again.
-      </div>
+      <div className="translation-failed-try-again">{messageText}</div>
     </div>
   );
 };

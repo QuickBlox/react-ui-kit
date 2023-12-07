@@ -79,7 +79,17 @@ export class DialogRemoteDTOMapper implements IMapper {
 
       return '';
     }
+    /*
+              let tmpFileUrl = '';
 
+          if (dialog.photo && dialog.photo !== 'null') {
+            const { blobFile } = await Creator.createBlobFromUrl(
+              dialog.photo && QB.content.privateUrl(dialog.photo),
+            );
+
+            tmpFileUrl = blobFile ? URL.createObjectURL(blobFile) : '';
+          }
+           */
     switch (dialog.type) {
       case DialogType.private:
         entity = new PrivateDialogEntity(

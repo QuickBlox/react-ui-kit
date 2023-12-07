@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import cn from 'classnames';
 
 import './ScrollableContainer.scss';
+import LoaderComponent from '../../UI/Placeholders/LoaderComponent/LoaderComponent';
 
 interface FlatListProps<T> {
   className?: string;
@@ -70,7 +71,15 @@ export default function ScrollableContainer<T>(props: FlatListProps<T>) {
 
   return (
     <div className={cn('list', className)}>
-      {refreshing && <div>loading...</div>}
+      {refreshing && (
+        <div>
+          <LoaderComponent
+            width="44"
+            height="44"
+            color="var(--color-background-info)"
+          />
+        </div>
+      )}
       {data && data.length ? (
         <div className="list-content" onScroll={scrollHandler} ref={container}>
           {/* {data.map(renderItem)} */}

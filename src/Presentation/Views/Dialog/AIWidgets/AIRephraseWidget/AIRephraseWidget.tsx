@@ -36,6 +36,7 @@ type AIRephraseWidgetProps = {
   maxTokensForAIRephrase: number;
   rephraseTones: Tone[];
   theme?: UiKitTheme;
+  setPrevValueText: FunctionTypeStringToVoid;
 };
 // eslint-disable-next-line react/function-component-definition
 const AIRephraseWidget: React.FC<AIRephraseWidgetProps> = ({
@@ -50,6 +51,7 @@ const AIRephraseWidget: React.FC<AIRephraseWidgetProps> = ({
   maxTokensForAIRephrase,
   rephraseTones,
   theme = undefined,
+  setPrevValueText,
 }: AIRephraseWidgetProps) => {
   const [currentMessageText, setCurrentMessageText] =
     useState<string>(messageText);
@@ -109,13 +111,13 @@ const AIRephraseWidget: React.FC<AIRephraseWidgetProps> = ({
             .then((answerText) => {
               // eslint-disable-next-line promise/always-return
               if (answerText === 'Rephrase failed.') {
-                setMessageErrorToast('Rephrase failed.');
+                setMessageErrorToast('Rephrase failed. Try again.');
                 setShowErrorToast(true);
               }
               setWaitAIWidget(false);
             })
             .catch(() => {
-              setMessageErrorToast('Rephrase failed.');
+              setMessageErrorToast('Rephrase failed. Try again.');
               setShowErrorToast(true);
               setWaitAIWidget(false);
             });
@@ -139,6 +141,7 @@ const AIRephraseWidget: React.FC<AIRephraseWidgetProps> = ({
           !waitAIWidget
         ) {
           setCurrentMessageText(prevTextMessage);
+          setPrevValueText(prevTextMessage);
         }
       },
     });

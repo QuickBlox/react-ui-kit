@@ -6,7 +6,6 @@ import ForwardMessagePreview from './ForwardMessagePreview/ForwardMessagePreview
 import DialogsWithSearch from './DialogsWithSearch/DialogsWithSearch';
 import InputForForwarding from './InputForForwarding/InputForForwarding';
 
-// ForwardMessageFlow -  !!! NEW name this component
 //! !! Where render errors!!!!
 type ForwardMessageFlowProps = {
   messages: MessageEntity[];
@@ -18,28 +17,6 @@ type ForwardMessageFlowProps = {
     messages: MessageEntity[],
     relatedText: string,
   ) => void;
-  // forwardedMessages: MessageEntity[];
-  //   // renderDialogsWithSearch: React.ReactNode; -- delete and remove call DialogsWithSearch component into this component
-  //   // dialogs: DialogEntity[] - input params
-  //  // currentDialog: DialogEntity - input params
-  //     /*
-  //     DialogsWithSearch
-  //       onSelect => return selected dialogs
-  //      */
-  // renderForwardMessage: React.ReactNode;  // -- delete and remove call ForwardMessage component into this component
-  //   // forwardedMessages: MessageEntity[] - input params
-  //   // renderMessageInput: React.ReactNode; -- delete and remove call MessageInput component into this component
-  //                               // add handlers for MessageInput in this component
-  //                                       // onSendText
-  //                                       // onSendAttachment
-  //                                       // onSendVoice
-  //                                       // onRephrase ???
-  //
-  //   // Add State this component:
-  //   // selectedDialogs - list dialog ForForwarding
-  //
-  //   //after....
-  // // renderUsersWithSearch: React.ReactNode;
 };
 
 // eslint-disable-next-line react/function-component-definition

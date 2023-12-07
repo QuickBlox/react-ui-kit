@@ -64,15 +64,6 @@ const Dialog: React.FC<DialogProps> = ({
     setCurrentMessageErrorToast(messageErrorToast);
   }, [messageErrorToast]);
 
-  useEffect(() => {
-    if (showCurrentErrorToast || currentMessageErrorToast) {
-      setTimeout(() => {
-        setShowCurrentErrorToast(false);
-        setCurrentMessageErrorToast('');
-      }, 18000);
-    }
-  }, [showCurrentErrorToast]);
-
   const [currentWarningErrorText, setCurrentWarningErrorText] =
     useState<string>('');
 
@@ -83,11 +74,6 @@ const Dialog: React.FC<DialogProps> = ({
   useEffect(() => {
     setCurrentWarningErrorText(messagesViewModel.typingText);
   }, [messagesViewModel.typingText]);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const startReplyMessageFrowHandler = () => {
-  //   setShowReplyMessage(true);
-  // };
 
   return (
     <div
@@ -113,95 +99,14 @@ const Dialog: React.FC<DialogProps> = ({
           }}
           className="message-view-container--header"
         >
-          {/* <DialogHeader */}
-          {/*  dialog={messagesViewModel.entity} */}
-          {/*  onClickInfo={onDialogInformationHandler} */}
-          {/*  countMembers={getCountDialogMembers(dialogsViewModel.entity)} */}
-          {/* /> */}
           {renderHeader}
         </div>
       )}
-      {/* <div */}
-      {/*  style={{ */}
-      {/*    flexGrow: `1`, */}
-      {/*    flexShrink: `1`, */}
-      {/*    flexBasis: `${maxWidthToResizing}`, */}
-      {/*  }} */}
-      {/*  className="message-view-container--header" */}
-      {/* > */}
-      {/*  {useUpContent && upHeaderContent} */}
-      {/*  <DialogHeader */}
-      {/*    dialog={messagesViewModel.entity} */}
-      {/*    onClickInfo={onDialogInformationHandler} */}
-      {/*    countMembers={getCountDialogMembers(dialogsViewModel.entity)} */}
-      {/*  /> */}
-      {/*  {useSubContent && subHeaderContent} */}
-      {/* </div> */}
-      {showCurrentErrorToast && !messagesViewModel?.loading ? (
+      {showCurrentErrorToast ? (
+        // && !messagesViewModel?.loading
         <ErrorToast messageText={currentMessageErrorToast} />
       ) : null}
 
-      {/* <div */}
-      {/*  style={{ */}
-      {/*    flexGrow: `1`, */}
-      {/*    flexShrink: `1`, */}
-      {/*    flexBasis: `${maxWidthToResizing}`, */}
-      {/*  }} */}
-      {/*  className="message-view-container--information" */}
-      {/* > */}
-      {/*  <div> */}
-      {/*    connection status: */}
-      {/*    {browserOnline ? 'online ' : 'offline '} */}
-      {/*    /!* eslint-disable-next-line no-nested-ternary *!/ */}
-      {/*    {connectionRepository.isChatConnected() === undefined */}
-      {/*      ? 'unexpected undefined' */}
-      {/*      : connectionRepository.isChatConnected() */}
-      {/*      ? 'connected' */}
-      {/*      : 'disconnected'} */}
-      {/*  </div> */}
-      {/*  {hasMore && ( */}
-      {/*    <div style={{ color: 'red' }}> */}
-      {/*      unread: {dialogMessagesCount - messagesToView.length} */}
-      {/*    </div> */}
-      {/*  )} */}
-      {/*  <div>{` current user id: ${currentUserId || 'no user'}`}</div> */}
-      {/* </div> */}
-      {/* version 2 start */}
-      {/* <div */}
-      {/*  style={ */}
-      {/*    theme */}
-      {/*      ? { */}
-      {/*          flexGrow: `1`, */}
-      {/*          flexShrink: `1`, */}
-      {/*          flexBasis: `${maxWidthToResizing}`, */}
-      {/*          backgroundColor: theme.mainElements(), */}
-      {/*        } */}
-      {/*      : { */}
-      {/*          flexGrow: `1`, */}
-      {/*          flexShrink: `1`, */}
-      {/*          flexBasis: `${maxWidthToResizing}`, */}
-      {/*        } */}
-      {/*  } */}
-      {/*  className="message-view-container--information" */}
-      {/* > */}
-      {/*  <div> */}
-      {/*    connection status: */}
-      {/*    {browserOnline ? 'online ' : 'offline '} */}
-      {/*    /!* eslint-disable-next-line no-nested-ternary *!/ */}
-      {/*    {connectionRepository.isChatConnected() === undefined */}
-      {/*      ? 'unexpected undefined' */}
-      {/*      : connectionRepository.isChatConnected() */}
-      {/*      ? 'connected' */}
-      {/*      : 'disconnected'} */}
-      {/*  </div> */}
-      {/*  {hasMore && ( */}
-      {/*    <div style={{ color: 'red' }}> */}
-      {/*      unread: {dialogMessagesCount - messagesToView.length} */}
-      {/*    </div> */}
-      {/*  )} */}
-      {/*  <div>{` current user id: ${currentUserId || 'no user'}`}</div> */}
-      {/* </div> */}
-      {/* version 2 end */}
       <div
         style={
           theme
@@ -221,24 +126,6 @@ const Dialog: React.FC<DialogProps> = ({
         }
         className="message-view-container--messages"
       >
-        {/* {messagesViewModel?.error && !messagesViewModel.loading && ( */}
-        {/*  <ErrorComponent */}
-        {/*    // title={messagesViewModel?.error} */}
-        {/*    title="!!!!!!!!!!!!!!!!!!" */}
-        {/*    ClickActionHandler={() => { */}
-        {/*      alert('call click retry'); */}
-        {/*    }} */}
-        {/*  /> */}
-        {/* )} */}
-
-        {/* <ErrorComponent */}
-        {/*  // title={messagesViewModel?.error} */}
-        {/*  title="!!!!!!!!!!!!!!!!!!" */}
-        {/*  ClickActionHandler={() => { */}
-        {/*    alert('call click retry'); */}
-        {/*  }} */}
-        {/* /> */}
-
         {renderMessageList}
         {/* {(messagesViewModel?.loading || waitAIWidget) && ( */}
         <div
@@ -275,204 +162,6 @@ const Dialog: React.FC<DialogProps> = ({
       </div>
 
       {renderMessageInput}
-      {/* <div */}
-      {/* style={{ */}
-      {/*   flex: `flex: 1 1 ${maxWidthToResizing}`, */}
-      {/* }} */}
-      {/* onBlur={() => { */}
-      {/*   if (!(messageText && messageText.length > 0)) { */}
-      {/*     setVoiceMessage(true); */}
-      {/*   } */}
-      {/* }} */}
-      {/* className="message-view-container--chat-input" */}
-      {/* > */}
-      {/* <label */}
-      {/*   htmlFor="btnUploadAttachment" */}
-      {/*   style={{ */}
-      {/*     cursor: 'pointer', */}
-      {/*   }} */}
-      {/* > */}
-      {/*   <div> */}
-      {/*     <ActiveSvg */}
-      {/*       content={ */}
-      {/*         <AttachmentIcon */}
-      {/*           width="32" */}
-      {/*           height="32" */}
-      {/*           applyZoom */}
-      {/*           color={ */}
-      {/*             theme ? theme.inputElements() : 'var(--input-elements)' */}
-      {/*           } */}
-      {/*         /> */}
-      {/*       } */}
-      {/*       onClick={() => { */}
-      {/*         console.log('click send message'); */}
-      {/*       }} */}
-      {/*       onTouch={() => { */}
-      {/*         console.log('touch send message'); */}
-      {/*       }} */}
-      {/*     /> */}
-      {/*   </div> */}
-      {/*   <input */}
-      {/*     id="btnUploadAttachment" */}
-      {/*     type="file" */}
-      {/*     accept="image/*, audio/*, video/*, .pdf, .txt, .apk, .zip, .ipa, .ppt, .pptx, .doc, .docx, .xls, .xlsx, .json, .log" */}
-      {/*     style={{ display: 'none' }} */}
-      {/*     onChange={(event) => { */}
-      {/*       ChangeFileHandler(event); */}
-      {/*     }} */}
-      {/*   /> */}
-      {/* </label> */}
-      {/* /!*  start InputWidgetToRightPlaceHolder *!/ */}
-      {/* /!* {InputWidgetToRightPlaceHolder && ( *!/ */}
-      {/* /!*  <div> *!/ */}
-      {/* /!*    <ActiveSvg *!/ */}
-      {/* /!*      content={InputWidgetToRightPlaceHolder.renderWidget()} *!/ */}
-      {/* /!*      onClick={() => { *!/ */}
-      {/* /!*        console.log('click left place golder widget'); *!/ */}
-      {/* /!*        if (messagesViewModel?.loading) return; *!/ */}
-      {/* /!*        setIsRecording(!isRecording); *!/ */}
-      {/* /!*        setUseAudioWidget(true); *!/ */}
-      {/* /!*      }} *!/ */}
-      {/* /!*      onTouch={() => { *!/ */}
-      {/* /!*        console.log('touch left place golder widget'); *!/ */}
-      {/* /!*      }} *!/ */}
-      {/* /!*    /> *!/ */}
-      {/* /!*  </div> *!/ */}
-      {/* /!* )} *!/ */}
-      {/* /!* end InputWidgetToRightPlaceHolder *!/ */}
-      {/* {!isRecording && ( */}
-      {/*   <div className="input-text-message"> */}
-      {/*     <div className="type-message"> */}
-      {/*       <textarea */}
-      {/*         style={theme ? { backgroundColor: theme.chatInput() } : {}} */}
-      {/*         disabled={messagesViewModel?.loading} */}
-      {/*         value={messageText} */}
-      {/*         onFocus={() => { */}
-      {/*           setVoiceMessage(false); */}
-      {/*         }} */}
-      {/*         onChange={(event) => { */}
-      {/*           setMessageText(event.target.value); */}
-      {/*         }} */}
-      {/*         onInput={() => { */}
-      {/*           messagesViewModel.sendTypingTextMessage(); */}
-      {/*         }} */}
-      {/*         onKeyDown={(e) => { */}
-      {/*           console.log( */}
-      {/*             `onKeyDown: ${e.key} shift ${ */}
-      {/*               e.shiftKey ? 'true' : 'false' */}
-      {/*             } ctrl ${e.ctrlKey ? 'true' : 'false'}`, */}
-      {/*           ); */}
-      {/*           if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) { */}
-      {/*             sendTextMessageActions(); */}
-      {/*           } */}
-      {/*         }} */}
-      {/*         placeholder="enter text to send" */}
-      {/*       /> */}
-      {/*     </div> */}
-      {/*     <div className="right"> */}
-      {/*       {AIRephrase && ( */}
-      {/*         <div */}
-      {/*           className="icon" */}
-      {/*           style={{ */}
-      {/*             cursor: !waitAIWidget ? 'pointer' : '', */}
-      {/*           }} */}
-      {/*         > */}
-      {/*           <AIWidgetActions */}
-      {/*             widgetToRender={ */}
-      {/*               <ToneIcon */}
-      {/*                 width="24" */}
-      {/*                 height="24" */}
-      {/*                 applyZoom */}
-      {/*                 color={theme ? theme.mainText() : 'var(--main-text)'} */}
-      {/*               /> */}
-      {/*             } */}
-      {/*             items={getAIEditingMessagesItems()} */}
-      {/*           /> */}
-      {/*         </div> */}
-      {/*       )} */}
-      {/*     </div> */}
-      {/*   </div> */}
-      {/* )} */}
-
-      {/* {isRecording && ( */}
-      {/*   <VoiceRecordingProgress */}
-      {/*     startStatus={isRecording} */}
-      {/*     longRecInSec={60} */}
-      {/*     onClick={() => { */}
-      {/*       console.log('click send voice message'); */}
-      {/*       if (messagesViewModel?.loading) return; */}
-      {/*       setIsRecording(!isRecording); */}
-      {/*     }} */}
-      {/*     onTouch={() => { */}
-      {/*       console.log('touch send voice message'); */}
-      {/*       if (messagesViewModel?.loading) return; */}
-      {/*       setIsRecording(!isRecording); */}
-      {/*     }} */}
-      {/*   /> */}
-      {/* )} */}
-      {/* {!isVoiceMessage && !waitAIWidget && ( */}
-      {/*   <div> */}
-      {/*     <ActiveSvg */}
-      {/*       content={ */}
-      {/*         <SendIcon */}
-      {/*           width="21" */}
-      {/*           height="18" */}
-      {/*           applyZoom */}
-      {/*           color={theme ? theme.mainElements() : 'var(--main-elements)'} */}
-      {/*         /> */}
-      {/*       } */}
-      {/*       onClick={() => { */}
-      {/*         console.log('click send message'); */}
-      {/*         sendTextMessageActions(); */}
-      {/*       }} */}
-      {/*       onTouch={() => { */}
-      {/*         console.log('touch send message'); */}
-      {/*       }} */}
-      {/*     /> */}
-      {/*   </div> */}
-      {/* )} */}
-      {/* {waitAIWidget ? ( */}
-      {/*   <div */}
-      {/*     style={{ */}
-      {/*       height: '44px', */}
-      {/*       width: '24px', */}
-      {/*     }} */}
-      {/*   > */}
-      {/*     <LoaderComponent width="24" height="24" color="var(--caption)" /> */}
-      {/*   </div> */}
-      {/* ) : ( */}
-      {/*   isVoiceMessage && ( */}
-      {/*     <div> */}
-      {/*       <ActiveSvg */}
-      {/*         content={ */}
-      {/*           <VoiceIcon */}
-      {/*             width="21" */}
-      {/*             height="18" */}
-      {/*             applyZoom */}
-      {/*             color={ */}
-      {/*               isRecording ? 'var(--error)' : 'var(--input-elements)' */}
-      {/*             } */}
-      {/*           /> */}
-      {/*         } */}
-      {/*         onClick={() => { */}
-      {/*           console.log('click send voice message'); */}
-      {/*           if (messagesViewModel?.loading) return; */}
-      {/*           setIsRecording(!isRecording); */}
-      {/*         }} */}
-      {/*         onTouch={() => { */}
-      {/*           console.log('touch send message'); */}
-      {/*           if (messagesViewModel?.loading) return; */}
-      {/*           setIsRecording(!isRecording); */}
-      {/*         }} */}
-      {/*       /> */}
-      {/*     </div> */}
-      {/*   ) */}
-      {/* )} */}
-      {/* </div> */}
-
-      {/* <div className="message-view-container--warning-error"> */}
-      {/*  {widgetTextContent} */}
-      {/* </div> */}
     </div>
   );
 };

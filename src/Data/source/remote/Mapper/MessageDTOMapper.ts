@@ -274,7 +274,10 @@ export class MessageDTOMapper implements IDTOMapper {
       // 0, 1, 2, 3
       return messageParts[1] || '';
     }
-    if (qbMessage.includes('[Forwarded_Message]')) {
+    if (
+      qbMessage.includes('[Forwarded_Message]') ||
+      qbMessage.includes('[Replied_Message]')
+    ) {
       return '';
     }
 
