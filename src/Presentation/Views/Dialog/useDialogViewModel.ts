@@ -334,7 +334,7 @@ export default function useDialogViewModel(
     return Promise.resolve(resultEnity);
   };
 
-  function sendMessage(messageToSend: MessageEntity) {
+  const sendMessage = (messageToSend: MessageEntity) => {
     const sendTextMessageUseCase: SendTextMessageUseCase =
       new SendTextMessageUseCase(
         new MessagesRepository(LOCAL_DATA_SOURCE, REMOTE_DATA_SOURCE),
@@ -376,7 +376,7 @@ export default function useDialogViewModel(
       .finally(() => {
         setLoading(false);
       });
-  }
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const sendTextMessage = (newMessage: string) => {
@@ -400,96 +400,142 @@ export default function useDialogViewModel(
     sendMessage(messageToSend);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const createMessageContent = (messageBody: string, fileMessage: FileEntity) =>
+    `MediaContentEntity|${messageBody}|${
+      fileMessage.uid
+    }|${fileMessage.type!.toString()}`;
+
+  const setupMessageToSend = (
+    fileMessage: FileEntity,
+    currentUserId: number,
+  ): MessageEntity => {
+    const recipientId =
+      dialog.type === DialogType.private
+        ? (dialog as PrivateDialogEntity).participantId
+        : currentUserId;
+    const messageBody = fileMessage.name || '[attachment]';
+
+    const messageEntityParams: MessageEntityParams = {
+      dialogId: dialog.id,
+      message: messageBody,
+      sender_id: currentUserId,
+      recipient_id: recipientId,
+      dialog_type: DialogType.group,
+    };
+
+    const messageToReturn: MessageEntity =
+      Creator.createMessageEntity(messageEntityParams);
+
+    const attachments: ChatMessageAttachmentEntity[] = [
+      {
+        id: fileMessage.id as string,
+        uid: fileMessage.uid,
+        type: fileMessage.type!,
+        file: fileMessage,
+        name: fileMessage.name,
+        size: fileMessage.size,
+        url: fileMessage.url,
+      },
+    ];
+
+    messageToReturn.attachments = attachments;
+    messageToReturn.message = createMessageContent(messageBody, fileMessage);
+
+    return messageToReturn;
+  };
+
   const sendAttachmentMessage = async (newMessage: File): Promise<boolean> => {
-    console.log('call sendTextMessage');
+    console.log('call sendAttachmentMessage');
     setLoading(true);
     const currentUserId = REMOTE_DATA_SOURCE.authInformation?.userId || 0;
 
     try {
-      await uploadFile(newMessage)
-        // eslint-disable-next-line promise/always-return
-        .then((fileMessage: FileEntity) => {
-          console.log(JSON.stringify(fileMessage));
+      const fileMessage = await uploadFile(newMessage);
+      const messageToSend = setupMessageToSend(fileMessage, currentUserId);
 
-          const recipientId =
-            dialog.type === DialogType.private
-              ? (dialog as PrivateDialogEntity).participantId
-              : currentUserId;
+      sendMessage(messageToSend);
+    } catch (reason) {
+      setLoading(false);
+      console.log('EXCEPTION in sendAttachmentMessage', stringifyError(reason));
 
-          // eslint-disable-next-line promise/always-return
-          const messageBody = fileMessage.name || '[attachment]';
-          // const messageToSend: MessageEntity =
-          //   Stubs.createMessageEntityWithParams(
-          //     '',
-          //     dialog.id,
-          //     messageBody,
-          //     Date.now().toString(),
-          //     Date.now(),
-          //     Date.now().toString(),
-          //     [],
-          //     [],
-          //     1,
-          //     currentUserId,
-          //     // eslint-disable-next-line promise/always-return
-          //     recipientId,
-          //     [],
-          //     '',
-          //     DialogType.group,
-          //   );
-          //
-          const messageEntityParams: MessageEntityParams = {
-            dialogId: dialog.id,
-            message: messageBody,
-            sender_id: currentUserId,
-            recipient_id: recipientId,
-            dialog_type: DialogType.group,
-          };
-          const messageToSend: MessageEntity =
-            Creator.createMessageEntity(messageEntityParams);
-          //
-
-          messageToSend.dialogType = dialog.type;
-          const attachments: ChatMessageAttachmentEntity[] = [
-            {
-              id: fileMessage.id as string,
-              uid: fileMessage.uid,
-              type: fileMessage.type!,
-              file: fileMessage,
-              name: fileMessage.name,
-              size: fileMessage.size,
-              url: fileMessage.url,
-            },
-          ];
-
-          messageToSend.attachments = attachments;
-
-          messageToSend.message = `MediaContentEntity|${messageBody}|${
-            fileMessage.uid
-          }|${fileMessage.type!.toString()}`;
-          sendMessage(messageToSend);
-          //
-        })
-        .catch((reason) => {
-          setLoading(false);
-          const errorMessage = stringifyError(reason);
-
-          console.log('EXCEPTION in sendAttachmentMessage', errorMessage);
-
-          throw new Error(errorMessage);
-        });
-    } catch (e) {
       return false;
     }
 
     return true;
   };
 
-  const forwardMessage = (
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // const sendAttachmentMessage = async (newMessage: File): Promise<boolean> => {
+  //   console.log('call sendTextMessage');
+  //   setLoading(true);
+  //   const currentUserId = REMOTE_DATA_SOURCE.authInformation?.userId || 0;
+  //
+  //   try {
+  //     await uploadFile(newMessage)
+  //       // eslint-disable-next-line promise/always-return
+  //       .then((fileMessage: FileEntity) => {
+  //         console.log(JSON.stringify(fileMessage));
+  //
+  //         const recipientId =
+  //           dialog.type === DialogType.private
+  //             ? (dialog as PrivateDialogEntity).participantId
+  //             : currentUserId;
+  //
+  //         // eslint-disable-next-line promise/always-return
+  //         const messageBody = fileMessage.name || '[attachment]';
+  //         //
+  //         const messageEntityParams: MessageEntityParams = {
+  //           dialogId: dialog.id,
+  //           message: messageBody,
+  //           sender_id: currentUserId,
+  //           recipient_id: recipientId,
+  //           dialog_type: DialogType.group,
+  //         };
+  //         const messageToSend: MessageEntity =
+  //           Creator.createMessageEntity(messageEntityParams);
+  //         //
+  //
+  //         messageToSend.dialogType = dialog.type;
+  //         const attachments: ChatMessageAttachmentEntity[] = [
+  //           {
+  //             id: fileMessage.id as string,
+  //             uid: fileMessage.uid,
+  //             type: fileMessage.type!,
+  //             file: fileMessage,
+  //             name: fileMessage.name,
+  //             size: fileMessage.size,
+  //             url: fileMessage.url,
+  //           },
+  //         ];
+  //
+  //         messageToSend.attachments = attachments;
+  //
+  //         messageToSend.message = `MediaContentEntity|${messageBody}|${
+  //           fileMessage.uid
+  //         }|${fileMessage.type!.toString()}`;
+  //         sendMessage(messageToSend);
+  //         //
+  //       })
+  //       .catch((reason) => {
+  //         setLoading(false);
+  //         const errorMessage = stringifyError(reason);
+  //
+  //         console.log('EXCEPTION in sendAttachmentMessage', errorMessage);
+  //
+  //         throw new Error(errorMessage);
+  //       });
+  //   } catch (e) {
+  //     return false;
+  //   }
+  //
+  //   return true;
+  // };
+
+  const forwardMessage = async (
     targetDialogs: DialogEntity[],
     messagesToForward: MessageEntity[],
     relatedMessage: MessageEntity,
-  ): void => {
+  ): Promise<void> => {
     //
     const userName = REMOTE_DATA_SOURCE.authInformation?.userName || '';
     const forwardMessagesUseCase: ForwardMessagesUseCase =
@@ -502,7 +548,7 @@ export default function useDialogViewModel(
       );
 
     // eslint-disable-next-line promise/catch-or-return
-    forwardMessagesUseCase
+    await forwardMessagesUseCase
       .execute()
       .catch((reason) => {
         const errorMessage: string = stringifyError(reason);
@@ -519,13 +565,55 @@ export default function useDialogViewModel(
       });
     //
   };
+
+  const sendForwardedMessages = async (
+    forwardingData: ForwardMessagesParams,
+    // eslint-disable-next-line @typescript-eslint/require-await
+  ): Promise<boolean> => {
+    setLoading(true);
+    const currentUserId = REMOTE_DATA_SOURCE.authInformation?.userId || 0;
+
+    const messageEntityParams: MessageEntityParams = {
+      dialogId: dialog.id,
+      message: forwardingData.relatedTextMessage || '',
+      sender_id: currentUserId,
+      recipient_id:
+        dialog.type === DialogType.private
+          ? (dialog as PrivateDialogEntity).participantId
+          : currentUserId,
+      dialog_type: DialogType.group,
+    };
+    const relatedMessage: MessageEntity =
+      Creator.createMessageEntity(messageEntityParams);
+
+    relatedMessage.dialogType = dialog.type;
+
+    let resultOperation = true;
+
+    await forwardMessage(
+      forwardingData.targetDialogs,
+      forwardingData.messagesToForward,
+      relatedMessage,
+    ).catch(() => {
+      resultOperation = false;
+    });
+
+    return resultOperation;
+  };
   //
 
-  //
-  const replyMessage = (
+  // New function to handle errors
+  const handleError = (reason: any, logMessage: string) => {
+    setLoading(false);
+    const errorMessage = stringifyError(reason);
+
+    console.log(logMessage, errorMessage);
+    throw new Error(errorMessage);
+  };
+  const replyMessage = async (
     messagesToReply: MessageEntity[],
     relatedMessage: MessageEntity,
-  ): void => {
+  ): Promise<void> => {
     //
     const replyMessagesUseCase: ReplyMessagesUseCase = new ReplyMessagesUseCase(
       new MessagesRepository(LOCAL_DATA_SOURCE, REMOTE_DATA_SOURCE),
@@ -534,7 +622,7 @@ export default function useDialogViewModel(
     );
 
     // eslint-disable-next-line promise/catch-or-return
-    replyMessagesUseCase
+    await replyMessagesUseCase
       .execute()
       // eslint-disable-next-line promise/always-return
       .then((messageEntity) => {
@@ -568,63 +656,9 @@ export default function useDialogViewModel(
       .finally(() => {
         setLoading(false);
       });
-    //
   };
-  //
-
-  const sendForwardedMessages = async (
-    forwardingData: ForwardMessagesParams,
-    // eslint-disable-next-line @typescript-eslint/require-await
-  ): Promise<boolean> => {
-    setLoading(true);
-    const currentUserId = REMOTE_DATA_SOURCE.authInformation?.userId || 0;
-    // const relatedMessage: MessageEntity = Stubs.createMessageEntityWithParams(
-    //   '',
-    //   dialog.id,
-    //   forwardingData.relatedTextMessage || '',
-    //   new Date().toISOString(),
-    //   Date.now(),
-    //   new Date().toISOString(),
-    //   [],
-    //   [],
-    //   1,
-    //   currentUserId,
-    //   dialog.type === DialogType.private
-    //     ? (dialog as PrivateDialogEntity).participantId
-    //     : currentUserId,
-    //   [],
-    //   '',
-    //   DialogType.group,
-    // );
-
-    const messageEntityParams: MessageEntityParams = {
-      dialogId: dialog.id,
-      message: forwardingData.relatedTextMessage || '',
-      sender_id: currentUserId,
-      recipient_id:
-        dialog.type === DialogType.private
-          ? (dialog as PrivateDialogEntity).participantId
-          : currentUserId,
-      dialog_type: DialogType.group,
-    };
-    const relatedMessage: MessageEntity =
-      Creator.createMessageEntity(messageEntityParams);
-
-    relatedMessage.dialogType = dialog.type;
-
-    forwardMessage(
-      forwardingData.targetDialogs,
-      forwardingData.messagesToForward,
-      relatedMessage,
-    );
-
-    return true;
-  };
-  //
-
   const sendReplyMessages = async (
     replyData: ReplyMessagesParams,
-    // eslint-disable-next-line @typescript-eslint/require-await
   ): Promise<boolean> => {
     setLoading(true);
     const currentUserId = REMOTE_DATA_SOURCE.authInformation?.userId || 0;
@@ -643,47 +677,110 @@ export default function useDialogViewModel(
       Creator.createMessageEntity(messageEntityParams);
 
     relatedMessage.dialogType = dialog.type;
+    let isOperationSuccessful = true;
 
-    if (replyData.relatedFileMessage) {
-      try {
-        await uploadFile(replyData.relatedFileMessage)
-          .then((fileMessage: FileEntity) => {
-            const attachments: ChatMessageAttachmentEntity[] = [
-              {
-                id: fileMessage.id as string,
-                uid: fileMessage.uid,
-                type: fileMessage.type!,
-                file: fileMessage,
-                name: fileMessage.name,
-                size: fileMessage.size,
-                url: fileMessage.url,
-              },
-            ];
+    try {
+      if (replyData.relatedFileMessage) {
+        const fileMessage: FileEntity = await uploadFile(
+          replyData.relatedFileMessage,
+        );
+        const attachments: ChatMessageAttachmentEntity[] = [
+          {
+            id: fileMessage.id as string,
+            uid: fileMessage.uid,
+            type: fileMessage.type!,
+            file: fileMessage,
+            name: fileMessage.name,
+            size: fileMessage.size,
+            url: fileMessage.url,
+          },
+        ];
 
-            relatedMessage.attachments = attachments;
-
-            replyMessage(replyData.messagesToReply, relatedMessage);
-
-            return true;
-            //
-          })
-          .catch((reason) => {
-            setLoading(false);
-            const errorMessage = stringifyError(reason);
-
-            console.log('EXCEPTION in sendAttachmentMessage', errorMessage);
-
-            throw new Error(errorMessage);
-          });
-      } catch (e) {
-        return false;
+        relatedMessage.attachments = attachments;
+        await replyMessage(replyData.messagesToReply, relatedMessage);
+      } else {
+        await replyMessage(replyData.messagesToReply, relatedMessage);
       }
-    } else {
-      replyMessage(replyData.messagesToReply, relatedMessage);
+    } catch (e) {
+      handleError(e, 'EXCEPTION in sendAttachmentMessage');
+      isOperationSuccessful = false;
     }
 
-    return true;
+    return isOperationSuccessful;
   };
+  // const sendReplyMessages = async (
+  //   replyData: ReplyMessagesParams,
+  //   // eslint-disable-next-line @typescript-eslint/require-await
+  // ): Promise<boolean> => {
+  //   setLoading(true);
+  //   const currentUserId = REMOTE_DATA_SOURCE.authInformation?.userId || 0;
+  //   const messageEntityParams: MessageEntityParams = {
+  //     dialogId: dialog.id,
+  //     message: replyData.relatedTextMessage || '',
+  //     sender_id: currentUserId,
+  //     recipient_id:
+  //       // eslint-disable-next-line promise/always-return
+  //       dialog.type === DialogType.private
+  //         ? (dialog as PrivateDialogEntity).participantId
+  //         : currentUserId,
+  //     dialog_type: DialogType.group,
+  //   };
+  //   const relatedMessage: MessageEntity =
+  //     Creator.createMessageEntity(messageEntityParams);
+  //
+  //   relatedMessage.dialogType = dialog.type;
+  //
+  //   let resultOperation = true;
+  //
+  //   if (replyData.relatedFileMessage) {
+  //     try {
+  //       await uploadFile(replyData.relatedFileMessage)
+  //         .then(async (fileMessage: FileEntity) => {
+  //           const attachments: ChatMessageAttachmentEntity[] = [
+  //             {
+  //               id: fileMessage.id as string,
+  //               uid: fileMessage.uid,
+  //               type: fileMessage.type!,
+  //               file: fileMessage,
+  //               name: fileMessage.name,
+  //               size: fileMessage.size,
+  //               url: fileMessage.url,
+  //             },
+  //           ];
+  //
+  //           relatedMessage.attachments = attachments;
+  //
+  //           await replyMessage(replyData.messagesToReply, relatedMessage);
+  //           resultOperation = true;
+  //
+  //           return resultOperation;
+  //           //
+  //         })
+  //         .catch((reason) => {
+  //           setLoading(false);
+  //           const errorMessage = stringifyError(reason);
+  //
+  //           console.log('EXCEPTION in sendAttachmentMessage', errorMessage);
+  //           resultOperation = false;
+  //           throw new Error(errorMessage);
+  //         });
+  //     } catch (e) {
+  //       resultOperation = false;
+  //
+  //       return resultOperation;
+  //     }
+  //   } else {
+  //     await replyMessage(replyData.messagesToReply, relatedMessage).catch(
+  //       () => {
+  //         resultOperation = false;
+  //
+  //         return resultOperation;
+  //       },
+  //     );
+  //   }
+  //
+  //   return resultOperation;
+  // };
 
   //
 

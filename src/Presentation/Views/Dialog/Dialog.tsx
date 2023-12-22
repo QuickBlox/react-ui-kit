@@ -80,7 +80,7 @@ const Dialog: React.FC<DialogProps> = ({
       style={
         maxWidthToResize
           ? {
-              maxWidth: `${maxWidthToResizing}`,
+              // maxWidth: `${maxWidthToResizing}`,
               minWidth: `$message-view-container-wrapper-min-width`,
               // width: `${maxWidthToResizing}`,
               width: '100%',

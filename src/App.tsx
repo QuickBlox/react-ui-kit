@@ -28,7 +28,7 @@ function App() {
   const { connectionRepository } = useQBConnection();
 
   const initLoginData: LoginData = {
-    login: 'anruaav2', // vit1
+    login: 'artimed', // vit1
     password: 'quickblox',
   };
 
@@ -215,29 +215,29 @@ function App() {
       }}
     >
       <div className="App">
-        <div className="App">
-          <Routes>
-            {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-            <Route path="/" element={<Login loginHandler={loginHandler} />} />
-            <Route
-              path="/desktop-test-mock"
-              element={
+        <Routes>
+          {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+          <Route path="/" element={<Login loginHandler={loginHandler} />} />
+          <Route
+            path="/desktop-test-mock"
+            element={
+              <div>
+                <div style={{ height: '32px' }}>Q-communicate</div>
                 <QuickBloxUIKitDesktopLayout
                   theme={new DefaultTheme()}
+                  uikitHeightOffset="32px"
                   // AIAssist={{
                   //   enabled: true,
                   //   default: true,
                   //   AIWidget: defaultAIAnswer,
                   // }}
                 />
-              }
-            />
+              </div>
+            }
+          />
 
-            <Route path="/test-stage" element={<TestStageMarkup />} />
-          </Routes>
-        </div>
-        <br />
-        <br />
+          <Route path="/test-stage" element={<TestStageMarkup />} />
+        </Routes>
       </div>
     </QuickBloxUIKitProvider>
   );

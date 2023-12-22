@@ -1,95 +1,66 @@
-$user-single-container-height: 320px;
-.user-single-container {
-  min-height: $user-single-container-height;
-  max-height: $user-single-container-height;
-  height: $user-single-container-height;
-  //border: 1px solid green;
-
-  &--search-wrapper{
-    min-height: 56px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 16px;
-
-    //border: 1px solid blue;
-
-    &__search-text{
-      min-height: 24px;
-      // margin: 16px 16px 16px 16px;
-      font-family: 'Roboto';
-      font-style: normal;
-      font-weight: 400;
-      font-size: 16px;
-      line-height: 24px;
-      letter-spacing: 0.15px;
-      flex: 2 2 268px;
-      letter-spacing: 0.15px;
-
-      //border: 1px solid orange;
-    }
-    &__search-icon{
-      min-height: 24px;
-      margin-left: 10px;
-      flex: 1 1 24px;
-      cursor: pointer;
-
-      //border: 1px solid red;
-    }
-  }
-
-  &--wrapper {
-    min-height: 56px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 16px;
-
-   // border: 1px solid blue;
-
-    &__username {
-      min-height: 24px;
-      min-width: 232px;
-      max-width: 232px;
-      // margin: 16px 16px 16px 16px;
-      font-family: 'Roboto';
-      font-style: normal;
-      font-weight: 400;
-      font-size: 16px;
-      line-height: 24px;
-      letter-spacing: 0.15px;
-      flex: 2 2 268px;
-      letter-spacing: 0.15px;
-
-      //border: 1px solid orange;
-    }
-
-    &__icon {
-      min-height: 40px;
-      min-width: 40px;
-      max-height: 40px;
-      max-width: 40px;
-      margin-left: 16px;
-      margin-top: 8px;
-      margin-bottom: 8px;
-      // flex: 1 1 24px;
-      display: flex;
-      //cursor: pointer;
-      background-color: var(--caption);
-      border-radius: 50%;
-      align-items: center;
-      text-align: center;
-      align-content: center;
-
-      // border: 1px solid red;
-
-      &__content {
-        margin: 6px;
-      }
-    }
-  }
+.list-single-user,
+.list-single-user * {
+  box-sizing: border-box;
+}
+.list-single-user {
+  background: var(--light-theme-mainbackground, #ffffff);
+  padding: 8px 16px 8px 16px;
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.list-single-user-avatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  position: relative;
+}
+.list-single-user-avatar-rectangle {
+  position: absolute;
+  right: 0%;
+  left: 0%;
+  width: 100%;
+  bottom: 0%;
+  top: 0%;
+  height: 100%;
+}
+.list-single-user-avatar-ellipse {
+  background: var(--disabled-elements, #bcc1c5);
+  border-radius: 50%;
+  position: absolute;
+  right: 0%;
+  left: 0%;
+  width: 100%;
+  bottom: 0%;
+  top: 0%;
+  height: 100%;
+}
+.list-single-user-contents-user {
+  height: auto;
+  position: absolute;
+  right: 17.86%;
+  left: 17.86%;
+  width: 64.29%;
+  bottom: 17.86%;
+  top: 17.86%;
+  height: 64.29%;
+  overflow: visible;
+}
+.list-single-user-subtitle {
+  color: var(--color-font, #0b1b0f);
+  text-align: left;
+  font-family: var(--body-body-large-font-family, "Roboto-Regular", sans-serif);
+  font-size: var(--body-body-large-font-size, 16px);
+  line-height: var(--body-body-large-line-height, 24px);
+  font-weight: var(--body-body-large-font-weight, 400);
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }

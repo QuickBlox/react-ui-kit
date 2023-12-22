@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
+import './MessageContentComponent.scss';
 import { MessageEntity } from '../../../../../../Domain/entity/MessageEntity';
 import UiKitTheme from '../../../../../themes/UiKitTheme';
 import ColumnContainer from '../../../../../components/containers/ColumnContainer/ColumnContainer';
@@ -7,6 +8,7 @@ import {
   HighLightLink,
   messageHasUrls,
 } from '../../HighLightLink/HighLightLink';
+import { MessageDTOMapper } from '../../../../../../Data/source/remote/Mapper/MessageDTOMapper';
 
 type MessageContentComponentProps = {
   messageEntity: MessageEntity;
@@ -21,12 +23,22 @@ const MessageContentComponent: FC<MessageContentComponentProps> = ({
   widgetTextContent,
   theme,
 }: MessageContentComponentProps) => {
+  const [messageTextValue, setMessageTextValue] = React.useState<string>(
+    messageEntity.message || '',
+  );
+
+  useEffect(() => {
+    const value = MessageDTOMapper.formatMessage(messageEntity.message);
+
+    setMessageTextValue(value);
+  }, [messageEntity.message]);
+
   const messageText = (
-    <div style={{ overflowWrap: 'break-word', maxWidth: '320px' }}>
+    <div className="message-content-text">
       {!originalTextMessage ? (
         <div>{widgetTextContent}</div>
       ) : (
-        <div>{messageEntity.message}</div>
+        <div>{messageTextValue}</div>
       )}
     </div>
   );
@@ -46,7 +58,7 @@ const MessageContentComponent: FC<MessageContentComponentProps> = ({
     messageHasUrls(messageEntity.message) &&
     !(messageEntity.attachments && messageEntity.attachments.length > 0)
   ) {
-    return <HighLightLink messageText={messageEntity.message} />;
+    return <HighLightLink messageText={messageTextValue} />;
   }
 
   return messageContent;

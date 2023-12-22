@@ -12,14 +12,14 @@
 }
 .outgoing-replied-message {
   background: var(--secondary-background, #ffffff);
-  padding: 0px 8px 8px 16px;
+  padding: 10px 8px 0px 16px;
   display: flex;
   flex-direction: row;
   gap: 8px;
   align-items: flex-end;
   justify-content: flex-end;
   flex-shrink: 0;
-  //width: 480px;
+  //width: 320px;
   position: relative;
 }
 .outgoing-replied-text-message-caption {
@@ -104,7 +104,8 @@
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
-  max-width: 480px;
+  // max-width: 320px;
+  max-width: var(--max-width-message-bubble);
 }
 .outgoing-replied-message-single-line {
   color: var(--secondary-text, #0b1b0f);
@@ -117,7 +118,7 @@
 }
 
 .outgoing-replied-message-func {
-  padding-top: 15px;
+  // padding-top: 15px;
   //padding: 0px 0px 20px 0px;
   display: flex;
   flex-direction: row;

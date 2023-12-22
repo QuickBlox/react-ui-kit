@@ -4,7 +4,7 @@
 }
 .incoming-forward-message {
   background: var(--color-background, #ffffff);
-  padding: 0px 16px 8px 8px;
+  padding: 10px 16px 0px 8px;
   display: flex;
   flex-direction: row;
   gap: 8px;
@@ -51,8 +51,8 @@
 }
 .ncoming-forward-message-incoming {
   display: flex;
-  width: 480px;
-  max-width: 480px;
+  width: 320px;
+  max-width: 320px;
   flex-direction: column;
   gap: 2px;
   align-items: flex-start;
@@ -130,7 +130,8 @@
   justify-content: flex-end;
   // flex-shrink: 0;
   position: relative;
-  max-width: 480px;
+  // max-width: 320px;
+  max-width: var(--max-width-message-bubble);
 }
 .incoming-forward-message-incoming-bubble-background {
   background: var(--incoming-background, #e4e6e8);

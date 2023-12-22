@@ -196,7 +196,7 @@ function IncomingRepliedMessage(props: {
                     />
                   </div>
                 </div>
-                {props.AITranslation && (
+                {props.AITranslation && !item.attachments ? (
                   <AITranslateComponent
                     onTranslate={(language) => {
                       sendMessageToTranslate(
@@ -218,6 +218,8 @@ function IncomingRepliedMessage(props: {
                         .AITranslateWidgetConfig,
                     )}
                   />
+                ) : (
+                  <div style={{ height: '16px' }} />
                 )}
               </div>
               <div className="incoming-replied-ai-transcribe">
@@ -248,7 +250,7 @@ function IncomingRepliedMessage(props: {
                     </div>
                   </div>
                 ) : null}
-                {!waitAITranslateWidget
+                {!waitAITranslateWidget && !item.attachments
                   ? props.AIAnswerToMessage && (
                       <AIAssistComponent
                         onAssistAnswer={() => {

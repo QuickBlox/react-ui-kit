@@ -14,10 +14,6 @@ type ContextMenuProps = {
 
 const ContextMenuStyles: { [key: string]: CSSProperties } = {
   contextMenuIcon: {
-    // display: 'inline-block',
-    // position: 'relative',
-    // maxWidth: '42px',
-    // maxHeight: '42px',
     cursor: 'pointer',
   },
   contextMenuContent: {
@@ -72,38 +68,21 @@ function ContextMenu({ items, widgetToRender }: ContextMenuProps) {
     >
       <div onClick={handleClick}>{widgetToRender || <EditDots />}</div>
       {menuVisible && (
-        <div
-          ref={contextMenuRef}
-          // style={ContextMenuStyles.contextMenuContent}
-          className="context-menu"
-        >
+        <div ref={contextMenuRef} className="context-menu">
           {items?.map((item, index) => (
             <div
               className="context-menu-item"
               key={index}
               style={{
-                // padding: '4px',
                 cursor: 'pointer',
               }}
               onClick={() => {
-                handleMenuItemClick(item.action); // Используем новую функцию обработчика
+                handleMenuItemClick(item.action);
               }}
             >
               <div className="context-menu-item-reply">{item.title}</div>
               <div className="context-menu-item-icon" />
             </div>
-            // <div
-            //   key={index}
-            //   style={{
-            //     padding: '4px',
-            //     cursor: 'pointer',
-            //   }}
-            //   onClick={() => {
-            //     handleMenuItemClick(item.action); // Используем новую функцию обработчика
-            //   }}
-            // >
-            //   {item.title}
-            // </div>
           ))}
         </div>
       )}

@@ -19,7 +19,8 @@ $header-container-color-icon: var(--color-icon);
   height: $header-container-height;
   gap: 0 $header-container-gap-width;
   padding: $header-container-padding-interval $header-container-padding-interval $header-container-padding-interval $header-container-bottom;
- &--title_wrapper{
+  justify-content: space-between;
+  &--title_wrapper{
    font-family: $header-container-title-font-family;
    font-style: normal;
    font-weight: 500;

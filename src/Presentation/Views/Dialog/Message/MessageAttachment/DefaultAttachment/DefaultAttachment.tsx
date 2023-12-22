@@ -3,8 +3,8 @@ import './DefaultAttachment.scss';
 import TextDocument from '../../../../../components/UI/svgs/Icons/Media/TextDocument';
 
 function trimFileName(fileName: string) {
-  if (fileName.length > 30) {
-    return `${fileName.substring(0, 29)}... .${fileName.slice(
+  if (fileName.length > 10) {
+    return `${fileName.substring(0, 9)}... .${fileName.slice(
       (Math.max(0, fileName.lastIndexOf('.')) || Infinity) + 1,
     )}`;
   }

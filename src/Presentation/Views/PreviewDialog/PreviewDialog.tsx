@@ -1,18 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import React, { useEffect } from 'react';
 import './PreviewDialog.scss';
-import ColumnContainer from '../../components/containers/ColumnContainer/ColumnContainer';
-import RowCenterContainer from '../../components/containers/RowCenterContainer/RowCenterContainer';
 import PublicChannel from '../../components/UI/svgs/Icons/Contents/PublicChannel';
 import { IconTheme } from '../../components/UI/svgs/Icons/IconsCommonTypes';
 import ThemeScheme from '../../themes/ThemeScheme';
 import { DialogType } from '../../../Domain/entity/DialogTypes';
 import User from '../../components/UI/svgs/Icons/Contents/User';
 import GroupChat from '../../components/UI/svgs/Icons/Contents/GroupChat';
-import RowLeftContainer from '../../components/containers/RowLeftContainer/RowLeftContainer';
 import PreviewDialogViewModel from './PreviewDialogViewModel';
-import NotifyOff from '../../components/UI/svgs/Icons/Toggle/NotifyOff';
-import EditDots from '../../components/UI/svgs/Icons/Actions/EditDots';
 import UiKitTheme from '../../themes/UiKitTheme';
 import PreviewImageFile from './PreviewImageFile/PreviewImageFile';
 import PreviewAudioFile from './PreviewAudioFile/PreviewAudioFile';
@@ -20,6 +15,9 @@ import PreviewVideoFile from './PreviewVideoFile/PreviewVideoFile';
 import PreviewDefaultFile from './PreviewDefaultFile/PreviewDefaultFile';
 import { Creator } from '../../../Data/Creator';
 import UserAvatar from '../EditDialog/UserAvatar/UserAvatar';
+import PreviewDialogContextMenu from './PreviewDialogContextMenu/PreviewDialogContextMenu';
+import { DialogEntity } from '../../../Domain/entity/DialogEntity';
+import { MessageDTOMapper } from '../../../Data/source/remote/Mapper/MessageDTOMapper';
 
 export type ThemeNames = 'light' | 'dark' | 'custom';
 type PreviewDialogsColorTheme = {
@@ -36,7 +34,6 @@ type PreviewDialogsTheme = {
   selected: boolean;
   muted: boolean;
 };
-
 type PreviewDialogSettings = {
   showAvatarSection: boolean;
   showTitleSection: boolean;
@@ -47,7 +44,6 @@ type PreviewDialogSettings = {
   showTimeInTitle: boolean;
   showBadgePlaceholderInMessage: boolean;
 };
-
 type PreviewDialogsProps = {
   typeDialog: DialogType;
   dialogAvatar?: JSX.Element;
@@ -72,10 +68,6 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   additionalSettings = undefined,
 }: PreviewDialogsProps) => {
-  // const colorIcon = window
-  //   .getComputedStyle(document.documentElement)
-  //   .getPropertyValue('--color-icon')
-  //   .trim();
   const [dialogAvatarUrl, setDialogAvatarUrl] = React.useState('');
 
   const colorIcon = theme?.colorTheme
@@ -151,21 +143,6 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
       : 'var(--field-border)'; // ThemeScheme.secondary_200;
   }
 
-  const avatarSectionStyles = {
-    backgroundColor: `${workTheme.backgroundColorAvatarSection}`,
-  };
-  const titleDialogStyles = theme?.colorTheme
-    ? {
-        border: `1px solid ${workTheme.divider}`,
-        backgroundColor: `${workTheme.backgroundColorMainSection}`,
-        color: `${workTheme.fontColorTitle}`,
-      }
-    : {};
-
-  const messageDialogStyles = theme?.colorTheme
-    ? { color: `${workTheme.colorAvatarIcon}` }
-    : {};
-
   const publicIconTheme: IconTheme = {
     color: colorIcon || ThemeScheme.primary_400,
     width: '42',
@@ -176,40 +153,33 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
     width: '42',
     height: '42',
   };
-  const previewDialogContainerStyles = [
-    'preview-dialog-container',
-    theme && theme.selected ? 'preview-selected' : '',
-  ].join(' ');
-
-  const avatarWrapperStyles = [
-    'avatar-wrapper',
-    typeDialog === DialogType.public ? 'public_avatar' : '',
-  ].join(' ');
-  const textWrapperContainer = [
-    unreadMessageCount && unreadMessageCount > 0
-      ? 'preview-dialog-container__text-left'
-      : 'preview-dialog-container__text',
-    previewMessage?.length && previewMessage?.length > 40 ? 'ellipsis' : '',
-  ].join(' ');
   let avatar: JSX.Element;
 
   switch (typeDialog) {
     case DialogType.public:
       avatar = (
-        <PublicChannel
-          color={publicIconTheme.color}
-          width={publicIconTheme.width}
-          height={publicIconTheme.height}
-        />
+        <div className="dialog-preview-avatar-ellipse">
+          <div className="dpa-contents-user">
+            <PublicChannel
+              color={publicIconTheme.color}
+              width={publicIconTheme.width}
+              height={publicIconTheme.height}
+            />
+          </div>
+        </div>
       );
       break;
     case DialogType.group:
       avatar = (
-        <GroupChat
-          color={itemTheme.color}
-          width={itemTheme.width}
-          height={itemTheme.height}
-        />
+        <div className="dialog-preview-avatar-ellipse">
+          <div className="contents-user">
+            <GroupChat
+              color={itemTheme.color}
+              width={itemTheme.width}
+              height={itemTheme.height}
+            />
+          </div>
+        </div>
       );
       break;
     case DialogType.private:
@@ -219,97 +189,36 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
           iconTheme={{ width: '40px', height: '40px' }}
         />
       ) : (
-        <User
-          color={itemTheme.color}
-          width={itemTheme.width}
-          height={itemTheme.height}
-        />
+        <div className="dialog-preview-avatar-ellipse">
+          <div className="contents-user">
+            <User
+              color={itemTheme.color}
+              width={itemTheme.width}
+              height={itemTheme.height}
+            />
+          </div>
+        </div>
       );
       break;
     default:
       avatar = (
-        <GroupChat
-          color={itemTheme.color}
-          width={itemTheme.width}
-          height={itemTheme.height}
-        />
+        <div className="dialog-preview-avatar-ellipse">
+          <div className="contents-user">
+            <GroupChat
+              color={itemTheme.color}
+              width={itemTheme.width}
+              height={itemTheme.height}
+            />
+          </div>
+        </div>
       );
       break;
   }
   avatar = dialogAvatar || avatar;
   const [haveHover, setHaveHover] = React.useState(false);
 
-  const avatarSectionContainer = {
-    flexBasis: '56px',
-    minWidth: '56px',
-    maxWidth: '56px',
-    minHeight: '56px',
-    maxHeight: '56px',
-  };
-  const titleContainer = {
-    flexBasis: '150px',
-    minHeight: '20px',
-    maxHeight: '20px',
-    maxWidth: '150px',
-    minWidth: '150px',
-  };
-
-  const badgeContainer = {
-    flexBasis: '18px',
-    minHeight: '29px',
-    maxHeight: '29px',
-    maxWidth: '18px',
-    minWidth: '18px',
-  };
-  const badgeItemStyle = {
-    width: '19px',
-    height: '20px',
-    borderRadius: '50%',
-    backgroundColor: `${
-      publicIconTheme.color ? publicIconTheme.color : 'blue'
-    }`,
-    color: 'white',
-    fontSize: '12px',
-    lineHeight: '16px',
-  };
-  const hoverItemStyle = {
-    width: '19px',
-    height: '20px',
-    borderRadius: '50%',
-    color: 'white',
-    fontSize: '12px',
-    lineHeight: '16px',
-  };
-
-  const messageMinContainer = {
-    flexBasis: '182px',
-    minHeight: '29px',
-    maxHeight: '29px',
-    maxWidth: '182px',
-    minWidth: '182px',
-  };
-
-  const messageMaxContainer = {
-    flexBasis: '182px',
-    minHeight: '29px',
-    maxHeight: '29px',
-    maxWidth: '182px',
-    minWidth: '182px',
-  };
-
   const getMessageParts = (message: string) => {
-    if (
-      message.includes('MediaContentEntity') ||
-      message.includes('[Attachment]')
-    ) {
-      const messageParts = message.split('|');
-
-      // val messageBody = "${MediaContentEntity::class.java.simpleName}|$fileName|$uid|$fileMimeType"
-      // 0, 1, 2, 3
-      return messageParts;
-    }
-
-    return [];
+    return MessageDTOMapper.getMessageParts(message);
   };
 
   const [fileUrl, setFileUrl] = React.useState('');
@@ -345,17 +254,6 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
       tmpFileUrl = blobFile ? URL.createObjectURL(blobFile) : tmpFileUrl || '';
       setDialogAvatarUrl(tmpFileUrl);
     }
-    /*
-                let tmpFileUrl = '';
-  
-            if (dialog.photo && dialog.photo !== 'null') {
-              const { blobFile } = await Creator.createBlobFromUrl(
-                dialog.photo && QB.content.privateUrl(dialog.photo),
-              );
-  
-              tmpFileUrl = blobFile ? URL.createObjectURL(blobFile) : '';
-            }
-             */
   }
 
   useEffect(() => {
@@ -372,33 +270,37 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
     };
   }, []);
 
+  const trimFileName = (fileName: string): string => {
+    if (fileName.length > 16) {
+      return `${fileName.substring(0, 15)}... .${fileName.slice(
+        (Math.max(0, fileName.lastIndexOf('.')) || Infinity) + 1,
+      )}`;
+    }
+
+    return fileName;
+  };
+
   const getPreviewMessage = (message: string): JSX.Element => {
     const messageParts = getMessageParts(message);
 
     if (messageParts && messageParts.length > 0) {
       const fileName: string = messageParts[1];
-      // const fileUid: string = messageParts[2];
-      // const fileUrl: string = fileUid && QB.content.privateUrl(fileUid);
-      // let fileUrl: string = fileUid && QB.content.privateUrl(fileUid);
-      // const { blobFile } = await Creator.createBlobFromUrl(fileUrl);
-      //
-      // fileUrl = blobFile ? URL.createObjectURL(blobFile) : fileUrl || '';
 
       const result: JSX.Element = (
         <div className="dialog-item-preview-text">{message}</div>
       );
 
       if (messageParts[3].includes('audio')) {
-        return <PreviewAudioFile fileName={fileName} />;
+        return <PreviewAudioFile fileName={trimFileName(fileName)} />;
       }
       if (messageParts[3].includes('video')) {
-        return <PreviewVideoFile fileName={fileName} />;
+        return <PreviewVideoFile fileName={trimFileName(fileName)} />;
       }
       if (messageParts[3].includes('image')) {
         return <PreviewImageFile fileName={fileName} imgUrl={fileUrl} />;
       }
       if (fileName.length > 0 && fileName.includes('.')) {
-        return <PreviewDefaultFile fileName={fileName} />;
+        return <PreviewDefaultFile fileName={trimFileName(fileName)} />;
       }
 
       return result;
@@ -411,159 +313,81 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
       return <div>Replied Message</div>;
     }
 
-    return <div>{message}</div>;
+    return (
+      <div>
+        {message.split(' ').length >= 1 && message.split(' ')[0].length < 23
+          ? message
+          : `${message.substring(0, 25)} ...`}
+      </div>
+    );
   };
 
   return (
     <div
-      onMouseEnter={() => setHaveHover(true)}
-      onMouseLeave={() => setHaveHover(false)}
+      className="dialog-preview-container"
       style={
         haveHover
           ? {
-              ...titleDialogStyles,
-              // background: hoverTheme.backgroundColorMainSection,
-              background: 'var(--chat-input)',
-              border: `1px solid ${hoverTheme.divider}`,
+              background: 'var(--divider)',
             }
-          : titleDialogStyles
+          : {}
       }
-      className={previewDialogContainerStyles}
-      onClick={() => {
-        if (dialogViewModel && dialogViewModel.itemClickActionHandler) {
-          const it = dialogViewModel?.item;
-
-          dialogViewModel.itemClickActionHandler(it);
-        }
-      }}
-      onTouchStart={() => {
-        if (dialogViewModel && dialogViewModel.itemTouchActionHandler) {
-          const it = dialogViewModel?.item;
-
-          dialogViewModel.itemTouchActionHandler(it);
-        }
-      }}
+      onMouseEnter={() => setHaveHover(true)}
+      onMouseLeave={() => setHaveHover(false)}
     >
-      <RowCenterContainer
-        minWidthContainer="288px"
-        minHeightContainer="56px"
-        gapBetweenItem="16px"
-        LeftItem={
-          <div style={avatarSectionStyles} className={avatarWrapperStyles}>
-            <div
-              style={{
-                margin: '0 auto',
-              }}
-            >
-              <div>{avatar}</div>
+      <div className="dialog-preview-container-left">
+        <div
+          className="dialog-preview"
+          onClick={() => {
+            if (dialogViewModel && dialogViewModel.itemClickActionHandler) {
+              const it = dialogViewModel?.item;
+
+              dialogViewModel.itemClickActionHandler(it);
+            }
+          }}
+          onTouchStart={() => {
+            if (dialogViewModel && dialogViewModel.itemTouchActionHandler) {
+              const it = dialogViewModel?.item;
+
+              dialogViewModel.itemTouchActionHandler(it);
+            }
+          }}
+        >
+          <div className="dialog-preview-avatar">{avatar}</div>
+          <div className="dialog-preview-text">
+            <div className="dialog-preview-text-subtitle">
+              <div className="dialog-preview-text-subtitle-caption-name">
+                {title}
+              </div>
+              <div className="dialog-preview-text-subtitle-caption2-time">
+                {message_date_time_sent}
+              </div>
+            </div>
+            <div className="dialog-preview-text-subtitle-message">
+              <div className="dialog-preview-text-subtitle-text">
+                {getPreviewMessage(previewMessage || '')}
+              </div>
+              {unreadMessageCount! > 0 && (
+                <div className="dialog-preview-text-subtitle-message-badge">
+                  <div className="dialog-preview-text-subtitle-message-badge-v">
+                    {unreadMessageCount}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        }
-        LeftContainerSize={avatarSectionContainer}
-        CenterItem={
-          <ColumnContainer gapBetweenItem="3px" maxWidth="213px">
-            <RowLeftContainer
-              RightItem={
-                <div className="dialog-item-date-time-sent">
-                  {!haveHover ? message_date_time_sent : ''}
-                </div>
-              }
-              CenterContainerSize={titleContainer}
-              CenterItem={
-                <div className="row-left-layout-main-container">
-                  {typeDialog === DialogType.public && (
-                    <div>
-                      <PublicChannel
-                        color={publicIconTheme.color}
-                        width="20px"
-                        height="20px"
-                        applyZoom
-                      />
-                    </div>
-                  )}
-                  <div className="preview-dialog-container__text-title">
-                    {title}
-                  </div>
-                  {theme?.muted && (
-                    <div>
-                      <NotifyOff
-                        color={publicIconTheme.color}
-                        width="20px"
-                        height="20px"
-                        applyZoom
-                      />
-                    </div>
-                  )}
-                </div>
-              }
-            />
-            {haveHover ? (
-              <RowLeftContainer
-                gapBetweenItem="7px"
-                RightContainerSize={badgeContainer}
-                RightItem={
-                  <div>
-                    <div style={hoverItemStyle}>
-                      <EditDots
-                        color={
-                          theme?.colorTheme
-                            ? theme?.colorTheme.mainElements()
-                            : 'var(--main-elements)'
-                        }
-                      />
-                    </div>
-                  </div>
-                }
-                CenterContainerSize={messageMinContainer}
-                CenterItem={
-                  <div className="preview-dialog-container__text-left">
-                    <span className="preview-dialog-container__text-concat">
-                      {getPreviewMessage(previewMessage || '')}
-                    </span>
-                  </div>
-                }
-              />
-            ) : (
-              <RowLeftContainer
-                gapBetweenItem="7px"
-                RightContainerSize={badgeContainer}
-                RightItem={
-                  unreadMessageCount && (
-                    <div>
-                      <div className="badge-text-style" style={badgeItemStyle}>
-                        {unreadMessageCount &&
-                        unreadMessageCount.toString().length > 1
-                          ? '9+'
-                          : unreadMessageCount}
-                      </div>
-                    </div>
-                  )
-                }
-                CenterContainerSize={
-                  unreadMessageCount && unreadMessageCount > 0
-                    ? messageMinContainer
-                    : messageMaxContainer
-                }
-                CenterItem={
-                  <div
-                    style={messageDialogStyles}
-                    className={textWrapperContainer}
-                  >
-                    <span className="preview-dialog-container__text-concat">
-                      {getPreviewMessage(previewMessage || '')}
-                    </span>
-                  </div>
-                }
-              />
-            )}
-          </ColumnContainer>
-        }
-        CenterContainerSize={{
-          flexBasis: '50px',
-          minHeight: '50px',
-          maxHeight: '50px',
-        }}
-      />
+        </div>
+      </div>
+      <div className="dialog-preview-container-right">
+        <div className="dialog-preview-icon-close">
+          <PreviewDialogContextMenu
+            dialog={dialogViewModel?.entity as DialogEntity}
+            // onLeave={() => console.log('call leave dialog')}
+            onLeave={() => console.log('call leave dialog')}
+            enableLeaveDialog
+          />
+        </div>
+      </div>
     </div>
   );
 };

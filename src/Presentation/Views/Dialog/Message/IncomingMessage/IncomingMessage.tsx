@@ -218,7 +218,7 @@ export function IncomingMessage(props: {
                   />
                 </div>
               </div>
-              {props.AITranslation && (
+              {props.AITranslation && !props.message.attachments ? (
                 <AITranslateComponent
                   onTranslate={(language) => {
                     sendMessageToTranslate(
@@ -240,6 +240,8 @@ export function IncomingMessage(props: {
                       .AITranslateWidgetConfig,
                   )}
                 />
+              ) : (
+                <div style={{ height: '16px' }} />
               )}
             </div>
             <div className="incoming-ai-transcribe">
@@ -270,7 +272,7 @@ export function IncomingMessage(props: {
                   </div>
                 </div>
               ) : null}
-              {!waitAITranslateWidget
+              {!waitAITranslateWidget && !props.message.attachments
                 ? props.AIAnswerToMessage && (
                     <AIAssistComponent
                       onAssistAnswer={() => {

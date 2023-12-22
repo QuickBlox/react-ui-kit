@@ -136,7 +136,7 @@ export class MessageDTOMapper implements IDTOMapper {
 
       dto.id = qbMessage._id;
       dto.dialogId = qbMessage.chat_dialog_id;
-      dto.message = MessageDTOMapper.formatMessage(qbMessage.message);
+      dto.message = qbMessage.message; // MessageDTOMapper.formatMessage(qbMessage.message);
       dto.created_at = qbMessage.created_at;
       dto.date_sent = qbMessage.date_sent * 1000;
       dto.delivered_ids = qbMessage.delivered_ids || [];
@@ -156,7 +156,7 @@ export class MessageDTOMapper implements IDTOMapper {
       dto.id = qbMessage._id;
       dto.dialogId = qbMessage.chat_dialog_id;
 
-      dto.message = MessageDTOMapper.formatMessage(qbMessage.message); // todo: check
+      dto.message = qbMessage.message; // MessageDTOMapper.formatMessage(qbMessage.message); // todo: check
       dto.created_at = qbMessage.created_at || Date.now().toString(); // todo: check
       dto.date_sent = qbMessage.date_sent || Date.now() * 1000; // todo: check
       dto.delivered_ids = qbMessage.delivered_ids || [];
@@ -262,42 +262,88 @@ export class MessageDTOMapper implements IDTOMapper {
   }
 
   //
+  public static FORWARD_MESSAGE_PREFIX = '[Forwarded_Message]';
+
+  public static REPLY_MESSAGE_PREFIX = '[Replied_Message]';
+
+  public static ATTACHMENT_PREFIX = '[Attachment]';
+
+  public static MEDIA_CONTENT_ENTITY_PREFIX = 'MediaContentEntity';
+
+  private static isForwardedOrRepliedMessage(qbMessage: string) {
+    return (
+      qbMessage.includes(MessageDTOMapper.FORWARD_MESSAGE_PREFIX) ||
+      qbMessage.includes(MessageDTOMapper.REPLY_MESSAGE_PREFIX)
+    );
+  }
+
+  private static isMediaOrAttachmentMessage(message: string) {
+    return (
+      message.includes(MessageDTOMapper.MEDIA_CONTENT_ENTITY_PREFIX) ||
+      message.includes(MessageDTOMapper.ATTACHMENT_PREFIX)
+    );
+  }
 
   public static formatMessage(qbMessage: string) {
-    if (
-      qbMessage.includes('MediaContentEntity') ||
-      qbMessage.includes('[Attachment]')
-    ) {
-      const messageParts = qbMessage.split('|');
-
-      // val messageBody = "${MediaContentEntity::class.java.simpleName}|$fileName|$uid|$fileMimeType"
-      // 0, 1, 2, 3
-      return messageParts[1] || '';
+    if (MessageDTOMapper.isMediaOrAttachmentMessage(qbMessage)) {
+      return this.splitMessageParts(qbMessage)[1] || '';
     }
-    if (
-      qbMessage.includes('[Forwarded_Message]') ||
-      qbMessage.includes('[Replied_Message]')
-    ) {
+    if (MessageDTOMapper.isForwardedOrRepliedMessage(qbMessage)) {
       return '';
     }
 
     return qbMessage;
   }
 
-  private static getMessageParts(qbMessage: string) {
-    if (
-      qbMessage.includes('MediaContentEntity') ||
-      qbMessage.includes('[Attachment]')
-    ) {
-      const messageParts = qbMessage.split('|');
-
-      // val messageBody = "${MediaContentEntity::class.java.simpleName}|$fileName|$uid|$fileMimeType"
-      // 0, 1, 2, 3
-      return messageParts;
+  public static getMessageParts(qbMessage: string) {
+    if (MessageDTOMapper.isMediaOrAttachmentMessage(qbMessage)) {
+      return MessageDTOMapper.splitMessageParts(qbMessage);
     }
 
     return [];
   }
+
+  private static splitMessageParts(message: string) {
+    // val messageBody = "${MediaContentEntity::class.java.simpleName}|$fileName|$uid|$fileMimeType"
+    // 0, 1, 2, 3
+    return message.split('|');
+  }
+
+  // public static formatMessage(qbMessage: string) {
+  //   if (
+  //     qbMessage.includes('MediaContentEntity') ||
+  //     qbMessage.includes('[Attachment]')
+  //   ) {
+  //     const messageParts = qbMessage.split('|');
+  //
+  //     // val messageBody = "${MediaContentEntity::class.java.simpleName}|$fileName|$uid|$fileMimeType"
+  //     // 0, 1, 2, 3
+  //     return messageParts[1] || '';
+  //   }
+  //   if (
+  //     qbMessage.includes('[Forwarded_Message]') ||
+  //     qbMessage.includes('[Replied_Message]')
+  //   ) {
+  //     return '';
+  //   }
+  //
+  //   return qbMessage;
+  // }
+  //
+  // private static getMessageParts(qbMessage: string) {
+  //   if (
+  //     qbMessage.includes('MediaContentEntity') ||
+  //     qbMessage.includes('[Attachment]')
+  //   ) {
+  //     const messageParts = qbMessage.split('|');
+  //
+  //     // val messageBody = "${MediaContentEntity::class.java.simpleName}|$fileName|$uid|$fileMimeType"
+  //     // 0, 1, 2, 3
+  //     return messageParts;
+  //   }
+  //
+  //   return [];
+  // }
 
   private static validateDTO(messageDTO: RemoteMessageDTO) {
     const messageDTOValidator: DtoValidator<RemoteMessageDTO> = {

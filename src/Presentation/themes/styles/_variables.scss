@@ -1,6 +1,29 @@
 @import "theme_light";
 @import "theme_dark";
 
+$qb-min-width-screen-desktop: 980px;
+
+$qb-max-width-screen: 980px;
+
+$qb-max-width-message-view-container-desktop: 680px;
+$qb-max-width-message-view-container-mobile: 345px;
+
+$qb-max-width-message-bubble-desktop: 480px;
+$qb-max-width-message-bubble-mobile: 170px;
+
+$qb-max-width-image-message-desktop: 240px;
+$qb-max-width-image-message-mobile: 150px;
+
+$qb-max-width-audio-message-desktop: 300px;
+$qb-max-width-audio-message-mobile: 150px;
+
+$qb-max-width-dialog-list-desktop: 320px;
+$qb-max-width-dialog-list-mobile: 100%;
+
+$create-dialog-container-width: 380px;
+
+
+
 /* Fonts */
 :root{
   --title-title-large: 500 20px/24px "Roboto", sans-serif;
@@ -17,5 +40,15 @@
   --ui-kit-header: 500 48px "Roboto Mono", sans-serif;
   --ui-kit-title: 500 32px "Roboto Mono", sans-serif;
   --ui-kit-body: 400 17px "Roboto Mono", sans-serif;
+
+/* Width */
+  --max-width-message-bubble: #{$qb-max-width-message-bubble-desktop};
+  --max-width-message-view-container: #{$qb-max-width-message-view-container-desktop};
+  --max-width-image-message: #{$qb-max-width-image-message-desktop};
+  --max-width-audio-message: #{$qb-max-width-audio-message-desktop};
+  --max-width-dialog-list: #{$qb-max-width-dialog-list-desktop};
+  --min-width-screen-desktop: #{$qb-min-width-screen-desktop};
 }
+
+
 

@@ -12,6 +12,15 @@ body {
   background-color: var(--main-background);
   overflow: hidden !important;
   scrollbar-width: none !important;
-  max-height: 810px;
-  max-width: 1380px;
+}
+
+/* Media-query for mobile devices */
+@media only screen and (max-width: #{$qb-max-width-screen}) {
+  :root {
+    --max-width-message-view-container: #{$qb-max-width-message-view-container-mobile};
+    --max-width-message-bubble: #{$qb-max-width-message-bubble-mobile};
+    --max-width-image-message: #{$qb-max-width-image-message-mobile};
+    --max-width-audio-message: #{$qb-max-width-audio-message-mobile};
+    --max-width-dialog-list: #{$qb-max-width-dialog-list-mobile};
+  }
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import './SingleUser.scss';
 import { UserEntity } from '../../../../../Domain/entity/UserEntity';
-import ActiveSvg from '../../../../components/UI/svgs/ActiveSvg/ActiveSvg';
 import User from '../../../../components/UI/svgs/Icons/Contents/User';
 
 type UserSingleProps = {
@@ -11,28 +10,20 @@ type UserSingleProps = {
 // eslint-disable-next-line react/function-component-definition,@typescript-eslint/no-unused-vars
 const UserSingle: React.FC<UserSingleProps> = ({ user, keyValue }) => {
   return (
-    <div className="user-single-container--wrapper">
-      <div className="user-single-container--wrapper__icon">
-        <ActiveSvg
-          content={
-            <div className="user-single-container--wrapper__icon__content">
-              <User
-                width="26"
-                height="26"
-                applyZoom
-                color="var(--disabled-elements)"
-              />
-            </div>
-          }
-          onClick={() => {
-            console.log('user click...');
-          }}
-          onTouch={() => {
-            console.log('user touch...');
-          }}
-        />
+    <div className="list-single-user">
+      <div className="list-single-user-avatar">
+        <div className="list-single-user-avatar-rectangle" />
+        <div className="list-single-user-avatar-ellipse" />
+        <div className="list-single-user-contents-user">
+          <User
+            width="26"
+            height="26"
+            applyZoom
+            color="var(--tertiary-elements)"
+          />
+        </div>
       </div>
-      <div key={keyValue} className="user-single-container--wrapper__username">
+      <div className="list-single-user-subtitle">
         {user?.full_name || user?.login || user?.email || user?.id}
       </div>
     </div>

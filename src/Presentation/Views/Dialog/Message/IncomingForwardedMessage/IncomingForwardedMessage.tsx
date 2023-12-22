@@ -191,7 +191,7 @@ function IncomingForwardedMessage(props: {
                     />
                   </div>
                 </div>
-                {props.AITranslation && (
+                {props.AITranslation && !item.attachments ? (
                   <AITranslateComponent
                     onTranslate={(language) => {
                       sendMessageToTranslate(
@@ -213,6 +213,8 @@ function IncomingForwardedMessage(props: {
                         .AITranslateWidgetConfig,
                     )}
                   />
+                ) : (
+                  <div style={{ height: '16px' }} />
                 )}
               </div>
               <div className="incoming-forward-ai-transcribe">
@@ -243,7 +245,7 @@ function IncomingForwardedMessage(props: {
                     </div>
                   </div>
                 ) : null}
-                {!waitAITranslateWidget
+                {!waitAITranslateWidget && !item.attachments
                   ? props.AIAnswerToMessage && (
                       <AIAssistComponent
                         onAssistAnswer={() => {

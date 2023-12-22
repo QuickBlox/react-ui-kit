@@ -32,7 +32,6 @@ import GroupChat from '../../components/UI/svgs/Icons/Contents/GroupChat';
 import User from '../../components/UI/svgs/Icons/Contents/User';
 import { PublicDialogEntity } from '../../../Domain/entity/PublicDialogEntity';
 import PublicChannel from '../../components/UI/svgs/Icons/Contents/PublicChannel';
-import RenderDialogHeaderNavigator from '../../Views/Dialog/RenderDialogHeaderNavigator/RenderDialogHeaderNavigator';
 import MessageInput from '../../Views/Dialog/MessageInput/MessageInput';
 import SendIcon from '../../components/UI/svgs/Icons/Actions/Send';
 import AttachmentUploader from '../../Views/Dialog/AttachmentUploader/AttachmentUploader';
@@ -53,6 +52,10 @@ import SectionList from '../../components/containers/SectionList';
 import { SectionItem } from '../../components/containers/SectionList/useComponent';
 import { SystemDateBanner } from '../../Views/Dialog/SystemDateBanner/SystemDateBanner';
 import { formatDate } from '../../../utils/DateTimeFormatter';
+import { useMobileLayout } from '../../components/containers/SectionList/hooks';
+import RenderRightActions from '../../Views/Dialog/DialogHeader/RenderRightActions/RenderRightActions';
+import RenderLeftActions from '../../Views/Dialog/DialogHeader/RenderLeftActions/RenderLeftActions';
+import { MessageDTOMapper } from '../../../Data/source/remote/Mapper/MessageDTOMapper';
 
 type AIWidgetPlaceHolder = {
   enabled: boolean;
@@ -65,6 +68,7 @@ type QuickBloxUIKitDesktopLayoutProps = {
   AIRephrase?: AIWidgetPlaceHolder;
   AITranslate?: AIWidgetPlaceHolder;
   AIAssist?: AIWidgetPlaceHolder;
+  uikitHeightOffset?: string;
 };
 
 const QuickBloxUIKitDesktopLayout: React.FC<
@@ -77,6 +81,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   AIRephrase = undefined,
   AIAssist = undefined,
+  uikitHeightOffset = '0px',
 }: QuickBloxUIKitDesktopLayoutProps) => {
   console.log('create QuickBloxUIKitDesktopLayout');
   const [selectedDialog, setSelectedDialog] =
@@ -256,6 +261,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   };
 
   useEffect(() => {
+    const codeVersion = '0.2.8-beta.3';
+
+    console.log(`React UIKit CODE VERSION IS ${codeVersion}`);
     console.log('TestStage: GET DATA ');
     console.log(
       `auth data: ${JSON.stringify(
@@ -273,31 +281,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       console.log('TestStage: USE EFFECT release');
       dialogsViewModel.release();
     };
-  }, []); // сейчас это выполняется один раз при старте, а нужно каждый раз при смене пользователя
-
-  // const dialogsEventHandler = (dialogInfo: DialogEventInfo) => {
-  //   console.log('call dialogsEventHandler in QuickBloxUIKitDesktopLayout');
-  //   if (dialogInfo.eventMessageType === EventMessageType.SystemMessage) {
-  //     switch (dialogInfo.notificationTypes) {
-  //       case NotificationTypes.DELETE_LEAVE_DIALOG: {
-  //         if (
-  //           dialogInfo.messageInfo &&
-  //           dialogInfo.messageInfo.sender_id === userId
-  //         ) {
-  //           setSelectedDialog(undefined);
-  //         }
-  //
-  //         break;
-  //       }
-  //       default: {
-  //         const pagination: Pagination = new Pagination();
-  //
-  //         dialogsViewModel?.getDialogs(pagination);
-  //         break;
-  //       }
-  //     }
-  //   }
-  // };
+  }, []);
 
   useEffect(() => {
     console.log('TestStage: GET DATA AFTER User data has CHANGED');
@@ -312,29 +296,8 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       const pagination: Pagination = new Pagination();
 
       dialogsViewModel?.getDialogs(pagination);
-      //
-      // console.log('auth is completed, subscribe');
-      //
-      // subscribeToDialogEventsUseCase
-      //   .execute(dialogsEventHandler)
-      //   .catch((reason) => {
-      //     console.log(stringifyError(reason));
-      //   });
-      // //
-      // console.log('subscribe is completed, go');
     }
   }, [currentContext.InitParams]);
-
-  useEffect(() => {
-    console.log(
-      `TestStage: selectedDialog: ${
-        selectedDialog?.entity?.name || 'Dialog Name is empty'
-      }`,
-    );
-    if (selectedDialog && selectedDialog.entity) {
-      dialogsViewModel.entity = selectedDialog.entity;
-    }
-  }, [selectedDialog]);
 
   const getCountDialogMembers = (dialogEntity: DialogEntity): number => {
     let participants = [];
@@ -365,17 +328,36 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       }
 
       return (
-        <GroupChat
-          width="24"
-          height="24"
-          applyZoom
-          color="var(--secondary-text)"
-        />
+        <div className="dh-avatar">
+          <div className="dh-avatar-rectangle" />
+          <div className="dh-avatar-ellipse">
+            <div className="dh-avatar-contents-user">
+              <GroupChat
+                width="24"
+                height="24"
+                applyZoom
+                color="var(--secondary-text)"
+              />
+            </div>
+          </div>
+        </div>
       );
     }
     if (dialogEntity.type === DialogType.private) {
       return (
-        <User width="24" height="24" applyZoom color="var(--secondary-text)" />
+        <div className="dh-avatar">
+          <div className="dh-avatar-rectangle" />
+          <div className="dh-avatar-ellipse">
+            <div className="dh-avatar-contents-user">
+              <User
+                width="24"
+                height="24"
+                applyZoom
+                color="var(--secondary-text)"
+              />
+            </div>
+          </div>
+        </div>
       );
     }
     if (dialogEntity.type === DialogType.public) {
@@ -391,12 +373,19 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       }
 
       return (
-        <PublicChannel
-          width="24"
-          height="24"
-          applyZoom
-          color="var(--secondary-text)"
-        />
+        <div className="dh-avatar">
+          <div className="dh-avatar-rectangle" />
+          <div className="dh-avatar-ellipse">
+            <div className="dh-avatar-contents-user">
+              <PublicChannel
+                width="24"
+                height="24"
+                applyZoom
+                color="var(--secondary-text)"
+              />
+            </div>
+          </div>
+        </div>
       );
     }
   };
@@ -920,7 +909,8 @@ const QuickBloxUIKitDesktopLayout: React.FC<
           const forwardingData: ForwardMessagesParams = {
             messagesToForward: messagesForForward,
             targetDialogs: dialogsForForward,
-            relatedTextMessage: relatedText || '[Forwarded_Message]',
+            relatedTextMessage:
+              relatedText || MessageDTOMapper.FORWARD_MESSAGE_PREFIX,
           };
 
           // eslint-disable-next-line promise/catch-or-return
@@ -990,247 +980,353 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     return sections;
   }
 
+  const [showDialogList, setShowDialogList] = useState<boolean>(true);
+  const [showDialogMessages, setShowDialogMessages] = useState<boolean>(true);
+  const [showDialogInformation, setShowDialogInformation] =
+    useState<boolean>(false);
+
+  const [isMobile] = useMobileLayout();
+
+  useEffect(() => {
+    if (isMobile) {
+      if (!selectedDialog) {
+        setShowDialogList(true);
+      } else {
+        setShowDialogList(false);
+      }
+      const canShowMessages =
+        selectedDialog && !(showDialogInformation && needDialogInformation);
+
+      if (canShowMessages) {
+        setShowDialogMessages(true);
+      } else {
+        setShowDialogMessages(false);
+      }
+      if (selectedDialog && showDialogInformation)
+        setShowDialogInformation(true);
+      else setShowDialogInformation(false);
+    } else {
+      setShowDialogList(true);
+      setShowDialogMessages(true);
+      setShowDialogInformation(true);
+    }
+  }, [isMobile]);
+
+  useEffect(() => {
+    console.log(
+      `TestStage: selectedDialog: ${
+        selectedDialog?.entity?.name || 'Dialog Name is empty'
+      }`,
+    );
+    if (selectedDialog && selectedDialog.entity) {
+      dialogsViewModel.entity = selectedDialog.entity;
+      if (isMobile) {
+        setShowDialogList(false);
+        setShowDialogMessages(true);
+      }
+    } else {
+      setShowDialogList(true);
+    }
+  }, [selectedDialog]);
+
+  useEffect(() => {
+    if (isMobile) {
+      if (needDialogInformation) {
+        setShowDialogMessages(false);
+        setShowDialogInformation(true);
+      } else {
+        setShowDialogMessages(true);
+        setShowDialogInformation(false);
+      }
+    }
+  }, [needDialogInformation]);
+
+  const [clientHeight, setClientHeight] = useState<number>(0);
+  const handleHeightChange = (newHeight: number) => {
+    console.log('The new height is:', newHeight);
+    setClientHeight(newHeight);
+  };
+  // const uikitHeight = '100vh';
+  // const workHeight = `calc(${uikitHeight} - 128px - 16px)`;
+  const workHeight = `calc(100vh - ${uikitHeightOffset} - 16px)`;
+
   return (
-    <DesktopLayout
-      theme={theme}
-      dialogsView={
-        <DialogList
-          // subHeaderContent={<CompanyLogo />}
-          // upHeaderContent={<CompanyLogo />}
-          dialogsViewModel={dialogsViewModel} // 1 Get 2 Update UseCase
-          onDialogSelectHandler={selectDialogActions}
-          additionalSettings={{
-            withoutHeader: false,
-            themeHeader: theme,
-            themePreview: theme,
-            useSubHeader: false,
-            useUpHeader: false,
-          }}
-        />
-      }
-      dialogMessagesView={
-        selectedDialog && selectedDialog.entity && dialogsViewModel.entity ? (
-          <Dialog
-            messagesViewModel={messagesViewModel}
-            showErrorToast={showErrorToast}
-            messageErrorToast={messageErrorToast}
-            warningErrorText={warningErrorText}
-            // subHeaderContent={<CompanyLogo />}
-            // upHeaderContent={<CompanyLogo />}
-            renderHeader={
-              <DialogHeader
-                dialogName={dialogsViewModel.entity.name}
-                renderAvatar={renderIconForTypeDialog(dialogsViewModel.entity)}
-                renderDialogNavigation={
-                  <RenderDialogHeaderNavigator
-                    onClickInfo={informationOpenHandler}
-                    theme={theme}
-                  />
-                }
-                countMembers={getCountDialogMembers(dialogsViewModel.entity)}
-                theme={theme}
-              />
-            }
-            renderMessageList={
-              messagesViewModel &&
-              messagesViewModel.messages &&
-              messagesViewModel.messages.length > 0 &&
-              messagesToView &&
-              messagesToView.length > 0 && (
-                <SectionList
-                  resetScroll={scrollUpToDown}
-                  className="messages-container"
-                  onEndReached={fetchMoreData}
-                  onEndReachedThreshold={0.95}
-                  refreshing={messagesViewModel?.loading}
-                  renderSectionHeader={(section) => (
-                    // <div className="date">{section.title}</div>
-                    <div className="message-view-container--system-message-wrapper">
-                      <div
-                        style={
-                          theme
-                            ? { backgroundColor: theme.disabledElements() }
-                            : {}
-                        }
-                        className="message-view-container--system-message-wrapper__date_container"
-                      >
-                        {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call */}
-                        <SystemDateBanner text={formatDate(section.title)} />
-                      </div>
-                    </div>
+    <div>
+      {/* <div> */}
+      {/*  height: {height} clientHeight: {clientHeight} recommended:{' '} */}
+      {/*  {clientHeight - 64} width: {width} breakpont: {breakpoint} isMobile:{' '} */}
+      {/*  {isMobile?.toString()} selectedDialog:{' '} */}
+      {/*  {selectedDialog ? 'true' : 'false'} showDialogMessages:{' '} */}
+      {/*  {showDialogMessages?.toString()} showDialogList:{' '} */}
+      {/*  {showDialogList?.toString()} showDialogInformation:{' '} */}
+      {/*  {showDialogInformation?.toString()} */}
+      {/* </div> */}
+      <DesktopLayout
+        mainContainerStyles={{ height: workHeight }}
+        onHeightChange={handleHeightChange}
+        theme={theme}
+        dialogsView={
+          showDialogList ? (
+            <DialogList
+              scrollableHeight={clientHeight - 64}
+              // rootStyles={{
+              //   minHeight: `${clientHeight}px)`,
+              //   maxHeight: `${clientHeight}px)`,
+              // }}
+              // messagesContainerStyles={{
+              //   maxHeight: '736px !important',
+              // }}
+              // subHeaderContent={<CompanyLogo />}
+              // upHeaderContent={<CompanyLogo />}
+              dialogsViewModel={dialogsViewModel} // 1 Get 2 Update UseCase
+              onDialogSelectHandler={selectDialogActions}
+              additionalSettings={{
+                withoutHeader: false,
+                themeHeader: theme,
+                themePreview: theme,
+                useSubHeader: false,
+                useUpHeader: false,
+              }}
+            />
+          ) : null
+        }
+        dialogMessagesView={
+          showDialogMessages &&
+          selectedDialog &&
+          selectedDialog.entity &&
+          dialogsViewModel.entity ? (
+            <Dialog
+              rootStyles={{
+                minHeight: `${clientHeight}px)`,
+                maxHeight: `${clientHeight}px)`,
+              }}
+              messagesContainerStyles={{
+                minHeight: `calc(${clientHeight}px - 128px - 16px)`,
+                maxHeight: `calc(${clientHeight}px - 128px - 16px)`,
+              }}
+              messagesViewModel={messagesViewModel}
+              showErrorToast={showErrorToast}
+              messageErrorToast={messageErrorToast}
+              warningErrorText={warningErrorText}
+              // subHeaderContent={<CompanyLogo />}
+              // upHeaderContent={<CompanyLogo />}
+              renderHeader={
+                <DialogHeader
+                  dialogName={dialogsViewModel.entity.name}
+                  renderAvatar={renderIconForTypeDialog(
+                    dialogsViewModel.entity,
                   )}
-                  renderItem={([, groupMessages]) =>
-                    groupMessages.map((message) => (
-                      <Message
-                        theme={theme}
-                        setShowErrorToast={setShowErrorToast}
-                        setWaitAIWidget={setWaitAIWidget}
-                        setMessageErrorToast={setMessageErrorToast}
-                        AIAssistWidget={defaultAIAssistWidget!}
-                        AITranslateWidget={defaultAITranslateWidget!}
-                        message={message}
-                        onReply={(m: MessageEntity) => {
-                          handleOnReply(m);
-                        }}
-                        onForward={(m: MessageEntity) => {
-                          handleForward(m);
-                        }}
-                        messagesToView={messagesToView}
-                        userId={userId || -1}
-                        enableReplying={enableReplying}
-                        enableForwarding={enableForwarding}
-                      />
-                    ))
+                  renderLeftActions={
+                    <RenderLeftActions
+                      onClickBack={() => setSelectedDialog(undefined)}
+                      theme={theme}
+                    />
                   }
-                  sections={getSectionData(messagesToView)}
+                  renderRightActions={
+                    <RenderRightActions
+                      onClickInfo={informationOpenHandler}
+                      theme={theme}
+                    />
+                  }
+                  countMembers={getCountDialogMembers(dialogsViewModel.entity)}
+                  theme={theme}
                 />
-              )
-            }
-            renderReplyMessagesPreview={
-              <ReplyMessagePreview
-                messages={[...messagesToReply]}
-                userNameSentMessage={
-                  messagesToReply[0]?.sender?.full_name ||
-                  messagesToReply[0]?.sender?.login ||
-                  messagesToReply[0]?.sender?.email ||
-                  messagesToReply[0]?.sender?.id.toString() ||
-                  ''
-                }
-                onClose={closeReplyMessageFlowHandler}
-              />
-            }
-            showReplyMessage={showReplyMessage}
-            renderMessageInput={
-              <MessageInput
-                waitAIWidget={waitAIWidget}
-                messageText={messageText}
-                onChangeText={(text: string) => {
-                  setMessageText(text);
-                }}
-                sendText={(textToSend: string) => {
-                  sendTextMessageActions(textToSend);
-                }}
-                renderSendIcon={
-                  <SendIcon
-                    width="21"
-                    height="18"
-                    applyZoom
-                    color={
-                      theme ? theme.mainElements() : 'var(--main-elements)'
+              }
+              renderMessageList={
+                messagesViewModel &&
+                messagesViewModel.messages &&
+                messagesViewModel.messages.length > 0 &&
+                messagesToView &&
+                messagesToView.length > 0 && (
+                  <SectionList
+                    resetScroll={scrollUpToDown}
+                    className="messages-container"
+                    onEndReached={fetchMoreData}
+                    onEndReachedThreshold={0.95}
+                    refreshing={messagesViewModel?.loading}
+                    renderSectionHeader={(section) => (
+                      // <div className="date">{section.title}</div>
+                      <div className="message-view-container--system-message-wrapper">
+                        <div
+                          style={
+                            theme
+                              ? { backgroundColor: theme.disabledElements() }
+                              : {}
+                          }
+                          className="message-view-container--system-message-wrapper__date_container"
+                        >
+                          {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call */}
+                          <SystemDateBanner text={formatDate(section.title)} />
+                        </div>
+                      </div>
+                    )}
+                    renderItem={([, groupMessages]) =>
+                      groupMessages.map((message) => (
+                        <Message
+                          theme={theme}
+                          setShowErrorToast={setShowErrorToast}
+                          setWaitAIWidget={setWaitAIWidget}
+                          setMessageErrorToast={setMessageErrorToast}
+                          AIAssistWidget={defaultAIAssistWidget!}
+                          AITranslateWidget={defaultAITranslateWidget!}
+                          message={message}
+                          onReply={(m: MessageEntity) => {
+                            handleOnReply(m);
+                          }}
+                          onForward={(m: MessageEntity) => {
+                            handleForward(m);
+                          }}
+                          messagesToView={messagesToView}
+                          userId={userId || -1}
+                          enableReplying={enableReplying}
+                          enableForwarding={enableForwarding}
+                        />
+                      ))
                     }
+                    sections={getSectionData(messagesToView)}
                   />
-                }
-                renderAttachment={
-                  <AttachmentUploader
-                    icon={
-                      <AttachmentIcon
-                        width="32"
-                        height="32"
-                        applyZoom
-                        color={
-                          theme
-                            ? theme.inputElements()
-                            : 'var(--input-elements)'
-                        }
-                      />
-                    }
-                    onChangeFile={ChangeFileHandler}
-                  />
-                }
-                isRecording={isRecording}
-                renderVoiceRecorder={
-                  <VoiceMessage
-                    icon={
-                      <VoiceIcon
-                        width="21"
-                        height="18"
-                        applyZoom
-                        color={
-                          isRecording ? 'var(--error)' : 'var(--input-elements)'
-                        }
-                      />
-                    }
-                    onClick={() => {
-                      console.log('click send voice message');
-                      if (messagesViewModel?.loading) return;
-                      setIsRecording(!isRecording);
-                    }}
-                  />
-                }
-                renderVoiceRecordProgress={
-                  <VoiceRecordingProgress
-                    startStatus={isRecording}
-                    longRecInSec={60}
-                    onClick={() => {
-                      console.log('click send voice message');
-                      if (messagesViewModel?.loading) return;
-                      setIsRecording(!isRecording);
-                    }}
-                    onTouch={() => {
-                      console.log('touch send voice message');
-                      if (messagesViewModel?.loading) return;
-                      setIsRecording(!isRecording);
-                    }}
-                  />
-                }
-                messagesViewModel={messagesViewModel}
-                maxWidthToResizing={maxWidthToResizing}
-                renderAIWidget={
-                  <AIRephraseWidget
-                    waitAIWidget={waitAIWidget}
-                    messageText={messageText}
-                    theme={theme}
-                    AIRephrase={defaultAIRephraseWidget}
-                    setWaitAIWidget={setWaitAIWidget}
-                    setPrevValueText={(prevValue) => {
-                      setMessageText(prevValue);
-                    }}
-                    setMessageErrorToast={(e: string) => {
-                      setMessageErrorToast(e);
-                    }}
-                    setShowErrorToast={(e: boolean) => {
-                      setShowErrorToast(e);
-                    }}
-                    messagesToView={messagesToView}
-                    currentUserId={userId || -1}
-                    maxTokensForAIRephrase={maxTokensForAIRephrase}
-                    rephraseTones={rephraseTones}
-                  />
-                }
-              />
-            }
-            maxWidthToResize={maxWidthToResizing}
-            theme={theme}
-          /> // 1 Get Messages + 1 Get User by id
-        ) : (
-          <div
-            style={{
-              minHeight: '799px',
-              minWidth: '1040px',
-              border: '1px solid var(--divider)',
-              margin: '0 auto',
-            }}
-          >
-            You login as {userName}({userId}). Select chat to start
-            conversation.
-          </div>
-        )
-      }
-      dialogInfoView={
-        // 1 Get User by 1 + Get user by name
-        <div>
-          {selectedDialog && needDialogInformation && (
+                )
+              }
+              renderReplyMessagesPreview={
+                <ReplyMessagePreview
+                  messages={[...messagesToReply]}
+                  userNameSentMessage={
+                    messagesToReply[0]?.sender?.full_name ||
+                    messagesToReply[0]?.sender?.login ||
+                    messagesToReply[0]?.sender?.email ||
+                    messagesToReply[0]?.sender?.id.toString() ||
+                    ''
+                  }
+                  onClose={closeReplyMessageFlowHandler}
+                />
+              }
+              showReplyMessage={showReplyMessage}
+              renderMessageInput={
+                <MessageInput
+                  waitAIWidget={waitAIWidget}
+                  messageText={messageText}
+                  onChangeText={(text: string) => {
+                    setMessageText(text);
+                  }}
+                  sendText={(textToSend: string) => {
+                    sendTextMessageActions(textToSend);
+                  }}
+                  renderSendIcon={
+                    <SendIcon
+                      width="21"
+                      height="18"
+                      applyZoom
+                      color={
+                        theme ? theme.mainElements() : 'var(--main-elements)'
+                      }
+                    />
+                  }
+                  renderAttachment={
+                    <AttachmentUploader
+                      icon={
+                        <AttachmentIcon
+                          width="32"
+                          height="32"
+                          applyZoom
+                          color={
+                            theme
+                              ? theme.inputElements()
+                              : 'var(--input-elements)'
+                          }
+                        />
+                      }
+                      onChangeFile={ChangeFileHandler}
+                    />
+                  }
+                  isRecording={isRecording}
+                  renderVoiceRecorder={
+                    <VoiceMessage
+                      icon={
+                        <VoiceIcon
+                          width="21"
+                          height="18"
+                          applyZoom
+                          color={
+                            isRecording
+                              ? 'var(--error)'
+                              : 'var(--input-elements)'
+                          }
+                        />
+                      }
+                      onClick={() => {
+                        console.log('click send voice message');
+                        if (messagesViewModel?.loading) return;
+                        setIsRecording(!isRecording);
+                      }}
+                    />
+                  }
+                  renderVoiceRecordProgress={
+                    <VoiceRecordingProgress
+                      startStatus={isRecording}
+                      longRecInSec={60}
+                      onClick={() => {
+                        console.log('click send voice message');
+                        if (messagesViewModel?.loading) return;
+                        setIsRecording(!isRecording);
+                      }}
+                      onTouch={() => {
+                        console.log('touch send voice message');
+                        if (messagesViewModel?.loading) return;
+                        setIsRecording(!isRecording);
+                      }}
+                    />
+                  }
+                  messagesViewModel={messagesViewModel}
+                  maxWidthToResizing={maxWidthToResizing}
+                  renderAIWidget={
+                    <AIRephraseWidget
+                      waitAIWidget={waitAIWidget}
+                      messageText={messageText}
+                      theme={theme}
+                      AIRephrase={defaultAIRephraseWidget}
+                      setWaitAIWidget={setWaitAIWidget}
+                      setPrevValueText={(prevValue) => {
+                        setMessageText(prevValue);
+                      }}
+                      setMessageErrorToast={(e: string) => {
+                        setMessageErrorToast(e);
+                      }}
+                      setShowErrorToast={(e: boolean) => {
+                        setShowErrorToast(e);
+                      }}
+                      messagesToView={messagesToView}
+                      currentUserId={userId || -1}
+                      maxTokensForAIRephrase={maxTokensForAIRephrase}
+                      rephraseTones={rephraseTones}
+                    />
+                  }
+                />
+              }
+              maxWidthToResize={maxWidthToResizing}
+              theme={theme}
+            /> // 1 Get Messages + 1 Get User by id
+          ) : null
+        }
+        dialogInfoView={
+          // 1 Get User by 1 + Get user by name
+          showDialogInformation &&
+          selectedDialog &&
+          needDialogInformation && (
             <DialogInfo
+              // rootStyles={{
+              //   minHeight: '800px',
+              //   maxWidth: '800px',
+              // }}
               // subHeaderContent={<CompanyLogo />}
               // upHeaderContent={<CompanyLogo />}
               dialog={selectedDialog.entity}
               dialogViewModel={dialogsViewModel}
               onCloseDialogInformationHandler={informationCloseHandler}
             />
-          )}
-        </div>
-      }
-    />
+          )
+        }
+      />
+    </div>
   );
 };
 

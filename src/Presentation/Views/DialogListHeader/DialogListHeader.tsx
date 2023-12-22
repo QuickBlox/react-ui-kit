@@ -13,8 +13,8 @@ type DialogListHeaderProps = {
   title?: string;
   clickSearchHandler?: FunctionTypeVoidToVoid;
   touchSearchHandler?: FunctionTypeVoidToVoid;
-  ClickActionHandler?: FunctionTypeVoidToVoid;
-  TouchActionHandler?: FunctionTypeVoidToVoid;
+  clickActionHandler?: FunctionTypeVoidToVoid;
+  touchActionHandler?: FunctionTypeVoidToVoid;
   theme?: UiKitTheme;
   settings?: any;
 };
@@ -24,9 +24,9 @@ const DialogListHeader: React.FC<DialogListHeaderProps> = ({
   clickSearchHandler,
   touchSearchHandler,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ClickActionHandler,
+  clickActionHandler,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  TouchActionHandler,
+  touchActionHandler,
   theme = undefined,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   settings = undefined,
@@ -64,16 +64,6 @@ const DialogListHeader: React.FC<DialogListHeaderProps> = ({
   };
 
   return (
-    // <div className={[s1, s2].join(' ')}>
-    //   <div className={s3}>
-    //     <div>{title}</div>
-    //   </div>
-    //   <div className={s5}>
-    //     <Search />
-    //     <NewChat />
-    //   </div>
-    // </div>
-    // className="header-dialogs-container__title"
     <div
       className="header-dialogs-container header-dialogs"
       style={titleContainerStyle}
@@ -84,25 +74,13 @@ const DialogListHeader: React.FC<DialogListHeaderProps> = ({
       <div style={buttonsStyle} className="header-dialogs-container__buttons">
         <ActiveSvg
           content={<Search width="24" height="24" applyZoom />}
-          onTouch={() => {
-            console.log('touchSearchDialogsHandler');
-            if (touchSearchHandler) touchSearchHandler();
-          }}
-          onClick={() => {
-            console.log('clickSearchDialogsHandler');
-            if (clickSearchHandler) clickSearchHandler();
-          }}
+          onTouch={touchSearchHandler}
+          onClick={clickSearchHandler}
         />
         <ActiveSvg
           content={<NewChat width="24" height="24" applyZoom />}
-          onTouch={() => {
-            console.log('onTouch: Hello from component 1');
-            if (TouchActionHandler) TouchActionHandler();
-          }}
-          onClick={() => {
-            console.log('onClick: Hello from component 2');
-            if (ClickActionHandler) ClickActionHandler();
-          }}
+          onTouch={touchActionHandler}
+          onClick={clickActionHandler}
         />
       </div>
     </div>

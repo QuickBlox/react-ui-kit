@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './ReplyMessagePreview.scss';
 import { MessageEntity } from '../../../../Domain/entity/MessageEntity';
 import ReplyFilled from '../../../components/UI/svgs/Icons/Actions/ReplyFilled';
@@ -7,6 +7,7 @@ import Close from '../../../components/UI/svgs/Icons/Navigation/Close';
 import { FileType } from '../../../../Domain/entity/FileTypes';
 import ReplyImagePreviewAttachment from './ReplyImagePreviewAttachment/ReplyImagePreviewAttachment';
 import TextDocument from '../../../components/UI/svgs/Icons/Media/TextDocument';
+import { MessageDTOMapper } from '../../../../Data/source/remote/Mapper/MessageDTOMapper';
 
 type ReplyMessagePreviewProps = {
   messages: MessageEntity[];
@@ -25,6 +26,14 @@ const ReplyMessagePreview: React.FC<ReplyMessagePreviewProps> = ({
   userNameSentMessage,
   onClose,
 }: ReplyMessagePreviewProps) => {
+  const [messageTextValue, setMessageTextValue] = React.useState<string>('');
+
+  useEffect(() => {
+    const value = MessageDTOMapper.formatMessage(messages[0].message);
+
+    setMessageTextValue(value);
+  }, [messages, messages[0]?.message]);
+
   return (
     <div className="reply-message-preview-row">
       <div className="reply-message-preview-row-card">
@@ -68,13 +77,13 @@ const ReplyMessagePreview: React.FC<ReplyMessagePreviewProps> = ({
             <div className="reply-message-preview-message-caption-info-text">
               {messages.length > 1
                 ? '2 messages'
-                : trimMessage(messages[0].message)}
+                : trimMessage(messageTextValue)}
             </div>
           ) : (
             <div className="reply-message-preview-message-caption-info-file">
               {messages.length > 1
                 ? '2 messages'
-                : trimMessage(messages[0].message)}
+                : trimMessage(messageTextValue)}
             </div>
           )}
         </div>

@@ -37,21 +37,6 @@ function OutgoingForwardedMessage(props: {
             setOpenMenu(!openMenu);
           }}
         >
-          <div className="outgoing-forward-message-func">
-            {
-              // haveHover &&
-              !disableMenu ? (
-                <MessageContextMenu
-                  theme={props.theme}
-                  message={item}
-                  onReply={props.onReply}
-                  onForward={props.onForward}
-                  enableReplying={props.enableReplying}
-                  enableForwarding={props.enableForwarding}
-                />
-              ) : null
-            }
-          </div>
           <div className="outgoing-forward-message-caption">
             <div className="outgoing-forward-message-caption-status">
               {props.status_message ? (
@@ -81,6 +66,21 @@ function OutgoingForwardedMessage(props: {
           </div>
           <div className="outgoing-forward-message-caption-time">
             {props.date_sent}
+          </div>
+          <div className="outgoing-forward-message-func">
+            {
+              // haveHover &&
+              !disableMenu ? (
+                <MessageContextMenu
+                  theme={props.theme}
+                  message={item}
+                  onReply={props.onReply}
+                  onForward={props.onForward}
+                  enableReplying={props.enableReplying}
+                  enableForwarding={props.enableForwarding}
+                />
+              ) : null
+            }
           </div>
           <div className="outgoing-forwarded-message-data">
             <div className="outgoing-forwarded-message-name">

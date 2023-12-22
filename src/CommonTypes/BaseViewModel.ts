@@ -74,6 +74,7 @@ export type FunctionTypeForwardMessagesParamsToBoolean = (
 ) => Promise<boolean>;
 export type FunctionTypeFileToToVoid = (file: File) => void;
 export type FunctionTypeMessageEntityToVoid = (message: MessageEntity) => void;
+export type FunctionDialogEntityToVoid = (dialog: DialogEntity) => void;
 export type FunctionTypeFileToToBoolean = (file: File) => Promise<boolean>;
 export type FunctionTypePaginationToVoid = (pagination: Pagination) => void;
 export type FunctionTypeVoidToVoid = () => void;

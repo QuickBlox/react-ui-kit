@@ -359,39 +359,39 @@ export class RemoteDataSource implements IRemoteDataSource {
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    function QBChatXMPPMessageToRemoteMessageDTO(message: QBChatXMPPMessage) {
-      const resultMessage = new RemoteMessageDTO();
-
-      resultMessage.id = message.id;
-      resultMessage.message = MessageDTOMapper.formatMessage(message.body);
-      resultMessage.markable = message.markable
-        ? message.markable.toString()
-        : '0';
-      resultMessage.dialogId = message?.extension?.dialog_id || '';
-      // eslint-disable-next-line no-nested-ternary
-      resultMessage.recipient_id = message?.recipient_id
-        ? parseInt(message?.recipient_id, 10)
-        : message?.extension?.sender_id
-        ? message?.extension?.sender_id
-        : 0;
-      resultMessage.sender_id = message?.extension?.sender_id
-        ? message?.extension?.sender_id
-        : 0;
-      resultMessage.notification_type =
-        message.notification_type || message.extension.notification_type;
-      resultMessage.date_sent = message.extension.date_sent
-        ? parseInt(message.extension.date_sent, 10)
-        : 0;
-      resultMessage.delivered_ids = [];
-
-      // resultMessage.attachments = message.extension.attachments || [];
-      resultMessage.attachments = MessageDTOMapper.transformAttachment(
-        message.body,
-        message.extension.attachments ? message.extension.attachments : [],
-      );
-
-      return resultMessage;
-    }
+    // function QBChatXMPPMessageToRemoteMessageDTO(message: QBChatXMPPMessage) {
+    //   const resultMessage = new RemoteMessageDTO();
+    //
+    //   resultMessage.id = message.id;
+    //   resultMessage.message = MessageDTOMapper.formatMessage(message.body);
+    //   resultMessage.markable = message.markable
+    //     ? message.markable.toString()
+    //     : '0';
+    //   resultMessage.dialogId = message?.extension?.dialog_id || '';
+    //   // eslint-disable-next-line no-nested-ternary
+    //   resultMessage.recipient_id = message?.recipient_id
+    //     ? parseInt(message?.recipient_id, 10)
+    //     : message?.extension?.sender_id
+    //     ? message?.extension?.sender_id
+    //     : 0;
+    //   resultMessage.sender_id = message?.extension?.sender_id
+    //     ? message?.extension?.sender_id
+    //     : 0;
+    //   resultMessage.notification_type =
+    //     message.notification_type || message.extension.notification_type;
+    //   resultMessage.date_sent = message.extension.date_sent
+    //     ? parseInt(message.extension.date_sent, 10)
+    //     : 0;
+    //   resultMessage.delivered_ids = [];
+    //
+    //   // resultMessage.attachments = message.extension.attachments || [];
+    //   resultMessage.attachments = MessageDTOMapper.transformAttachment(
+    //     message.body,
+    //     message.extension.attachments ? message.extension.attachments : [],
+    //   );
+    //
+    //   return resultMessage;
+    // }
 
     QB.chat.onMessageListener = (
       userId: number,

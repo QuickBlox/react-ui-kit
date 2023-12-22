@@ -1,7 +1,31 @@
 .audio-body{
-  // border: 1px solid red;
-  // max-height: 300px;
-  // max-width: 100%;
-  padding: 0;
+  padding: 5px;
   border-radius: 4px;
+  width: var(--max-width-audio-message);
+}
+
+.audio-controls {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  gap: 5px;
+}
+
+.equalizer,
+.equalizer * {
+  box-sizing: border-box;
+}
+.equalizer {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+  align-items: flex-end;
+  justify-content: flex-start;
+  position: relative;
+}
+.rectangle-equalizer {
+  background: var(--main-elements, #636d78);
+  flex-shrink: 0;
+  width: 2px;
+  position: relative;
 }

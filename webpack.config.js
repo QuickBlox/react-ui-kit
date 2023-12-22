@@ -4,6 +4,7 @@ const path = require('path');
 module.exports = {
     mode: 'development',
     entry: './src/index-ui.ts',
+    devtool: 'source-map',
     output: {
         // filename: "research-ui-react-library-" +
         //     packageInfo.version + ".js",

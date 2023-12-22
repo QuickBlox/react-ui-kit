@@ -1,113 +1,111 @@
-@import "../../../index";
 
-$preview-dialog-color-divider: var(--color-divider);
-$row-center-container-base-font-size: 12px;
-$row-center-container-base-font-line-height: 32px;
-$row--main-container-min-height: 72px;
-$row--main-container-min-width: 320px;
-$row--main-container-text-title-width: 120px;
-$row--main-container-text-content-long-width: 200px;
-$row--main-container-text-content-short-width: 180px;
-
-$preview-dialog-avatar-wrapper-background-color-public: var(--color-background-modal);
-$preview-dialog-avatar-wrapper-background-color-private: var(--caption);
-
-.preview-dialog-container{
-  height: $row--main-container-min-height;
-  min-height: $row--main-container-min-height;
-  min-width: $row--main-container-min-width;
-
-  padding: 8px 16px;
-  //padding-left: 16px;
-  //padding-right: 16px;
-  //padding-top: 8px;
-  //padding-bottom: 8px;
-
-  border: 1px solid $preview-dialog-color-divider;
-  &.preview-selected{
-    background-color: $preview-dialog-color-divider;
-  }
-  &__text-title{
-    text-align: left;
-    max-width: $row--main-container-text-title-width;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    color: var(--main-text, #0b121b);
-    text-align: left;
-    font: var(--label-label-medium, 500 12px/16px "Roboto", sans-serif);
-    position: relative;
-  }
-  &__text {
-    position: relative;
-    font-size: $row-center-container-base-font-size;
-    font-family: 'Roboto';
-    color: var(--color-font);
-    width: $row--main-container-text-content-long-width; /* Could be anything you like. */
-  }
-  &__text-left {
-    position: relative;
-    font-size: $row-center-container-base-font-size;
-    font-family: 'Roboto';
-    color: var(--color-font);
-    width: $row--main-container-text-content-short-width; /* Could be anything you like. */
-  }
-
-  &__text-concat {
-    position: relative;
-    display: inline-block;
-    word-wrap: break-word;
-    overflow: hidden;
-    max-height: $row-center-container-base-font-line-height; /* (Number of lines you want visible) * (line-height) */
-    line-height: 11px; // $row-center-container-base-font-size;
-    //text-align:justify;
-    color: var(--main-text);
-    text-align: left;
-    font: var(--body-body-small, 400 12px/16px "Roboto", sans-serif);
-    position: relative;
-    align-self: stretch;
-    height: 32px;
-  }
-
-  //&__text.ellipsis::after {
-  //  content: "...";
-  //  position: absolute;
-  //  right: -6px;
-  //  // bottom: -1px;
-  //}
-  //&__text-left.ellipsis::after {
-  //  content: "...";
-  //  position: absolute;
-  //  right: -6px;
-  //  // bottom: -1px;
-  //}
-
+.dialog-preview-container {
+  display: flex;
+  //background: var(--color-background, #ffffff);
+  border: 1px solid var(--chat-input);
 }
-
-.avatar-wrapper{
-  background: $preview-dialog-avatar-wrapper-background-color-private;
-  &.public_avatar{
-    background: $preview-dialog-avatar-wrapper-background-color-public;
-  }
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
+.dialog-preview-container-left {
+  flex: 1;
+}
+.dialog-preview-container-right {
   display: flex;
   align-items: center;
-  text-align: center;
-  margin: 0 auto;
-  &.icon_colors{
-    color: var(--color-icon);
-    background-color: var(--secondary-text);
-  }
-}
-.badge-text-style{
-  align-items: center;
-  text-align: center;
-  margin: 0 auto;
-  padding-top: 2px;
+  justify-content: center;
 }
 
+.dialog-preview,
+.dialog-preview * {
+  box-sizing: border-box;
+}
+.dialog-preview {
+  //background: var(--color-background, #ffffff);
+  padding: 8px 8px 8px 16px;
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.dialog-preview-item {
+  background: var(--color-background, #ffffff);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.dialog-preview-avatar {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  position: relative;
+}
+.dialog-preview-avatar-rectangle {
+  position: absolute;
+  right: 0%;
+  left: 0%;
+  width: 100%;
+  bottom: 0%;
+  top: 0%;
+  height: 100%;
+}
+.dialog-preview-avatar-ellipse {
+  background: var(--disabled-elements, #bcc1c5);
+  border-radius: 50%;
+  position: absolute;
+  right: 0%;
+  left: 0%;
+  width: 100%;
+  bottom: 0%;
+  top: 0%;
+  height: 100%;
+}
+.dialog-preview-avatar-contents-user {
+  height: auto;
+  position: absolute;
+  right: 17.86%;
+  left: 17.86%;
+  width: 64.29%;
+  bottom: 17.86%;
+  top: 17.86%;
+  height: 64.29%;
+  overflow: visible;
+}
+.dialog-preview-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex: 1;
+  position: relative;
+}
+.dialog-preview-text-subtitle {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+}
+.dialog-preview-text-subtitle-caption {
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.dialog-preview-text-subtitle-caption-name {
+  color: var(--main-text, #0b1b0f);
+  text-align: left;
+  font: var(--label-label-medium, 500 12px/16px "Roboto", sans-serif);
+  position: relative;
+}
 .dialog-item-preview-text{
   color: var(--main-text);
   text-align: left;
@@ -117,10 +115,92 @@ $preview-dialog-avatar-wrapper-background-color-private: var(--caption);
   height: 32px;
 }
 
-.dialog-item-date-time-sent{
-  color: var(--secondary-text);
+.dialog-preview-text-subtitle-caption2 {
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+}
+.dialog-preview-text-subtitle-caption2-time {
+  color: var(--tertiary-elements, #636d78);
   text-align: right;
   font: var(--label-label-small, 500 11px/16px "Roboto", sans-serif);
   position: relative;
 }
+.dialog-preview-text-subtitle-text {
+  color: var(--secondary-text, #636d78);
+  text-align: left;
+  font: var(--body-body-small, 400 12px/16px "Roboto", sans-serif);
+  position: relative;
+  align-self: stretch;
+
+  ///
+  display: inline-block;
+  word-wrap: break-word;
+  overflow: hidden;
+  max-height: 32px;
+  height: 32px;
+}
+
+.dialog-preview-text-subtitle-message-badge {
+  background: var(--main-elements, #3978fc);
+  border-radius: 30px;
+  padding: 2px 6px 2px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  height: 22px;
+}
+.dialog-preview-text-subtitle-message-badge-v {
+  color: var(--color-background, #ffffff);
+  text-align: center;
+  font: var(--label-label-medium, 500 12px/16px "Roboto", sans-serif);
+  position: relative;
+}
+
+.dialog-preview-text-subtitle-message {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: space-between;
+  align-self: stretch;
+}
+
+.dialog-preview-icon-close {
+  border-radius: 4px;
+  padding: 4px;
+  display: flex;
+  flex-direction: row;
+  gap: 0px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  position: relative;
+  cursor: pointer;
+}
+
+.dpa-contents-user {
+  height: auto;
+  position: absolute;
+  right: 17.86%;
+  left: 17.86%;
+  width: 64.29%;
+  bottom: 17.86%;
+  top: 17.86%;
+  height: 64.29%;
+  overflow: visible;
+}
+
+
+
+
 

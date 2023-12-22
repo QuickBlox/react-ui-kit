@@ -11,8 +11,8 @@ $message-view-container-message-text-color: var(--main-text);
 $message-view-container-date-time-text-color: var(--secondary-text);
 $message-view-container-ai-translate-text-color: var(--tertiary-elements);
 .message-view-container{
-  min-height: $message-view-container-wrapper-max-height;
-  max-height: $message-view-container-wrapper-max-height;
+  // min-height: $message-view-container-wrapper-max-height;
+  // max-height: $message-view-container-wrapper-max-height;
   display: flex;
   flex-flow: column nowrap;
 
@@ -20,6 +20,7 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
   align-items: center;
   margin: 0 auto;
   gap: 3px;
+  min-width: var(--max-width-message-view-container);
 
 
   &--header{
@@ -52,6 +53,7 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
     background-color: $message-view-container-background-color;
     width: 100%;
     max-height: calc(800px - 128px - 16px);
+    // max-height: calc(100vh - 128px - 16px); // TODO: fix calc max-height
 
     display: flex;
     flex-flow: column nowrap;
@@ -68,6 +70,7 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
     flex-wrap: nowrap;
     margin: 0 auto;
     gap: 3px;
+    padding: 20px 0px 10px 0px;
     &__date_container{
       background-color: var(--disabled-elements);
       border-radius: 30px;
@@ -196,8 +199,8 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
   &--message-content-wrapper{
     max-width: 300px;
     max-height: 160px;
-    min-width: 300px;
-    width: 300px;
+    // min-width: 300px;
+    // width: 300px;
 
     display: flex;
     flex-direction: row;

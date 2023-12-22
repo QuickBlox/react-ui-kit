@@ -49,35 +49,8 @@ function OutgoingRepliedMessage(props: {
             }
           </div>
           <div className="outgoing-replied-message-caption">
-            <div className="outgoing-replied-message-caption-status">
-              {/* {props.status_message ? ( */}
-              {/*  <ViewedDelivered */}
-              {/*    width="13" */}
-              {/*    height="13" */}
-              {/*    applyZoom */}
-              {/*    color={ */}
-              {/*      props.theme */}
-              {/*        ? props.theme.mainElements() */}
-              {/*        : 'var(--main-elements)' */}
-              {/*    } */}
-              {/*  /> */}
-              {/* ) : ( */}
-              {/*  <SentStatusIcon */}
-              {/*    width="13" */}
-              {/*    height="13" */}
-              {/*    applyZoom */}
-              {/*    color={ */}
-              {/*      props.theme */}
-              {/*        ? props.theme.mainElements() */}
-              {/*        : 'var(--main-elements)' */}
-              {/*    } */}
-              {/*  /> */}
-              {/* )} */}
-            </div>
+            <div className="outgoing-replied-message-caption-status" />
           </div>
-          {/* <div className="outgoing-replied-message-caption-time"> */}
-          {/*  {props.date_sent} */}
-          {/* </div> */}
           <div className="outgoing-replied-message-data">
             <div className="outgoing-replied-message-name">
               <div className="outgoing-replied-message-caption">
@@ -109,62 +82,6 @@ function OutgoingRepliedMessage(props: {
 
       {props.renderOringinalMessage}
     </div>
-    // <div>
-    //   <div
-    //     className="outgoing-replied-text-message"
-    //     // onMouseEnter={() => setHaveHover(true)}
-    //     // onMouseLeave={() => setHaveHover(false)}
-    //     onClick={() => {
-    //       setOpenMenu(!openMenu);
-    //     }}
-    //   >
-    //     <div className="outgoing-replied-text-message-info">
-    //       <div className="outgoing-replied-text-message-info-name">
-    //         <div className="outgoing-replied-text-message-info-name-caption">
-    //           <div className="outgoing-replied-text-message-info-name-caption-reply">
-    //             <div className="outgoing-replied-text-message-info-name-caption-reply-icon">
-    //               <ReplyFilled width="16" height="16" color="var(--caption)" />
-    //             </div>
-    //             <div className="outgoing-replied-text-message-info-name-caption-reply-to-name">
-    //               {`Replied to ${props.repliedUserName}`}
-    //             </div>
-    //           </div>
-    //         </div>
-    //       </div>
-    //       {props.messages.map((item) => (
-    //         <div className="message-view-container--outgoing-message-wrapper--message">
-    //           <div className="message-view-container--outgoing-message-wrapper--context-menu">
-    //             {
-    //               // haveHover &&
-    //               !disableMenu ? (
-    //                 <MessageContextMenu
-    //                   theme={props.theme}
-    //                   message={item}
-    //                   onReply={props.onReply}
-    //                   onForward={props.onForward}
-    //                   enableReplying={props.enableReplying}
-    //                   enableForwarding={props.enableForwarding}
-    //                 />
-    //               ) : null
-    //             }
-    //           </div>
-    //           <div className="time">11:125</div>
-    //           <div className="outgoing-replied-text-message-info-message-bubble">
-    //             <div className="outgoing-replied-text-message-info-message-line">
-    //               <MessageContentComponent
-    //                 theme={props.theme}
-    //                 messageEntity={item}
-    //                 originalTextMessage
-    //                 widgetTextContent=""
-    //               />
-    //             </div>
-    //           </div>
-    //         </div>
-    //       ))}
-    //     </div>
-    //   </div>
-    //   {props.renderOringinalMessage}
-    // </div>
   );
 }
 

@@ -1,6 +1,15 @@
-$column-container-width: 320px;
+// $column-container-width: 320px;
+$column-container-width: var(--max-width-dialog-list);
 .column-container{
   width: $column-container-width;
   display: flex;
   flex-flow: column nowrap;
+}
+
+@media only screen and (max-width: var(--min-width-screen-desktop)) {
+  .column-container{
+    width: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+  }
 }

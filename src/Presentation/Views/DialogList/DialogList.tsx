@@ -37,6 +37,7 @@ type DialogsProps = {
   onDialogSelectHandler?: FunctionTypeViewModelToVoid<DialogEntity>;
   dialogsViewModel: DialogListViewModel;
   additionalSettings?: DialogsComponentSettings;
+  scrollableHeight?: number;
 };
 
 // eslint-disable-next-line react/function-component-definition
@@ -47,6 +48,7 @@ const DialogList: React.FC<DialogsProps> = ({
   onDialogSelectHandler,
   dialogsViewModel,
   additionalSettings = undefined,
+  scrollableHeight = 736,
 }: DialogsProps) => {
   const dialogs: PreviewDialogViewModel[] = [];
   const [dialogsToView, setDialogsToView] = React.useState<
@@ -161,7 +163,7 @@ const DialogList: React.FC<DialogsProps> = ({
         setShowSearchDialogs(!showSearchDialogs);
         setNameDialogForSearch('');
       }}
-      ClickActionHandler={() => {
+      clickActionHandler={() => {
         handleModal(
           true,
           <CreateNewDialogFlow dialogsViewModel={dialogsViewModel} />,
@@ -282,7 +284,8 @@ const DialogList: React.FC<DialogsProps> = ({
         />
         <input
           type="text"
-          style={{ width: '268px' }}
+          // style={{ width: '268px' }}
+          style={{ width: '85%' }}
           value={nameDialogForSearch}
           onChange={(event) => {
             setNameDialogForSearch(event.target.value);
@@ -305,22 +308,33 @@ const DialogList: React.FC<DialogsProps> = ({
 
   return (
     <div
-      style={{
-        minHeight: '800px',
-        minWidth: '322px',
-        border: '1px solid var(--divider)',
-      }}
+      className="dialog-list"
+      // style={{
+      //   minHeight: '800px',
+      //   minWidth: '322px',
+      //   width: `${100}%`,
+      //   border: '1px solid var(--divider)',
+      // }}
     >
       <ColumnContainer>
         {useUpContent && upHeaderContent}
         {useHeader && HeaderContent}
         {useSubContent && subHeaderContent}
         {/* <div className="scroll-box"> */}
-        <div className="scroll-box">
+        <div
+          className="scroll-box"
+          style={{ maxHeight: 'initial' }}
+          ref={(el) => {
+            if (el) {
+              el.style.setProperty(
+                'max-height',
+                `${scrollableHeight}px`,
+                'important',
+              );
+            }
+          }}
+        >
           {dialogsViewModel?.loading && (
-            // <div style={{ maxHeight: '44px', minHeight: '44px', height: '44px' }}>
-            //   <LoaderComponent width="44" height="44" color="var(--divider)" />
-            // </div>
             <div
               style={{
                 display: 'flex',
@@ -366,32 +380,6 @@ const DialogList: React.FC<DialogsProps> = ({
             dialogsToView.map((item, index) =>
               renderPreviewDialog(item, index),
             )}
-
-          {/* /!* eslint-disable-next-line no-nested-ternary *!/ */}
-          {/* {nameDialogForSearch.length > 0 ? ( */}
-          {/*  dialogsToView */}
-          {/*    .filter((item) => */}
-          {/*      item.entity.name.includes(nameDialogForSearch, 0), */}
-          {/*    ) */}
-          {/*    .map((item, index) => renderPreviewDialog(item, index)) */}
-          {/* ) : (dialogsToView && dialogsToView.length) > 0 ? ( */}
-          {/*  dialogsToView.map((item, index) => renderPreviewDialog(item, index)) */}
-          {/* ) : ( */}
-          {/*  <div>Create new chat</div> */}
-          {/* )} */}
-          {/* {dialogsToView && dialogsToView.length > 0 ? ( */}
-          {/*  dialogsToView.map((item, index) => renderPreviewDialog(item, index)) */}
-          {/* ) : ( */}
-          {/*  // <ScrollableContainer */}
-          {/*  //   data={dialogsToView} */}
-          {/*  //   renderItem={renderPreviewDialog} */}
-          {/*  //   onEndReached={fetchMoreData} */}
-          {/*  //   // onEndReachedThreshold={0.8} */}
-          {/*  //   refreshing={dialogsViewModel?.loading} */}
-          {/*  // /> */}
-          {/*  // */}
-          {/*  <div>Create new chat</div> */}
-          {/* )} */}
         </div>
       </ColumnContainer>
     </div>

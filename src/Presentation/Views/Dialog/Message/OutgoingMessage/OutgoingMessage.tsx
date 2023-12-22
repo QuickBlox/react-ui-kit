@@ -32,21 +32,6 @@ export function OutgoingMessage(props: {
           setOpenMenu(!openMenu);
         }}
       >
-        <div className="outgoing-message-func">
-          {
-            // haveHover &&
-            !disableMenu ? (
-              <MessageContextMenu
-                theme={props.theme}
-                message={props.message}
-                onReply={props.onReply}
-                onForward={props.onForward}
-                enableReplying={props.enableReplying}
-                enableForwarding={props.enableForwarding}
-              />
-            ) : null
-          }
-        </div>
         <div className="outgoing-message-caption">
           <div className="outgoing-message-caption-status">
             {props.message.delivered_ids &&
@@ -76,6 +61,21 @@ export function OutgoingMessage(props: {
           </div>
         </div>
         <div className="outgoing-message-caption-time">{props.date_sent}</div>
+        <div className="outgoing-message-func">
+          {
+            // haveHover &&
+            !disableMenu ? (
+              <MessageContextMenu
+                theme={props.theme}
+                message={props.message}
+                onReply={props.onReply}
+                onForward={props.onForward}
+                enableReplying={props.enableReplying}
+                enableForwarding={props.enableForwarding}
+              />
+            ) : null
+          }
+        </div>
         <div className="outgoing-message-data">
           <div className="outgoing-message-name">
             <div className="outgoing-message-caption" />

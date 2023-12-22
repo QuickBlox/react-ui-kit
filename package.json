@@ -1,6 +1,6 @@
 {
   "name": "quickblox-react-ui-kit",
-  "version": "0.2.7-release-final",
+  "version": "0.2.8-beta.5",
   "main": "dist/index-ui.js",
   "license": "MIT",
   "keywords": [
@@ -89,7 +89,7 @@
     "test": "react-scripts test",
     "lint": "eslint ./src",
     "eject": "react-scripts eject",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build:lib"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": "eslint"

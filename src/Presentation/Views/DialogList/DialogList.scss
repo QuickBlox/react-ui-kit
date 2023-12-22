@@ -1,5 +1,17 @@
+.dialog-list {
+  min-width: var(--max-width-dialog-list);
+  width: 100%;
+  border: 1px solid var(--divider);
+}
+
+@media only screen and (max-width: var(--min-width-screen-desktop)) {
+  .dialog-list {
+    width: 100%;
+    border: 1px solid var(--divider);
+  }
+}
+
 .scroll-box{
-  max-height: 736px !important;
   overflow: hidden !important;
   scrollbar-width: none !important;
   ///
@@ -27,7 +39,6 @@
   scrollbar-width: none !important;
 }
 .scroll-dialogs-container{
-  // border: 1px solid darkred;
   flex: 1 1 200px;
   width: 100%;
   max-height: 200px;
@@ -48,7 +59,7 @@
   align-items: center;
   text-align: center;
   padding: 8px;
-  width: 288px;
+  // width: 288px;
   height: 44px;
 
   border: 1px solid #90979F;
