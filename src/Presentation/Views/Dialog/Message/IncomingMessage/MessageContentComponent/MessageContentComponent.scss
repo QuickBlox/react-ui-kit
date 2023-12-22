@@ -1,0 +1,4 @@
+.message-content-text {
+  overflow-wrap: break-word;
+  max-width: calc(var(--max-width-message-bubble) - 20px);
+}

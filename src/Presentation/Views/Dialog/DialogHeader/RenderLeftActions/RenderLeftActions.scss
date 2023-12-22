@@ -1,0 +1,29 @@
+.dialog-header-left-icon {
+  display: none;
+}
+.navigation-back {
+  align-self: stretch;
+  flex: 1;
+  height: auto;
+  position: relative;
+  overflow: visible;
+}
+
+
+@media only screen and (max-width: 980px) {
+  .dialog-header-left-icon {
+    border-radius: 4px;
+    padding: 4px;
+    display: flex;
+    flex-direction: row;
+    gap: 0px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    position: relative;
+    cursor: pointer;
+  }
+}
+
