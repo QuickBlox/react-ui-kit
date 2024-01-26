@@ -2,10 +2,10 @@ $dialog-information-container-height: 800px;
 $dialog-information-container-dialog-information-height: 64px;
 
 .dialog-information-container {
-  min-height: $dialog-information-container-height;
-  max-height: $dialog-information-container-height;
-  height: $dialog-information-container-height;
-  border: 1px solid var(--divider);
+  // min-height: $dialog-information-container-height;
+  // max-height: $dialog-information-container-height;
+  // height: $dialog-information-container-height;
+  // border: 1px solid var(--divider);
 
 }
 .header-dialog-info,
@@ -139,6 +139,14 @@ $dialog-information-container-dialog-information-height: 64px;
   flex-shrink: 0;
   position: relative;
   border-bottom: 1px solid var(--divider);
+}
+@media only screen and (max-width: var(--min-width-screen-desktop)) {
+  .dialog-info-action-wrapper-settings {
+    padding: 6px;
+  }
+}
+.no-padding {
+  padding: 0;
 }
 .dialog-info-action-wrapper-settings-icon {
   border-radius: 4px;

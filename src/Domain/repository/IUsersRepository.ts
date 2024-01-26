@@ -1,4 +1,4 @@
-import { UserEntity } from '../entity/UserEntity'
+import { UserEntity } from '../entity/UserEntity';
 
 export interface IUsersRepository {
   getUserFromLocal(userId: number): Promise<UserEntity>;
@@ -9,5 +9,5 @@ export interface IUsersRepository {
 
   getUsersFromRemote(usersIds: Array<number>): Promise<Array<UserEntity>>;
 
-  saveUsersToLocal(users: Array<UserEntity>): void
+  saveUsersToLocal(users: Array<UserEntity>): void;
 }

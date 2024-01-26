@@ -28,7 +28,7 @@ const ForwardMessageFlow: React.FC<ForwardMessageFlowProps> = ({
   onSendData,
 }: ForwardMessageFlowProps) => {
   const [activeChatsTab, setActiveChatsTab] = useState(true);
-  const [selectedDialogs, setSelectedDialogs] = useState(['0']);
+  const [selectedDialogs, setSelectedDialogs] = useState<string[]>([]);
   const [inputText, setInputText] = useState('');
 
   const userName = currentUserName;
@@ -108,6 +108,7 @@ const ForwardMessageFlow: React.FC<ForwardMessageFlowProps> = ({
           inputText={inputText}
           onChange={(s) => setInputText(s)}
           onSend={sendMessageHandler}
+          disabled={selectedDialogs.length === 0}
         />
       </div>
     </div>

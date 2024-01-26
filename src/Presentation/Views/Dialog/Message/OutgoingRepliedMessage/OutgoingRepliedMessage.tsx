@@ -6,6 +6,7 @@ import { MessageEntity } from '../../../../../Domain/entity/MessageEntity';
 import { FunctionTypeMessageEntityToVoid } from '../../../../../CommonTypes/BaseViewModel';
 import ReplyFilled from '../../../../components/UI/svgs/Icons/Actions/ReplyFilled';
 import MessageContextMenu from '../MessageContextMenu/MessageContextMenu';
+import { FileType } from '../../../../../Domain/entity/FileTypes';
 
 function OutgoingRepliedMessage(props: {
   theme: UiKitTheme | undefined;
@@ -66,7 +67,21 @@ function OutgoingRepliedMessage(props: {
                 </div>
               </div>
             </div>
-            <div className="outgoing-replied-message-chat-bubble-background">
+            <div
+              className="outgoing-replied-message-chat-bubble-background"
+              style={{
+                background:
+                  item.attachments &&
+                  (item.attachments[0].type
+                    .toString()
+                    .includes(FileType.image) ||
+                    item.attachments[0].type
+                      .toString()
+                      .includes(FileType.video))
+                    ? 'none'
+                    : undefined,
+              }}
+            >
               <div className="outgoing-replied-message-single-line">
                 <MessageContentComponent
                   theme={props.theme}

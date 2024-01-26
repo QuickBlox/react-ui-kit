@@ -81,7 +81,7 @@ const Dialog: React.FC<DialogProps> = ({
         maxWidthToResize
           ? {
               // maxWidth: `${maxWidthToResizing}`,
-              minWidth: `$message-view-container-wrapper-min-width`,
+              // minWidth: `$message-view-container-wrapper-min-width`,
               // width: `${maxWidthToResizing}`,
               width: '100%',
               ...rootStyles,
@@ -92,11 +92,11 @@ const Dialog: React.FC<DialogProps> = ({
     >
       {headerContent || (
         <div
-          style={{
-            flexGrow: `1`,
-            flexShrink: `1`,
-            flexBasis: `${maxWidthToResizing}`,
-          }}
+          // style={{
+          //   flexGrow: `1`,
+          //   flexShrink: `1`,
+          //   flexBasis: `${maxWidthToResizing}`,
+          // }}
           className="message-view-container--header"
         >
           {renderHeader}
@@ -111,16 +111,16 @@ const Dialog: React.FC<DialogProps> = ({
         style={
           theme
             ? {
-                flexGrow: `1`,
-                flexShrink: `1`,
-                flexBasis: `${maxWidthToResizing}`,
+                // flexGrow: `1`,
+                // flexShrink: `1`,
+                // flexBasis: `${maxWidthToResizing}`,
                 backgroundColor: theme.secondaryBackground(), // var(--secondary-background);
                 ...messagesContainerStyles,
               }
             : {
-                flexGrow: `1`,
-                flexShrink: `1`,
-                flexBasis: `${maxWidthToResizing}`,
+                // flexGrow: `1`,
+                // flexShrink: `1`,
+                // flexBasis: `${maxWidthToResizing}`,
                 ...messagesContainerStyles,
               }
         }

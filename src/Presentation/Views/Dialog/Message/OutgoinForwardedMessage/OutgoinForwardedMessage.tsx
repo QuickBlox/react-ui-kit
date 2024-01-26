@@ -8,6 +8,7 @@ import ViewedDelivered from '../../../../components/UI/svgs/Icons/Status/ViewedD
 import SentStatusIcon from '../../../../components/UI/svgs/Icons/Status/Sent';
 import ForwardFilled from '../../../../components/UI/svgs/Icons/Actions/ForwardFilled';
 import MessageContentComponent from '../IncomingMessage/MessageContentComponent/MessageContentComponent';
+import { FileType } from '../../../../../Domain/entity/FileTypes';
 
 function OutgoingForwardedMessage(props: {
   theme: UiKitTheme | undefined;
@@ -97,7 +98,21 @@ function OutgoingForwardedMessage(props: {
                 </div>
               </div>
             </div>
-            <div className="outgoing-forwarded-message-chat-bubble-background">
+            <div
+              className="outgoing-forwarded-message-chat-bubble-background"
+              style={{
+                background:
+                  item.attachments &&
+                  (item.attachments[0].type
+                    .toString()
+                    .includes(FileType.image) ||
+                    item.attachments[0].type
+                      .toString()
+                      .includes(FileType.video))
+                    ? 'none'
+                    : undefined,
+              }}
+            >
               <div className="outgoing-forwarded-message-single-line">
                 <MessageContentComponent
                   theme={props.theme}

@@ -10,8 +10,6 @@ export class LocalUsersDTO {
     return this._pagination;
   }
 
-
-
   private _users: Array<LocalUserDTO>;
 
   private _pagination: Pagination;

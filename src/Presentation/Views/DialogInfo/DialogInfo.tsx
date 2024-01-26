@@ -3,17 +3,12 @@ import './DialogInfo.scss';
 import ColumnContainer from '../../components/containers/ColumnContainer/ColumnContainer';
 import { DialogEntity } from '../../../Domain/entity/DialogEntity';
 import Close from '../../components/UI/svgs/Icons/Navigation/Close';
-import NotifyOn from '../../components/UI/svgs/Icons/Toggle/NotifyOn';
-import SwitchButton from '../../components/UI/Elements/SwitchButton/SwitchButton';
 import GroupChat from '../../components/UI/svgs/Icons/Contents/GroupChat';
-import Search from '../../components/UI/svgs/Icons/Navigation/Search';
 import UsersList from './UsersList/UsersList';
-import useUsersListViewModel from './UsersList/useUsersListViewModel';
-import ErrorComponent from '../../components/UI/Placeholders/ErrorComponent/ErrorComponent';
-import LoaderComponent from '../../components/UI/Placeholders/LoaderComponent/LoaderComponent';
 import ActiveSvg from '../../components/UI/svgs/ActiveSvg/ActiveSvg';
 import {
   EditDialogParams,
+  FunctionTypeBooleanToVoid,
   FunctionTypeVoidToVoid,
 } from '../../../CommonTypes/BaseViewModel';
 import Leave from '../../components/UI/svgs/Icons/Navigation/Leave';
@@ -27,11 +22,8 @@ import { ModalContext } from '../../providers/ModalContextProvider/Modal';
 import EditDialog, { TypeOpenDialog } from '../EditDialog/EditDialog';
 import InviteMembers from '../InviteMembers/InviteMembers';
 import { PublicDialogEntity } from '../../../Domain/entity/PublicDialogEntity';
-import YesNoQuestionComponent from '../YesNoQuestion/YesNoQuestion';
-import MembersList from './MembersList/MembersList';
 import { DialogListViewModel } from '../DialogList/DialogListViewModel';
 import { GroupDialogEntity } from '../../../Domain/entity/GroupDialogEntity';
-import { stringifyError } from '../../../utils/parse';
 import { FileEntity } from '../../../Domain/entity/FileEntity';
 import UserAvatar from '../EditDialog/UserAvatar/UserAvatar';
 import MainButton, {
@@ -39,11 +31,19 @@ import MainButton, {
 } from '../../components/UI/Buttons/MainButton/MainButton';
 import useQbInitializedDataContext from '../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
 import UiKitTheme from '../../themes/UiKitTheme';
+import LeaveDialogFlow from '../Flow/LeaveDialogFlow/LeaveDialogFlow';
+import { UserEntity } from '../../../Domain/entity/UserEntity';
+import { useMobileLayout } from '../../components/containers/SectionList/hooks';
+import useUsersListViewModel from './UsersList/useUsersListViewModel';
+import { PrivateDialogEntity } from '../../../Domain/entity/PrivateDialogEntity';
 
 type HeaderDialogsProps = {
   dialog: DialogEntity;
   dialogViewModel: DialogListViewModel;
   onCloseDialogInformationHandler: FunctionTypeVoidToVoid;
+  onShowAllMemberClick: FunctionTypeBooleanToVoid;
+  showMembersDialogInitValue?: boolean;
+  users: UserEntity[];
   theme?: UiKitTheme;
   subHeaderContent?: React.ReactNode;
   upHeaderContent?: React.ReactNode;
@@ -54,6 +54,9 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
   dialog,
   dialogViewModel,
   onCloseDialogInformationHandler,
+  onShowAllMemberClick,
+  showMembersDialogInitValue = false,
+  users,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   theme = undefined,
   subHeaderContent = undefined,
@@ -65,68 +68,28 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId.toString();
   const { handleModal } = React.useContext(ModalContext);
-  const userViewModel = useUsersListViewModel(dialog);
-  const [showMembersDialog, setShowMembersDialog] = React.useState(false);
-  const [isAllMembersShow, setIsAllMembersShow] = React.useState(false);
+  const [showMembersDialog, setShowMembersDialog] = React.useState(
+    showMembersDialogInitValue,
+  );
+  const [isMobile] = useMobileLayout();
 
   useEffect(() => {
-    console.log('HAVE NEW DIALOG');
-    if (dialog === undefined && onCloseDialogInformationHandler) {
-      console.log('HAVE UNDEFINED NEW DIALOG');
-      onCloseDialogInformationHandler();
+    setShowMembersDialog(showMembersDialogInitValue);
+  }, [showMembersDialogInitValue]);
 
-      return;
-    }
-    userViewModel.entity = dialogViewModel.entity;
-
-    setShowMembersDialog(false);
-  }, [dialog, dialogViewModel.entity]);
-
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    userViewModel.getUsers();
-  }, [userViewModel.entity]);
-
-  useEffect(() => {
-    console.log('users list has changed in DialogInfo:');
-    console.log(userViewModel.users);
-  }, [userViewModel.users]);
-
-  const searchDialogHandler = () => {
-    console.log('searchDialogHandler');
-  };
+  // const searchDialogHandler = () => {
+  //   console.log('searchDialogHandler');
+  // };
   const closeModal = () => {
     handleModal(false, '', '', false, false);
   };
   const leaveDialogHandler = () => {
     handleModal(
       true,
-      <ColumnContainer gapBetweenItem="8px">
-        <YesNoQuestionComponent
-          noActionCaption="Cancel"
-          yesActionCaption="Leave"
-          ClickYesActionHandler={() => {
-            dialogViewModel
-              .deleteDialog(
-                (dialogViewModel?.entity || dialog) as GroupDialogEntity,
-              )
-              .then((result) => {
-                if (result) closeModal();
-
-                return result;
-              })
-              .catch((e) => {
-                console.log(
-                  'exception in DeleteDialogHandler',
-                  stringifyError(e),
-                );
-              });
-          }}
-          ClickNoActionHandler={() => {
-            closeModal();
-          }}
-        />
-      </ColumnContainer>,
+      <LeaveDialogFlow
+        dialog={(dialogViewModel?.entity || dialog) as GroupDialogEntity}
+        dialogsViewModel={dialogViewModel}
+      />,
       'Leave dialog?',
       false,
       true,
@@ -135,7 +98,42 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
   const showMembersDialogHandler = () => {
     setShowMembersDialog(!showMembersDialog);
   };
+  const userViewModel = useUsersListViewModel(dialog);
+  const [dialogAvatarUrl, setDialogAvatarUrl] = React.useState('');
+  const getUserAvatarByUid = async () => {
+    let result = '';
+    const participants: Array<number> =
+      dialogViewModel?.entity &&
+      dialogViewModel?.entity.type === DialogType.private
+        ? [
+            (dialogViewModel?.entity as unknown as PrivateDialogEntity)
+              .participantId,
+          ]
+        : [];
+    const senderUser = await userViewModel.getUserById(participants[0]);
 
+    result = senderUser?.photo || '';
+
+    return result;
+  };
+
+  async function getDialogPhotoFileForPreview() {
+    const tmpFileUrl: string = await getUserAvatarByUid();
+
+    if (tmpFileUrl && tmpFileUrl.length > 0) {
+      setDialogAvatarUrl(tmpFileUrl);
+    }
+  }
+
+  useEffect(() => {
+    getDialogPhotoFileForPreview();
+
+    return () => {
+      if (dialogAvatarUrl) {
+        URL.revokeObjectURL(dialogAvatarUrl);
+      }
+    };
+  }, []);
   // eslint-disable-next-line consistent-return
   const renderIconForTypeDialog = (dialogEntity: DialogEntity) => {
     console.log(JSON.stringify(dialogEntity));
@@ -162,7 +160,12 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
       );
     }
     if (dialogEntity.type === DialogType.private) {
-      return (
+      return dialogAvatarUrl ? (
+        <UserAvatar
+          urlAvatar={dialogAvatarUrl}
+          iconTheme={{ width: '81px', height: '81px' }}
+        />
+      ) : (
         <div className="dialog-info-profile-avatar-default-icon">
           <div className="dialog-info-profile-avatar-ellipse">
             <div className="dialog-info-profile-avatar-contents">
@@ -283,15 +286,8 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
   const useSubContent = subHeaderContent || false;
   const useUpContent = upHeaderContent || false;
 
-  return isAllMembersShow ? (
-    <MembersList
-      closeInformationHandler={() => {
-        setIsAllMembersShow(false);
-      }}
-      members={userViewModel.users}
-    />
-  ) : (
-    <div className="dialog-information-container" style={{ ...rootStyles }}>
+  return (
+    <div style={{ ...rootStyles }} className="dialog-information-container">
       <ColumnContainer>
         {useUpContent && upHeaderContent}
         <div className="header-dialog-info">
@@ -335,6 +331,17 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
                       'Edit dialog',
                       false,
                       false,
+                      isMobile
+                        ? {
+                            width: '300px',
+                            backgroundColor: 'var(--main-background)',
+                          }
+                        : {
+                            width: '380px',
+                            // minWidth: '332px',
+                            // maxWidth: '332px',
+                            backgroundColor: 'var(--main-background)',
+                          },
                     );
                   }}
                   touchAction={() => {
@@ -345,21 +352,21 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
             ) : null}
           </div>
         </div>
-        <div className="dialog-info-action-wrapper-settings">
-          <div className="dialog-info-action-wrapper-settings-icon">
-            <div className="dialog-info-action-wrapper-settings-contents">
-              <NotifyOn width="24" height="24" applyZoom />
-            </div>
-          </div>
-          <div className="dialog-info-action-wrapper-settings-subtitle">
-            Notifications
-          </div>
-          <SwitchButton
-            clickHandler={() => {
-              console.log('clicked SwitchButton Notifications...');
-            }}
-          />
-        </div>
+        {/* <div className="dialog-info-action-wrapper-settings"> */}
+        {/*  <div className="dialog-info-action-wrapper-settings-icon"> */}
+        {/*    <div className="dialog-info-action-wrapper-settings-contents"> */}
+        {/*      <NotifyOn width="24" height="24" applyZoom /> */}
+        {/*    </div> */}
+        {/*  </div> */}
+        {/*  <div className="dialog-info-action-wrapper-settings-subtitle"> */}
+        {/*    Notifications */}
+        {/*  </div> */}
+        {/*  <SwitchButton */}
+        {/*    clickHandler={() => { */}
+        {/*      console.log('clicked SwitchButton Notifications...'); */}
+        {/*    }} */}
+        {/*  /> */}
+        {/* </div> */}
         {dialog.type !== DialogType.private ? (
           <div>
             <div className="dialog-info-action-wrapper-settings">
@@ -379,7 +386,7 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
               <div className="dialog-info-action-wrapper-settings-right">
                 <div className="dialog-info-action-wrapper-settings-right-badge">
                   <div className="dialog-info-action-wrapper-settings-right-badge-title">
-                    {userViewModel.users.length}
+                    {users.length}
                   </div>
                 </div>
                 <div className="dialog-info-action-wrapper-settings-icon">
@@ -402,7 +409,7 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
                       )
                     }
                     onClick={showMembersDialogHandler}
-                    onTouch={showMembersDialogHandler}
+                    // onTouch={showMembersDialogHandler} //todo artik 29.12.2023 don't need for mobile
                   />
                 </div>
               </div>
@@ -410,30 +417,31 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
             <div>
               {showMembersDialog ? (
                 <ColumnContainer>
-                  {userViewModel?.loading && (
-                    <div
-                      style={{
-                        height: '44px',
-                        width: '44px',
-                      }}
-                    >
-                      <LoaderComponent width="44" height="44" />
-                    </div>
-                  )}
-                  {userViewModel?.error && (
-                    <ErrorComponent
-                      title={userViewModel?.error}
-                      ClickActionHandler={() => {
-                        console.log('call retry after error...');
-                      }}
-                    />
-                  )}
-                  {userViewModel.users && userViewModel.users.length > 0 && (
-                    <div className="dialog-info-action-wrapper-settings">
+                  {/* {userViewModel?.loading && ( */}
+                  {/*  <div */}
+                  {/*    style={{ */}
+                  {/*      height: '44px', */}
+                  {/*      width: '44px', */}
+                  {/*    }} */}
+                  {/*  > */}
+                  {/*    <LoaderComponent width="44" height="44" /> */}
+                  {/*  </div> */}
+                  {/* )} */}
+                  {/* {userViewModel?.error && ( */}
+                  {/*  <ErrorComponent */}
+                  {/*    title={userViewModel?.error} */}
+                  {/*    ClickActionHandler={() => { */}
+                  {/*      console.log('call retry after error...'); */}
+                  {/*    }} */}
+                  {/*  /> */}
+                  {/* )} */}
+                  {users && users.length > 0 && (
+                    <div className="dialog-info-action-wrapper-settings no-padding">
                       <UsersList
-                        usersFirstPageToView={userViewModel.users}
-                        allUsers={userViewModel.users}
-                        usersInDialogCount={userViewModel.users.length}
+                        maxHeight={75}
+                        usersFirstPageToView={users}
+                        allUsers={users}
+                        usersInDialogCount={users.length}
                       />
                     </div>
                   )}
@@ -522,7 +530,7 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
                     <MainButton
                       title="See all members"
                       typeButton={TypeButton.outlined}
-                      clickHandler={() => setIsAllMembersShow(true)}
+                      clickHandler={() => onShowAllMemberClick(true)}
                     />
                   </div>
                 </ColumnContainer>
@@ -530,18 +538,18 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
             </div>
           </div>
         ) : null}
-        <div className="dialog-info-action-wrapper-settings">
-          <div className="dialog-info-action-wrapper-settings-icon">
-            <ActiveSvg
-              content={<Search width="24" height="24" applyZoom />}
-              onClick={() => searchDialogHandler()}
-              onTouch={() => searchDialogHandler()}
-            />
-          </div>
-          <div className="dialog-info-action-wrapper-settings-subtitle">
-            Search in dialog
-          </div>
-        </div>
+        {/* <div className="dialog-info-action-wrapper-settings"> */}
+        {/*  <div className="dialog-info-action-wrapper-settings-icon"> */}
+        {/*    <ActiveSvg */}
+        {/*      content={<Search width="24" height="24" applyZoom />} */}
+        {/*      onClick={() => searchDialogHandler()} */}
+        {/*      onTouch={() => searchDialogHandler()} */}
+        {/*    /> */}
+        {/*  </div> */}
+        {/*  <div className="dialog-info-action-wrapper-settings-subtitle"> */}
+        {/*    Search in dialog */}
+        {/*  </div> */}
+        {/* </div> */}
         <div className="dialog-info-action-wrapper-settings">
           <div className="dialog-info-action-wrapper-settings-icon">
             <ActiveSvg

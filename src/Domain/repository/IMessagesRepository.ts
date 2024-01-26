@@ -1,6 +1,6 @@
 import { MessageEntity } from '../entity/MessageEntity';
 import { PaginatedResult, Pagination } from './Pagination';
-import { DialogEntity } from '../entity/DialogEntity'
+import { DialogEntity } from '../entity/DialogEntity';
 
 export interface IMessagesRepository {
   saveMessageToLocal(message: MessageEntity): Promise<MessageEntity>;

@@ -1,4 +1,5 @@
 import BaseViewModel, {
+  FunctionTypeUserIdToUserEntity,
   FunctionTypeVoidToVoid,
 } from '../../../../CommonTypes/BaseViewModel';
 import { UserEntity } from '../../../../Domain/entity/UserEntity';
@@ -10,4 +11,5 @@ export interface UsersListViewModel extends BaseViewModel<DialogEntity> {
   users: UserEntity[]; // content
   getUsers: FunctionTypeVoidToVoid; // prepareContent
   release: FunctionTypeVoidToVoid; // release Content
+  getUserById: FunctionTypeUserIdToUserEntity;
 }

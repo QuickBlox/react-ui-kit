@@ -675,7 +675,8 @@ export class RemoteDataSource implements IRemoteDataSource {
       created_at: {
         lt: Date.now() / 1000,
       },
-      sort_desc: 'created_at',
+      // sort_desc: 'created_at',// artan 19.0.2024
+      sort_desc: 'updated_at',
       page: pageNumber,
       // per_page: perPage,
       limit: perPage,

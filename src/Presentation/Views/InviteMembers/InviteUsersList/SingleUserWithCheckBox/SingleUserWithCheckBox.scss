@@ -3,7 +3,6 @@ $user-single-container-height: 336px;
   min-height: $user-single-container-height;
   max-height: $user-single-container-height;
   height: $user-single-container-height;
-  //border: 1px solid green;
 
   &--search-wrapper{
     min-height: 56px;
@@ -14,11 +13,8 @@ $user-single-container-height: 336px;
     align-items: center;
     gap: 16px;
 
-    //border: 1px solid blue;
-
     &__search-text{
       min-height: 24px;
-      // margin: 16px 16px 16px 16px;
       font-family: 'Roboto';
       font-style: normal;
       font-weight: 400;
@@ -27,16 +23,12 @@ $user-single-container-height: 336px;
       letter-spacing: 0.15px;
       flex: 2 2 268px;
       letter-spacing: 0.15px;
-
-      //border: 1px solid orange;
     }
     &__search-icon{
       min-height: 24px;
       margin-left: 10px;
       flex: 1 1 24px;
       cursor: pointer;
-
-      //border: 1px solid red;
     }
   }
 
@@ -52,20 +44,8 @@ $user-single-container-height: 336px;
     border-bottom: 1px solid var(--color-divider);
 
     &__username {
-      //min-height: 24px;
-      //min-width: 193px;
-      //max-width: 193px;
-      //// margin: 16px 16px 16px 16px;
-      //font-family: 'Roboto';
-      //font-style: normal;
-      //font-weight: 400;
-      //font-size: 16px;
-      //line-height: 24px;
-      //letter-spacing: 0.15px;
-      //flex: 2 2 268px;
-      //letter-spacing: 0.15px;
 
-      width: 193px;
+      // width: 193px;
       height: 24px;
       font-family: 'Roboto';
       font-style: normal;
@@ -78,7 +58,6 @@ $user-single-container-height: 336px;
       letter-spacing: 0.15px;
       color: var(--main-text);
 
-     // border: 1px solid orange;
     }
     &__select {
       min-height: 24px;
@@ -102,8 +81,6 @@ $user-single-container-height: 336px;
       align-items: center;
       text-align: center;
       align-content: center;
-
-     // border: 1px solid red;
 
       &__content {
         margin: 6px;

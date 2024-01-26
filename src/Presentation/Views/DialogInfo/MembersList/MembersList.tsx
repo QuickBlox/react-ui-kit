@@ -10,11 +10,13 @@ import UsersList from '../UsersList/UsersList';
 type MembersListProps = {
   closeInformationHandler: FunctionTypeVoidToVoid;
   members: UserEntity[];
+  maxHeight?: number;
 };
 // eslint-disable-next-line react/function-component-definition
 const MembersList: React.FC<MembersListProps> = ({
   closeInformationHandler,
   members,
+  maxHeight = 0,
 }: MembersListProps) => {
   const [userNameForFilter, setUserNameForFilter] = useState<string>('');
   const [membersListFilter, setMembersListFilter] = useState<UserEntity[]>([
@@ -91,6 +93,7 @@ const MembersList: React.FC<MembersListProps> = ({
       </div>
       <div className="members-container-members-list-wrapper">
         <UsersList
+          maxHeight={maxHeight}
           usersFirstPageToView={[...membersListFilter]}
           allUsers={[...membersListFilter]}
           usersInDialogCount={membersListFilter.length}

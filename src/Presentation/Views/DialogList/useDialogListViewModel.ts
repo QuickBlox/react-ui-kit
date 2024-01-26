@@ -31,6 +31,7 @@ import { RemoteDataSource } from '../../../Data/source/remote/RemoteDataSource';
 import { GetUsersByIdsUseCase } from '../../../Domain/use_cases/GetUsersByIdsUseCase';
 import UsersRepository from '../../../Data/repository/UsersRepository';
 import { UserEntity } from '../../../Domain/entity/UserEntity';
+import { DefaultConfigurations } from '../../../Data/DefaultConfigurations';
 
 export default function useDialogListViewModel(
   currentContext: QBDataContextType,
@@ -69,6 +70,12 @@ export default function useDialogListViewModel(
       eventMessageRepository,
       'DialogsViewModel',
     );
+  //
+  const QBConfig =
+    currentContext.InitParams.qbConfig ||
+    DefaultConfigurations.getDefaultQBConfig();
+  const { regexUserName } = QBConfig.appConfig;
+  const regex = regexUserName ? new RegExp(regexUserName) : null;
 
   async function getDialogs(currentPagination: Pagination) {
     console.log('getDialogs in useDialogListViewModel');
@@ -91,7 +98,26 @@ export default function useDialogListViewModel(
       // eslint-disable-next-line promise/always-return
       .then((result) => {
         console.log('EXECUTE COMPLETED: ', JSON.stringify(currentPagination));
-        setDialogs([...(result.ResultData as PublicDialogEntity[])]);
+        //
+        const tmpItems: PublicDialogEntity[] = (
+          result.ResultData as PublicDialogEntity[]
+        ).reduce((acc: PublicDialogEntity[], u: PublicDialogEntity) => {
+          const isPrivate = u.type === DialogType.private;
+          const isValidName =
+            regex && u.name && u.name.length > 0 && regex.test(u.name);
+
+          if (isPrivate && !isValidName) {
+            // eslint-disable-next-line no-param-reassign
+            u.name = 'Unknown';
+          }
+          acc.push(u);
+
+          return acc;
+        }, []);
+
+        //
+        // setDialogs([...(result.ResultData as PublicDialogEntity[])]);
+        setDialogs([...tmpItems]);
         setLoading(false);
         setPagination(result.CurrentPagination);
       })

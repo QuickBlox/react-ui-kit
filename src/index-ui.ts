@@ -23,7 +23,9 @@ import DialogList from './Presentation/Views/DialogList/DialogList';
 import Dialog from './Presentation/Views/Dialog/Dialog';
 import DialogInfo from './Presentation/Views/DialogInfo/DialogInfo';
 import { DialogEntity } from './Domain/entity/DialogEntity';
-import BaseViewModel from './CommonTypes/BaseViewModel';
+import BaseViewModel, {
+  FunctionTypeViewModelToVoid,
+} from './CommonTypes/BaseViewModel';
 import {
   LoginData,
   AuthorizationData,
@@ -38,9 +40,10 @@ import { AISource, IChatMessage } from './Data/source/AISource';
 import AIWidgetIcon from './Presentation/components/UI/svgs/Icons/AIWidgets/AIWidget';
 import ErrorMessageIcon from './Presentation/Views/Dialog/AIWidgets/ErrorMessageIcon';
 import PreviewDialogViewModel from './Presentation/Views/PreviewDialog/PreviewDialogViewModel';
-import {AvatarContentIncomingUserProps} from './Presentation/Views/Dialog/Message/IncomingMessage/AvatarContentIncomingUser/AvatarContentIncomingUser';
-import {FunctionTypeViewModelToVoid} from './CommonTypes/BaseViewModel';
-import {GetUserNameFct} from './Presentation/Views/Dialog/Message/IncomingMessage/IncomingMessage';
+import { AvatarContentIncomingUserProps } from './Presentation/Views/Dialog/Message/IncomingMessage/AvatarContentIncomingUser/AvatarContentIncomingUser';
+
+import { GetUserNameFct } from './Presentation/Views/Dialog/Message/IncomingMessage/IncomingMessage';
+
 export {
   MainButton,
   TypeButton,
@@ -80,5 +83,5 @@ export {
   PreviewDialogViewModel,
   type FunctionTypeViewModelToVoid,
   type AvatarContentIncomingUserProps,
-  type GetUserNameFct
+  type GetUserNameFct,
 };

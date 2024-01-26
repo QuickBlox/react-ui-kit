@@ -30,7 +30,7 @@ export class SubscribeToDialogEventsUseCase extends BaseUseCase<
   }
 
   execute(callBack: CallBackFunction<DialogEventInfo>): Promise<boolean> {
-    console.log('execute SubscribeToDialogEventsUseCase', callBack);
+    // console.log('execute SubscribeToDialogEventsUseCase', callBack); //todo artik changed 28.12.2023
     this.callBackExecute = callBack;
     if (
       this.callBackExecute !== undefined &&

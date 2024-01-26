@@ -5,7 +5,7 @@ $desktop-main-container-item-center-width: 720px;
 // $desktop-main-container-item-center-width: 1040px;
 
 .desktop-layout-main-container{
-  border: 1px solid #6c38cc;
+  // border: 1px solid #6c38cc;
   // min-height: $desktop-main-container-min-height;
   // max-width: $desktop-main-container-max-width;
   // height: calc(100vh - 128px);
@@ -16,19 +16,22 @@ $desktop-main-container-item-center-width: 720px;
   margin: 0 auto;
 
   &__item-left {
-   // border-bottom: 1px solid var(--divider);
+    border-bottom: 1px solid var(--divider);
     flex: 1 1 $desktop-main-container-item-width;
     // max-width: $desktop-main-container-item-width
+    height: 100%;
   }
   &__item-right {
-   // border: 1px solid  var(--divider);
+    border: 1px solid  var(--divider);
     flex: 1 1 $desktop-main-container-item-width;
     // max-width: $desktop-main-container-item-width
     width: 100%;
+    height: 100%;
   }
   &__item-center {
-   // border: 1px solid  var(--divider);
+    border: 1px solid  var(--divider);
    // flex: 3 2 $desktop-main-container-item-center-width;
+    height: 100%;
     width: 100%;
    //  min-width: 320px;
   }

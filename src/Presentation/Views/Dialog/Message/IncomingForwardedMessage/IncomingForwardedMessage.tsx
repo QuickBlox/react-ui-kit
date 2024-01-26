@@ -16,6 +16,7 @@ import AITranslateComponent from '../../AIComponents/AITranslateComponent/AITran
 import MessageContextMenu from '../MessageContextMenu/MessageContextMenu';
 import LoaderComponent from '../../../../components/UI/Placeholders/LoaderComponent/LoaderComponent';
 import AIAssistComponent from '../../AIComponents/AIAssistComponent/AIAssistComponent';
+import { FileType } from '../../../../../Domain/entity/FileTypes';
 
 function IncomingForwardedMessage(props: {
   theme?: UiKitTheme;
@@ -181,7 +182,21 @@ function IncomingForwardedMessage(props: {
             </div>
             <div className="incoming-forward-message-incoming-message">
               <div className="incoming-forward-message-incoming-bubble">
-                <div className="incoming-forward-message-incoming-bubble-background">
+                <div
+                  className="incoming-forward-message-incoming-bubble-background"
+                  style={{
+                    background:
+                      item.attachments &&
+                      (item.attachments[0].type
+                        .toString()
+                        .includes(FileType.image) ||
+                        item.attachments[0].type
+                          .toString()
+                          .includes(FileType.video))
+                        ? 'none'
+                        : undefined,
+                  }}
+                >
                   <div className="incoming-forward-message-incoming-bubble-background-line">
                     <MessageContentComponent
                       theme={props.theme}

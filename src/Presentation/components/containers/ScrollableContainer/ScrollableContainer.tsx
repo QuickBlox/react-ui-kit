@@ -6,6 +6,8 @@ import LoaderComponent from '../../UI/Placeholders/LoaderComponent/LoaderCompone
 
 interface FlatListProps<T> {
   className?: string;
+  rootStyles?: React.CSSProperties;
+  mainContainerStyles?: React.CSSProperties;
   data: Array<T>;
   ListEmptyComponent?: React.ComponentClass | React.FunctionComponent;
   onEndReached?: VoidFunction;
@@ -18,6 +20,8 @@ interface FlatListProps<T> {
 export default function ScrollableContainer<T>(props: FlatListProps<T>) {
   const {
     className,
+    rootStyles,
+    mainContainerStyles,
     data,
     ListEmptyComponent,
     onEndReached,
@@ -70,7 +74,7 @@ export default function ScrollableContainer<T>(props: FlatListProps<T>) {
   console.log('data to scrolling: ', JSON.stringify(data));
 
   return (
-    <div className={cn('list', className)}>
+    <div style={rootStyles} className={cn('list', className)}>
       {refreshing && (
         <div>
           <LoaderComponent
@@ -81,8 +85,12 @@ export default function ScrollableContainer<T>(props: FlatListProps<T>) {
         </div>
       )}
       {data && data.length ? (
-        <div className="list-content" onScroll={scrollHandler} ref={container}>
-          {/* {data.map(renderItem)} */}
+        <div
+          style={mainContainerStyles}
+          className="list-content"
+          onScroll={scrollHandler}
+          ref={container}
+        >
           {data.map((it, index) => renderItem(it, index))}
           <div style={{ float: 'left', clear: 'both' }} ref={messageEndRef} />
         </div>

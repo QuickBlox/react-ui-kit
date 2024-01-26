@@ -8,12 +8,14 @@ type UsersListProps = {
   usersFirstPageToView: UserEntity[];
   allUsers: UserEntity[];
   usersInDialogCount: number;
+  maxHeight?: number;
 };
 // eslint-disable-next-line react/function-component-definition
 const UsersList: React.FC<UsersListProps> = ({
   usersFirstPageToView,
   allUsers,
   usersInDialogCount = 0,
+  maxHeight = 0,
 }) => {
   const [hasMore, setHasMore] = React.useState(false);
   const [usersToView, setUsersToView] = React.useState<UserEntity[]>([
@@ -50,9 +52,11 @@ const UsersList: React.FC<UsersListProps> = ({
       });
     }
   };
+  const rootStyles = maxHeight > 0 ? { maxHeight: `${maxHeight}px` } : {};
 
   return (
     <ScrollableContainer
+      rootStyles={rootStyles}
       data={usersToView}
       renderItem={renderUserComponent}
       onEndReached={fetchMoreData}

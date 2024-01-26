@@ -16,20 +16,27 @@
 .dialog-header-left {
   display: flex;
   flex-direction: row;
-  gap: 18px;
+  gap: 33px;// todo artik 29.12.2023 changed was 18 px
   align-items: center;
   justify-content: flex-start;
   flex-shrink: 0;
   position: relative;
+  width: 100%;
+}
+@media only screen and (max-width: var(--min-width-screen-desktop)) {
+  .dialog-header-left {
+    gap: 3px;// todo artik 29.12.2023 changed was 18 px
+  }
 }
 .dialog-header-left-headline {
   display: flex;
   flex-direction: row;
-  gap: 33px;
+  //gap: 33px;
   align-items: center;
   justify-content: flex-start;
-  flex-shrink: 0;
+  // flex-shrink: 0;
   position: relative;
+  width: 100%;
 }
 .dialog-header-left-avatar-and-name {
   display: flex;
@@ -43,14 +50,7 @@
 .dialog-header-dialog-name {
   color: var(--main-text, #0b1b0f);
   text-align: left;
-  font-family: var(
-                  --title-title-medium-font-family,
-                  "Roboto-Medium",
-                  sans-serif
-  );
-  font-size: var(--title-title-medium-font-size, 16px);
-  line-height: var(--title-title-medium-line-height, 24px);
-  font-weight: var(--title-title-medium-font-weight, 500);
+  font: var(--title-title-medium);
   position: relative;
 }
 .dialog-header-line,

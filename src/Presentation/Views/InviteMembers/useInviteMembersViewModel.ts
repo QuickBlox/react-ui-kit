@@ -14,11 +14,18 @@ import {
   NOT_FOUND_REMOTE_DATASOURCE_EXCEPTION_CODE,
   RemoteDataSourceException,
 } from '../../../Data/source/exception/RemoteDataSourceException';
+import { DefaultConfigurations } from '../../../Data/DefaultConfigurations';
 
 export default function useInviteMembersViewModel(): InviteMembersViewModel {
   // initPagination?: Pagination,
   console.log('create useUsersListViewModel');
   const currentContext = useQbInitializedDataContext();
+  const QBConfig =
+    currentContext.InitParams.qbConfig ||
+    DefaultConfigurations.getDefaultQBConfig();
+  const { regexUserName } = QBConfig.appConfig;
+  const regex = regexUserName ? new RegExp(regexUserName) : null;
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('error with getting user list');
 
@@ -59,10 +66,41 @@ export default function useInviteMembersViewModel(): InviteMembersViewModel {
         setPagination(data.CurrentPagination);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         setUsers((prevState) => {
-          const newItems =
-            currentPagination.getCurrentPage() === 0
-              ? [...data.ResultData]
-              : [...prevState, ...data.ResultData];
+          let newItems: UserEntity[] = [];
+
+          if (regexUserName && regexUserName.length > 0) {
+            // const tmpItems: UserEntity[] = [];
+            //
+            // for (let i = 0; i < data.ResultData.length; i += 1) {
+            //   const u = data.ResultData[i];
+            //   const regexResult = regex.test(u.full_name);
+            //
+            //   if (regexResult) {
+            //     tmpItems.push(u);
+            //   }
+            // }
+            // work
+            const tmpItems: UserEntity[] = data.ResultData.reduce(
+              (acc: UserEntity[], u: UserEntity) => {
+                if (!regex || regex.test(u.full_name)) {
+                  acc.push(u);
+                }
+
+                return acc;
+              },
+              [],
+            );
+
+            newItems =
+              currentPagination.getCurrentPage() === 0
+                ? [...tmpItems]
+                : [...prevState, ...tmpItems];
+          } else {
+            newItems =
+              currentPagination.getCurrentPage() === 0
+                ? [...data.ResultData]
+                : [...prevState, ...data.ResultData];
+          }
 
           return newItems;
         });

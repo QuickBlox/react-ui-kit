@@ -3,6 +3,8 @@ import './SingleUserWithCheckBox.scss';
 import { UserEntity } from '../../../../../Domain/entity/UserEntity';
 import ActiveSvg from '../../../../components/UI/svgs/ActiveSvg/ActiveSvg';
 import User from '../../../../components/UI/svgs/Icons/Contents/User';
+import { useMobileLayout } from '../../../../components/containers/SectionList/hooks';
+import UserAvatar from '../../../EditDialog/UserAvatar/UserAvatar';
 
 export type FunctionTypeUserEntityToVoid = (
   item: UserEntity,
@@ -24,6 +26,8 @@ const SingleUserWithCheckBox: React.FC<SingleUserWithCheckBoxProps> = ({
   keyValue,
   isDisabled = false,
 }) => {
+  const [isMobile] = useMobileLayout();
+
   function getChecked(index: number | undefined) {
     const result = isElementChecked; // || isUserChecked;
 
@@ -31,20 +35,56 @@ const SingleUserWithCheckBox: React.FC<SingleUserWithCheckBoxProps> = ({
 
     return result;
   }
+  // const [dialogAvatarUrl, setDialogAvatarUrl] = React.useState('');
+  // const getUserAvatarUid = () => {
+  //   let result = '';
+  //
+  //   result = user?.blob_id || '';
+  //
+  //   return result;
+  // };
+  //
+  // async function getDialogPhotoFileForPreview() {
+  //   const fileUid: string = getUserAvatarUid();
+  //
+  //   if (fileUid && fileUid.length > 0) {
+  //     let tmpFileUrl: string = fileUid && QB.content.privateUrl(fileUid);
+  //     const { blobFile } = await Creator.createBlobFromUrl(tmpFileUrl);
+  //
+  //     tmpFileUrl = blobFile ? URL.createObjectURL(blobFile) : tmpFileUrl || '';
+  //     setDialogAvatarUrl(tmpFileUrl);
+  //   }
+  // }
+  // useEffect(() => {
+  //   getDialogPhotoFileForPreview();
+  //
+  //   return () => {
+  //     if (dialogAvatarUrl) {
+  //       URL.revokeObjectURL(dialogAvatarUrl);
+  //     }
+  //   };
+  // }, []);
 
   return (
     <div key={keyValue} className="user-single-container-chbox--wrapper">
       <div className="user-single-container-chbox--wrapper__icon">
         <ActiveSvg
           content={
-            <div className="user-single-container-chbox--wrapper__icon__content">
-              <User
-                width="26"
-                height="26"
-                applyZoom
-                color="var(--tertiary-elements)"
+            user.photo ? (
+              <UserAvatar
+                urlAvatar={user.photo}
+                iconTheme={{ width: '41px', height: '41px' }}
               />
-            </div>
+            ) : (
+              <div className="user-single-container-chbox--wrapper__icon__content">
+                <User
+                  width="26"
+                  height="26"
+                  applyZoom
+                  color="var(--tertiary-elements)"
+                />
+              </div>
+            )
           }
           onClick={() => {
             console.log('user click...');
@@ -54,7 +94,10 @@ const SingleUserWithCheckBox: React.FC<SingleUserWithCheckBoxProps> = ({
           }}
         />
       </div>
-      <div className="user-single-container-chbox--wrapper__username">
+      <div
+        className="user-single-container-chbox--wrapper__username"
+        style={isMobile ? { width: '133px' } : { width: '193px' }}
+      >
         {`${user?.full_name || user?.login || user?.email || user?.id}`}
       </div>
       <div className="user-single-container-chbox--wrapper__select">

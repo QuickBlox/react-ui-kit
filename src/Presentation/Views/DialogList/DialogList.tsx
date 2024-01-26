@@ -3,6 +3,7 @@ import './DialogList.scss';
 import ColumnContainer from '../../components/containers/ColumnContainer/ColumnContainer';
 import { DialogType } from '../../../Domain/entity/DialogTypes';
 import BaseViewModel, {
+  FunctionTypeDialogEntityToVoid,
   FunctionTypeViewModelToVoid,
 } from '../../../CommonTypes/BaseViewModel';
 import PreviewDialogViewModel from '../PreviewDialog/PreviewDialogViewModel';
@@ -13,13 +14,14 @@ import DialogListHeader from '../DialogListHeader/DialogListHeader';
 import { ModalContext } from '../../providers/ModalContextProvider/Modal';
 import { DialogListViewModel } from './DialogListViewModel';
 import { DialogEntity } from '../../../Domain/entity/DialogEntity';
-import CreateNewDialogFlow from '../CreateDialogFlow/CreateNewDialogFlow';
-import { getTimeShort24hFormat } from '../../../utils/DateTimeFormatter';
+import CreateNewDialogFlow from '../Flow/CreateDialogFlow/CreateNewDialogFlow';
 import { IconTheme } from '../../components/UI/svgs/Icons/IconsCommonTypes';
 import { GroupDialogEntity } from '../../../Domain/entity/GroupDialogEntity';
 import Search from '../../components/UI/svgs/Icons/Navigation/Search';
 import Remove from '../../components/UI/svgs/Icons/Actions/Remove';
 import UiKitTheme from '../../themes/UiKitTheme';
+import { useMobileLayout } from '../../components/containers/SectionList/hooks';
+import { getDateForDialog } from '../../../utils/DateTimeFormatter';
 
 type DialogsComponentSettings = {
   themeName?: ThemeNames;
@@ -35,6 +37,7 @@ type DialogsProps = {
   subHeaderContent?: React.ReactNode;
   upHeaderContent?: React.ReactNode;
   onDialogSelectHandler?: FunctionTypeViewModelToVoid<DialogEntity>;
+  onLeaveDialog: FunctionTypeDialogEntityToVoid;
   dialogsViewModel: DialogListViewModel;
   additionalSettings?: DialogsComponentSettings;
   scrollableHeight?: number;
@@ -46,6 +49,7 @@ const DialogList: React.FC<DialogsProps> = ({
   subHeaderContent,
   upHeaderContent,
   onDialogSelectHandler,
+  onLeaveDialog,
   dialogsViewModel,
   additionalSettings = undefined,
   scrollableHeight = 736,
@@ -62,10 +66,11 @@ const DialogList: React.FC<DialogsProps> = ({
 
   const [showSearchDialogs, setShowSearchDialogs] = React.useState(false);
   const [nameDialogForSearch, setNameDialogForSearch] = React.useState('');
+  const [isMobile] = useMobileLayout();
 
   useEffect(() => {
     console.log('USE EFFECT DIALOG LIST HAS CHANGED');
-    console.log(JSON.stringify(dialogsViewModel?.dialogs));
+    // console.log(JSON.stringify(dialogsViewModel?.dialogs)); //todo artik changed 28.12.2023
     dialogs.slice(0);
 
     dialogsViewModel?.dialogs.forEach((entiy, index) => {
@@ -151,11 +156,13 @@ const DialogList: React.FC<DialogsProps> = ({
   // }, []);
 
   const { handleModal } = React.useContext(ModalContext);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const useHeader = !additionalSettings?.withoutHeader || header || false;
   const useSubContent =
     additionalSettings?.useSubHeader || subHeaderContent || false;
   const useUpContent =
     additionalSettings?.useUpHeader || upHeaderContent || false;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const HeaderContent = header || (
     <DialogListHeader
       title="Dialogs"
@@ -170,19 +177,24 @@ const DialogList: React.FC<DialogsProps> = ({
           'New dialog',
           false,
           false,
-          {
-            minHeight: '200px',
-            minWidth: '380px',
-            maxWidth: '380px',
-            backgroundColor: 'var(--main-background)',
-            // border: '3px solid red',
-          },
+          isMobile
+            ? {
+                width: '300px',
+                backgroundColor: 'var(--main-background)',
+              }
+            : {
+                width: '380px',
+                // minWidth: '332px',
+                // maxWidth: '332px',
+                backgroundColor: 'var(--main-background)',
+              },
         );
       }}
       theme={additionalSettings?.themeHeader}
     />
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const renderPreviewDialog = (item: PreviewDialogViewModel, index: number) => {
     function getMessageDateTimeSent() {
       let dateInt = 0;
@@ -193,7 +205,7 @@ const DialogList: React.FC<DialogsProps> = ({
         if (Number.isNaN(dateInt)) {
           return formattedValue;
         }
-        formattedValue = getTimeShort24hFormat(dateInt * 1000);
+        formattedValue = getDateForDialog(dateInt * 1000);
       }
 
       return formattedValue;
@@ -262,6 +274,7 @@ const DialogList: React.FC<DialogsProps> = ({
           message_date_time_sent={getMessageDateTimeSent()}
           previewMessage={item.entity.lastMessage.text}
           dialogAvatar={getDialogAvatar(item)}
+          onLeaveDialog={onLeaveDialog}
         />
       </div>
     );
@@ -316,18 +329,23 @@ const DialogList: React.FC<DialogsProps> = ({
       //   border: '1px solid var(--divider)',
       // }}
     >
-      <ColumnContainer>
+      <ColumnContainer maxWidth={isMobile ? '100%' : '320px'}>
         {useUpContent && upHeaderContent}
         {useHeader && HeaderContent}
         {useSubContent && subHeaderContent}
         {/* <div className="scroll-box"> */}
         <div
           className="scroll-box"
-          style={{ maxHeight: 'initial' }}
+          style={{ maxHeight: 'initial', height: 'initial' }}
           ref={(el) => {
             if (el) {
               el.style.setProperty(
                 'max-height',
+                `${scrollableHeight}px`,
+                'important',
+              );
+              el.style.setProperty(
+                'height',
                 `${scrollableHeight}px`,
                 'important',
               );

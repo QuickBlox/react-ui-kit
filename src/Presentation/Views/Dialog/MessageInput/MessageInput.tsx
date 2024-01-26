@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import UiKitTheme from '../../../themes/UiKitTheme';
 import ActiveSvg from '../../../components/UI/svgs/ActiveSvg/ActiveSvg';
 import LoaderComponent from '../../../components/UI/Placeholders/LoaderComponent/LoaderComponent';
@@ -36,17 +36,16 @@ const MessageInput: React.FC<MessageInputProps> = ({
   maxWidthToResizing,
   theme = undefined,
 }: MessageInputProps) => {
-  const [currentMessageText, setCurrentMessageText] =
-    useState<string>(messageText);
   const [isVoiceMessage, setVoiceMessage] = useState(true);
 
-  useEffect(() => {
-    setCurrentMessageText(messageText);
-  }, [messageText]);
+  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    onChangeText(event.target.value);
+  };
 
   function sendTextMessageActions() {
     if (sendText) {
-      sendText(currentMessageText);
+      sendText(messageText);
+      onChangeText('');
     }
   }
 
@@ -56,7 +55,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
         flex: `flex: 1 1 ${maxWidthToResizing}`,
       }}
       onBlur={() => {
-        if (!(currentMessageText && currentMessageText.length > 0)) {
+        if (!(messageText && messageText.length > 0)) {
           setVoiceMessage(true);
         }
       }}
@@ -87,14 +86,11 @@ const MessageInput: React.FC<MessageInputProps> = ({
             <textarea
               style={theme ? { backgroundColor: theme.chatInput() } : {}}
               disabled={messagesViewModel?.loading}
-              value={currentMessageText}
+              value={messageText}
               onFocus={() => {
                 setVoiceMessage(false);
               }}
-              onChange={(event) => {
-                // setCurrentMessageText(event.target.value);
-                onChangeText(event.target.value);
-              }}
+              onChange={handleChange}
               onInput={() => {
                 messagesViewModel.sendTypingTextMessage();
               }}
@@ -108,7 +104,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
                   sendTextMessageActions();
                 }
               }}
-              placeholder="enter text to send"
+              placeholder="Type message"
             />
           </div>
           {renderAIWidget}

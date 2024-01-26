@@ -11,6 +11,7 @@ type InputForForwardingProps = {
   inputText: string;
   onChange: FunctionTypeStringToVoid;
   onSend: FunctionTypeVoidToVoid;
+  disabled?: boolean;
 };
 
 // eslint-disable-next-line react/function-component-definition
@@ -18,6 +19,7 @@ const InputForForwarding: React.FC<InputForForwardingProps> = ({
   inputText,
   onChange,
   onSend,
+  disabled = false,
 }: InputForForwardingProps) => {
   return (
     <div className="forwarding-message-input">
@@ -35,6 +37,7 @@ const InputForForwarding: React.FC<InputForForwardingProps> = ({
         <ActiveSvg
           content={<SendIcon width="24" height="24" />}
           onClick={onSend}
+          disabled={disabled}
         />
       </div>
     </div>

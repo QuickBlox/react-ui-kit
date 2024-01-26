@@ -33,6 +33,8 @@ import {
 import { ForwardMessagesUseCase } from '../../../Domain/use_cases/ForwardMessagesUseCase';
 import { ReplyMessagesUseCase } from '../../../Domain/use_cases/ReplyMessagesUseCase';
 import { Creator, MessageEntityParams } from '../../../Data/Creator';
+import { DefaultConfigurations } from '../../../Data/DefaultConfigurations';
+import { MessageDTOMapper } from '../../../Data/source/remote/Mapper/MessageDTOMapper';
 
 export default function useDialogViewModel(
   dialogType: DialogType,
@@ -49,6 +51,11 @@ export default function useDialogViewModel(
   // const [dialogsParticipants, setDialogsParticipants] = useState<number[]>([]);
 
   const currentContext = useQbInitializedDataContext();
+  const QBConfig =
+    currentContext.InitParams.qbConfig ||
+    DefaultConfigurations.getDefaultQBConfig();
+  const { regexUserName } = QBConfig.appConfig;
+  const regex = regexUserName ? new RegExp(regexUserName) : null;
   const eventMessaging = useEventMessagesRepository();
   const { REMOTE_DATA_SOURCE, LOCAL_DATA_SOURCE } = currentContext.storage;
 
@@ -142,6 +149,14 @@ export default function useDialogViewModel(
 
           if (userDictionary) {
             obj.sender = userDictionary[message.sender_id];
+            if (
+              obj.sender &&
+              obj.sender.full_name &&
+              regex &&
+              !regex.test(obj.sender.full_name)
+            ) {
+              obj.sender.full_name = 'Unknown';
+            }
           }
 
           return obj;
@@ -400,10 +415,14 @@ export default function useDialogViewModel(
     sendMessage(messageToSend);
   };
 
-  const createMessageContent = (messageBody: string, fileMessage: FileEntity) =>
+  const createMessageContent = (
+    messageBody: string,
+    fileMessage: FileEntity,
+    attachmentType = '[Attachment]',
+  ) =>
     `MediaContentEntity|${messageBody}|${
       fileMessage.uid
-    }|${fileMessage.type!.toString()}`;
+    }|${fileMessage.type!.toString()}|${attachmentType}`;
 
   const setupMessageToSend = (
     fileMessage: FileEntity,
@@ -420,7 +439,7 @@ export default function useDialogViewModel(
       message: messageBody,
       sender_id: currentUserId,
       recipient_id: recipientId,
-      dialog_type: DialogType.group,
+      dialog_type: dialog.type || DialogType.group,
     };
 
     const messageToReturn: MessageEntity =
@@ -697,6 +716,17 @@ export default function useDialogViewModel(
         ];
 
         relatedMessage.attachments = attachments;
+        const messagePrefix = relatedMessage.message.includes(
+          MessageDTOMapper.REPLY_MESSAGE_PREFIX,
+        )
+          ? fileMessage.name || 'Replied message'
+          : relatedMessage.message;
+
+        relatedMessage.message = createMessageContent(
+          messagePrefix,
+          fileMessage,
+          MessageDTOMapper.REPLY_MESSAGE_PREFIX,
+        );
         await replyMessage(replyData.messagesToReply, relatedMessage);
       } else {
         await replyMessage(replyData.messagesToReply, relatedMessage);

@@ -11,7 +11,10 @@ const ColumnContainer: React.FC<ContainerProps> = ({
   const containerStyles = gapBetweenItem ? { gap: gapBetweenItem } : {};
 
   const resumeStyles = maxWidth
-    ? { ...containerStyles, width: maxWidth }
+    ? {
+        ...containerStyles,
+        width: maxWidth,
+      }
     : containerStyles;
 
   return (

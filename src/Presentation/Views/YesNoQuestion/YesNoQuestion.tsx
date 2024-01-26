@@ -1,8 +1,6 @@
 import './YesNoQuestion.scss';
 import React from 'react';
 import { FunctionTypeVoidToVoid } from '../../../CommonTypes/BaseViewModel';
-import ColumnContainer from '../../components/containers/ColumnContainer/ColumnContainer';
-import RowRightContainer from '../../components/containers/RowRightContainer/RowRightContainer';
 import MainButton, {
   TypeButton,
 } from '../../components/UI/Buttons/MainButton/MainButton';
@@ -34,56 +32,27 @@ const YesNoQuestionComponent: React.FC<YesNoQuestionProps> = ({
   noActionCaption = undefined,
 }: YesNoQuestionProps) => {
   return (
-    <div className="yesno-container-wrapper">
-      <ColumnContainer>
-        <div className="yesno-container__message-text">{messageText}</div>
-        <div className="yesno-container__footer">
-          <RowRightContainer
-            minHeightContainer="32px"
-            gapBetweenItem="8px"
-            RightContainerSize={{
-              flexBasis: '63px',
-              minWidth: '63px',
-              maxWidth: '63px',
-              minHeight: '32px',
-              maxHeight: '32px',
-            }}
-            RightItem={
-              <div>
-                <MainButton
-                  clickHandler={() => {
-                    if (ClickYesActionHandler) {
-                      ClickYesActionHandler();
-                    }
-                  }}
-                  title={yesActionCaption || 'Yes'}
-                  typeButton={TypeButton.danger}
-                />
-              </div>
+    <div>
+      <div className="ynq-dialog-actions">
+        <MainButton
+          title={noActionCaption || 'No'}
+          clickHandler={() => {
+            if (ClickNoActionHandler) {
+              ClickNoActionHandler();
             }
-            CenterContainerSize={{
-              flexBasis: '78px',
-              minWidth: '78px',
-              maxWidth: '78px',
-              minHeight: '32px',
-              maxHeight: '32px',
-            }}
-            CenterItem={
-              <div>
-                <MainButton
-                  title={noActionCaption || 'No'}
-                  clickHandler={() => {
-                    if (ClickNoActionHandler) {
-                      ClickNoActionHandler();
-                    }
-                  }}
-                  typeButton={TypeButton.outlined}
-                />
-              </div>
+          }}
+          typeButton={TypeButton.outlined}
+        />
+        <MainButton
+          clickHandler={() => {
+            if (ClickYesActionHandler) {
+              ClickYesActionHandler();
             }
-          />
-        </div>
-      </ColumnContainer>
+          }}
+          title={yesActionCaption || 'Yes'}
+          typeButton={TypeButton.danger}
+        />
+      </div>
     </div>
   );
 };

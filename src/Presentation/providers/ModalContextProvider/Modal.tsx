@@ -25,7 +25,7 @@ const initValue: ModalContextType = {
   modalHeader: '',
   modalContent: '',
   handleModal: () => {
-    console.log('empty function');
+    // console.log('empty function');
   },
   ModalContainerStyle: {},
 };
@@ -49,11 +49,10 @@ function Modal() {
   const questionSizeBox: React.CSSProperties = haveModalFooter
     ? {
         minHeight: '160px',
-        minWidth: '380px',
+        minWidth: '332px',
         maxHeight: '160px',
-        maxWidth: '380px',
+        maxWidth: '332px',
         backgroundColor: 'var(--main-background)',
-        // border: '3px solid blue',
       }
     : ModalContainerStyle || {};
 
@@ -73,56 +72,6 @@ function Modal() {
             {modalHeader}
           </div>
           <div className="modal-container__content">{modalContent}</div>
-          {/* {haveModalFooter && ( */}
-          {/*  <div className="modal-container__footer"> */}
-          {/*    <RowRightContainer */}
-          {/*      minHeightContainer="32px" */}
-          {/*      gapBetweenItem="8px" */}
-          {/*      RightContainerSize={{ */}
-          {/*        flexBasis: '63px', */}
-          {/*        minWidth: '63px', */}
-          {/*        maxWidth: '63px', */}
-          {/*        minHeight: '32px', */}
-          {/*        maxHeight: '32px', */}
-          {/*      }} */}
-          {/*      RightItem={ */}
-          {/*        <div> */}
-          {/*          <button */}
-          {/*            style={{ */}
-          {/*              width: '62px', */}
-          {/*              height: '31px', */}
-          {/*              borderRadius: '4px', */}
-          {/*            }} */}
-          {/*            type="button" */}
-          {/*          > */}
-          {/*            Next */}
-          {/*          </button> */}
-          {/*        </div> */}
-          {/*      } */}
-          {/*      CenterContainerSize={{ */}
-          {/*        flexBasis: '78px', */}
-          {/*        minWidth: '78px', */}
-          {/*        maxWidth: '78px', */}
-          {/*        minHeight: '32px', */}
-          {/*        maxHeight: '32px', */}
-          {/*      }} */}
-          {/*      CenterItem={ */}
-          {/*        <div> */}
-          {/*          <button */}
-          {/*            style={{ */}
-          {/*              width: '78px', */}
-          {/*              height: '31px', */}
-          {/*              borderRadius: '4px', */}
-          {/*            }} */}
-          {/*            type="button" */}
-          {/*          > */}
-          {/*            Cancel */}
-          {/*          </button> */}
-          {/*        </div> */}
-          {/*      } */}
-          {/*    /> */}
-          {/*  </div> */}
-          {/* )} */}
         </div>
       ) : null}
     </div>

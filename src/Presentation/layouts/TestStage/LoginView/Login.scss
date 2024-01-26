@@ -15,8 +15,9 @@ strong {
 /* ---------- LOGIN ---------- */
 
 #login {
+  border: 3px solid #6c38cc;
   margin: 50px auto;
-  width: 300px;
+  width: 100%; //todo artik changed 28.12.2023 300px
 }
 
 form fieldset input[type="text"],
@@ -31,7 +32,7 @@ input[type="password"] {
   height: 50px;
   outline: none;
   padding: 0px 10px;
-  width: 280px;
+  width: 100%; //todo artik changed 28.12.2023 280px
   border: 1px solid #008dde;
   margin: 1px;
 }
@@ -46,7 +47,7 @@ form fieldset button[type="submit"] {
   font-family: inherit;
   height: 50px;
   text-transform: uppercase;
-  width: 280px;
+  width: 100%; //todo artik changed 28.12.2023 280px
 }
 
 form fieldset a {

@@ -5,6 +5,7 @@ import { FileEntity } from '../Domain/entity/FileEntity';
 import { IChatMessage } from '../Data/source/AISource';
 import { Tone } from '../Presentation/Views/Dialog/AIWidgets/Tone';
 import { MessageEntity } from '../Domain/entity/MessageEntity';
+import { UserEntity } from '../Domain/entity/UserEntity';
 
 export default class BaseViewModel<TResult> {
   get entity(): TResult {
@@ -78,6 +79,9 @@ export type FunctionDialogEntityToVoid = (dialog: DialogEntity) => void;
 export type FunctionTypeFileToToBoolean = (file: File) => Promise<boolean>;
 export type FunctionTypePaginationToVoid = (pagination: Pagination) => void;
 export type FunctionTypeVoidToVoid = () => void;
+export type FunctionTypeUserIdToUserEntity = (
+  id: number,
+) => Promise<UserEntity>;
 export type FunctionTypeStringToVoid = (value: string) => void;
 export type FunctionTypeBooleanToVoid = (value: boolean) => void;
 export type FunctionTypeEditDialogParamsToVoid = (
@@ -89,6 +93,7 @@ export type FunctionTypeDialogEntityToDialogEntity = (
 export type FunctionTypeDialogEntityToBoolean = (
   entity: GroupDialogEntity,
 ) => Promise<boolean>;
+export type FunctionTypeDialogEntityToVoid = (entity: DialogEntity) => void;
 export type FunctionTypeFileToFileEntity = (file: File) => Promise<FileEntity>;
 export type FunctionTypeJSXElement = () => JSX.Element;
 // export type FunctionTypeChatMessagesToVoid = (

@@ -8,9 +8,10 @@ $create-dialog-container-height: 180px;
   min-height: $container-height;
   max-height: $container-height;
   height: $container-height;
-  min-width: $container-width;
-  max-width: $container-width;
-  width: $container-width;
+  //min-width: $container-width;
+  //max-width: $container-width;
+  //width: $container-width;
+  width: 100%;
 
   display: flex;
   flex-direction: column;
@@ -24,9 +25,10 @@ $create-dialog-container-height: 180px;
   min-height: 34px;
   max-height: 34px;
   height: 34px;
-  min-width: $container-width;
-  max-width: $container-width;
-  width: $container-width;
+  //min-width: $container-width;
+  //max-width: $container-width;
+  //width: $container-width;
+  width: 100%;
 
   display: flex;
   flex-direction: row;
@@ -39,9 +41,10 @@ $create-dialog-container-height: 180px;
   min-height: $create-dialog-container-height;
   max-height: $create-dialog-container-height;
   height: $create-dialog-container-height;
-  min-width: $create-dialog-container-width;
-  max-width: $create-dialog-container-width;
-  width: $create-dialog-container-width;
+  //min-width: $create-dialog-container-width;
+  //max-width: $create-dialog-container-width;
+  //width: $create-dialog-container-width;
+  width: 100%;
 
   //border: 3px solid green;
 
@@ -164,7 +167,8 @@ $create-dialog-container-height: 180px;
       align-items: center;
       padding: 6px 8px;
 
-      width: 320px;
+      //width: 320px;
+      width: 100%;
       height: 44px;
 
       border: 1px solid var(--tertiary-elements);//#90979F;

@@ -5,7 +5,6 @@ import useQBConnection from './Presentation/providers/QuickBloxUIKitProvider/use
 import { LocalDataSource } from './Data/source/local/LocalDataSource';
 import Login from './Presentation/layouts/TestStage/LoginView/Login';
 import QuickBloxUIKitProvider from './Presentation/providers/QuickBloxUIKitProvider/QuickBloxUIKitProvider';
-import TestStageMarkup from './Presentation/layouts/TestStage/TestStageMarkup';
 import { Stubs } from './Data/Stubs';
 import {
   LoginData,
@@ -28,7 +27,7 @@ function App() {
   const { connectionRepository } = useQBConnection();
 
   const initLoginData: LoginData = {
-    login: 'artimed', // vit1
+    login: 'anruaav2', // vit1 380990579507
     password: 'quickblox',
   };
 
@@ -222,10 +221,10 @@ function App() {
             path="/desktop-test-mock"
             element={
               <div>
-                <div style={{ height: '32px' }}>Q-communicate</div>
+                <div style={{ height: '56px' }}>Q-communicate</div>
                 <QuickBloxUIKitDesktopLayout
                   theme={new DefaultTheme()}
-                  uikitHeightOffset="32px"
+                  uikitHeightOffset="56px"
                   // AIAssist={{
                   //   enabled: true,
                   //   default: true,
@@ -235,8 +234,6 @@ function App() {
               </div>
             }
           />
-
-          <Route path="/test-stage" element={<TestStageMarkup />} />
         </Routes>
       </div>
     </QuickBloxUIKitProvider>

@@ -17,6 +17,7 @@ import AIAssistComponent from '../../AIComponents/AIAssistComponent/AIAssistComp
 import AITranslateComponent from '../../AIComponents/AITranslateComponent/AITranslateComponent';
 import MessageContentComponent from './MessageContentComponent/MessageContentComponent';
 import UserAvatar from '../../../EditDialog/UserAvatar/UserAvatar';
+import { FileType } from '../../../../../Domain/entity/FileTypes';
 
 export type GetUserNameFct = (props: {
   userId?: number;
@@ -208,7 +209,21 @@ export function IncomingMessage(props: {
           </div>
           <div className="incoming-message-incoming-message">
             <div className="incoming-message-incoming-bubble">
-              <div className="incoming-message-incoming-bubble-background">
+              <div
+                className="incoming-message-incoming-bubble-background"
+                style={{
+                  background:
+                    props.message.attachments &&
+                    (props.message.attachments[0].type
+                      .toString()
+                      .includes(FileType.image) ||
+                      props.message.attachments[0].type
+                        .toString()
+                        .includes(FileType.video))
+                      ? 'none'
+                      : undefined,
+                }}
+              >
                 <div className="incoming-message-incoming-bubble-background-line">
                   <MessageContentComponent
                     theme={props.theme}

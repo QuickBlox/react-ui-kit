@@ -22,11 +22,15 @@
   width: 380px;
   min-height: 312px;
   background-color: var(--main-background);
-  // padding: 24px;
-  padding-top: 24px;
-  padding-left: 24px;
-  padding-right: 24px;
+  padding: 24px;
+  position: relative;
   border-radius: 4px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: flex-start;
+  justify-content: flex-start;
 
   &__close{
     position: absolute;
@@ -63,6 +67,7 @@
   }
   &__content{
     margin-bottom: 20px;
+    width: 100%;
     //border: 1px solid brown;
   }
   &__footer{

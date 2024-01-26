@@ -1,16 +1,19 @@
 import './HighLightLink.scss';
 import React from 'react';
 
+// const pattern =
+//   '^(https?:\\/\\/)?' + // protocol
+//   '((([a-zA-Z\\d]([a-zA-Z\\d-]{0,61}[a-zA-Z\\d])*\\.)+' + // sub-domain + domain name
+//   '[a-zA-Z]{2,13})' + // extension
+//   '|((\\d{1,3}\\.){3}\\d{1,3})' + // OR ip (v4) address
+//   '|localhost)' + // OR localhost
+//   '(\\:\\d{1,5})?' + // port
+//   '(\\/[a-zA-Z\\&\\d%_.~+-:@]*)*' + // path
+//   '(\\?[a-zA-Z\\&\\d%_.,~+-:@=;&]*)?' + // query string
+//   '(\\#[-a-zA-Z&\\d_]*)?$'; // fragment locator
+
 const pattern =
-  '^(https?:\\/\\/)?' + // protocol
-  '((([a-zA-Z\\d]([a-zA-Z\\d-]{0,61}[a-zA-Z\\d])*\\.)+' + // sub-domain + domain name
-  '[a-zA-Z]{2,13})' + // extension
-  '|((\\d{1,3}\\.){3}\\d{1,3})' + // OR ip (v4) address
-  '|localhost)' + // OR localhost
-  '(\\:\\d{1,5})?' + // port
-  '(\\/[a-zA-Z\\&\\d%_.~+-:@]*)*' + // path
-  '(\\?[a-zA-Z\\&\\d%_.,~+-:@=;&]*)?' + // query string
-  '(\\#[-a-zA-Z&\\d_]*)?$'; // fragment locator
+  /(https?:\/\/)?([\p{L}\p{N}_-]+(?:(?:\.[\p{L}\p{N}_-]+)+)[\p{L}\p{N}.,@?^=%&:/~+#-]*[\p{L}\p{N}@?^=%&/~+#-])/gu;
 
 function removeLastPunctuation(str: string): string {
   const punctuationRegex = /[!;%:?*_.,:-]/;
@@ -66,13 +69,13 @@ export const messageHasUrls = (message: string) => {
   let result = 0;
 
   const strings = message.split(/\n| /);
-  const onlyDigit = /^\d+$/;
+  // const onlyDigit = /^\d+$/;
 
   strings.forEach((s: string) => {
-    if (s.length < 60 && !onlyDigit.test(s))
-      if (s.match(pattern) || removeLastPunctuation(s).match(pattern)) {
-        result += 1;
-      }
+    // if (s.length < 1160 && !onlyDigit.test(s))
+    if (s.match(pattern) || removeLastPunctuation(s).match(pattern)) {
+      result += 1;
+    }
   });
 
   return result > 0;
@@ -115,11 +118,13 @@ export const HighLightLink: React.FC<HighLightLinkProps> = ({
   const elements = strings.map((item, index) => {
     if (isURL(item)) {
       return (
-        <span>
-          <a key={index} href={`${getRuleUrl(item)}`} target="blank">
-            {item}
-          </a>{' '}
-        </span>
+        <div className="message-urls">
+          <span>
+            <a key={index} href={`${getRuleUrl(item)}`} target="blank">
+              {item}
+            </a>{' '}
+          </span>
+        </div>
       );
     }
 

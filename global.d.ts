@@ -67,6 +67,7 @@ interface QBConfig {
     debug: boolean;
     enableForwarding: boolean;
     enableReplying: boolean;
+    regexUserName?: string;
     endpoints: {
       api: string;
       chat: string;

@@ -20,18 +20,18 @@ const RenderRightActions: React.FC<
   return (
     //
     <div className="dialog-header-right">
-      <div className="dialog-header-right-icon">
-        {/* TODO: phone button // Phone Btn */}
-        {/* <ActiveSvg */}
-        {/*  content={<Phone width="24" height="24" applyZoom />} */}
-        {/*  onClick={() => { */}
-        {/*    if (CallHandler) CallHandler(); */}
-        {/*  }} */}
-        {/*  onTouch={() => { */}
-        {/*    if (CallHandler) CallHandler(); */}
-        {/*  }} */}
-        {/* /> */}
-      </div>
+      {/* TODO: phone button // Phone Btn */}
+      {/* <div className="dialog-header-right-icon"> */}
+      {/*   <ActiveSvg */}
+      {/*    content={<Phone width="24" height="24" applyZoom />} */}
+      {/*    onClick={() => { */}
+      {/*      if (CallHandler) CallHandler(); */}
+      {/*    }} */}
+      {/*    onTouch={() => { */}
+      {/*      if (CallHandler) CallHandler(); */}
+      {/*    }} */}
+      {/*   /> */}
+      {/* </div> */}
 
       <div className="dialog-header-right-icon">
         <ActiveSvg

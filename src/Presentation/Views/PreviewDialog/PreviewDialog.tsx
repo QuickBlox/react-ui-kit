@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './PreviewDialog.scss';
 import PublicChannel from '../../components/UI/svgs/Icons/Contents/PublicChannel';
 import { IconTheme } from '../../components/UI/svgs/Icons/IconsCommonTypes';
@@ -18,6 +18,9 @@ import UserAvatar from '../EditDialog/UserAvatar/UserAvatar';
 import PreviewDialogContextMenu from './PreviewDialogContextMenu/PreviewDialogContextMenu';
 import { DialogEntity } from '../../../Domain/entity/DialogEntity';
 import { MessageDTOMapper } from '../../../Data/source/remote/Mapper/MessageDTOMapper';
+import { FunctionTypeDialogEntityToVoid } from '../../../CommonTypes/BaseViewModel';
+import { PrivateDialogEntity } from '../../../Domain/entity/PrivateDialogEntity';
+import useUsersListViewModel from '../DialogInfo/UsersList/useUsersListViewModel';
 
 export type ThemeNames = 'light' | 'dark' | 'custom';
 type PreviewDialogsColorTheme = {
@@ -53,6 +56,7 @@ type PreviewDialogsProps = {
   unreadMessageCount?: number;
   message_date_time_sent?: string;
   theme?: PreviewDialogsTheme;
+  onLeaveDialog: FunctionTypeDialogEntityToVoid;
   additionalSettings?: PreviewDialogSettings;
 };
 // eslint-disable-next-line react/function-component-definition
@@ -65,6 +69,7 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
   unreadMessageCount,
   message_date_time_sent,
   theme = undefined,
+  onLeaveDialog,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   additionalSettings = undefined,
 }: PreviewDialogsProps) => {
@@ -186,7 +191,7 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
       avatar = dialogAvatarUrl ? (
         <UserAvatar
           urlAvatar={dialogAvatarUrl}
-          iconTheme={{ width: '40px', height: '40px' }}
+          iconTheme={{ width: '55px', height: '55px' }}
         />
       ) : (
         <div className="dialog-preview-avatar-ellipse">
@@ -239,19 +244,29 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
       setFileUrl(tmpFileUrl);
     }
   }
+  const userViewModel = useUsersListViewModel(dialogViewModel?.item.entity);
 
-  const getUserAvatarUid = () => {
-    return '';
+  const getUserAvatarByUid = async () => {
+    let result = '';
+    const participants: Array<number> =
+      dialogViewModel?.entity &&
+      dialogViewModel?.entity.type === DialogType.private
+        ? [
+            (dialogViewModel?.entity as unknown as PrivateDialogEntity)
+              .participantId,
+          ]
+        : [];
+    const senderUser = await userViewModel.getUserById(participants[0]);
+
+    result = senderUser?.photo || '';
+
+    return result;
   };
 
   async function getDialogPhotoFileForPreview() {
-    const fileUid: string = getUserAvatarUid();
+    const tmpFileUrl: string = await getUserAvatarByUid();
 
-    if (fileUid && fileUid.length > 0) {
-      let tmpFileUrl: string = fileUid && QB.content.privateUrl(fileUid);
-      const { blobFile } = await Creator.createBlobFromUrl(tmpFileUrl);
-
-      tmpFileUrl = blobFile ? URL.createObjectURL(blobFile) : tmpFileUrl || '';
+    if (tmpFileUrl && tmpFileUrl.length > 0) {
       setDialogAvatarUrl(tmpFileUrl);
     }
   }
@@ -297,7 +312,12 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
         return <PreviewVideoFile fileName={trimFileName(fileName)} />;
       }
       if (messageParts[3].includes('image')) {
-        return <PreviewImageFile fileName={fileName} imgUrl={fileUrl} />;
+        return (
+          <PreviewImageFile
+            fileName={trimFileName(fileName)}
+            imgUrl={fileUrl}
+          />
+        );
       }
       if (fileName.length > 0 && fileName.includes('.')) {
         return <PreviewDefaultFile fileName={trimFileName(fileName)} />;
@@ -306,10 +326,10 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
       return result;
     }
 
-    if (message.includes('[Forwarded_Message]')) {
+    if (message.includes(MessageDTOMapper.FORWARD_MESSAGE_PREFIX)) {
       return <div>Forwarded message</div>;
     }
-    if (message.includes('[Replied_Message]')) {
+    if (message.includes(MessageDTOMapper.REPLY_MESSAGE_PREFIX)) {
       return <div>Replied Message</div>;
     }
 
@@ -320,6 +340,54 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
           : `${message.substring(0, 25)} ...`}
       </div>
     );
+  };
+
+  const LONG_TAP_DURATION = 2000; // in milliseconds
+  const VERY_LONG_TAP_DURATION = 3800; // in milliseconds
+
+  const [touchDuration, setTouchDuration] = useState(0);
+  let touchTimer: NodeJS.Timeout | null = null;
+
+  const handleTouchStart = () => {
+    // Если предыдущий таймер еще активен, отменяем его
+    if (touchTimer !== null) {
+      clearTimeout(touchTimer);
+    }
+
+    // Запуск нового таймера
+    touchTimer = setTimeout(() => {
+      setTouchDuration(Date.now());
+    }, VERY_LONG_TAP_DURATION);
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleTouchEndOrCancel = (event: React.TouchEvent) => {
+    // Если таймер был установлен, отменяем его
+    if (touchTimer !== null) {
+      clearTimeout(touchTimer);
+
+      if (Date.now() - touchDuration > VERY_LONG_TAP_DURATION) {
+        console.log('Very long tap detected');
+        // Call context menu here
+      } else if (Date.now() - touchDuration > LONG_TAP_DURATION) {
+        console.log('Long tap detected');
+        // Select the element here
+        if (dialogViewModel && dialogViewModel.itemTouchActionHandler) {
+          const it = dialogViewModel?.item;
+
+          dialogViewModel.itemTouchActionHandler(it);
+        }
+      } else {
+        console.log('Short tap detected');
+        // Do something for short taps here
+      }
+
+      // Reset touchDuration
+      setTouchDuration(0);
+
+      // Prevent unwanted click events after touch ends
+      // event.preventDefault();
+    }
   };
 
   return (
@@ -339,19 +407,16 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
         <div
           className="dialog-preview"
           onClick={() => {
+            console.log('CLICK detected in PreviewDialog');
             if (dialogViewModel && dialogViewModel.itemClickActionHandler) {
               const it = dialogViewModel?.item;
 
               dialogViewModel.itemClickActionHandler(it);
             }
           }}
-          onTouchStart={() => {
-            if (dialogViewModel && dialogViewModel.itemTouchActionHandler) {
-              const it = dialogViewModel?.item;
-
-              dialogViewModel.itemTouchActionHandler(it);
-            }
-          }}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEndOrCancel}
+          onTouchCancel={handleTouchEndOrCancel}
         >
           <div className="dialog-preview-avatar">{avatar}</div>
           <div className="dialog-preview-text">
@@ -383,7 +448,9 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
           <PreviewDialogContextMenu
             dialog={dialogViewModel?.entity as DialogEntity}
             // onLeave={() => console.log('call leave dialog')}
-            onLeave={() => console.log('call leave dialog')}
+            onLeave={() =>
+              onLeaveDialog(dialogViewModel?.entity as DialogEntity)
+            }
             enableLeaveDialog
           />
         </div>

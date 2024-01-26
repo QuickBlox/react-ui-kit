@@ -20,7 +20,7 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
   align-items: center;
   margin: 0 auto;
   gap: 3px;
-  min-width: var(--max-width-message-view-container);
+  // min-width: var(--max-width-message-view-container);
 
 
   &--header{
@@ -72,9 +72,9 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
     gap: 3px;
     padding: 20px 0px 10px 0px;
     &__date_container{
-      background-color: var(--disabled-elements);
+      // background-color: var(--disabled-elements);
       border-radius: 30px;
-      width: 72px;
+      // width: 72px;
       height: 20px;
 
       font-family: 'Roboto';

@@ -1,16 +1,18 @@
 
 .dialog-preview-container {
   display: flex;
-  //background: var(--color-background, #ffffff);
   border: 1px solid var(--chat-input);
+  gap: 16px;
 }
 .dialog-preview-container-left {
   flex: 1;
+  margin-left: 10px;
 }
 .dialog-preview-container-right {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 40px;
 }
 
 .dialog-preview,
@@ -18,8 +20,8 @@
   box-sizing: border-box;
 }
 .dialog-preview {
-  //background: var(--color-background, #ffffff);
-  padding: 8px 8px 8px 16px;
+  // padding: 8px 8px 8px 16px; //todo comment padding value for desktop artik 21-12-2023
+  padding: 6px 6px 6px 6px; //todo new padding fro mobile artik 21-12-2023
   display: flex;
   flex-direction: row;
   gap: 16px;
@@ -182,8 +184,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 32px;
-  height: 32px;
+  width: 12px; // todo artik 21-12-2020 change width value from 32px to 12px
+  height: 22px; // todo artik 21-12-2020 change width value from 32px to 22px
   position: relative;
   cursor: pointer;
 }

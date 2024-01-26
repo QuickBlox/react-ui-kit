@@ -1,9 +1,10 @@
 import {
   FunctionTypeFileWithContextToToVoid,
   FunctionTypeJSXElement,
-  FunctionTypeStringWithContextToString, FunctionTypeVoidToTones,
+  FunctionTypeStringWithContextToString,
+  FunctionTypeVoidToTones,
 } from '../../../../CommonTypes/BaseViewModel';
-import {Tone} from "./Tone";
+import { Tone } from './Tone';
 
 export interface MessageWidgetProps {
   // https://api.openai.com/v1/chat/completions'

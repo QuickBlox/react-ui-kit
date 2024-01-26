@@ -3,33 +3,24 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 8px 16px;
+  padding: 8px 16px 8px 16px;
 
-  //width: 63px;
   height: 32px;
-
-  /* Light UiKitTheme/Main elements */
 
   background: var(--main-elements);
   border-radius: 4px;
-
-  /* Inside auto layout */
 
   flex: none;
   order: 1;
   flex-grow: 0;
 
-  //
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
   line-height: 16px;
-  /* identical to box height, or 114% */
-
   letter-spacing: 0.4px;
 
-  /* Light UiKitTheme/System */
   color: var(--main-background);
 
   border: none;
@@ -41,28 +32,21 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 8px 16px;
+  padding: 8px 16px 8px 16px;
 
-  //width: 76px;
   height: 32px;
 
-  /* Light UiKitTheme/Error */
   background: var(--error);
   border-radius: 4px;
-  /* Inside auto layout */
   flex: none;
   order: 1;
   flex-grow: 0;
-
-  /* Button/Default */
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
   line-height: 16px;
-  /* identical to box height, or 114% */
   letter-spacing: 0.4px;
-  /* Light UiKitTheme/System */
   color: var(--main-background);
 
   border: none;
@@ -70,65 +54,48 @@
 }
 
 .secondary-button{
-  /* Button */
   box-sizing: border-box;
-  /* Auto layout */
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 8px 16px;
-  //width: 76px;
+  padding: 8px 16px 8px 16px;
   height: 32px;
 
-  /* Light UiKitTheme/Secondary elements */
   background-color: var(--main-background);
   border: 1px solid var(--secondary-elements);
   border-radius: 4px;
-  /* Inside auto layout */
   flex: none;
   order: 0;
   flex-grow: 0;
-  //
-  /* Button/Default */
+
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
   line-height: 16px;
-  /* identical to box height, or 114% */
   letter-spacing: 0.4px;
-  /* Light UiKitTheme/Secondary elements */
   color: var(--secondary-elements);
-
 }
 
 .main-disabled-button{
-  /* Button */
-  /* Auto layout */
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 8px 16px;
-  //width: 76px;
+  padding: 8px 16px 8px 16px;
   height: 32px;
-  /* Light UiKitTheme/Disabled elements */
   background: var(--disabled-elements);
   border-radius: 4px;
-  /* Inside auto layout */
   flex: none;
   order: 1;
   flex-grow: 0;
-  /* Button/Default */
   font-family: 'Roboto';
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
   line-height: 16px;
-  /* identical to box height, or 114% */
   letter-spacing: 0.4px;
-  /* Light UiKitTheme/Secondary text */
   color: var(--secondary-text);
 
   border: none;

@@ -16,6 +16,7 @@ import AvatarContentIncomingUser, {
   AvatarContentIncomingUserProps,
 } from '../IncomingMessage/AvatarContentIncomingUser/AvatarContentIncomingUser';
 import LoaderComponent from '../../../../components/UI/Placeholders/LoaderComponent/LoaderComponent';
+import { FileType } from '../../../../../Domain/entity/FileTypes';
 
 function IncomingRepliedMessage(props: {
   theme: UiKitTheme | undefined;
@@ -186,7 +187,21 @@ function IncomingRepliedMessage(props: {
             </div>
             <div className="incoming-replied-message-incoming-message">
               <div className="incoming-replied-message-incoming-bubble">
-                <div className="incoming-replied-message-incoming-bubble-background">
+                <div
+                  className="incoming-replied-message-incoming-bubble-background"
+                  style={{
+                    background:
+                      item.attachments &&
+                      (item.attachments[0].type
+                        .toString()
+                        .includes(FileType.image) ||
+                        item.attachments[0].type
+                          .toString()
+                          .includes(FileType.video))
+                        ? 'none'
+                        : undefined,
+                  }}
+                >
                   <div className="incoming-replied-message-incoming-bubble-background-line">
                     <MessageContentComponent
                       theme={props.theme}

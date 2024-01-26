@@ -2,6 +2,8 @@ import { IUseCase } from './base/IUseCase';
 import { MessageEntity } from '../entity/MessageEntity';
 import MessagesRepository from '../../Data/repository/MessagesRepository';
 import { DialogEntity } from '../entity/DialogEntity';
+import { DialogType } from '../entity/DialogTypes';
+import { PrivateDialogEntity } from '../entity/PrivateDialogEntity';
 
 export class ForwardMessagesUseCase implements IUseCase<void, boolean> {
   private messagesRepository: MessagesRepository;
@@ -74,12 +76,19 @@ export class ForwardMessagesUseCase implements IUseCase<void, boolean> {
       const messageToSend: MessageEntity = {
         ...this.relatedMessage,
         dialogId,
+        dialogType: targetDialog.type, // added by artik 2024-01-18
         qb_original_messages: this.messagesToForward,
         qb_message_action: 'forward',
         origin_sender_name:
           this.relatedMessage.sender?.full_name || this.userName,
       };
 
+      // added by artik 2024-01-18
+      if (targetDialog.type === DialogType.private) {
+        messageToSend.recipient_id = (
+          targetDialog as PrivateDialogEntity
+        ).participantId;
+      }
       const sentMessage = await this.messagesRepository.sendMessageToRemote(
         messageToSend,
       );

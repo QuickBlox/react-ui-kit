@@ -226,16 +226,18 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
             <div className="container-invite-members--add-members-container--wrapper__members">
               <ColumnContainer>
                 {userViewModel?.loading && (
-                  <div
-                    style={{
-                      height: '44px',
-                      width: '44px',
-                    }}
-                  >
-                    <LoaderComponent width="44" height="44" />
+                  <div className="container-invite-members--add-members-container--loader">
+                    <div
+                      style={{
+                        height: '44px',
+                        width: '44px',
+                      }}
+                    >
+                      <LoaderComponent width="44" height="44" />
+                    </div>
                   </div>
                 )}
-                {userViewModel?.error && (
+                {userViewModel?.error && !userViewModel?.loading && (
                   <ErrorComponent
                     title={userViewModel?.error}
                     ClickActionHandler={() => {

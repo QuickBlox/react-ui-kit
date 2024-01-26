@@ -56,6 +56,11 @@ import { useMobileLayout } from '../../components/containers/SectionList/hooks';
 import RenderRightActions from '../../Views/Dialog/DialogHeader/RenderRightActions/RenderRightActions';
 import RenderLeftActions from '../../Views/Dialog/DialogHeader/RenderLeftActions/RenderLeftActions';
 import { MessageDTOMapper } from '../../../Data/source/remote/Mapper/MessageDTOMapper';
+import LeaveDialogFlow from '../../Views/Flow/LeaveDialogFlow/LeaveDialogFlow';
+import MembersList from '../../Views/DialogInfo/MembersList/MembersList';
+import useUsersListViewModel from '../../Views/DialogInfo/UsersList/useUsersListViewModel';
+import { GetUserNameFct } from '../../Views/Dialog/Message/IncomingMessage/IncomingMessage';
+import { UserEntity } from '../../../Domain/entity/UserEntity';
 
 type AIWidgetPlaceHolder = {
   enabled: boolean;
@@ -81,6 +86,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   AIRephrase = undefined,
   AIAssist = undefined,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   uikitHeightOffset = '0px',
 }: QuickBloxUIKitDesktopLayoutProps) => {
   console.log('create QuickBloxUIKitDesktopLayout');
@@ -230,6 +236,8 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   const [showReplyMessage, setShowReplyMessage] = useState(false);
   const [messagesToReply, setMessagesToReply] = useState<MessageEntity[]>([]);
   const { handleModal } = React.useContext(ModalContext);
+  const [isMobile, width, height, breakpoint] = useMobileLayout();
+  const [clientHeight, setClientHeight] = useState<number>(0);
 
   // const subscribeToDialogEventsUseCase: SubscribeToDialogEventsUseCase =
   //   new SubscribeToDialogEventsUseCase(eventMessaging, 'TestStage');
@@ -312,7 +320,42 @@ const QuickBloxUIKitDesktopLayout: React.FC<
 
     return participants.length;
   };
+  const userViewModel = useUsersListViewModel(selectedDialog?.entity);
+  const [dialogAvatarUrl, setDialogAvatarUrl] = React.useState('');
+  const getUserAvatarByUid = async () => {
+    let result = '';
+    const participants: Array<number> =
+      dialogsViewModel?.entity &&
+      dialogsViewModel?.entity.type === DialogType.private
+        ? [
+            (dialogsViewModel?.entity as unknown as PrivateDialogEntity)
+              .participantId,
+          ]
+        : [];
+    const senderUser = await userViewModel.getUserById(participants[0]);
 
+    result = senderUser?.photo || '';
+
+    return result;
+  };
+
+  async function getDialogPhotoFileForPreview() {
+    const tmpFileUrl: string = await getUserAvatarByUid();
+
+    if (tmpFileUrl && tmpFileUrl.length > 0) {
+      setDialogAvatarUrl(tmpFileUrl);
+    }
+  }
+
+  useEffect(() => {
+    getDialogPhotoFileForPreview();
+
+    return () => {
+      if (dialogAvatarUrl) {
+        URL.revokeObjectURL(dialogAvatarUrl);
+      }
+    };
+  }, [dialogsViewModel.entity]);
   // eslint-disable-next-line consistent-return
   const renderIconForTypeDialog = (dialogEntity: DialogEntity) => {
     if (dialogEntity.type === DialogType.group) {
@@ -344,7 +387,12 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       );
     }
     if (dialogEntity.type === DialogType.private) {
-      return (
+      return dialogAvatarUrl ? (
+        <UserAvatar
+          urlAvatar={dialogAvatarUrl}
+          iconTheme={{ width: '40px', height: '40px' }}
+        />
+      ) : (
         <div className="dh-avatar">
           <div className="dh-avatar-rectangle" />
           <div className="dh-avatar-ellipse">
@@ -401,7 +449,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     }
   }, [dialogsViewModel.entity]);
 
-  const [needDialogInformation, setNeedDialogInformation] = useState(true);
+  const [needDialogInformation, setNeedDialogInformation] = useState(false);
   const informationCloseHandler = (): void => {
     setNeedDialogInformation(false);
   };
@@ -520,7 +568,8 @@ const QuickBloxUIKitDesktopLayout: React.FC<
         const replyData: ReplyMessagesParams = {
           messagesToReply,
           relatedFileMessage: fileToSend,
-          relatedTextMessage: messageText || '[Replied_Message]',
+          relatedTextMessage:
+            messageText || MessageDTOMapper.REPLY_MESSAGE_PREFIX,
         };
 
         repliedActions(replyData);
@@ -796,10 +845,18 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   }, [messagesViewModel.entity]);
   //
   useEffect(() => {
-    console.log('HAVE NEW ENTITY');
-    if (messagesViewModel.entity) {
+    if (!isMobile && messagesViewModel.entity) {
       dialogsViewModel.setWaitLoadingStatus(messagesViewModel?.loading);
+      const timeoutId = setTimeout(() => {
+        dialogsViewModel.setWaitLoadingStatus(false); // wait only for 3 sec
+      }, 3000);
+
+      return () => clearTimeout(timeoutId);
     }
+
+    return () => {
+      // Placeholder: Cleanup handler is not required
+    };
   }, [messagesViewModel?.loading]);
   //
   function prepareFirstPage(initData: MessageEntity[]) {
@@ -984,8 +1041,10 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   const [showDialogMessages, setShowDialogMessages] = useState<boolean>(true);
   const [showDialogInformation, setShowDialogInformation] =
     useState<boolean>(false);
+  //
+  const [isAllMembersShow, setIsAllMembersShow] = React.useState(false);
 
-  const [isMobile] = useMobileLayout();
+  const [showMembersDialog, setShowMembersDialog] = React.useState(false);
 
   useEffect(() => {
     if (isMobile) {
@@ -1010,6 +1069,15 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       setShowDialogMessages(true);
       setShowDialogInformation(true);
     }
+    //
+    const sizeChangingLogString = `SIZE INFO: height: ${height.toString()} clientHeight: ${clientHeight}  width: ${width.toString()} breakpont: ${breakpoint.toString()} isMobile:
+       ${isMobile?.toString()} selectedDialog:
+      ${selectedDialog ? 'true' : 'false'} showDialogMessages:
+       ${showDialogMessages?.toString()} showDialogList:
+       ${showDialogList?.toString()} showDialogInformation:
+       ${showDialogInformation?.toString()}`;
+
+    console.log(sizeChangingLogString);
   }, [isMobile]);
 
   useEffect(() => {
@@ -1020,6 +1088,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     );
     if (selectedDialog && selectedDialog.entity) {
       dialogsViewModel.entity = selectedDialog.entity;
+      userViewModel.entity = selectedDialog.entity;
+
+      setShowMembersDialog(false);
       if (isMobile) {
         setShowDialogList(false);
         setShowDialogMessages(true);
@@ -1028,6 +1099,12 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       setShowDialogList(true);
     }
   }, [selectedDialog]);
+
+  useEffect(() => {
+    if (userViewModel.entity) {
+      userViewModel.getUsers();
+    }
+  }, [userViewModel.entity]);
 
   useEffect(() => {
     if (isMobile) {
@@ -1041,34 +1118,82 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     }
   }, [needDialogInformation]);
 
-  const [clientHeight, setClientHeight] = useState<number>(0);
   const handleHeightChange = (newHeight: number) => {
     console.log('The new height is:', newHeight);
     setClientHeight(newHeight);
   };
-  // const uikitHeight = '100vh';
-  // const workHeight = `calc(${uikitHeight} - 128px - 16px)`;
-  const workHeight = `calc(100vh - ${uikitHeightOffset} - 16px)`;
+  const workHeight = isMobile
+    ? `calc(${height.toString()}px - ${uikitHeightOffset} - 28px)`
+    : `calc(100vh - ${uikitHeightOffset} - 28px)`;
+  // const workHeight = `calc(${uikitHeightOffset} - 128px - 16px)`;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // const workHeight = `100%`;
+
+  const leaveDialogHandler = (dialog: DialogEntity) => {
+    handleModal(
+      true,
+      <LeaveDialogFlow dialog={dialog} dialogsViewModel={dialogsViewModel} />,
+      'Leave dialog?',
+      false,
+      true,
+    );
+  };
+
+  // eslint-disable-next-line react/prop-types
+  const defaultGetSenderName: GetUserNameFct = async (props: {
+    userId?: number;
+    sender?: UserEntity;
+  }): Promise<string | undefined> => {
+    let result = 'undefined user';
+
+    // eslint-disable-next-line react/prop-types
+    if (!props.sender) {
+      // eslint-disable-next-line react/prop-types
+      if (props.userId && props.userId > 0) {
+        // eslint-disable-next-line react/prop-types,@typescript-eslint/no-unsafe-call
+        const senderUser = await userViewModel.getUserById(props.userId);
+
+        if (!senderUser) {
+          return result;
+        }
+        result =
+          senderUser.full_name ||
+          senderUser.login ||
+          senderUser.email ||
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+          senderUser.id.toString();
+      } else return result;
+    } else {
+      result =
+        // eslint-disable-next-line react/prop-types
+        props.sender.full_name ||
+        // eslint-disable-next-line react/prop-types
+        props.sender.login ||
+        // eslint-disable-next-line react/prop-types
+        props.sender.email ||
+        // eslint-disable-next-line react/prop-types
+        props.sender.id.toString();
+    }
+
+    return result;
+  };
 
   return (
     <div>
-      {/* <div> */}
-      {/*  height: {height} clientHeight: {clientHeight} recommended:{' '} */}
-      {/*  {clientHeight - 64} width: {width} breakpont: {breakpoint} isMobile:{' '} */}
-      {/*  {isMobile?.toString()} selectedDialog:{' '} */}
-      {/*  {selectedDialog ? 'true' : 'false'} showDialogMessages:{' '} */}
-      {/*  {showDialogMessages?.toString()} showDialogList:{' '} */}
-      {/*  {showDialogList?.toString()} showDialogInformation:{' '} */}
-      {/*  {showDialogInformation?.toString()} */}
+      {/* <div style={{ height: '18px', border: '1px solid red' }}> */}
+      {/*  h:{height},w:{width},ch:{clientHeight},wh:{workHeight} */}
       {/* </div> */}
       <DesktopLayout
-        mainContainerStyles={{ height: workHeight }}
+        mainContainerStyles={{
+          minHeight: workHeight,
+          maxHeight: workHeight,
+        }}
         onHeightChange={handleHeightChange}
         theme={theme}
         dialogsView={
           showDialogList ? (
             <DialogList
-              scrollableHeight={clientHeight - 64}
+              scrollableHeight={clientHeight - 64 - 6}
               // rootStyles={{
               //   minHeight: `${clientHeight}px)`,
               //   maxHeight: `${clientHeight}px)`,
@@ -1080,6 +1205,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
               // upHeaderContent={<CompanyLogo />}
               dialogsViewModel={dialogsViewModel} // 1 Get 2 Update UseCase
               onDialogSelectHandler={selectDialogActions}
+              onLeaveDialog={leaveDialogHandler}
               additionalSettings={{
                 withoutHeader: false,
                 themeHeader: theme,
@@ -1087,6 +1213,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                 useSubHeader: false,
                 useUpHeader: false,
               }}
+              // regx={regx}
             />
           ) : null
         }
@@ -1097,13 +1224,20 @@ const QuickBloxUIKitDesktopLayout: React.FC<
           dialogsViewModel.entity ? (
             <Dialog
               rootStyles={{
-                minHeight: `${clientHeight}px)`,
-                maxHeight: `${clientHeight}px)`,
+                minHeight: `${clientHeight}px`,
+                maxHeight: `${clientHeight}px`,
               }}
-              messagesContainerStyles={{
-                minHeight: `calc(${clientHeight}px - 128px - 16px)`,
-                maxHeight: `calc(${clientHeight}px - 128px - 16px)`,
-              }}
+              messagesContainerStyles={
+                isMobile
+                  ? {
+                      minHeight: `calc(${clientHeight}px - 128px - 16px)`,
+                      maxHeight: `calc(${clientHeight}px - 128px - 16px)`,
+                    }
+                  : {
+                      minHeight: `calc(${clientHeight}px - 128px - 1px)`, // todo: artik 29.12.2023 1px - это "подобранная наглаз" величина
+                      maxHeight: `calc(${clientHeight}px - 128px - 1px)`,
+                    }
+              }
               messagesViewModel={messagesViewModel}
               showErrorToast={showErrorToast}
               messageErrorToast={messageErrorToast}
@@ -1176,6 +1310,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                           onForward={(m: MessageEntity) => {
                             handleForward(m);
                           }}
+                          defaultGetSenderName={defaultGetSenderName}
                           messagesToView={messagesToView}
                           userId={userId || -1}
                           enableReplying={enableReplying}
@@ -1311,19 +1446,33 @@ const QuickBloxUIKitDesktopLayout: React.FC<
           // 1 Get User by 1 + Get user by name
           showDialogInformation &&
           selectedDialog &&
-          needDialogInformation && (
+          needDialogInformation &&
+          (isAllMembersShow ? (
+            <MembersList
+              closeInformationHandler={() => {
+                setIsAllMembersShow(false);
+              }}
+              members={userViewModel.users}
+              maxHeight={clientHeight - 64 - 6} // todo: artik 29.12.2023 значение такое же как и в DialogList
+            />
+          ) : (
             <DialogInfo
-              // rootStyles={{
-              //   minHeight: '800px',
-              //   maxWidth: '800px',
-              // }}
+              showMembersDialogInitValue={showMembersDialog}
+              onShowAllMemberClick={(value: boolean) => {
+                setIsAllMembersShow(value);
+              }}
+              users={userViewModel.users}
+              rootStyles={{
+                minHeight: `${clientHeight}px`,
+                maxHeight: `${clientHeight}px`,
+              }}
               // subHeaderContent={<CompanyLogo />}
               // upHeaderContent={<CompanyLogo />}
               dialog={selectedDialog.entity}
               dialogViewModel={dialogsViewModel}
               onCloseDialogInformationHandler={informationCloseHandler}
             />
-          )
+          ))
         }
       />
     </div>

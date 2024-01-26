@@ -6,7 +6,7 @@ import Remove from '../../../components/UI/svgs/Icons/Actions/Remove';
 import { FunctionTypeVoidToVoid } from '../../../../CommonTypes/BaseViewModel';
 
 type UserAvatarProps = {
-  urlAvatar: string;
+  urlAvatar?: string;
   iconTheme?: IconTheme;
   clickRemoveAvatarHandler?: FunctionTypeVoidToVoid;
 };

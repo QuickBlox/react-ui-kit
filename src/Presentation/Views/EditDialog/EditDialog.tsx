@@ -198,7 +198,7 @@ const EditDialog: React.FC<EditDialogProps> = ({
             <div className="edit-dialog-container--wrapper__dialog-name-input">
               <input
                 type="text"
-                style={{ width: '280px' }}
+                style={{ width: '100%' }}
                 value={dialogName?.length > 0 ? dialogName : undefined}
                 onChange={(event) => setDialogName(event.target.value)}
                 placeholder="Enter name"

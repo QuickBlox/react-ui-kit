@@ -12,9 +12,13 @@ type DialogHeaderProps = {
 };
 // eslint-disable-next-line react/function-component-definition
 const DialogHeader: React.FC<DialogHeaderProps> = ({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   dialogName,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   renderAvatar,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   renderLeftActions,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   renderRightActions,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   countMembers = 0,
@@ -39,8 +43,9 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
               {/* </div> */}
             </div>
           </div>
+          {renderRightActions}
         </div>
-        {renderRightActions}
+        {/* <div>R</div> */}
       </div>
       <div className="dialog-header-line" />
     </div>

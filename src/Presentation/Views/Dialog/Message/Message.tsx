@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FunctionTypeBooleanToVoid,
   FunctionTypeMessageEntityToVoid,
@@ -8,7 +8,6 @@ import { MessageEntity } from '../../../../Domain/entity/MessageEntity';
 import { getTimeShort24hFormat } from '../../../../utils/DateTimeFormatter';
 import { SystemMessageBanner } from '../SystemMessageBanner/SystemMessageBanner';
 import UiKitTheme from '../../../themes/UiKitTheme';
-import { UserEntity } from '../../../../Domain/entity/UserEntity';
 import { AIMessageWidget } from '../AIWidgets/AIMessageWidget';
 import {
   GetUserNameFct,
@@ -20,6 +19,7 @@ import { OutgoingMessage } from './OutgoingMessage/OutgoingMessage';
 import MessageContentComponent from './IncomingMessage/MessageContentComponent/MessageContentComponent';
 import OutgoingForwardedMessage from './OutgoinForwardedMessage/OutgoinForwardedMessage';
 import IncomingRepliedMessage from './IncomingRepliedMessage/IncomingRepliedMessage';
+import { MessageDTOMapper } from '../../../../Data/source/remote/Mapper/MessageDTOMapper';
 
 type MessageProps = {
   message: MessageEntity;
@@ -32,6 +32,7 @@ type MessageProps = {
   AIAssistWidget: AIMessageWidget;
   onReply: FunctionTypeMessageEntityToVoid;
   onForward: FunctionTypeMessageEntityToVoid;
+  defaultGetSenderName: GetUserNameFct;
   theme?: UiKitTheme;
   enableForwarding: boolean;
   enableReplying: boolean;
@@ -49,6 +50,7 @@ const Message: React.FC<MessageProps> = ({
   AIAssistWidget,
   onReply,
   onForward,
+  defaultGetSenderName,
   theme,
   enableForwarding,
   enableReplying,
@@ -59,21 +61,31 @@ const Message: React.FC<MessageProps> = ({
 
   let messageView: JSX.Element;
 
-  const defaultGetSenderName: GetUserNameFct = (props: {
-    sender?: UserEntity;
-  }): Promise<string | undefined> => {
-    let result = 'undefined user';
-    // eslint-disable-next-line react/prop-types
-    const { sender } = props;
+  const [userNameForReplyForward, setUserNameForReplyForward] =
+    useState<string>('');
 
-    if (!sender) return Promise.resolve(result);
-    // eslint-disable-next-line react/prop-types
-    result =
-      // eslint-disable-next-line react/prop-types
-      sender.full_name || sender.login || sender.email || sender.id.toString();
+  async function getUserNameForReplyForward() {
+    if (
+      message.origin_sender_name &&
+      !message.origin_sender_name.includes('undefined')
+    ) {
+      setUserNameForReplyForward(message.origin_sender_name);
+    } else if (
+      message.qb_original_messages &&
+      message.qb_original_messages?.length > 0
+    ) {
+      const userName = await defaultGetSenderName({
+        userId: message.qb_original_messages[0].sender_id,
+        sender: message.qb_original_messages[0].sender,
+      });
 
-    return Promise.resolve(result);
-  };
+      setUserNameForReplyForward(userName || '');
+    }
+  }
+
+  useEffect(() => {
+    getUserNameForReplyForward();
+  }, []);
 
   const checkMessageType = (m: MessageEntity): string => {
     if (m.notification_type && m.notification_type.length > 0) {
@@ -189,31 +201,35 @@ const Message: React.FC<MessageProps> = ({
             AITranslation={AITranslateWidget}
             AIAnswerToMessage={AIAssistWidget}
             renderOringinalMessage={
-              <IncomingMessage
-                theme={theme}
-                senderNameFct={defaultGetSenderName}
-                message={message}
-                date_sent={getTimeShort24hFormat(message.date_sent)}
-                onReply={onReply}
-                onForward={onForward}
-                // element={messageContentRender(message)}
-                onStartLoader={() => {
-                  setWaitAIWidget(true);
-                }}
-                onStopLoader={() => {
-                  setWaitAIWidget(false);
-                }}
-                onErrorToast={(messageError: string) => {
-                  setShowErrorToast(true);
-                  setMessageErrorToast(messageError);
-                }}
-                currentUserId={userId}
-                messagesToView={messagesToView}
-                AITranslation={AITranslateWidget}
-                AIAnswerToMessage={AIAssistWidget}
-                enableReplying={enableReplying}
-                enableForwarding={enableForwarding}
-              />
+              !message.message.includes(
+                MessageDTOMapper.FORWARD_MESSAGE_PREFIX,
+              ) ? (
+                <IncomingMessage
+                  theme={theme}
+                  senderNameFct={defaultGetSenderName}
+                  message={message}
+                  date_sent={getTimeShort24hFormat(message.date_sent)}
+                  onReply={onReply}
+                  onForward={onForward}
+                  // element={messageContentRender(message)}
+                  onStartLoader={() => {
+                    setWaitAIWidget(true);
+                  }}
+                  onStopLoader={() => {
+                    setWaitAIWidget(false);
+                  }}
+                  onErrorToast={(messageError: string) => {
+                    setShowErrorToast(true);
+                    setMessageErrorToast(messageError);
+                  }}
+                  currentUserId={userId}
+                  messagesToView={messagesToView}
+                  AITranslation={AITranslateWidget}
+                  AIAnswerToMessage={AIAssistWidget}
+                  enableReplying={enableReplying}
+                  enableForwarding={enableForwarding}
+                />
+              ) : null
             }
           />
         );
@@ -261,7 +277,11 @@ const Message: React.FC<MessageProps> = ({
           enableReplying={enableReplying}
           enableForwarding={enableForwarding}
           messages={message.qb_original_messages}
-          repliedUserName={message.origin_sender_name || '!!!UserName!!!'}
+          repliedUserName={
+            userNameForReplyForward.length > 0
+              ? userNameForReplyForward
+              : 'UNDEFINED REPLIED USER NAME'
+          }
           onReply={onReply}
           onForward={onForward}
           theme={theme}
@@ -292,30 +312,39 @@ const Message: React.FC<MessageProps> = ({
           enableReplying={enableReplying}
           enableForwarding={enableForwarding}
           messages={message.qb_original_messages}
-          repliedUserName={message.origin_sender_name || '!!!UserName!!!'}
+          repliedUserName={
+            userNameForReplyForward.length > 0
+              ? userNameForReplyForward
+              : 'UNDEFINED FORWARDING USER NAME'
+          }
           date_sent={getTimeShort24hFormat(message.date_sent)}
           status_message={message.delivered_ids && message.delivered_ids.length}
           onReply={onReply}
           onForward={onForward}
           theme={theme}
           renderOringinalMessage={
-            <OutgoingMessage
-              enableReplying={enableReplying}
-              enableForwarding={enableForwarding}
-              message={message}
-              date_sent={getTimeShort24hFormat(message.date_sent)}
-              onReply={onReply}
-              onForward={onForward}
-              theme={theme}
-              element={
-                <MessageContentComponent
-                  theme={theme}
-                  messageEntity={message}
-                  originalTextMessage
-                  widgetTextContent=""
-                />
-              }
-            />
+            !message.message.includes(
+              MessageDTOMapper.FORWARD_MESSAGE_PREFIX,
+            ) ? (
+              // message.message.trim().length > 0
+              <OutgoingMessage
+                enableReplying={enableReplying}
+                enableForwarding={enableForwarding}
+                message={message}
+                date_sent={getTimeShort24hFormat(message.date_sent)}
+                onReply={onReply}
+                onForward={onForward}
+                theme={theme}
+                element={
+                  <MessageContentComponent
+                    theme={theme}
+                    messageEntity={message}
+                    originalTextMessage
+                    widgetTextContent=""
+                  />
+                }
+              />
+            ) : null
           }
         />
       );

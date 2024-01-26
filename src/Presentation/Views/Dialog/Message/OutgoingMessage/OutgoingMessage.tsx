@@ -6,6 +6,7 @@ import ViewedDelivered from '../../../../components/UI/svgs/Icons/Status/ViewedD
 import SentStatusIcon from '../../../../components/UI/svgs/Icons/Status/Sent';
 import { FunctionTypeMessageEntityToVoid } from '../../../../../CommonTypes/BaseViewModel';
 import MessageContextMenu from '../MessageContextMenu/MessageContextMenu';
+import { FileType } from '../../../../../Domain/entity/FileTypes';
 
 export function OutgoingMessage(props: {
   message: MessageEntity;
@@ -80,7 +81,21 @@ export function OutgoingMessage(props: {
           <div className="outgoing-message-name">
             <div className="outgoing-message-caption" />
           </div>
-          <div className="outgoing-message-chat-bubble-background">
+          <div
+            className="outgoing-message-chat-bubble-background"
+            style={{
+              background:
+                props.message.attachments &&
+                (props.message.attachments[0].type
+                  .toString()
+                  .includes(FileType.image) ||
+                  props.message.attachments[0].type
+                    .toString()
+                    .includes(FileType.video))
+                  ? 'none'
+                  : undefined,
+            }}
+          >
             <div className="outgoing-message-single-line">{props.element}</div>
           </div>
         </div>

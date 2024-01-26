@@ -7,9 +7,7 @@ $create-dialog-container-height: 412px;
   min-height: $container-height;
   max-height: $container-height;
   height: $container-height;
-  min-width: $container-width;
-  max-width: $container-width;
-  width: $container-width;
+  width: var(--max-width-dialog-list);
 
   display: flex;
   flex-direction: column;
@@ -21,11 +19,13 @@ $create-dialog-container-height: 412px;
     min-height: $container-height;
     max-height: $container-height;
     height: $container-height;
-    min-width: $create-dialog-container-width;
-    max-width: $create-dialog-container-width;
-    width: $create-dialog-container-width;
+    width: var(--max-width-dialog-list);
 
-    //border: 5px solid green;
+    &--loader {
+      align-items: center;
+      justify-content: center;
+      display: flex;
+    }
 
     &--wrapper{
       min-height: 432px;
@@ -34,8 +34,6 @@ $create-dialog-container-height: 412px;
       flex-wrap: nowrap;
       justify-content: flex-start;
       align-items: flex-start;
-
-      //border: 1px solid blue;
 
       &__inf{
         min-height: 20px;
@@ -48,11 +46,11 @@ $create-dialog-container-height: 412px;
         letter-spacing: 0.1px;
         color: var(--main-elements);
         margin-top: 24px;
-        //border: 1px solid green;
       }
 
+
+
       &__members{
-        //border: 3px solid firebrick;
         display: flex;
         max-height: 326px;
         height: 356px;
@@ -64,6 +62,8 @@ $create-dialog-container-height: 412px;
         letter-spacing: 0.1px;
         color: var(--main-elements);
         margin-top: 8px;
+        width: 100%;
+        align-items: center;
 
         &__empty-members {
           display: flex;
@@ -72,7 +72,8 @@ $create-dialog-container-height: 412px;
           padding: 0px;
           gap: 16px;
 
-          width: 332px;
+          //width: 332px;
+          width: 100%;
           height: 100px;
 
         }
@@ -95,7 +96,8 @@ $create-dialog-container-height: 412px;
         align-items: center;
         text-align: center;
         padding: 8px;
-        width: 320px;
+        //width: 320px;
+        width: 100%;
         height: 44px;
 
         border: 1px solid #90979F;
@@ -132,9 +134,10 @@ $create-dialog-container-height: 412px;
     min-height: 32px;
     max-height: 32px;
     height: 32px;
-    min-width: $container-width;
-    max-width: $container-width;
-    width: $container-width;
+    //min-width: $container-width;
+    //max-width: $container-width;
+    //width: $container-width;
+    width: 100%;
     min-height: 34px;
     margin-top: 24px;
     margin-bottom: 24px;

@@ -12,11 +12,11 @@
 }
 
 .scroll-box{
-  overflow: hidden !important;
+  // overflow: hidden !important; //todo artik changed 28.12.2023
   scrollbar-width: none !important;
   ///
-  //overflow-y: scroll;
-  //overflow-x: hidden;
+  overflow-y: scroll; //todo artik changed 28.12.2023
+  overflow-x: hidden; //todo artik changed 28.12.2023
   &::-webkit-scrollbar {
     width: 0px;
     background: transparent;
