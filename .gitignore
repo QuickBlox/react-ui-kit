@@ -9,6 +9,9 @@ node_modules
 npm-debug.log
 npm-debug.log.*
 
+# storybook
+/storybook-static
+
 # *Storm
 .idea
 .idea/*
