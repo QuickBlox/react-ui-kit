@@ -5,17 +5,6 @@ import ErrorMessageIcon from './ErrorMessageIcon';
 import { IChatMessage } from '../../../../Data/source/AISource';
 import { AIAnswerAssistUseCase } from '../../../../Domain/use_cases/ai/AIAnswerAssistUseCase';
 
-// interface MessageWidgetProps {
-//   // https://api.openai.com/v1/chat/completions'
-//   // api: 'v1/chat/completions',
-//   // servername: 'https://myproxy.com',
-//   // https://func270519800.azurewebsites.net/api/TranslateTextToEng
-//   servername: string;
-//   api: string;
-//   port: string;
-//   apiKeyOrSessionToken: string;
-//   apiKey: string;
-// }
 export default function UseDefaultAIAssistAnswerWidget({
   servername,
   api,

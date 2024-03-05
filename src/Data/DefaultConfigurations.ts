@@ -143,7 +143,7 @@ export class DefaultConfigurations {
         AIAnswerAssistWidgetConfig: {
           organizationName: 'Quickblox',
           openAIModel: 'gpt-3.5-turbo',
-          apiKey: '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_',
+          apiKey: '',
           maxTokens: 3584,
           useDefault: true,
           proxyConfig: {
@@ -155,7 +155,7 @@ export class DefaultConfigurations {
         AITranslateWidgetConfig: {
           organizationName: 'Quickblox',
           openAIModel: 'gpt-3.5-turbo',
-          apiKey: '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_',
+          apiKey: '',
           maxTokens: 3584,
           useDefault: true,
           defaultLanguage: 'English',
@@ -174,7 +174,7 @@ export class DefaultConfigurations {
         AIRephraseWidgetConfig: {
           organizationName: 'Quickblox',
           openAIModel: 'gpt-3.5-turbo',
-          apiKey: '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_',
+          apiKey: '',
           maxTokens: 3584,
           useDefault: true,
           defaultTone: 'Professional',
@@ -256,7 +256,7 @@ export class DefaultConfigurations {
         debug: true,
         enableForwarding: true,
         enableReplying: true,
-        regexUserName: '/^(?=[a-zA-Z])[-a-zA-Z_ ]{3,49}(?<! )$/',
+        regexUserName: '', // '/^(?=[a-zA-Z])[-a-zA-Z_ ]{3,49}(?<! )$/',
         endpoints: {
           api: 'api.quickblox.com',
           chat: 'chat.quickblox.com',
@@ -265,72 +265,6 @@ export class DefaultConfigurations {
           enable: true,
         },
       },
-      // credentials: {
-      //   appId: -1,
-      //   accountKey: '',
-      //   authKey: '',
-      //   authSecret: '',
-      //   sessionToken: '',
-      // },
-      // configAIApi: {
-      //   AIAnswerAssistWidgetConfig: {
-      //     apiKey: '',
-      //     useDefault: true,
-      //     proxyConfig: {
-      //       api: 'v1/chat/completions',
-      //       servername: 'https://api.openai.com/',
-      //       port: '',
-      //       sessionToken: '',
-      //     },
-      //   },
-      //   AITranslateWidgetConfig: {
-      //     apiKey: '',
-      //     useDefault: true,
-      //     defaultLanguage: 'English',
-      //     languages: [
-      //       'English',
-      //       'Spanish',
-      //       'French',
-      //       'Portuguese',
-      //       'German',
-      //       'Ukrainian',
-      //     ],
-      //     proxyConfig: {
-      //       api: 'v1/chat/completions',
-      //       servername: 'https://api.openai.com/',
-      //       port: '',
-      //       sessionToken: '',
-      //     },
-      //   },
-      //   AIRephraseWidgetConfig: {
-      //     apiKey: '',
-      //     useDefault: true,
-      //     defaultTone: 'Professional',
-      //     proxyConfig: {
-      //       api: 'v1/chat/completions',
-      //       servername: 'https://api.openai.com/',
-      //       port: '',
-      //       sessionToken: '',
-      //     },
-      //   },
-      // },
-      // appConfig: {
-      //   maxFileSize: 10 * 1024 * 1024,
-      //   sessionTimeOut: 122,
-      //   chatProtocol: {
-      //     active: 2,
-      //   },
-      //   debug: true,
-      //   endpoints: {
-      //     api: 'api.quickblox.com',
-      //     chat: 'chat.quickblox.com',
-      //   },
-      //   streamManagement: {
-      //     enable: true,
-      //   },
-      // },
     };
   }
-
-  //
 }

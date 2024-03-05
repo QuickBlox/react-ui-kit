@@ -38,14 +38,10 @@ const DialogHeader: React.FC<DialogHeaderProps> = ({
               <div className="dialog-header-dialog-name">
                 {dialogName || 'Dialog name'}
               </div>
-              {/* <div className="message-header-container--info-wrapper__detail__dialog-members"> */}
-              {/*  {countMembers || 0} members */}
-              {/* </div> */}
             </div>
           </div>
           {renderRightActions}
         </div>
-        {/* <div>R</div> */}
       </div>
       <div className="dialog-header-line" />
     </div>

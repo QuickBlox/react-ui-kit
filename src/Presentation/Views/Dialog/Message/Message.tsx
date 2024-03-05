@@ -322,7 +322,7 @@ const Message: React.FC<MessageProps> = ({
           onReply={onReply}
           onForward={onForward}
           theme={theme}
-          renderOringinalMessage={
+          renderOriginalMessage={
             !message.message.includes(
               MessageDTOMapper.FORWARD_MESSAGE_PREFIX,
             ) ? (

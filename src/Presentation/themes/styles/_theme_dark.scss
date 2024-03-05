@@ -1,7 +1,7 @@
-@import "theme_colors_scheme";
+@import 'theme_colors_scheme';
 // https://sass-lang.com/documentation/breaking-changes/css-vars
 
-html[data-theme="dark"]{
+html[data-theme='dark'] {
   --primary: #{$primary-500};
   --color-background: #{$secondary-900};
   --color-background-modal: #{$secondary-800};
@@ -9,9 +9,12 @@ html[data-theme="dark"]{
   --color-divider: #{$secondary-400};
   --color-font: #{$primary-a-100};
   --color-icon: #{$primary-300};
-
+  --color-media-icon: #{$primary-a-100};
+  --color-default-hover: #{$secondary-700};
+  --color-default-active: #{$secondary-900};
 
   --color-background-info: #{$primary-500};
+  --color-border-active: #{$secondary-200};
   --tertiary-elements: #{$background-overlay-dark};
   --main-elements: #{$primary-300};
   --secondary-elements: #{$primary-a-100};
@@ -29,5 +32,6 @@ html[data-theme="dark"]{
   --chat-input: #{$secondary-800};
   --divider: #{$secondary-400};
   --error: #{$error-300};
+  --error-secondary: #{$error-100};
   --hightlight: #{$highlight};
 }

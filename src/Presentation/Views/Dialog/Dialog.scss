@@ -52,8 +52,8 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
   &--messages{
     background-color: $message-view-container-background-color;
     width: 100%;
-    max-height: calc(800px - 128px - 16px);
-    // max-height: calc(100vh - 128px - 16px); // TODO: fix calc max-height
+    //max-height: calc(800px - 128px - 16px);
+    max-height: calc(800px - 128px - 64px);
 
     display: flex;
     flex-flow: column nowrap;
@@ -302,6 +302,13 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
     }
 
   }
+  &__loader{
+    fill: var(--color-background-info);
+
+    svg path{
+      fill: var(--color-background-info);
+    }
+  }
 }
 
 .input-text-message * {
@@ -358,3 +365,4 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
   height: 24px;
   position: relative;
 }
+

@@ -1,0 +1,58 @@
+.file-attachment {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: stretch;
+  flex-shrink: 0;
+  position: relative;
+
+  &__placeholder {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    position: static;
+
+    &__bg {
+      background: var(--tertiary-elements, #636d78);
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      position: absolute;
+      left: 0px;
+      top: 0px;
+
+      &__icon {
+        border-radius: 4px;
+        padding: 4px;
+        display: flex;
+        flex-direction: row;
+        gap: 0px;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        position: absolute;
+        left: 4px;
+        top: 4px;
+      }
+    }
+  }
+
+  &__file-name {
+    color: var(--secondary-text, #636d78);
+    text-align: left;
+    font: var(--body-body-medium);
+    position: relative;
+  }
+}
+
+.message-icon-file {
+  align-self: stretch;
+  flex: 1;
+  height: auto;
+  position: relative;
+  overflow: visible;
+  fill: var(--color-media-icon, #ffffff);
+}

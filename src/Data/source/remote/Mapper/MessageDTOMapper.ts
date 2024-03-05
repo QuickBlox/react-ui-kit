@@ -19,7 +19,6 @@ export class MessageDTOMapper implements IDTOMapper {
     MessageDTOMapper.validateDTO(messageDTO);
 
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    // todo: why we have empty values?
     const message: QBChatMessage = {
       _id: '',
       attachments: [],
@@ -156,9 +155,9 @@ export class MessageDTOMapper implements IDTOMapper {
       dto.id = qbMessage._id;
       dto.dialogId = qbMessage.chat_dialog_id;
 
-      dto.message = qbMessage.message; // MessageDTOMapper.formatMessage(qbMessage.message); // todo: check
-      dto.created_at = qbMessage.created_at || Date.now().toString(); // todo: check
-      dto.date_sent = qbMessage.date_sent || Date.now() * 1000; // todo: check
+      dto.message = qbMessage.message;
+      dto.created_at = qbMessage.created_at || Date.now().toString();
+      dto.date_sent = qbMessage.date_sent || Date.now() * 1000;
       dto.delivered_ids = qbMessage.delivered_ids || [];
       dto.read_ids = qbMessage.read_ids || [];
 
@@ -167,9 +166,9 @@ export class MessageDTOMapper implements IDTOMapper {
         qbMessage.message,
         qbMessage.attachments || [],
       );
-      dto.read = qbMessage.read || 1; // todo: check
+      dto.read = qbMessage.read || 1;
       dto.sender_id = qbMessage.sender_id;
-      dto.updated_at = qbMessage.updated_at || Date.now().toString(); // todo: check
+      dto.updated_at = qbMessage.updated_at || Date.now().toString();
       dto.notification_type = qbMessage.notification_type || '';
       dto.markable = qbMessage.notification_type || '';
     }
@@ -246,7 +245,6 @@ export class MessageDTOMapper implements IDTOMapper {
       try {
         const originalData = JSON.parse(json_data);
 
-        // Проверка, что результат является массивом объектов QBChatNewMessage
         if (
           Array.isArray(originalData) &&
           originalData.every((item) => item instanceof Object)
@@ -308,42 +306,6 @@ export class MessageDTOMapper implements IDTOMapper {
     // 0, 1, 2, 3
     return message.split('|');
   }
-
-  // public static formatMessage(qbMessage: string) {
-  //   if (
-  //     qbMessage.includes('MediaContentEntity') ||
-  //     qbMessage.includes('[Attachment]')
-  //   ) {
-  //     const messageParts = qbMessage.split('|');
-  //
-  //     // val messageBody = "${MediaContentEntity::class.java.simpleName}|$fileName|$uid|$fileMimeType"
-  //     // 0, 1, 2, 3
-  //     return messageParts[1] || '';
-  //   }
-  //   if (
-  //     qbMessage.includes('[Forwarded_Message]') ||
-  //     qbMessage.includes('[Replied_Message]')
-  //   ) {
-  //     return '';
-  //   }
-  //
-  //   return qbMessage;
-  // }
-  //
-  // private static getMessageParts(qbMessage: string) {
-  //   if (
-  //     qbMessage.includes('MediaContentEntity') ||
-  //     qbMessage.includes('[Attachment]')
-  //   ) {
-  //     const messageParts = qbMessage.split('|');
-  //
-  //     // val messageBody = "${MediaContentEntity::class.java.simpleName}|$fileName|$uid|$fileMimeType"
-  //     // 0, 1, 2, 3
-  //     return messageParts;
-  //   }
-  //
-  //   return [];
-  // }
 
   private static validateDTO(messageDTO: RemoteMessageDTO) {
     const messageDTOValidator: DtoValidator<RemoteMessageDTO> = {
@@ -520,7 +482,6 @@ export class MessageDTOMapper implements IDTOMapper {
 
         return _id !== undefined && _id !== null && _id.length > 0;
       },
-      // TODO: check attachment
       attachments(v: unknown): v is QBChatMessage['attachments'] {
         const { attachments } = v as QBChatMessage;
 

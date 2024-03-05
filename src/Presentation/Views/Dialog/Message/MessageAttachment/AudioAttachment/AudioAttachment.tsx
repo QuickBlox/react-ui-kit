@@ -79,7 +79,7 @@ const AudioAttachment: React.FC<AudioAttachmentComponentProps> = ({
     return uniqueNumbers;
   };
 
-  const rederEqualizer = (uid: string) => {
+  const renderEqualizer = (uid: string) => {
     const divElements: JSX.Element[] = [];
 
     const nums = generateUniqueNumbers(uid, 30);
@@ -97,7 +97,7 @@ const AudioAttachment: React.FC<AudioAttachmentComponentProps> = ({
     return divElements;
   };
 
-  const rederRandomEqualizer = () => {
+  const renderRandomEqualizer = () => {
     const divElements: JSX.Element[] = [];
 
     for (let i = 0; i < 30; i += 1) {
@@ -143,14 +143,11 @@ const AudioAttachment: React.FC<AudioAttachmentComponentProps> = ({
           )}
         </div>
         {isPlaying ? (
-          <div className="equalizer">{rederRandomEqualizer()}</div>
+          <div className="equalizer">{renderRandomEqualizer()}</div>
         ) : (
-          <div className="equalizer">{rederEqualizer(audioFile.uid)}</div>
+          <div className="equalizer">{renderEqualizer(audioFile.uid)}</div>
         )}
       </div>
-      {/* <a href={audioFile.url} target="_blank" download rel="noreferrer"> */}
-      {/*  Download */}
-      {/* </a> */}
     </div>
   );
 };

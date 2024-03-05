@@ -1,0 +1,40 @@
+@import '../../themes/styles/mixins';
+
+.dialog-window {
+  @include applyBorderBox;
+
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  position: fixed;
+  background-color: rgba(19, 29, 40, 0.8);
+
+  &__content {
+    width: 380px;
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    padding: 24px;
+    border-radius: 4px;
+    background-color: var(--main-background);
+    box-shadow: 0 9px 15px 0 rgba(0, 0, 0, 0.04),
+      0 9px 46px 0 rgba(0, 0, 0, 0.08);
+  }
+
+  &__header {
+    padding: 0px !important;
+  }
+
+  &__close {
+    width: 24px;
+    height: 24px;
+
+    fill: var(--secondary-elements);
+    cursor: pointer;
+  }
+}

@@ -28,7 +28,6 @@ export class UserTypingMessageUseCase implements IUseCase<void, void> {
 
   async execute(): Promise<void> {
     console.log('execute SendUserIsTypingMessageUseCase');
-    // todo: add work with timer
     this._typingTime = Date.now();
     if (!this._typingTimer) {
       await this.messagesRepository.typingMessageStart(

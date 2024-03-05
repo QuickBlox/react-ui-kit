@@ -259,6 +259,115 @@ export class Stubs {
     //
   }
 
+  public static initializeMessagesWithMockData() {
+    const initFirstPageMessages: Array<MessageEntity> =
+      new Array<MessageEntity>();
+    // attachments
+    // shot text message with attachment photo
+    const photo: ChatMessageAttachmentEntity = {
+      id: '10231',
+      type: FileType.image,
+      uid: '10231',
+      url: 'https://via.placeholder.com/600/92c952',
+      file: {
+        id: '10231',
+        uid: '',
+        type: FileType.image,
+        url: 'https://via.placeholder.com/600/92c952',
+      },
+    };
+    const photoAttachments: ChatMessageAttachmentEntity[] = [photo];
+    // shot text message with attachment video
+    const video: ChatMessageAttachmentEntity = {
+      id: '10232',
+      type: FileType.video,
+      uid: '10232',
+      url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4',
+      file: {
+        id: '10232',
+        uid: '',
+        type: FileType.video,
+        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4',
+      },
+    };
+    const videoAttachments: ChatMessageAttachmentEntity[] = [video];
+    const audio: ChatMessageAttachmentEntity = {
+      id: '10233',
+      type: FileType.audio,
+      uid: '10233',
+      url: 'https://cdn.freesound.org/previews/681/681715_1648170-lq.mp3',
+      file: {
+        id: '10233',
+        uid: '',
+        type: FileType.audio,
+        url: 'https://cdn.freesound.org/previews/681/681715_1648170-lq.mp3',
+      },
+    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const audioAttachments: ChatMessageAttachmentEntity[] = [audio];
+    // shot text message with attachment text
+    const text: ChatMessageAttachmentEntity = {
+      id: '10233',
+      type: FileType.text,
+      uid: '10233',
+      url: 'https://www.learningcontainer.com/wp-content/uploads/2020/04/sample-text-file.txt',
+      file: {
+        id: '10233',
+        uid: '',
+        type: FileType.text,
+        url: 'https://www.learningcontainer.com/wp-content/uploads/2020/04/sample-text-file.txt',
+      },
+      name: 'textFile.txt',
+    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const textAttachments: ChatMessageAttachmentEntity[] = [text];
+    const currentUser = 134885168; // should be 134885168 was 11
+
+    const createAttachment = (i: number): ChatMessageAttachmentEntity[] => {
+      switch (i) {
+        case 1:
+          return photoAttachments;
+        case 2:
+          return videoAttachments;
+        case 3:
+          return audioAttachments;
+        case 4:
+          return textAttachments;
+        default:
+          return [];
+      }
+    };
+
+    // attachments
+    for (let i = 1; i <= 4; i += 1) {
+      const newMessageEntity: MessageEntity =
+        Stubs.createMessageEntityWithParams(
+          i.toString(),
+          '103',
+          i % 3 === 0
+            ? `${
+                i + 1
+              } very very very long test text message for dialog 103. The text message with huge text: bla-bla-bla long long long long, bla-bla-bla, very very very long test text message for dialog 103. very very very long test text message for dialog 103. etc`
+            : `${i + 1} test message for dialog 103`,
+          '31.03.2023',
+          Date.now(),
+          '31.03.2023',
+          [currentUser, 12, 13],
+          [currentUser, 12, 13],
+          1,
+          i % 2 === 0 ? currentUser : 12,
+          i % 2 === 0 ? 12 : currentUser,
+          // eslint-disable-next-line no-nested-ternary
+          createAttachment(i),
+          i % 7 === 0 ? '3' : undefined,
+        );
+
+      initFirstPageMessages.push(newMessageEntity);
+    }
+
+    return initFirstPageMessages;
+  }
+
   static createDialogEntityByTypeWithEmptyValues(
     dialogType: DialogType,
   ): DialogEntity {

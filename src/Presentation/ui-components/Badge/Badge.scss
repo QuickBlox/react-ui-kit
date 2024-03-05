@@ -1,0 +1,23 @@
+.badge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 20px;
+  border-radius: 30px;
+  padding: 2px 6px;
+
+  font-family: 'Roboto';
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.5px;
+
+  background-color: var(--main-elements);
+  color: var(--secondary-background);
+
+  &--mute {
+    background-color: var(--disabled-elements);
+    color: var(--secondary-background);
+  }
+}

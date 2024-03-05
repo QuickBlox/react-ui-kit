@@ -33,42 +33,6 @@ export class ForwardMessagesUseCase implements IUseCase<void, boolean> {
 
   async execute(): Promise<boolean> {
     console.log('execute ForwardMessagesUseCase');
-    // v1
-    // const dialogId = this.targetDialogs[0].id;
-    //
-    // this.relatedMessage.dialogId = dialogId;
-    // this.relatedMessage.qb_original_message = this.messagesToForward;
-    //
-    // const sentMessage: MessageEntity =
-    //   await this.messagesRepository.sendMessageToRemote(this.relatedMessage);
-    //
-    // if (sentMessage.id && sentMessage.id.length > 0) {
-    //   return Promise.resolve(true);
-    // }
-    //
-    // return Promise.resolve(false);
-    // v2
-    // const sentMessages: MessageEntity[] = [];
-    //
-    // for (const targetDialog of this.targetDialogs) {
-    //   const dialogId = targetDialog.id;
-    //
-    //   this.relatedMessage.dialogId = dialogId;
-    //   this.relatedMessage.qb_original_message = this.messagesToForward;
-    //
-    //   const sentMessage: MessageEntity =
-    //     await this.messagesRepository.sendMessageToRemote(this.relatedMessage);
-    //
-    //   if (sentMessage.id && sentMessage.id.length > 0) {
-    //     sentMessages.push(sentMessage);
-    //   }
-    // }
-    //
-    // const allMessagesSent = sentMessages.every(
-    //   (message) => message.id && message.id.length > 0,
-    // );
-    //
-    // return Promise.resolve(allMessagesSent);
 
     const promises = this.targetDialogs.map(async (targetDialog) => {
       const dialogId = targetDialog.id;

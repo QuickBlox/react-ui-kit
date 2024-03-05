@@ -27,8 +27,6 @@ export function OutgoingMessage(props: {
     <div>
       <div
         className="outgoing-message"
-        // onMouseEnter={() => setHaveHover(true)}
-        // onMouseLeave={() => setHaveHover(false)}
         onClick={() => {
           setOpenMenu(!openMenu);
         }}
@@ -84,6 +82,7 @@ export function OutgoingMessage(props: {
           <div
             className="outgoing-message-chat-bubble-background"
             style={{
+              // todo: need refactoring this, should use only item.attachments[0].type
               background:
                 props.message.attachments &&
                 (props.message.attachments[0].type

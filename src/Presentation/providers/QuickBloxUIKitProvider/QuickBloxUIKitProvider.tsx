@@ -48,10 +48,6 @@ type AccountData = {
   sessionToken?: string;
 };
 
-/*
-{ username: string; password: string }
- */
-
 export type InitParams = {
   maxFileSize: number;
   accountData: AccountData;

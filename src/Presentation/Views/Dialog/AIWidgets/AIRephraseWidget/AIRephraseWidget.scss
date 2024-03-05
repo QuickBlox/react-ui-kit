@@ -8,3 +8,13 @@
   position: relative;
   margin-bottom: 5px;
 }
+.rephrase-icon{
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  fill: var(--color-icon);
+
+  svg path{
+    fill: var(--color-icon);
+  }
+}

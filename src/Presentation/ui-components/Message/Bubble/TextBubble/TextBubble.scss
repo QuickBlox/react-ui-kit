@@ -1,0 +1,40 @@
+.bubble-content-text {
+  overflow-wrap: break-word;
+  max-width: calc(var(--max-width-message-bubble) - 20px);
+
+  color: var(--main-tex, #0b1b0f);
+  text-align: left;
+  font: var(--body-body-medium, 400 14px/20px "Roboto-Regular", sans-serif);
+}
+
+.text-bubble-background {
+
+  &__incoming {
+    background: var(--incoming-background, #e4e6e8);
+    border-radius: 22px 22px 22px 0px;
+    padding: 8px 12px 8px 12px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    position: relative;
+    width: 100%;
+  }
+
+  &__outgoing {
+    background: var(--outgoing-background, #E7EFFF);
+    border-radius: 22px 22px 0px 22px;
+    padding: 8px 12px 8px 12px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+}
+

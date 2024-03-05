@@ -63,7 +63,6 @@ export default class UsersRepository {
 
     if (checkResult) {
       try {
-        // TODO: change
         const dto: LocalUserDTO = new LocalUserDTO();
 
         dto.id = userId.toString();
@@ -120,7 +119,6 @@ export default class UsersRepository {
 
     if (checkResult) {
       try {
-        // TODO: change
         const dto: RemoteUserDTO = new RemoteUserDTO();
 
         dto.id = userId.toString();
@@ -175,7 +173,6 @@ export default class UsersRepository {
         let dto: LocalUserDTO = new LocalUserDTO();
 
         dto.id = usersIds[i].toString();
-        // TODO: check loop with await
         // eslint-disable-next-line no-await-in-loop
         dto = await this.localDataSource.getUser(dto);
         arrayUserDTO.push(dto);
@@ -207,7 +204,6 @@ export default class UsersRepository {
         let dto: RemoteUserDTO = new RemoteUserDTO();
 
         dto.id = usersIds[i].toString();
-        // TODO: check loop with await
         // eslint-disable-next-line no-await-in-loop
         dto = await this.remoteDataSource.getUser(dto);
         arrayUserDTO.push(dto);
@@ -253,30 +249,8 @@ export default class UsersRepository {
 
         ResultData.push(userEntity);
       }
-      // const PaginatedList: Record<number, UserEntity[]> = {};
-      //
-      // //
-      // // eslint-disable-next-line no-restricted-syntax
-      // for (const [key, value] of Object.entries(result.PaginatedList)) {
-      //   const remoteUsers: RemoteUserDTO[] = value;
-      //   const pageusers: UserEntity[] = [];
-      //
-      //   // eslint-disable-next-line no-restricted-syntax
-      //   for (const remoteUser of remoteUsers) {
-      //     const userEntity: UserEntity =
-      //       // eslint-disable-next-line no-await-in-loop
-      //       await this.userRemoteDTOMapper.toEntity<RemoteUserDTO, UserEntity>(
-      //         remoteUser,
-      //       );
-      //
-      //     pageusers.push(userEntity);
-      //   }
-      //
-      //   PaginatedList[parseInt(key, 10)] = pageusers;
-      // }
 
       return {
-        // PaginatedList,
         ResultData,
         CurrentPagination: result.PaginationResult,
       };
@@ -288,7 +262,6 @@ export default class UsersRepository {
 
   async saveUsersToLocal(entities: Array<UserEntity>): Promise<boolean> {
     try {
-      // TODO: check this loop
       // eslint-disable-next-line no-restricted-syntax
       for (const item of entities) {
         // eslint-disable-next-line no-await-in-loop

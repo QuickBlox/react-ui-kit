@@ -16,7 +16,7 @@
 .dialog-header-left {
   display: flex;
   flex-direction: row;
-  gap: 33px;// todo artik 29.12.2023 changed was 18 px
+  gap: 33px;
   align-items: center;
   justify-content: flex-start;
   flex-shrink: 0;
@@ -25,7 +25,7 @@
 }
 @media only screen and (max-width: var(--min-width-screen-desktop)) {
   .dialog-header-left {
-    gap: 3px;// todo artik 29.12.2023 changed was 18 px
+    gap: 3px;
   }
 }
 .dialog-header-left-headline {

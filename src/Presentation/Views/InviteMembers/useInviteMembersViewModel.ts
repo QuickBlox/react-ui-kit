@@ -18,7 +18,6 @@ import { DefaultConfigurations } from '../../../Data/DefaultConfigurations';
 
 export default function useInviteMembersViewModel(): InviteMembersViewModel {
   // initPagination?: Pagination,
-  console.log('create useUsersListViewModel');
   const currentContext = useQbInitializedDataContext();
   const QBConfig =
     currentContext.InitParams.qbConfig ||
@@ -69,32 +68,22 @@ export default function useInviteMembersViewModel(): InviteMembersViewModel {
           let newItems: UserEntity[] = [];
 
           if (regexUserName && regexUserName.length > 0) {
-            // const tmpItems: UserEntity[] = [];
-            //
-            // for (let i = 0; i < data.ResultData.length; i += 1) {
-            //   const u = data.ResultData[i];
-            //   const regexResult = regex.test(u.full_name);
-            //
-            //   if (regexResult) {
-            //     tmpItems.push(u);
-            //   }
-            // }
             // work
-            const tmpItems: UserEntity[] = data.ResultData.reduce(
-              (acc: UserEntity[], u: UserEntity) => {
+            const filteredUsers: UserEntity[] = data.ResultData.reduce(
+              (userList: UserEntity[], u: UserEntity) => {
                 if (!regex || regex.test(u.full_name)) {
-                  acc.push(u);
+                  userList.push(u);
                 }
 
-                return acc;
+                return userList;
               },
               [],
             );
 
             newItems =
               currentPagination.getCurrentPage() === 0
-                ? [...tmpItems]
-                : [...prevState, ...tmpItems];
+                ? [...filteredUsers]
+                : [...prevState, ...filteredUsers];
           } else {
             newItems =
               currentPagination.getCurrentPage() === 0

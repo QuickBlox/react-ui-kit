@@ -1,0 +1,90 @@
+@import '../../themes/styles/mixins';
+
+.text-field {
+  @include applyBorderBox;
+
+  &__label {
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.25px;
+  }
+
+  &__wrapper {
+    background-color: var(----color-background);
+
+    display: flex;
+    align-items: center;
+
+    border-radius: 4px;
+    border: 1px solid var(--tertiary-elements);
+    margin-top: 8px;
+    padding: 6px 8px;
+
+    &:active {
+      border: 1px solid var(--main-elements);
+    }
+  }
+
+  &__icon {
+    margin-right: 6px;
+  }
+
+  &__input {
+    border: none;
+    outline: none;
+
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.15px;
+
+    &:disabled {
+      background-color: transparent;
+      cursor: not-allowed;
+      border: none;
+      color: inherit;
+    }
+
+    &::placeholder {
+      color: var(--secondary-text);
+    }
+  }
+
+  &__reset {
+    width: 24px;
+    height: 24px;
+    fill: var(--tertiary-elements);
+
+    cursor: pointer;
+  }
+
+  &--disabled *,
+  &--disabled &__label &__reset {
+    color: var(--disabled-elements);
+    fill: var(--disabled-elements);
+
+    cursor: not-allowed;
+  }
+
+  &--disabled &__wrapper {
+    background-color: var(--incoming-background);
+    border: none;
+
+    &:active {
+      border: none;
+    }
+  }
+
+  &--disabled &__input {
+    &::placeholder {
+      color: var(--disabled-elements);
+    }
+  }
+
+  &__loader {
+    fill: var(--color-icon);
+  }
+}

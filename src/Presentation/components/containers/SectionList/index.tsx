@@ -22,7 +22,9 @@ export default function SectionList<T>(props: SectionListProps<T>) {
   const renderSection = (section: SectionItem<T>) => (
     <div className="section" key={section.title}>
       {renderSectionHeader && renderSectionHeader(section)}
-      {Object.entries(section.data).map(renderItem)}
+      {Object.entries(section.data).map((item) =>
+        renderItem(item, listContentRef),
+      )}
       {renderSectionFooter && renderSectionFooter(section)}
     </div>
   );

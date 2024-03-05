@@ -1,0 +1,67 @@
+.ai-translate {
+    padding: 0px 12px 0px 0px;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    align-self: stretch;
+    flex-shrink: 0;
+    position: relative;
+
+  &__caption {
+    display: flex;
+    flex-direction: row;
+    gap: 0px;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+    position: relative;
+    cursor: pointer;
+
+    &--disable {
+      cursor: none;
+    }
+
+    &__label {
+      color: var(--tertiary-elements, #636d78);
+      text-align: right;
+      font: var(--label-label-small);
+      position: relative;
+    }
+  }
+
+  &__icon {
+    border-radius: 4px;
+    display: flex;
+    flex-direction: row;
+    gap: 0px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    position: relative;
+    cursor: pointer;
+
+    &--disable {
+      cursor: none;
+    }
+
+    &__media-translate {
+      align-self: stretch;
+      flex: 1;
+      height: auto;
+      position: relative;
+      overflow: visible;
+      fill: var(--tertiary-elements, #636D78);
+    }
+  }
+}
+
+.ai-translate-pos {
+  left: 12em;
+  bottom: 12em;
+}
+
+

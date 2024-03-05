@@ -11,15 +11,15 @@ const VideoAttachment: React.FC<VideoAttachmentComponentProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   videoFile,
 }: VideoAttachmentComponentProps) => {
-  const [fileUrl, setFileUrl] = React.useState('');
+  const [videoUrl, setVideoUrl] = React.useState('');
 
   async function getFileForPreview() {
     if (videoFile.url && videoFile.url.length > 0) {
-      let tmpFileUrl: string = videoFile.url;
-      const { blobFile } = await Creator.createBlobFromUrl(tmpFileUrl);
+      let fileUrl: string = videoFile.url;
+      const { blobFile } = await Creator.createBlobFromUrl(fileUrl);
 
-      tmpFileUrl = blobFile ? URL.createObjectURL(blobFile) : tmpFileUrl || '';
-      setFileUrl(tmpFileUrl);
+      fileUrl = blobFile ? URL.createObjectURL(blobFile) : fileUrl || '';
+      setVideoUrl(fileUrl);
     }
   }
 
@@ -27,8 +27,8 @@ const VideoAttachment: React.FC<VideoAttachmentComponentProps> = ({
     getFileForPreview();
 
     return () => {
-      if (fileUrl) {
-        URL.revokeObjectURL(fileUrl);
+      if (videoUrl) {
+        URL.revokeObjectURL(videoUrl);
       }
     };
   }, []);
@@ -41,35 +41,17 @@ const VideoAttachment: React.FC<VideoAttachmentComponentProps> = ({
           controls
           key={videoFile.id}
           playsInline
-          src={fileUrl}
+          src={videoUrl}
         >
-          <a href={fileUrl} download>
+          <a href={videoUrl} download>
             Download
           </a>
         </video>
       </div>
-      <a href={fileUrl} download>
+      <a href={videoUrl} download>
         Download
       </a>
     </div>
-    // <div>
-    //   <div className="message-attachment-video">
-    //     <video
-    //       className="message-attachment-video-body"
-    //       controls
-    //       key={videoFile.id}
-    //       playsInline
-    //       src={videoFile.url}
-    //     >
-    //       <a href={videoFile.url} download>
-    //         Download
-    //       </a>
-    //     </video>
-    //   </div>
-    //   <a href={videoFile.url} download>
-    //     Download
-    //   </a>
-    // </div>
   );
 };
 

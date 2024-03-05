@@ -1,0 +1,16 @@
+.message-attachment-image-body{
+  max-width: var(--max-width-image-message);
+  max-height: 160px;
+  padding: 0;
+  border-radius: 4px;
+}
+
+.message-attachment-image {
+  display: flex;
+  justify-content: center;
+  flex-flow: row;
+  max-width: var(--max-width-image-message);
+  max-height: 160px;
+  font: var(--body-body-medium, 400 14px / 20px "Roboto-Regular", sans-serif);
+  color: var(--main-tex, #0b1b0f);
+}

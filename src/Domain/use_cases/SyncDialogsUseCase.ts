@@ -42,7 +42,6 @@ export class SyncDialogsUseCase extends BaseUseCase<boolean, boolean> {
   // или подписка на ремоте датасурсе
   execute(callBack: CallBackFunction<boolean>): Promise<boolean> {
     console.log('EXECUTE in SyncDialogUseCaseWithMock', callBack);
-    // todo uncomment
     this.syncDialogs().catch();
     this.callBackExecute = callBack;
     if (
@@ -53,77 +52,11 @@ export class SyncDialogsUseCase extends BaseUseCase<boolean, boolean> {
       this.subscribe(this.callBackExecute);
     }
 
-    // if (this.timer1Id === undefined) {
-    //   this.timer1Id = setInterval(() => {
-    //     console.log(
-    //       'MOCK 1. connection lost',
-    //       'time: ',
-    //       new Date().toTimeString(),
-    //     );
-    //     this.connectionRepository.changeConnectionStatus(false);
-    //     this.setSyncInProgress();
-    //     this.informSubscribers(true);
-    //   }, 5000);
-    // }
-    //
-    // if (this.timer2Id === undefined) {
-    //   this.timer2Id = setInterval(() => {
-    //     console.log(
-    //       'MOCK 1. connection restore',
-    //       'time: ',
-    //       new Date().toTimeString(),
-    //     );
-    //     this.connectionRepository.changeConnectionStatus(true);
-    //     this.setSyncInProgress();
-    //     this.informSubscribers(true);
-    //   }, 10000);
-    // }
-    //
-    // add new item every 15 sec - not implemented
-    // if (this.timerId === undefined) {
-    //   setTimeout(() => {
-    //     console.log('MOCK 3. start update');
-    //     if (this.timerId === undefined) {
-    //       this.timerId = setInterval(() => {
-    //         console.log('MOCK 3. timer tick');
-    //         console.log('time: ', new Date().toTimeString());
-    //         //
-    //         this.dialogRepository.setLocalSynced(false);
-    //         const newItem: DialogEntity =
-    //           Stubs.createDialogEntityByTypeWithDefaultValues(
-    //             DialogType.public,
-    //           );
-    //
-    //         newItem.id = new Date().getTime().toString();
-    //         newItem.name = `Mock dialog ${new Date().toLocaleTimeString()}`;
-    //         newItem.lastMessage = {
-    //           dateSent: `${new Date().toLocaleTimeString()}`,
-    //           text: `Hello world! ${new Date().toLocaleTimeString()}`,
-    //           userId: 0,
-    //         };
-    //         newItem.updatedAt = `${new Date().toLocaleTimeString()}`;
-    //         this.dialogRepository
-    //           .saveDialogToLocal(newItem)
-    //           // eslint-disable-next-line promise/always-return
-    //           .then((result) => {
-    //             this.informSubscribers(result);
-    //             this.dialogRepository.setLocalSynced(true);
-    //           })
-    //           .catch((error) => {
-    //             console.log(error);
-    //           });
-    //       }, 15000);
-    //     }
-    //   }, 30000);
-    // }
-
     return Promise.resolve(true);
   }
 
   private async syncDialogs(): Promise<void> {
     console.log('call syncDialogs()  in SyncDialogsUseCaseWithMock');
-    // todo: cause of recycle v1
-    // this.connectionRepository.keepALiveChatConnection();
     if (this.connectionRepository.isChatConnected()) {
       await this.syncDialogsActions();
     }
@@ -210,8 +143,6 @@ export class SyncDialogsUseCase extends BaseUseCase<boolean, boolean> {
   // eslint-disable-next-line @typescript-eslint/require-await
   private async setSyncInProgressAndClearLocal() {
     this.setSyncInProgress();
-    // todo delete comment
-    // await this.deleteAllDialogsInLocal();
   }
 
   private async deleteAllDialogsInLocal() {

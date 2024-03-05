@@ -13,9 +13,7 @@ export class SubscribeToDialogsUpdatesUseCaseWithMock extends BaseUseCase<
 
   private dialogs: Array<DialogEntity> = [];
 
-  // todo: delete synUseCase: BaseUseCase<boolean>, use only dialogRepository
   constructor(dialogRepository: DialogsRepository) {
-    console.log('CONSTRUCTOR SubscribeToDialogsUpdatesUseCaseWithMock');
     super();
     this.callBackExecute = undefined;
 
@@ -44,18 +42,4 @@ export class SubscribeToDialogsUpdatesUseCaseWithMock extends BaseUseCase<
 
     return Promise.resolve(this.dialogRepository.getDialogsFromLocal());
   }
-
-  // subscribe(callBack: CallBackFunction): void {
-  //   console.log('execute subscribe');
-  //   // this.subject.subscribe()
-  //   // this.callBackExecute = callBack;
-  //   //
-  //   // // callBack(this.dialogs);
-  //   // if (this.events.listeners('Execute').length === 0) {
-  //   //   this.events.addListener('Execute', this.callBackExecute);
-  //   // }
-  //   // this.events.on('Execute', this.callBackExecute);
-  //   // this.register('Execute', callBack);
-  //   this.addSubscriber(callBack);
-  // }
 }

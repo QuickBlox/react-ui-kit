@@ -1,26 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import './PreviewDialog.scss';
-import PublicChannel from '../../components/UI/svgs/Icons/Contents/PublicChannel';
-import { IconTheme } from '../../components/UI/svgs/Icons/IconsCommonTypes';
-import ThemeScheme from '../../themes/ThemeScheme';
 import { DialogType } from '../../../Domain/entity/DialogTypes';
-import User from '../../components/UI/svgs/Icons/Contents/User';
-import GroupChat from '../../components/UI/svgs/Icons/Contents/GroupChat';
 import PreviewDialogViewModel from './PreviewDialogViewModel';
 import UiKitTheme from '../../themes/UiKitTheme';
-import PreviewImageFile from './PreviewImageFile/PreviewImageFile';
-import PreviewAudioFile from './PreviewAudioFile/PreviewAudioFile';
-import PreviewVideoFile from './PreviewVideoFile/PreviewVideoFile';
-import PreviewDefaultFile from './PreviewDefaultFile/PreviewDefaultFile';
 import { Creator } from '../../../Data/Creator';
-import UserAvatar from '../EditDialog/UserAvatar/UserAvatar';
-import PreviewDialogContextMenu from './PreviewDialogContextMenu/PreviewDialogContextMenu';
 import { DialogEntity } from '../../../Domain/entity/DialogEntity';
 import { MessageDTOMapper } from '../../../Data/source/remote/Mapper/MessageDTOMapper';
 import { FunctionTypeDialogEntityToVoid } from '../../../CommonTypes/BaseViewModel';
 import { PrivateDialogEntity } from '../../../Domain/entity/PrivateDialogEntity';
 import useUsersListViewModel from '../DialogInfo/UsersList/useUsersListViewModel';
+import PreviewFileMessage from '../../ui-components/PreviewFileMessage/PreviewFileMessage';
+import Badge from '../../ui-components/Badge/Badge';
+import DialogItemPreview from '../../ui-components/DialogItemPreview/DialogItemPreview';
+import Dropdown from '../../ui-components/Dropdown/Dropdown';
+import { GroupChatSvg, MoreSvg, PublicChannelSvg, UserSvg } from '../../icons';
+import Avatar from '../../ui-components/Avatar/Avatar';
 
 export type ThemeNames = 'light' | 'dark' | 'custom';
 type PreviewDialogsColorTheme = {
@@ -74,10 +69,6 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
   additionalSettings = undefined,
 }: PreviewDialogsProps) => {
   const [dialogAvatarUrl, setDialogAvatarUrl] = React.useState('');
-
-  const colorIcon = theme?.colorTheme
-    ? theme?.colorTheme.mainElements()
-    : 'var(--main-elements)';
 
   const defaultLightTheme: PreviewDialogsColorTheme = {
     backgroundColorMainSection: theme?.colorTheme
@@ -148,88 +139,37 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
       : 'var(--field-border)'; // ThemeScheme.secondary_200;
   }
 
-  const publicIconTheme: IconTheme = {
-    color: colorIcon || ThemeScheme.primary_400,
-    width: '42',
-    height: '42',
-  };
-  const itemTheme: IconTheme = {
-    color: workTheme.colorAvatarIcon,
-    width: '42',
-    height: '42',
-  };
   let avatar: JSX.Element;
 
   switch (typeDialog) {
     case DialogType.public:
-      avatar = (
-        <div className="dialog-preview-avatar-ellipse">
-          <div className="dpa-contents-user">
-            <PublicChannel
-              color={publicIconTheme.color}
-              width={publicIconTheme.width}
-              height={publicIconTheme.height}
-            />
-          </div>
-        </div>
-      );
+      avatar = <Avatar size="lg" icon={<PublicChannelSvg />} />;
       break;
     case DialogType.group:
-      avatar = (
-        <div className="dialog-preview-avatar-ellipse">
-          <div className="contents-user">
-            <GroupChat
-              color={itemTheme.color}
-              width={itemTheme.width}
-              height={itemTheme.height}
-            />
-          </div>
-        </div>
-      );
+      avatar = <Avatar size="lg" icon={<GroupChatSvg />} />;
       break;
     case DialogType.private:
-      avatar = dialogAvatarUrl ? (
-        <UserAvatar
-          urlAvatar={dialogAvatarUrl}
-          iconTheme={{ width: '55px', height: '55px' }}
-        />
-      ) : (
-        <div className="dialog-preview-avatar-ellipse">
-          <div className="contents-user">
-            <User
-              color={itemTheme.color}
-              width={itemTheme.width}
-              height={itemTheme.height}
-            />
-          </div>
-        </div>
-      );
+      avatar = <Avatar size="lg" icon={<UserSvg />} src={dialogAvatarUrl} />;
       break;
     default:
-      avatar = (
-        <div className="dialog-preview-avatar-ellipse">
-          <div className="contents-user">
-            <GroupChat
-              color={itemTheme.color}
-              width={itemTheme.width}
-              height={itemTheme.height}
-            />
-          </div>
-        </div>
-      );
+      avatar = <Avatar size="lg" icon={<GroupChatSvg />} />;
       break;
   }
   avatar = dialogAvatar || avatar;
-  const [haveHover, setHaveHover] = React.useState(false);
 
   const getMessageParts = (message: string) => {
     return MessageDTOMapper.getMessageParts(message);
   };
 
   const [fileUrl, setFileUrl] = React.useState('');
+  const [messageContentParts, setMessageContentParts] = React.useState<
+    string[]
+  >([]);
 
   async function getFileForPreview() {
     const messageParts = getMessageParts(previewMessage || '');
+
+    setMessageContentParts(messageParts);
 
     if (
       messageParts &&
@@ -256,9 +196,12 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
               .participantId,
           ]
         : [];
-    const senderUser = await userViewModel.getUserById(participants[0]);
 
-    result = senderUser?.photo || '';
+    if (participants.length > 0) {
+      const senderUser = await userViewModel.getUserById(participants[0]);
+
+      result = senderUser?.photo || '';
+    }
 
     return result;
   };
@@ -295,35 +238,30 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
     return fileName;
   };
 
-  const getPreviewMessage = (message: string): JSX.Element => {
-    const messageParts = getMessageParts(message);
+  const getPreviewMessage = (message: string): JSX.Element | string => {
+    if (messageContentParts && messageContentParts.length > 0) {
+      const [, fileName, , type] = messageContentParts;
 
-    if (messageParts && messageParts.length > 0) {
-      const fileName: string = messageParts[1];
-
-      const result: JSX.Element = (
-        <div className="dialog-item-preview-text">{message}</div>
-      );
-
-      if (messageParts[3].includes('audio')) {
-        return <PreviewAudioFile fileName={trimFileName(fileName)} />;
-      }
-      if (messageParts[3].includes('video')) {
-        return <PreviewVideoFile fileName={trimFileName(fileName)} />;
-      }
-      if (messageParts[3].includes('image')) {
+      if (type.includes('audio')) {
         return (
-          <PreviewImageFile
-            fileName={trimFileName(fileName)}
-            imgUrl={fileUrl}
-          />
+          <PreviewFileMessage type="audio" name={trimFileName(fileName)} />
+        );
+      }
+      if (type.includes('video')) {
+        return (
+          <PreviewFileMessage type="video" name={trimFileName(fileName)} />
+        );
+      }
+      if (type.includes('image')) {
+        return (
+          <PreviewFileMessage name={trimFileName(fileName)} src={fileUrl} />
         );
       }
       if (fileName.length > 0 && fileName.includes('.')) {
-        return <PreviewDefaultFile fileName={trimFileName(fileName)} />;
+        return <PreviewFileMessage name={trimFileName(fileName)} />;
       }
 
-      return result;
+      return message;
     }
 
     if (message.includes(MessageDTOMapper.FORWARD_MESSAGE_PREFIX)) {
@@ -333,129 +271,45 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
       return <div>Replied Message</div>;
     }
 
-    return (
-      <div>
-        {message.split(' ').length >= 1 && message.split(' ')[0].length < 23
-          ? message
-          : `${message.substring(0, 25)} ...`}
-      </div>
-    );
-  };
-
-  const LONG_TAP_DURATION = 2000; // in milliseconds
-  const VERY_LONG_TAP_DURATION = 3800; // in milliseconds
-
-  const [touchDuration, setTouchDuration] = useState(0);
-  let touchTimer: NodeJS.Timeout | null = null;
-
-  const handleTouchStart = () => {
-    // Если предыдущий таймер еще активен, отменяем его
-    if (touchTimer !== null) {
-      clearTimeout(touchTimer);
-    }
-
-    // Запуск нового таймера
-    touchTimer = setTimeout(() => {
-      setTouchDuration(Date.now());
-    }, VERY_LONG_TAP_DURATION);
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleTouchEndOrCancel = (event: React.TouchEvent) => {
-    // Если таймер был установлен, отменяем его
-    if (touchTimer !== null) {
-      clearTimeout(touchTimer);
-
-      if (Date.now() - touchDuration > VERY_LONG_TAP_DURATION) {
-        console.log('Very long tap detected');
-        // Call context menu here
-      } else if (Date.now() - touchDuration > LONG_TAP_DURATION) {
-        console.log('Long tap detected');
-        // Select the element here
-        if (dialogViewModel && dialogViewModel.itemTouchActionHandler) {
-          const it = dialogViewModel?.item;
-
-          dialogViewModel.itemTouchActionHandler(it);
-        }
-      } else {
-        console.log('Short tap detected');
-        // Do something for short taps here
-      }
-
-      // Reset touchDuration
-      setTouchDuration(0);
-
-      // Prevent unwanted click events after touch ends
-      // event.preventDefault();
-    }
+    return message;
   };
 
   return (
-    <div
-      className="dialog-preview-container"
-      style={
-        haveHover
-          ? {
-              background: 'var(--divider)',
-            }
-          : {}
+    <DialogItemPreview
+      active={theme?.selected}
+      avatar={avatar}
+      title={title || ''}
+      date={message_date_time_sent || ''}
+      lastMessage={getPreviewMessage(previewMessage || '')}
+      badge={
+        unreadMessageCount && unreadMessageCount > 0 ? (
+          <Badge count={unreadMessageCount} mute={false} limit={9} />
+        ) : undefined
       }
-      onMouseEnter={() => setHaveHover(true)}
-      onMouseLeave={() => setHaveHover(false)}
-    >
-      <div className="dialog-preview-container-left">
-        <div
-          className="dialog-preview"
-          onClick={() => {
-            console.log('CLICK detected in PreviewDialog');
-            if (dialogViewModel && dialogViewModel.itemClickActionHandler) {
-              const it = dialogViewModel?.item;
-
-              dialogViewModel.itemClickActionHandler(it);
+      contextMenu={
+        <Dropdown
+          options={[
+            {
+              value: 'Leave',
+              label: 'Leave',
+            },
+          ]}
+          onSelect={(value: string) => {
+            if (value === 'Leave') {
+              onLeaveDialog(dialogViewModel?.entity as DialogEntity);
             }
           }}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEndOrCancel}
-          onTouchCancel={handleTouchEndOrCancel}
+          placement="left"
         >
-          <div className="dialog-preview-avatar">{avatar}</div>
-          <div className="dialog-preview-text">
-            <div className="dialog-preview-text-subtitle">
-              <div className="dialog-preview-text-subtitle-caption-name">
-                {title}
-              </div>
-              <div className="dialog-preview-text-subtitle-caption2-time">
-                {message_date_time_sent}
-              </div>
-            </div>
-            <div className="dialog-preview-text-subtitle-message">
-              <div className="dialog-preview-text-subtitle-text">
-                {getPreviewMessage(previewMessage || '')}
-              </div>
-              {unreadMessageCount! > 0 && (
-                <div className="dialog-preview-text-subtitle-message-badge">
-                  <div className="dialog-preview-text-subtitle-message-badge-v">
-                    {unreadMessageCount}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="dialog-preview-container-right">
-        <div className="dialog-preview-icon-close">
-          <PreviewDialogContextMenu
-            dialog={dialogViewModel?.entity as DialogEntity}
-            // onLeave={() => console.log('call leave dialog')}
-            onLeave={() =>
-              onLeaveDialog(dialogViewModel?.entity as DialogEntity)
-            }
-            enableLeaveDialog
-          />
-        </div>
-      </div>
-    </div>
+          <MoreSvg />
+        </Dropdown>
+      }
+      onClick={() => {
+        if (dialogViewModel && dialogViewModel.itemClickActionHandler) {
+          dialogViewModel.itemClickActionHandler(dialogViewModel?.item);
+        }
+      }}
+    />
   );
 };
 

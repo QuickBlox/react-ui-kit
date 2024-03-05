@@ -61,11 +61,6 @@ export class SubscriptionPerformer<TArg> implements ISubscribable<TArg> {
     typeEvent: string = this.EVENT_TYPE,
     nameEvent: string = this.EVENT_NAME,
   ): void {
-    // todo artik changed 28.12.2023
-    // console.log(
-    //   `have subscribe SubscriptionPerformer from event ${typeEvent}: `,
-    //   callBack,
-    // );
     if (this.onEventByTypeSubscribers[typeEvent] === undefined) {
       this.onEventByTypeSubscribers[typeEvent] = {};
     }
@@ -116,7 +111,6 @@ export class SubscriptionPerformer<TArg> implements ISubscribable<TArg> {
               // eslint-disable-next-line @typescript-eslint/no-unused-vars
               const currentEventName = value[0];
 
-              // console.log('call for event: ', currentEventName); //todo artik changed 28.12.2023
               value[1](arg);
             }
           },

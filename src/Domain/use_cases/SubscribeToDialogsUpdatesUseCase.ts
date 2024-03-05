@@ -13,7 +13,6 @@ export class SubscribeToDialogsUpdatesUseCase extends BaseUseCase<
 
   private dialogs: Array<DialogEntity> = [];
 
-  // todo: delete synUseCase: BaseUseCase<boolean>, use only dialogRepository
   constructor(dialogRepository: DialogsRepository) {
     console.log('CONSTRUCTOR SubscribeToDialogsUpdatesUseCase');
     super();

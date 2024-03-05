@@ -46,26 +46,6 @@ const ErrorComponent: React.FC<ErrorComponentProps> = ({
         </div>
       </ColumnContainer>
     </div>
-    // <div className="error-container-wrapper">
-    //   <div className="error-container">
-    //     <div className="error-container__error-icon">
-    //       {theme ? <Error color={theme?.color} /> : <Error />}
-    //     </div>
-    //     <div className="error-container__error-message">{title}</div>
-    //     <div className="error-container--error-action">
-    //       <div
-    //         className="error-container--error-action__refresh-icon"
-    //         onClick={onClick}
-    //         onTouchStart={onTouch}
-    //       >
-    //         <Refresh />
-    //       </div>
-    //       <div className="error-container--error-action__refresh-text">
-    //         Retry
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
   );
 };
 

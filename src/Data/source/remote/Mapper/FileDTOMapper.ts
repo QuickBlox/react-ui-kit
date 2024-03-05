@@ -183,12 +183,6 @@ export class FileDTOMapper implements IDTOMapper {
 
         return name !== undefined && name !== null && name.length > 0;
       },
-      // TODO: public
-      // public(v: unknown): v is QBContentObject['public'] {
-      //   const { public } = v as QBContentObject;
-      //
-      //   return public !== undefined && public !== null;
-      // },
       size(v: unknown): v is QBContentObject['size'] {
         const { size } = v as QBContentObject;
 

@@ -1,0 +1,51 @@
+@import '../../themes/styles/mixins';
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @include applyBorderBox;
+
+  &__text {
+    margin: 16px 0px;
+
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.15px;
+    color: var(--caption);
+    text-align: center;
+  }
+
+  &__icon {
+    width: 52px;
+    height: 52px;
+
+    fill: var(--caption);
+  }
+
+  &__retry {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px 4px 8px;
+
+    fill: #3978fc;
+    color: #3978fc;
+
+    font-family: 'Roboto';
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 16px;
+    letter-spacing: 0.4px;
+  }
+
+  &__retry-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+
+    cursor: pointer;
+  }
+}

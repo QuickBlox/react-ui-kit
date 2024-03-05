@@ -28,19 +28,13 @@ export class GetAllDialogsUseCaseWithMock
         return await this.dialogRepository.saveDialogToLocal(entity);
       }),
     );
-    // fromRemote.forEach((entity) => {
-    //   this.dialogRepository.saveDialogToLocal(entity);
-    //   console.log('store item to local: ', JSON.stringify(entity));
-    // });
 
     const dialogs: Array<DialogEntity> =
       await this.dialogRepository.getDialogsFromLocal(this.pagination);
 
     return {
-      // PaginatedList: fromRemote.PaginatedList,
       ResultData: dialogs,
       CurrentPagination: fromRemote.CurrentPagination,
     };
-    //  return this.dialogRepository.getDialogsFromLocal(this.pagination);
   }
 }

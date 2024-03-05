@@ -1,0 +1,90 @@
+.message-caption {
+
+  &__user {
+    padding: 0px 16px 0px 16px;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    position: relative;
+
+    &__caption {
+      display: flex;
+      flex-direction: row;
+      gap: 2px;
+      align-items: center;
+      justify-content: flex-start;
+      flex-shrink: 0;
+      position: relative;
+
+      &__name {
+        color: var(--secondary-text, #636d78);
+        text-align: left;
+        font: var(--label-label-medium);
+        position: relative;
+      }
+    }
+  }
+
+  &__forward-reply {
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+    align-items: center;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    position: relative;
+
+    &--reply {
+      width: 16px;
+      height: 16px;
+      align-self: stretch;
+      flex: 1;
+      position: relative;
+      overflow: visible;
+      fill: var(--tertiary-elements, #636d78);
+    }
+
+    &--forward {
+      width: 16px;
+      height: 16px;
+      align-self: stretch;
+      flex: 1;
+      position: relative;
+      overflow: visible;
+      fill: var(--tertiary-elements, #636d78);
+    }
+
+    &__icon {
+      border-radius: 4px;
+      display: flex;
+      flex-direction: row;
+      gap: 0px;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      position: relative;
+
+      &--filled {
+        align-self: stretch;
+        flex: 1;
+        height: auto;
+        position: relative;
+        overflow: visible;
+        fill: var(--tertiary-elements, #636d78);
+      }
+    }
+
+    &__from {
+      color: var(--tertiary-elements, #636d78);
+      text-align: left;
+      font: var(--label-label-medium);
+      position: relative;
+    }
+  }
+
+}

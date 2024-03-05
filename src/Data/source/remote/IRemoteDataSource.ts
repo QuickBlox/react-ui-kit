@@ -8,7 +8,7 @@ import { RemoteFileDTO } from '../../dto/file/RemoteFileDTO';
 import { Pagination } from '../../../Domain/repository/Pagination';
 import { CallBackFunction } from '../../../Domain/use_cases/base/IUseCase';
 import { NotificationTypes } from '../../../Domain/entity/NotificationTypes';
-// todo list of all actions
+// todo list of all actions - for what we need to create tests
 /*
  0!!! не реализованы эксепшены для createDialog RemouteDataSource и
  и нет обрадотки эксепшенов для DTO и Mapper

@@ -28,10 +28,8 @@ export class LocalMessageDTO {
 
   public attachments: ChatMessageAttachmentEntity[];
 
-  // TODO: check notification_type
   public notification_type?: string;
 
-  // TODO: check markable
   public markable?: string;
 
   constructor() {

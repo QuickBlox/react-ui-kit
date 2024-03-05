@@ -1,6 +1,7 @@
 import './LoaderComponent.scss';
-import Loader from '../../svgs/Icons/Status/Loader';
+// import Loader from '../../svgs/Icons/Status/Loader';
 import { IconTheme } from '../../svgs/Icons/IconsCommonTypes';
+import { LoaderSvg } from '../../../../icons';
 
 export default function LoaderComponent(
   theme: IconTheme | undefined = undefined,
@@ -28,13 +29,15 @@ export default function LoaderComponent(
   return (
     <div style={loaderStyles} className={loaderClasses}>
       {theme ? (
-        <Loader
-          color={theme?.color}
-          width={theme?.width}
-          height={theme?.height}
-        />
+        <LoaderSvg className="loader" />
       ) : (
-        <Loader />
+        // <Loader
+        //   color={theme?.color}
+        //   width={theme?.width}
+        //   height={theme?.height}
+        // />
+        // <Loader />
+        <LoaderSvg className="loader" />
       )}
     </div>
   );

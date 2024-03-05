@@ -6,11 +6,8 @@ export interface MessageEntity {
   id: string;
   dialogId: string;
   dialogType?: DialogType;
-  // TODO: check ChatMessageAttachmentEntity
   attachments?: ChatMessageAttachmentEntity[];
-  // TODO: check notification_type
   notification_type?: string;
-  // TODO: check markable
   markable?: string;
   created_at: string;
   date_sent: number;

@@ -2,18 +2,14 @@ import React, { useEffect } from 'react';
 import './DialogInfo.scss';
 import ColumnContainer from '../../components/containers/ColumnContainer/ColumnContainer';
 import { DialogEntity } from '../../../Domain/entity/DialogEntity';
-import Close from '../../components/UI/svgs/Icons/Navigation/Close';
 import GroupChat from '../../components/UI/svgs/Icons/Contents/GroupChat';
 import UsersList from './UsersList/UsersList';
-import ActiveSvg from '../../components/UI/svgs/ActiveSvg/ActiveSvg';
 import {
   EditDialogParams,
   FunctionTypeBooleanToVoid,
+  FunctionTypeDialogEntityToVoid,
   FunctionTypeVoidToVoid,
 } from '../../../CommonTypes/BaseViewModel';
-import Leave from '../../components/UI/svgs/Icons/Navigation/Leave';
-import Next from '../../components/UI/svgs/Icons/Navigation/Next';
-import Down from '../../components/UI/svgs/Icons/Navigation/Down';
 import { DialogType } from '../../../Domain/entity/DialogTypes';
 import PublicChannel from '../../components/UI/svgs/Icons/Contents/PublicChannel';
 import User from '../../components/UI/svgs/Icons/Contents/User';
@@ -31,18 +27,20 @@ import MainButton, {
 } from '../../components/UI/Buttons/MainButton/MainButton';
 import useQbInitializedDataContext from '../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
 import UiKitTheme from '../../themes/UiKitTheme';
-import LeaveDialogFlow from '../Flow/LeaveDialogFlow/LeaveDialogFlow';
 import { UserEntity } from '../../../Domain/entity/UserEntity';
 import { useMobileLayout } from '../../components/containers/SectionList/hooks';
 import useUsersListViewModel from './UsersList/useUsersListViewModel';
 import { PrivateDialogEntity } from '../../../Domain/entity/PrivateDialogEntity';
+import Header from '../../ui-components/Header/Header';
+import { CloseSvg, GroupChatSvg, LeaveSvg } from '../../icons';
+import { Badge, SettingsItem } from '../../ui-components';
 
 type HeaderDialogsProps = {
   dialog: DialogEntity;
   dialogViewModel: DialogListViewModel;
   onCloseDialogInformationHandler: FunctionTypeVoidToVoid;
+  onLeaveDialog: FunctionTypeDialogEntityToVoid;
   onShowAllMemberClick: FunctionTypeBooleanToVoid;
-  showMembersDialogInitValue?: boolean;
   users: UserEntity[];
   theme?: UiKitTheme;
   subHeaderContent?: React.ReactNode;
@@ -54,8 +52,8 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
   dialog,
   dialogViewModel,
   onCloseDialogInformationHandler,
+  onLeaveDialog,
   onShowAllMemberClick,
-  showMembersDialogInitValue = false,
   users,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   theme = undefined,
@@ -68,35 +66,23 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId.toString();
   const { handleModal } = React.useContext(ModalContext);
-  const [showMembersDialog, setShowMembersDialog] = React.useState(
-    showMembersDialogInitValue,
-  );
   const [isMobile] = useMobileLayout();
 
-  useEffect(() => {
-    setShowMembersDialog(showMembersDialogInitValue);
-  }, [showMembersDialogInitValue]);
-
-  // const searchDialogHandler = () => {
-  //   console.log('searchDialogHandler');
-  // };
   const closeModal = () => {
     handleModal(false, '', '', false, false);
   };
   const leaveDialogHandler = () => {
-    handleModal(
-      true,
-      <LeaveDialogFlow
-        dialog={(dialogViewModel?.entity || dialog) as GroupDialogEntity}
-        dialogsViewModel={dialogViewModel}
-      />,
-      'Leave dialog?',
-      false,
-      true,
-    );
-  };
-  const showMembersDialogHandler = () => {
-    setShowMembersDialog(!showMembersDialog);
+    // handleModal(
+    //   true,
+    //   <LeaveDialogFlow
+    //     dialog={(dialogViewModel?.entity || dialog) as GroupDialogEntity}
+    //     dialogsViewModel={dialogViewModel}
+    //   />,
+    //   'Leave dialog?',
+    //   false,
+    //   true,
+    // );
+    onLeaveDialog((dialogViewModel?.entity || dialog) as GroupDialogEntity);
   };
   const userViewModel = useUsersListViewModel(dialog);
   const [dialogAvatarUrl, setDialogAvatarUrl] = React.useState('');
@@ -286,20 +272,89 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
   const useSubContent = subHeaderContent || false;
   const useUpContent = upHeaderContent || false;
 
+  const applyInviteUsersHandler = (
+    usersForInvite: number[],
+    usersForRemove: number[],
+  ) => {
+    const alreadyPresents = PublicDialogEntity.getParticipants(
+      dialogViewModel?.entity || dialog,
+    );
+    const newParticipants = usersForInvite.filter(
+      (item) => alreadyPresents.indexOf(item) < 0,
+    );
+
+    if (newParticipants.length > 0) {
+      const dialogForUpdate: GroupDialogEntity = {
+        ...(dialogViewModel?.entity || (dialog as GroupDialogEntity)),
+        participantIds: (
+          (dialogViewModel?.entity || dialog) as GroupDialogEntity
+        ).participantIds,
+        newParticipantIds: newParticipants,
+        photo: '',
+        name: '',
+      };
+
+      dialogViewModel
+        .updateDialog(dialogForUpdate)
+        // eslint-disable-next-line promise/always-return,@typescript-eslint/no-unused-vars
+        .then((data) => {
+          closeModal();
+        })
+        .catch((e) => {
+          console.log('Exception: ', e);
+        });
+    }
+
+    if (usersForRemove.length > 0) {
+      const dialogForUpdate: GroupDialogEntity = {
+        ...((dialogViewModel?.entity || dialog) as GroupDialogEntity),
+        photo: '',
+        name: '',
+        participantsToRemoveIds: usersForRemove,
+      };
+
+      dialogViewModel
+        .removeMembers(dialogForUpdate)
+        // eslint-disable-next-line promise/always-return,@typescript-eslint/no-unused-vars
+        .then((data) => {
+          closeModal();
+        })
+        .catch((e) => {
+          console.log('Exception: ', e);
+        });
+    }
+  };
+
+  const handleToggleModal = () =>
+    handleModal(
+      true,
+      <InviteMembers
+        participants={PublicDialogEntity.getParticipants(
+          dialogViewModel?.entity || dialog,
+        )}
+        applyInviteUsersHandler={applyInviteUsersHandler}
+        cancelInviteMembersHandler={() => {
+          closeModal();
+        }}
+        typeAddEditDialog={TypeOpenDialog.edit}
+        typeDialog={dialog.type}
+        idOwnerDialog={dialog.ownerId}
+      />,
+      'Edit dialog',
+      false,
+      false,
+    );
+
   return (
     <div style={{ ...rootStyles }} className="dialog-information-container">
       <ColumnContainer>
         {useUpContent && upHeaderContent}
-        <div className="header-dialog-info">
-          <div className="header-dialog-info-headline">Dialog information</div>
-          <div className="header-dialog-info-icon">
-            <ActiveSvg
-              content={<Close applyZoom color="var(--secondary-elements)" />}
-              onClick={onCloseDialogInformationHandler}
-            />
-          </div>
-        </div>
-
+        <Header title="Dialog information" className="header-dialog-info">
+          <CloseSvg
+            onClick={onCloseDialogInformationHandler}
+            className="header-dialog-info-icon"
+          />
+        </Header>
         {useSubContent && subHeaderContent}
 
         <div className="dialog-information-profile">
@@ -352,222 +407,46 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
             ) : null}
           </div>
         </div>
-        {/* <div className="dialog-info-action-wrapper-settings"> */}
-        {/*  <div className="dialog-info-action-wrapper-settings-icon"> */}
-        {/*    <div className="dialog-info-action-wrapper-settings-contents"> */}
-        {/*      <NotifyOn width="24" height="24" applyZoom /> */}
-        {/*    </div> */}
-        {/*  </div> */}
-        {/*  <div className="dialog-info-action-wrapper-settings-subtitle"> */}
-        {/*    Notifications */}
-        {/*  </div> */}
-        {/*  <SwitchButton */}
-        {/*    clickHandler={() => { */}
-        {/*      console.log('clicked SwitchButton Notifications...'); */}
-        {/*    }} */}
-        {/*  /> */}
-        {/* </div> */}
         {dialog.type !== DialogType.private ? (
-          <div>
-            <div className="dialog-info-action-wrapper-settings">
-              <div className="dialog-info-action-wrapper-settings-icon">
-                <div className="dialog-info-action-wrapper-settings-contents">
-                  <GroupChat
-                    width="24"
-                    height="24"
-                    applyZoom
-                    color="var(--color-icon)"
+          <SettingsItem
+            icon={<GroupChatSvg />}
+            title="Members"
+            rightSection={<Badge mute count={users.length} limit={100} />}
+            className="dialog-info-members"
+          >
+            <ColumnContainer>
+              {users && users.length > 0 && (
+                <div className="dialog-info-action-wrapper-settings no-padding">
+                  <UsersList
+                    maxHeight={75}
+                    usersFirstPageToView={users}
+                    allUsers={users}
+                    usersInDialogCount={users.length}
                   />
                 </div>
+              )}
+              <div className="dialog-info-action-wrapper-settings">
+                <MainButton
+                  title="Invite members"
+                  clickHandler={handleToggleModal}
+                  typeButton={TypeButton.outlined}
+                  disabled={dialog.ownerId !== currentUserId}
+                />
+                <MainButton
+                  title="See all members"
+                  typeButton={TypeButton.outlined}
+                  clickHandler={() => onShowAllMemberClick(true)}
+                />
               </div>
-              <div className="dialog-info-action-wrapper-settings-subtitle">
-                Members
-              </div>
-              <div className="dialog-info-action-wrapper-settings-right">
-                <div className="dialog-info-action-wrapper-settings-right-badge">
-                  <div className="dialog-info-action-wrapper-settings-right-badge-title">
-                    {users.length}
-                  </div>
-                </div>
-                <div className="dialog-info-action-wrapper-settings-icon">
-                  <ActiveSvg
-                    content={
-                      showMembersDialog ? (
-                        <Down
-                          applyZoom
-                          width="24"
-                          height="24"
-                          color="var(--secondary-elements)"
-                        />
-                      ) : (
-                        <Next
-                          applyZoom
-                          width="24"
-                          height="24"
-                          color="var(--secondary-elements)"
-                        />
-                      )
-                    }
-                    onClick={showMembersDialogHandler}
-                    // onTouch={showMembersDialogHandler} //todo artik 29.12.2023 don't need for mobile
-                  />
-                </div>
-              </div>
-            </div>
-            <div>
-              {showMembersDialog ? (
-                <ColumnContainer>
-                  {/* {userViewModel?.loading && ( */}
-                  {/*  <div */}
-                  {/*    style={{ */}
-                  {/*      height: '44px', */}
-                  {/*      width: '44px', */}
-                  {/*    }} */}
-                  {/*  > */}
-                  {/*    <LoaderComponent width="44" height="44" /> */}
-                  {/*  </div> */}
-                  {/* )} */}
-                  {/* {userViewModel?.error && ( */}
-                  {/*  <ErrorComponent */}
-                  {/*    title={userViewModel?.error} */}
-                  {/*    ClickActionHandler={() => { */}
-                  {/*      console.log('call retry after error...'); */}
-                  {/*    }} */}
-                  {/*  /> */}
-                  {/* )} */}
-                  {users && users.length > 0 && (
-                    <div className="dialog-info-action-wrapper-settings no-padding">
-                      <UsersList
-                        maxHeight={75}
-                        usersFirstPageToView={users}
-                        allUsers={users}
-                        usersInDialogCount={users.length}
-                      />
-                    </div>
-                  )}
-                  <div className="dialog-info-action-wrapper-settings">
-                    <MainButton
-                      title="Invite members"
-                      clickHandler={() => {
-                        handleModal(
-                          true,
-                          <InviteMembers
-                            participants={PublicDialogEntity.getParticipants(
-                              dialogViewModel?.entity || dialog,
-                            )}
-                            applyInviteUsersHandler={(
-                              usersForInvite,
-                              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                              usersForRemove,
-                            ) => {
-                              const alreadyPresents =
-                                PublicDialogEntity.getParticipants(
-                                  dialogViewModel?.entity || dialog,
-                                );
-                              const newParticipants = usersForInvite.filter(
-                                (item) => alreadyPresents.indexOf(item) < 0,
-                              );
-
-                              if (newParticipants.length > 0) {
-                                const dialogForUpdate: GroupDialogEntity = {
-                                  ...(dialogViewModel?.entity ||
-                                    (dialog as GroupDialogEntity)),
-                                  participantIds: (
-                                    (dialogViewModel?.entity ||
-                                      dialog) as GroupDialogEntity
-                                  ).participantIds,
-                                  newParticipantIds: newParticipants,
-                                  photo: '',
-                                  name: '',
-                                };
-
-                                dialogViewModel
-                                  .updateDialog(dialogForUpdate)
-                                  // eslint-disable-next-line promise/always-return,@typescript-eslint/no-unused-vars
-                                  .then((data) => {
-                                    closeModal();
-                                  })
-                                  .catch((e) => {
-                                    console.log('Exception: ', e);
-                                  });
-                              }
-
-                              if (usersForRemove.length > 0) {
-                                const dialogForUpdate: GroupDialogEntity = {
-                                  ...((dialogViewModel?.entity ||
-                                    dialog) as GroupDialogEntity),
-                                  photo: '',
-                                  name: '',
-                                  participantsToRemoveIds: usersForRemove,
-                                };
-
-                                dialogViewModel
-                                  .removeMembers(dialogForUpdate)
-                                  // eslint-disable-next-line promise/always-return,@typescript-eslint/no-unused-vars
-                                  .then((data) => {
-                                    closeModal();
-                                  })
-                                  .catch((e) => {
-                                    console.log('Exception: ', e);
-                                  });
-                              }
-                            }}
-                            cancelInviteMembersHandler={() => {
-                              closeModal();
-                            }}
-                            typeAddEditDialog={TypeOpenDialog.edit}
-                            typeDialog={dialog.type}
-                            idOwnerDialog={dialog.ownerId}
-                          />,
-                          'Edit dialog',
-                          false,
-                          false,
-                        );
-                      }}
-                      typeButton={TypeButton.outlined}
-                      disabled={dialog.ownerId !== currentUserId}
-                    />
-                    <MainButton
-                      title="See all members"
-                      typeButton={TypeButton.outlined}
-                      clickHandler={() => onShowAllMemberClick(true)}
-                    />
-                  </div>
-                </ColumnContainer>
-              ) : null}
-            </div>
-          </div>
+            </ColumnContainer>
+          </SettingsItem>
         ) : null}
-        {/* <div className="dialog-info-action-wrapper-settings"> */}
-        {/*  <div className="dialog-info-action-wrapper-settings-icon"> */}
-        {/*    <ActiveSvg */}
-        {/*      content={<Search width="24" height="24" applyZoom />} */}
-        {/*      onClick={() => searchDialogHandler()} */}
-        {/*      onTouch={() => searchDialogHandler()} */}
-        {/*    /> */}
-        {/*  </div> */}
-        {/*  <div className="dialog-info-action-wrapper-settings-subtitle"> */}
-        {/*    Search in dialog */}
-        {/*  </div> */}
-        {/* </div> */}
-        <div className="dialog-info-action-wrapper-settings">
-          <div className="dialog-info-action-wrapper-settings-icon">
-            <ActiveSvg
-              content={
-                <Leave width="24" height="24" applyZoom color="var(--error)" />
-              }
-              onClick={() => {
-                leaveDialogHandler();
-              }}
-              onTouch={() => {
-                leaveDialogHandler();
-              }}
-            />
-          </div>
-          <div className="dialog-info-action-wrapper-settings-subtitle">
-            Leave dialog
-          </div>
-        </div>
+        <SettingsItem
+          icon={<LeaveSvg />}
+          title="Leave dialog"
+          onClick={leaveDialogHandler}
+          className="dialog-info-leave"
+        />
       </ColumnContainer>
     </div>
   );

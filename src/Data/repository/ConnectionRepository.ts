@@ -77,16 +77,9 @@ export default class ConnectionRepository extends SubscriptionPerformer<boolean>
   }
 
   public keepALiveChatConnection() {
-    console.log('start keep alive');
     if (this.timerId === undefined) {
-      console.log('set timer keep alive');
       this.timerId = setInterval(() => {
-        // todo artik changed 28.12.2023
-        // console.log(
-        //   `!!!--have ping result after ${ConnectionRepository.PING_ALIVE_INTERVAL}--!!!`,
-        // );
         // eslint-disable-next-line promise/always-return
-        // todo: cause of recycle v1
         this.ChatServerPing()
           // eslint-disable-next-line promise/always-return
           .then((result) => {
@@ -97,7 +90,6 @@ export default class ConnectionRepository extends SubscriptionPerformer<boolean>
           });
       }, ConnectionRepository.PING_ALIVE_INTERVAL);
     }
-    console.log('end keep alive');
   }
 
   public stopKeepAlive() {
@@ -108,7 +100,6 @@ export default class ConnectionRepository extends SubscriptionPerformer<boolean>
 
   // eslint-disable-next-line class-methods-use-this
   protected async ChatServerPing(): Promise<boolean> {
-    // console.log('ping ChatServerPing'); //todo artik changed 28.12.2023
     const pingChat = (): Promise<string> => {
       return new Promise<string>((resolve, reject) => {
         try {
@@ -117,7 +108,6 @@ export default class ConnectionRepository extends SubscriptionPerformer<boolean>
               console.log('ping failed: ', stringifyError(error));
               resolve('failed');
             } else {
-              // console.log('ping connected'); //todo artik changed 28.12.2023
               resolve('connected');
             }
           });
@@ -137,8 +127,6 @@ export default class ConnectionRepository extends SubscriptionPerformer<boolean>
 
     const raceResult = await Promise.race([pingChat(), waitingFor()]);
     const result = raceResult === 'connected';
-
-    // console.log('ping ', raceResult, ' operation result is ', result); //todo artik changed 28.12.2023
 
     return Promise.resolve(result);
   }

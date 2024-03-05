@@ -1,0 +1,6 @@
+@mixin applyBorderBox {
+  &,
+  * {
+    box-sizing: border-box;
+  }
+}

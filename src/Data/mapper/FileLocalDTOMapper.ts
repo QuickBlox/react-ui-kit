@@ -108,42 +108,12 @@ export class FileLocalDTOMapper implements IMapper {
       },
     };
 
-    // if (!fileEntityValidator.id(fileEntity))
-    //   throw new MapperDTOException(
-    //     INCORRECT_DATA_MAPPER_DTO_EXCEPTION_MESSAGE,
-    //     INCORRECT_DATA_MAPPER_DTO_EXCEPTION_CODE,
-    //     'field {id} does not exists or empty',
-    //   );
-    // if (!fileEntityValidator.name(fileEntity))
-    //   throw new MapperDTOException(
-    //     INCORRECT_DATA_MAPPER_DTO_EXCEPTION_MESSAGE,
-    //     INCORRECT_DATA_MAPPER_DTO_EXCEPTION_CODE,
-    //     'field {name} does not exist or empty',
-    //   );
-    // if (!fileEntityValidator.size(fileEntity))
-    //   throw new MapperDTOException(
-    //     INCORRECT_DATA_MAPPER_DTO_EXCEPTION_MESSAGE,
-    //     INCORRECT_DATA_MAPPER_DTO_EXCEPTION_CODE,
-    //     'field {size} does not exists or empty',
-    //   );
-    // if (!fileEntityValidator.type(fileEntity))
-    //   throw new MapperDTOException(
-    //     INCORRECT_DATA_MAPPER_DTO_EXCEPTION_MESSAGE,
-    //     INCORRECT_DATA_MAPPER_DTO_EXCEPTION_CODE,
-    //     'field {type} does not exist or empty',
-    //   );
     if (!fileEntityValidator.uid(fileEntity))
       throw new MapperDTOException(
         INCORRECT_DATA_MAPPER_DTO_EXCEPTION_MESSAGE,
         INCORRECT_DATA_MAPPER_DTO_EXCEPTION_CODE,
         'field {uid} does not exists or empty',
       );
-    // if (!fileEntityValidator.url(fileEntity))
-    //   throw new MapperDTOException(
-    //     INCORRECT_DATA_MAPPER_DTO_EXCEPTION_MESSAGE,
-    //     INCORRECT_DATA_MAPPER_DTO_EXCEPTION_CODE,
-    //     'field {url} does not exist or empty',
-    //   );
 
     return Promise.resolve();
   }
@@ -240,13 +210,6 @@ export class FileLocalDTOMapper implements IMapper {
         INCORRECT_DATA_MAPPER_DTO_EXCEPTION_CODE,
         'field {uid} does not exist or empty in DTO',
       );
-
-    // if (!dtoValidator.type(fileDTO))
-    //   throw new MapperDTOException(
-    //     INCORRECT_DATA_MAPPER_DTO_EXCEPTION_MESSAGE,
-    //     INCORRECT_DATA_MAPPER_DTO_EXCEPTION_CODE,
-    //     'field {type} does not exist or empty in DTO',
-    //   );
 
     return Promise.resolve();
   }

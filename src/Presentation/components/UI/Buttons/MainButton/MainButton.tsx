@@ -1,5 +1,5 @@
 import React from 'react';
-import './MainButton.scss';
+import './MainButton.css';
 import { FunctionTypeVoidToVoid } from '../../../../../CommonTypes/BaseViewModel';
 
 export const TypeButton = {

@@ -6,14 +6,6 @@ import { Tone } from './Tone';
 import { IChatMessage } from '../../../../Data/source/AISource';
 import { AIRephraseUseCase } from '../../../../Domain/use_cases/ai/AIRephraseUseCase';
 
-// interface MessageWidgetProps {
-//   servername: string;
-//   api: string;
-//   port: string;
-//   apiKeyOrSessionToken: string;
-//   apiKey: string;
-// }
-
 export default function UseDefaultAIRephraseMessageWidget({
   servername,
   api,

@@ -1,0 +1,22 @@
+.message-item-additional-part {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  position: relative;
+
+  &__loader {
+    width: 24px;
+    height: 24px;
+    fill: var(--main-elements);
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+}

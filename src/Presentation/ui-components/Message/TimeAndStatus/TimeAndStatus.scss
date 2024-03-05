@@ -1,0 +1,54 @@
+.time-status {
+  background: var(--main-background, #ffffff);
+  padding: 0px 8px 8px 16px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: flex-end;
+  justify-content: flex-end;
+  align-self: stretch;
+  flex-shrink: 0;
+  width: 320px;
+  position: relative;
+
+  &__caption {
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+    align-items: center;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    position: relative;
+
+    &__status {
+      width: 13px;
+      height: 13px;
+    }
+  }
+  &__time {
+    color: var(--tertiary-elements, #636d78);
+    text-align: left;
+    font: var(--label-label-small);
+    position: relative;
+    // padding-bottom: 10px;
+  }
+}
+
+.status-message {
+  &--sent {
+    fill: var(--tertiary-elements, #636D78);
+  }
+
+  &--delivered {
+    fill: var(--tertiary-elements, #636D78);
+  }
+
+  &--viewed {
+    fill: var(--main-elements, #3978fc);
+  }
+
+  &--error {
+    fill: var(--error, #FF3B30);
+  }
+}
+

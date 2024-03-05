@@ -29,10 +29,6 @@ export interface ILocalDataSource {
 
   saveUser(user: LocalUserDTO): Promise<boolean>;
 
-  // getUsers(usersIds: Array<number>): Promise<Array<UserEntity>>
-
-  // saveUsers(users: Array<UserEntity>): Promise<boolean>
-
   getMessages(dtoMessages: LocalMessagesDTO): Promise<LocalMessagesDTO>;
 
   saveMessage(dtoMessage: LocalMessageDTO): Promise<boolean>;

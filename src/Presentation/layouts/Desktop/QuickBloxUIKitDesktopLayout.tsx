@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../../Views/Dialog/Dialog.scss';
+import '../../Views/Dialog/DialogHeader/DialogInfoIcon/DialogInfoIcon.scss';
 import { Tone } from 'qb-ai-rephrase/src/Tone';
+import { toast } from 'react-toastify';
 import useQbInitializedDataContext from '../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
 import { DialogEntity } from '../../../Domain/entity/DialogEntity';
 import { DialogListViewModel } from '../../Views/DialogList/DialogListViewModel';
@@ -23,44 +25,40 @@ import { DefaultConfigurations } from '../../../Data/DefaultConfigurations';
 import UseDefaultAIAssistAnswerWidgetWithProxy from '../../Views/Dialog/AIWidgets/UseDefaultAIAssistAnswerWidgetWithProxy';
 import UseDefaultAITranslateWidgetWithProxy from '../../Views/Dialog/AIWidgets/UseDefaultAITranslateWidgetWithProxy';
 import UseDefaultAIRephraseMessageWidgetWithProxy from '../../Views/Dialog/AIWidgets/UseDefaultAIRephraseMessageWidgetWithProxy';
-import DialogHeader from '../../Views/Dialog/DialogHeader/DialogHeader';
 import { DialogType } from '../../../Domain/entity/DialogTypes';
 import { GroupDialogEntity } from '../../../Domain/entity/GroupDialogEntity';
 import { PrivateDialogEntity } from '../../../Domain/entity/PrivateDialogEntity';
-import UserAvatar from '../../Views/EditDialog/UserAvatar/UserAvatar';
-import GroupChat from '../../components/UI/svgs/Icons/Contents/GroupChat';
-import User from '../../components/UI/svgs/Icons/Contents/User';
 import { PublicDialogEntity } from '../../../Domain/entity/PublicDialogEntity';
-import PublicChannel from '../../components/UI/svgs/Icons/Contents/PublicChannel';
-import MessageInput from '../../Views/Dialog/MessageInput/MessageInput';
-import SendIcon from '../../components/UI/svgs/Icons/Actions/Send';
-import AttachmentUploader from '../../Views/Dialog/AttachmentUploader/AttachmentUploader';
-import AttachmentIcon from '../../components/UI/svgs/Icons/Media/Attachment';
-import VoiceMessage from '../../Views/Dialog/VoiceMessage/VoiceMessage';
-import VoiceIcon from '../../components/UI/svgs/Icons/Actions/Voice';
-import VoiceRecordingProgress from '../../Views/Dialog/VoiceRecordingProgress/VoiceRecordingProgress';
-import AIRephraseWidget from '../../Views/Dialog/AIWidgets/AIRephraseWidget/AIRephraseWidget';
 import { DialogViewModel } from '../../Views/Dialog/DialogViewModel';
 import useDialogViewModel from '../../Views/Dialog/useDialogViewModel';
 import { MessageEntity } from '../../../Domain/entity/MessageEntity';
 import { stringifyError } from '../../../utils/parse';
-import Message from '../../Views/Dialog/Message/Message';
-import ReplyMessagePreview from '../../Views/Dialog/ReplyMessagePreview/ReplyMessagePreview';
+import ReplyMessagePreview from '../../ui-components/MessageInput/ReplyMessagePreview/ReplyMessagePreview';
 import ForwardMessageFlow from '../../Views/Dialog/ForwardMessageFlow/ForwardMessageFlow';
 import { ModalContext } from '../../providers/ModalContextProvider/Modal';
 import SectionList from '../../components/containers/SectionList';
 import { SectionItem } from '../../components/containers/SectionList/useComponent';
-import { SystemDateBanner } from '../../Views/Dialog/SystemDateBanner/SystemDateBanner';
-import { formatDate } from '../../../utils/DateTimeFormatter';
 import { useMobileLayout } from '../../components/containers/SectionList/hooks';
-import RenderRightActions from '../../Views/Dialog/DialogHeader/RenderRightActions/RenderRightActions';
-import RenderLeftActions from '../../Views/Dialog/DialogHeader/RenderLeftActions/RenderLeftActions';
 import { MessageDTOMapper } from '../../../Data/source/remote/Mapper/MessageDTOMapper';
-import LeaveDialogFlow from '../../Views/Flow/LeaveDialogFlow/LeaveDialogFlow';
 import MembersList from '../../Views/DialogInfo/MembersList/MembersList';
 import useUsersListViewModel from '../../Views/DialogInfo/UsersList/useUsersListViewModel';
 import { GetUserNameFct } from '../../Views/Dialog/Message/IncomingMessage/IncomingMessage';
 import { UserEntity } from '../../../Domain/entity/UserEntity';
+import Header from '../../ui-components/Header/Header';
+import Avatar from '../../ui-components/Avatar/Avatar';
+import {
+  GroupChatSvg,
+  InformationSvg,
+  PublicChannelSvg,
+  UserSvg,
+} from '../../icons';
+import Button from '../../ui-components/Button/Button';
+import DialogWindow from '../../ui-components/DialogWindow/DialogWindow';
+import MessageInput from '../../ui-components/MessageInput/MessageInput';
+import AIRephraseWidget from '../../Views/Dialog/AIWidgets/AIRephraseWidget/AIRephraseWidget';
+import MessageItem from '../../ui-components/MessageItem/MessageItem';
+import { MessageSeparator } from '../../ui-components';
+import ToastProvider from '../../ui-components/Toast/ToastProvider';
 
 type AIWidgetPlaceHolder = {
   enabled: boolean;
@@ -104,6 +102,8 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userName;
   const userId =
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId;
+  // const currentUserName =
+  //  currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userName;
   const sessionToken =
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.sessionToken;
 
@@ -269,7 +269,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   };
 
   useEffect(() => {
-    const codeVersion = '0.2.8-beta.3';
+    const codeVersion = '0.2.8';
 
     console.log(`React UIKit CODE VERSION IS ${codeVersion}`);
     console.log('TestStage: GET DATA ');
@@ -307,19 +307,19 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     }
   }, [currentContext.InitParams]);
 
-  const getCountDialogMembers = (dialogEntity: DialogEntity): number => {
-    let participants = [];
-
-    if (dialogEntity.type === DialogType.group) {
-      participants = (dialogEntity as GroupDialogEntity).participantIds;
-    } else if (dialogEntity.type === DialogType.private) {
-      participants = [(dialogEntity as PrivateDialogEntity).participantId];
-    } else if (dialogEntity.type === DialogType.public) {
-      participants = [];
-    }
-
-    return participants.length;
-  };
+  // const getCountDialogMembers = (dialogEntity: DialogEntity): number => {
+  //   let participants = [];
+  //
+  //   if (dialogEntity.type === DialogType.group) {
+  //     participants = (dialogEntity as GroupDialogEntity).participantIds;
+  //   } else if (dialogEntity.type === DialogType.private) {
+  //     participants = [(dialogEntity as PrivateDialogEntity).participantId];
+  //   } else if (dialogEntity.type === DialogType.public) {
+  //     participants = [];
+  //   }
+  //
+  //   return participants.length;
+  // };
   const userViewModel = useUsersListViewModel(selectedDialog?.entity);
   const [dialogAvatarUrl, setDialogAvatarUrl] = React.useState('');
   const getUserAvatarByUid = async () => {
@@ -361,79 +361,26 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     if (dialogEntity.type === DialogType.group) {
       const groupDialogEntity = dialogEntity as GroupDialogEntity;
 
-      if (groupDialogEntity.photo) {
-        return (
-          <UserAvatar
-            urlAvatar={groupDialogEntity.photo}
-            iconTheme={{ width: '40px', height: '40px' }}
-          />
-        );
-      }
-
       return (
-        <div className="dh-avatar">
-          <div className="dh-avatar-rectangle" />
-          <div className="dh-avatar-ellipse">
-            <div className="dh-avatar-contents-user">
-              <GroupChat
-                width="24"
-                height="24"
-                applyZoom
-                color="var(--secondary-text)"
-              />
-            </div>
-          </div>
-        </div>
+        <Avatar
+          src={groupDialogEntity.photo || ''}
+          icon={<GroupChatSvg />}
+          size="md"
+        />
       );
     }
     if (dialogEntity.type === DialogType.private) {
-      return dialogAvatarUrl ? (
-        <UserAvatar
-          urlAvatar={dialogAvatarUrl}
-          iconTheme={{ width: '40px', height: '40px' }}
-        />
-      ) : (
-        <div className="dh-avatar">
-          <div className="dh-avatar-rectangle" />
-          <div className="dh-avatar-ellipse">
-            <div className="dh-avatar-contents-user">
-              <User
-                width="24"
-                height="24"
-                applyZoom
-                color="var(--secondary-text)"
-              />
-            </div>
-          </div>
-        </div>
-      );
+      return <Avatar src={dialogAvatarUrl} icon={<UserSvg />} size="md" />;
     }
     if (dialogEntity.type === DialogType.public) {
       const publicDialogEntity = dialogEntity as PublicDialogEntity;
 
-      if (publicDialogEntity.photo) {
-        return (
-          <UserAvatar
-            urlAvatar={publicDialogEntity.photo}
-            iconTheme={{ width: '40px', height: '40px' }}
-          />
-        );
-      }
-
       return (
-        <div className="dh-avatar">
-          <div className="dh-avatar-rectangle" />
-          <div className="dh-avatar-ellipse">
-            <div className="dh-avatar-contents-user">
-              <PublicChannel
-                width="24"
-                height="24"
-                applyZoom
-                color="var(--secondary-text)"
-              />
-            </div>
-          </div>
-        </div>
+        <Avatar
+          src={publicDialogEntity.photo}
+          icon={<PublicChannelSvg />}
+          size="md"
+        />
       );
     }
   };
@@ -476,8 +423,8 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   );
 
   const [warningErrorText, setWarningErrorText] = useState<string>('');
-  const [showErrorToast, setShowErrorToast] = useState<boolean>(false);
-  const [messageErrorToast, setMessageErrorToast] = useState<string>('');
+  // const [showErrorToast, setShowErrorToast] = useState<boolean>(false);
+  // const [messageErrorToast, setMessageErrorToast] = useState<string>('');
 
   const [dialogMessagesCount, setDialogMessageCount] = useState(100);
   const [hasMore, setHasMore] = React.useState(true);
@@ -485,15 +432,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   const [messagesToView, setMessagesToView] = React.useState<MessageEntity[]>(
     [],
   );
-
-  useEffect(() => {
-    if (showErrorToast || messageErrorToast) {
-      setTimeout(() => {
-        setShowErrorToast(false);
-        setMessageErrorToast('');
-      }, 1800);
-    }
-  }, [showErrorToast]);
 
   const [useAudioWidget, setUseAudioWidget] = useState<boolean>(false);
 
@@ -535,21 +473,15 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       .then((opResult: boolean) => {
         // eslint-disable-next-line promise/always-return
         if (opResult) {
-          setShowErrorToast(true);
-          setMessageErrorToast('Message have been replied');
-          // showErrorMessage('Messages have been replied');
+          toast('Message have been replied');
         } else {
-          setShowErrorToast(true);
-          setMessageErrorToast('Message have not been replied');
-          // showErrorMessage('Messages have not been replied');
+          toast('Message have not been replied');
         }
       })
       .catch((reason) => {
         const errorMessage = stringifyError(reason);
 
-        setShowErrorToast(true);
-        setMessageErrorToast(errorMessage);
-        // showErrorMessage(errorMessage);
+        toast(errorMessage);
       })
       .finally(() => {
         setMessageText('');
@@ -580,26 +512,19 @@ const QuickBloxUIKitDesktopLayout: React.FC<
           .then((resultOperation) => {
             // eslint-disable-next-line promise/always-return
             if (!resultOperation) {
-              setShowErrorToast(true);
-              setMessageErrorToast(`Incorrect data`);
-              // showErrorMessage(`Incorrect data`);
+              toast(`Incorrect data`);
             }
           });
       }
     } else if (fileToSend) {
-      setShowErrorToast(true);
-      setMessageErrorToast(
+      toast(
         `file size ${fileToSend?.size} must be less then ${MAXSIZE_FOR_MESSAGE} mb.`,
       );
-      // showErrorMessage(
-      //   `file size ${fileToSend?.size} must be less then ${MAXSIZE_FOR_MESSAGE} mb.`,
-      // );
     }
   }, [fileToSend]);
 
   //  const [isVoiceMessage, setVoiceMessage] = useState(true);
   const getMicrophonePermission = async () => {
-    // if ('MediaRecorder' in window)
     if (window) {
       try {
         const mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -610,17 +535,11 @@ const QuickBloxUIKitDesktopLayout: React.FC<
         setPermission(true);
         setStream(mediaStream);
       } catch (err) {
-        // setWarningErrorText(
-        //   'The MediaRecorder API is not supported in your browser.',
-        // );
         showErrorMessage(
           `The MediaRecorder API throws exception ${stringifyError(err)} .`,
         );
       }
     } else {
-      // setWarningErrorText(
-      //   'The MediaRecorder API is not supported in your browser.',
-      // );
       showErrorMessage(
         'The MediaRecorder API is not supported in your browser.',
       );
@@ -664,13 +583,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     const localAudioChunks: any[] = [];
 
     mediaRecorder.current.ondataavailable = (event) => {
-      // const localAudioChunks: any[] = [];
-
       if (typeof event.data === 'undefined') return;
       if (event.data.size === 0) return;
       localAudioChunks.push(event.data);
-      console.log('voice data');
-      // setAudioChunks(localAudioChunks);
     };
 
     setAudioChunks(localAudioChunks);
@@ -679,7 +594,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const stopRecording = () => {
     if (!mediaRecorder.current) return;
-    // setRecordingStatus('inactive');
     mediaRecorder.current.stop();
 
     mediaRecorder.current.onstop = () => {
@@ -733,11 +647,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       setFileToSend(voiceMessage);
       if (useAudioWidget) {
         setUseAudioWidget(false);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        // AITranslation?.fileToWidget(
-        //   voiceMessage,
-        //   messageEntitiesToIChatMessageCollection(messagesToView),
-        // );
       }
       //
     }
@@ -749,7 +658,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       if (!permission) {
         // eslint-disable-next-line promise/catch-or-return,promise/always-return
         getMicrophonePermission().catch(() => {
-          // setWarningErrorText(`Have no audio.`);
           showErrorMessage(`Have no audio.`);
         });
       } else {
@@ -830,15 +738,12 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   }
   //
   useEffect(() => {
-    console.log('HAVE NEW DIALOG');
-    // messagesViewModel.getMessages(new Pagination());
     messagesViewModel.entity = dialogsViewModel.entity;
     setMessagesToView([]);
     setMessageText('');
   }, [dialogsViewModel.entity]);
 
   useEffect(() => {
-    console.log('HAVE NEW ENTITY');
     if (messagesViewModel.entity) {
       messagesViewModel.getMessages(new Pagination());
     }
@@ -860,14 +765,8 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   }, [messagesViewModel?.loading]);
   //
   function prepareFirstPage(initData: MessageEntity[]) {
-    // const firstPageSize =
-    //   messagesViewModel.messages.length < 47
-    //     ? messagesViewModel.messages.length
-    //     : 47;
-
     const firstPageSize = messagesViewModel.messages.length;
 
-    // for (let i = 0; i < firstPageSize; i += 1) {
     for (let i = firstPageSize - 1; i >= 0; i -= 1) {
       initData.push(messagesViewModel.messages[i]);
     }
@@ -913,10 +812,8 @@ const QuickBloxUIKitDesktopLayout: React.FC<
 
   //
   useEffect(() => {
-    console.log('Messages have changed');
     setDialogMessageCount(messagesViewModel?.messages?.length || 0);
     if (messagesToView?.length === 0 && messagesViewModel.messages.length > 0) {
-      // setDialogMessageCount(messagesViewModel.messages.length);
       const initData: MessageEntity[] = [];
 
       console.log(JSON.stringify(messagesViewModel.messages));
@@ -929,7 +826,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   }, [messagesViewModel.messages]);
   //
   useEffect(() => {
-    console.log('dialogMessagesCount have changed');
     if (messagesViewModel.messages.length - messagesToView.length >= 1) {
       fetchMoreData();
     }
@@ -959,10 +855,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
         currentUserName={userName || ''}
         dialogs={dialogsViewModel.dialogs}
         onSendData={(dialogsForForward, messagesForForward, relatedText) => {
-          // console.log('call send data (Forward),');
-          // console.log('Dialogs: ', dialogsForForward);
-          // console.log('Messages: ', messagesForForward);
-          // console.log('RelatedTex: ', relatedText);
           const forwardingData: ForwardMessagesParams = {
             messagesToForward: messagesForForward,
             targetDialogs: dialogsForForward,
@@ -976,13 +868,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
             .then((opResult: boolean) => {
               // eslint-disable-next-line promise/always-return
               if (opResult) {
-                setShowErrorToast(true);
-                setMessageErrorToast('Message have been forwarded');
-                // showErrorMessage('Messages have been forwarded');
+                toast('Message have been forwarded');
               } else {
-                setShowErrorToast(true);
-                setMessageErrorToast('Message have not been forwarded');
-                // showErrorMessage('Messages have not been forwarded');
+                toast('Message have not been forwarded');
               }
             })
             .catch((reason) => {
@@ -1023,7 +911,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
         message,
       ];
     });
-    // Сортировка каждого массива внутри groupMessages[date]
     Object.keys(groupMessages).forEach((date) => {
       groupMessages[date].sort((a, b) => a.date_sent - b.date_sent);
     });
@@ -1043,8 +930,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     useState<boolean>(false);
   //
   const [isAllMembersShow, setIsAllMembersShow] = React.useState(false);
-
-  const [showMembersDialog, setShowMembersDialog] = React.useState(false);
 
   useEffect(() => {
     if (isMobile) {
@@ -1090,7 +975,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       dialogsViewModel.entity = selectedDialog.entity;
       userViewModel.entity = selectedDialog.entity;
 
-      setShowMembersDialog(false);
       if (isMobile) {
         setShowDialogList(false);
         setShowDialogMessages(true);
@@ -1125,21 +1009,52 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   const workHeight = isMobile
     ? `calc(${height.toString()}px - ${uikitHeightOffset} - 28px)`
     : `calc(100vh - ${uikitHeightOffset} - 28px)`;
-  // const workHeight = `calc(${uikitHeightOffset} - 128px - 16px)`;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const workHeight = `100%`;
 
+  const [dialogToLeave, setDialogToLeave] = useState<DialogEntity>();
   const leaveDialogHandler = (dialog: DialogEntity) => {
-    handleModal(
-      true,
-      <LeaveDialogFlow dialog={dialog} dialogsViewModel={dialogsViewModel} />,
-      'Leave dialog?',
-      false,
-      true,
-    );
+    setDialogToLeave(dialog);
+    // handleModal(
+    //   true,
+    //   <LeaveDialogFlow dialog={dialog} dialogsViewModel={dialogsViewModel} />,
+    //   'Leave dialog?',
+    //   false,
+    //   true,
+    // );
   };
 
-  // eslint-disable-next-line react/prop-types
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleDialogOnClick = () => {
+    if (isOpen) {
+      setDialogToLeave(undefined);
+    }
+    setIsOpen((state) => !state);
+  };
+
+  useEffect(() => {
+    if (dialogToLeave) {
+      handleDialogOnClick();
+    }
+  }, [dialogToLeave]);
+
+  const handleLeaveDialog = () => {
+    if (dialogToLeave) {
+      dialogsViewModel
+        .deleteDialog(dialogToLeave as GroupDialogEntity)
+        .then((result) => {
+          // eslint-disable-next-line promise/always-return
+          if (!result) {
+            toast('Dialog have not been left');
+          }
+          handleDialogOnClick();
+        })
+        .catch((e) => {
+          console.log(e);
+          toast("Can't leave dialog");
+        });
+    }
+  };
+  // eslint-disable-next-line react/prop-types,@typescript-eslint/no-unused-vars
   const defaultGetSenderName: GetUserNameFct = async (props: {
     userId?: number;
     sender?: UserEntity;
@@ -1177,305 +1092,268 @@ const QuickBloxUIKitDesktopLayout: React.FC<
 
     return result;
   };
+  const messagesContainerMobileHeight = showReplyMessage
+    ? `calc(${clientHeight}px - 128px - 64px - 16px)`
+    : `calc(${clientHeight}px - 128px - 16px)`;
+  const messagesContainerHeight = showReplyMessage
+    ? `calc(${clientHeight}px - 128px - 64px)`
+    : `calc(${clientHeight}px - 128px - 1px)`;
 
   return (
-    <div>
-      {/* <div style={{ height: '18px', border: '1px solid red' }}> */}
-      {/*  h:{height},w:{width},ch:{clientHeight},wh:{workHeight} */}
-      {/* </div> */}
-      <DesktopLayout
-        mainContainerStyles={{
-          minHeight: workHeight,
-          maxHeight: workHeight,
-        }}
-        onHeightChange={handleHeightChange}
-        theme={theme}
-        dialogsView={
-          showDialogList ? (
-            <DialogList
-              scrollableHeight={clientHeight - 64 - 6}
-              // rootStyles={{
-              //   minHeight: `${clientHeight}px)`,
-              //   maxHeight: `${clientHeight}px)`,
-              // }}
-              // messagesContainerStyles={{
-              //   maxHeight: '736px !important',
-              // }}
-              // subHeaderContent={<CompanyLogo />}
-              // upHeaderContent={<CompanyLogo />}
-              dialogsViewModel={dialogsViewModel} // 1 Get 2 Update UseCase
-              onDialogSelectHandler={selectDialogActions}
-              onLeaveDialog={leaveDialogHandler}
-              additionalSettings={{
-                withoutHeader: false,
-                themeHeader: theme,
-                themePreview: theme,
-                useSubHeader: false,
-                useUpHeader: false,
-              }}
-              // regx={regx}
-            />
-          ) : null
-        }
-        dialogMessagesView={
-          showDialogMessages &&
-          selectedDialog &&
-          selectedDialog.entity &&
-          dialogsViewModel.entity ? (
-            <Dialog
-              rootStyles={{
-                minHeight: `${clientHeight}px`,
-                maxHeight: `${clientHeight}px`,
-              }}
-              messagesContainerStyles={
-                isMobile
-                  ? {
-                      minHeight: `calc(${clientHeight}px - 128px - 16px)`,
-                      maxHeight: `calc(${clientHeight}px - 128px - 16px)`,
-                    }
-                  : {
-                      minHeight: `calc(${clientHeight}px - 128px - 1px)`, // todo: artik 29.12.2023 1px - это "подобранная наглаз" величина
-                      maxHeight: `calc(${clientHeight}px - 128px - 1px)`,
-                    }
-              }
-              messagesViewModel={messagesViewModel}
-              showErrorToast={showErrorToast}
-              messageErrorToast={messageErrorToast}
-              warningErrorText={warningErrorText}
-              // subHeaderContent={<CompanyLogo />}
-              // upHeaderContent={<CompanyLogo />}
-              renderHeader={
-                <DialogHeader
-                  dialogName={dialogsViewModel.entity.name}
-                  renderAvatar={renderIconForTypeDialog(
-                    dialogsViewModel.entity,
-                  )}
-                  renderLeftActions={
-                    <RenderLeftActions
-                      onClickBack={() => setSelectedDialog(undefined)}
-                      theme={theme}
-                    />
-                  }
-                  renderRightActions={
-                    <RenderRightActions
-                      onClickInfo={informationOpenHandler}
-                      theme={theme}
-                    />
-                  }
-                  countMembers={getCountDialogMembers(dialogsViewModel.entity)}
-                  theme={theme}
-                />
-              }
-              renderMessageList={
-                messagesViewModel &&
-                messagesViewModel.messages &&
-                messagesViewModel.messages.length > 0 &&
-                messagesToView &&
-                messagesToView.length > 0 && (
-                  <SectionList
-                    resetScroll={scrollUpToDown}
-                    className="messages-container"
-                    onEndReached={fetchMoreData}
-                    onEndReachedThreshold={0.95}
-                    refreshing={messagesViewModel?.loading}
-                    renderSectionHeader={(section) => (
-                      // <div className="date">{section.title}</div>
-                      <div className="message-view-container--system-message-wrapper">
-                        <div
-                          style={
-                            theme
-                              ? { backgroundColor: theme.disabledElements() }
-                              : {}
-                          }
-                          className="message-view-container--system-message-wrapper__date_container"
-                        >
-                          {/* eslint-disable-next-line @typescript-eslint/no-unsafe-call */}
-                          <SystemDateBanner text={formatDate(section.title)} />
+    <ToastProvider>
+      <div>
+        {/* <div style={{ height: '18px', border: '1px solid red' }}> */}
+        {/*  h:{height},w:{width},ch:{clientHeight},wh:{workHeight} */}
+        {/* </div> */}
+        <DesktopLayout
+          mainContainerStyles={{
+            minHeight: workHeight,
+            maxHeight: workHeight,
+          }}
+          onHeightChange={handleHeightChange}
+          theme={theme}
+          dialogsView={
+            showDialogList ? (
+              <DialogList
+                scrollableHeight={clientHeight - 64 - 6}
+                // subHeaderContent={<CompanyLogo />}
+                // upHeaderContent={<CompanyLogo />}
+                dialogsViewModel={dialogsViewModel} // 1 Get 2 Update UseCase
+                onDialogSelectHandler={selectDialogActions}
+                onLeaveDialog={leaveDialogHandler}
+                additionalSettings={{
+                  withoutHeader: false,
+                  themeHeader: theme,
+                  themePreview: theme,
+                  useSubHeader: false,
+                  useUpHeader: false,
+                }}
+              />
+            ) : null
+          }
+          dialogMessagesView={
+            showDialogMessages &&
+            selectedDialog &&
+            selectedDialog.entity &&
+            dialogsViewModel.entity ? (
+              <Dialog
+                rootStyles={{
+                  minHeight: `${clientHeight}px`,
+                  maxHeight: `${clientHeight}px`,
+                }}
+                messagesContainerStyles={
+                  isMobile
+                    ? {
+                        minHeight: messagesContainerMobileHeight,
+                        maxHeight: messagesContainerMobileHeight,
+                      }
+                    : {
+                        minHeight: messagesContainerHeight,
+                        maxHeight: messagesContainerHeight,
+                      }
+                }
+                messagesViewModel={messagesViewModel}
+                warningErrorText={warningErrorText}
+                // subHeaderContent={<CompanyLogo />}
+                // upHeaderContent={<CompanyLogo />}
+                renderHeader={
+                  <Header
+                    title={dialogsViewModel.entity.name}
+                    avatar={renderIconForTypeDialog(dialogsViewModel.entity)}
+                    onGoBack={() => setSelectedDialog(undefined)}
+                    className="dialog-header__line"
+                  >
+                    <div className="dialog-header-right">
+                      <InformationSvg
+                        className="dialog-header-right__icon"
+                        onClick={informationOpenHandler}
+                      />
+                    </div>
+                  </Header>
+                }
+                renderMessageList={
+                  messagesViewModel &&
+                  messagesViewModel.messages &&
+                  messagesViewModel.messages.length > 0 &&
+                  messagesToView &&
+                  messagesToView.length > 0 && (
+                    <SectionList
+                      resetScroll={scrollUpToDown}
+                      className="messages-container"
+                      onEndReached={fetchMoreData}
+                      onEndReachedThreshold={0.95}
+                      refreshing={messagesViewModel?.loading}
+                      renderSectionHeader={(section) => (
+                        <div className="message-view-container--system-message-wrapper">
+                          <div
+                            style={
+                              theme
+                                ? { backgroundColor: theme.disabledElements() }
+                                : {}
+                            }
+                            className="message-view-container--system-message-wrapper__date_container"
+                          >
+                            <MessageSeparator
+                              text={section.title}
+                              type="date"
+                            />
+                          </div>
                         </div>
-                      </div>
-                    )}
-                    renderItem={([, groupMessages]) =>
-                      groupMessages.map((message) => (
-                        <Message
-                          theme={theme}
-                          setShowErrorToast={setShowErrorToast}
-                          setWaitAIWidget={setWaitAIWidget}
-                          setMessageErrorToast={setMessageErrorToast}
-                          AIAssistWidget={defaultAIAssistWidget!}
-                          AITranslateWidget={defaultAITranslateWidget!}
-                          message={message}
-                          onReply={(m: MessageEntity) => {
-                            handleOnReply(m);
-                          }}
-                          onForward={(m: MessageEntity) => {
-                            handleForward(m);
-                          }}
-                          defaultGetSenderName={defaultGetSenderName}
-                          messagesToView={messagesToView}
-                          userId={userId || -1}
-                          enableReplying={enableReplying}
-                          enableForwarding={enableForwarding}
+                      )}
+                      renderItem={([, groupMessages], listRef) =>
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                        groupMessages.map((message) => (
+                          <MessageItem
+                            // defaultGetSenderName={defaultGetSenderName}
+                            message={message}
+                            userId={userId || -1}
+                            enableForwarding={enableForwarding}
+                            enableReplying={enableReplying}
+                            onReply={(m: MessageEntity) => {
+                              handleOnReply(m);
+                            }}
+                            onForward={(m: MessageEntity) => {
+                              handleForward(m);
+                            }}
+                            listRef={listRef}
+                            loading={waitAIWidget}
+                            AIAssistWidget={defaultAIAssistWidget!}
+                            AITranslateWidget={defaultAITranslateWidget!}
+                            languagesForAITranslate={DefaultConfigurations.getAdditionalLanguagesForAITranslate(
+                              currentContext.InitParams.qbConfig.configAIApi
+                                .AITranslateWidgetConfig,
+                            )}
+                            defaultTranslationLanguage={DefaultConfigurations.getDefaultLanguageForAITranslate(
+                              currentContext.InitParams.qbConfig.configAIApi
+                                .AITranslateWidgetConfig,
+                            )}
+                            onStartLoader={() => {
+                              setWaitAIWidget(true);
+                            }}
+                            onStopLoader={() => {
+                              setWaitAIWidget(false);
+                            }}
+                            onErrorToast={(messageError: string) => {
+                              toast(messageError);
+                            }}
+                            messagesToView={messagesToView}
+                            maxTokens={maxTokensForAIRephrase}
+                          />
+                        ))
+                      }
+                      sections={getSectionData(messagesToView)}
+                    />
+                  )
+                }
+                renderMessageInput={
+                  <MessageInput
+                    previewMessage={
+                      showReplyMessage ? (
+                        <ReplyMessagePreview
+                          messages={[...messagesToReply]}
+                          userNameSentMessage={
+                            messagesToReply[0]?.sender?.full_name ||
+                            messagesToReply[0]?.sender?.login ||
+                            messagesToReply[0]?.sender?.email ||
+                            messagesToReply[0]?.sender?.id.toString() ||
+                            ''
+                          }
+                          onClose={closeReplyMessageFlowHandler}
                         />
-                      ))
+                      ) : undefined
                     }
-                    sections={getSectionData(messagesToView)}
+                    value={messageText}
+                    placeholder="Type message"
+                    loading={waitAIWidget || messagesViewModel?.loading}
+                    onChange={(text: string) => {
+                      setMessageText(text);
+                    }}
+                    onChanging={() => {
+                      messagesViewModel.sendTypingTextMessage();
+                    }}
+                    onSend={(textToSend: string) => {
+                      sendTextMessageActions(textToSend);
+                    }}
+                    onAttachment={ChangeFileHandler}
+                    enableVoice={isRecording}
+                    onVoice={() => {
+                      if (messagesViewModel?.loading) return;
+                      setIsRecording(!isRecording);
+                    }}
+                    rephrase={
+                      <AIRephraseWidget
+                        waitAIWidget={waitAIWidget}
+                        messageText={messageText}
+                        theme={theme}
+                        AIRephrase={defaultAIRephraseWidget}
+                        setWaitAIWidget={setWaitAIWidget}
+                        setPrevValueText={(prevValue) => {
+                          setMessageText(prevValue);
+                        }}
+                        setMessageErrorToast={(e: string) => {
+                          toast(e);
+                        }}
+                        messagesToView={messagesToView}
+                        currentUserId={userId || -1}
+                        maxTokensForAIRephrase={maxTokensForAIRephrase}
+                        rephraseTones={rephraseTones}
+                      />
+                    }
                   />
-                )
-              }
-              renderReplyMessagesPreview={
-                <ReplyMessagePreview
-                  messages={[...messagesToReply]}
-                  userNameSentMessage={
-                    messagesToReply[0]?.sender?.full_name ||
-                    messagesToReply[0]?.sender?.login ||
-                    messagesToReply[0]?.sender?.email ||
-                    messagesToReply[0]?.sender?.id.toString() ||
-                    ''
-                  }
-                  onClose={closeReplyMessageFlowHandler}
-                />
-              }
-              showReplyMessage={showReplyMessage}
-              renderMessageInput={
-                <MessageInput
-                  waitAIWidget={waitAIWidget}
-                  messageText={messageText}
-                  onChangeText={(text: string) => {
-                    setMessageText(text);
-                  }}
-                  sendText={(textToSend: string) => {
-                    sendTextMessageActions(textToSend);
-                  }}
-                  renderSendIcon={
-                    <SendIcon
-                      width="21"
-                      height="18"
-                      applyZoom
-                      color={
-                        theme ? theme.mainElements() : 'var(--main-elements)'
-                      }
-                    />
-                  }
-                  renderAttachment={
-                    <AttachmentUploader
-                      icon={
-                        <AttachmentIcon
-                          width="32"
-                          height="32"
-                          applyZoom
-                          color={
-                            theme
-                              ? theme.inputElements()
-                              : 'var(--input-elements)'
-                          }
-                        />
-                      }
-                      onChangeFile={ChangeFileHandler}
-                    />
-                  }
-                  isRecording={isRecording}
-                  renderVoiceRecorder={
-                    <VoiceMessage
-                      icon={
-                        <VoiceIcon
-                          width="21"
-                          height="18"
-                          applyZoom
-                          color={
-                            isRecording
-                              ? 'var(--error)'
-                              : 'var(--input-elements)'
-                          }
-                        />
-                      }
-                      onClick={() => {
-                        console.log('click send voice message');
-                        if (messagesViewModel?.loading) return;
-                        setIsRecording(!isRecording);
-                      }}
-                    />
-                  }
-                  renderVoiceRecordProgress={
-                    <VoiceRecordingProgress
-                      startStatus={isRecording}
-                      longRecInSec={60}
-                      onClick={() => {
-                        console.log('click send voice message');
-                        if (messagesViewModel?.loading) return;
-                        setIsRecording(!isRecording);
-                      }}
-                      onTouch={() => {
-                        console.log('touch send voice message');
-                        if (messagesViewModel?.loading) return;
-                        setIsRecording(!isRecording);
-                      }}
-                    />
-                  }
-                  messagesViewModel={messagesViewModel}
-                  maxWidthToResizing={maxWidthToResizing}
-                  renderAIWidget={
-                    <AIRephraseWidget
-                      waitAIWidget={waitAIWidget}
-                      messageText={messageText}
-                      theme={theme}
-                      AIRephrase={defaultAIRephraseWidget}
-                      setWaitAIWidget={setWaitAIWidget}
-                      setPrevValueText={(prevValue) => {
-                        setMessageText(prevValue);
-                      }}
-                      setMessageErrorToast={(e: string) => {
-                        setMessageErrorToast(e);
-                      }}
-                      setShowErrorToast={(e: boolean) => {
-                        setShowErrorToast(e);
-                      }}
-                      messagesToView={messagesToView}
-                      currentUserId={userId || -1}
-                      maxTokensForAIRephrase={maxTokensForAIRephrase}
-                      rephraseTones={rephraseTones}
-                    />
-                  }
-                />
-              }
-              maxWidthToResize={maxWidthToResizing}
-              theme={theme}
-            /> // 1 Get Messages + 1 Get User by id
-          ) : null
-        }
-        dialogInfoView={
-          // 1 Get User by 1 + Get user by name
-          showDialogInformation &&
-          selectedDialog &&
-          needDialogInformation &&
-          (isAllMembersShow ? (
-            <MembersList
-              closeInformationHandler={() => {
-                setIsAllMembersShow(false);
-              }}
-              members={userViewModel.users}
-              maxHeight={clientHeight - 64 - 6} // todo: artik 29.12.2023 значение такое же как и в DialogList
-            />
-          ) : (
-            <DialogInfo
-              showMembersDialogInitValue={showMembersDialog}
-              onShowAllMemberClick={(value: boolean) => {
-                setIsAllMembersShow(value);
-              }}
-              users={userViewModel.users}
-              rootStyles={{
-                minHeight: `${clientHeight}px`,
-                maxHeight: `${clientHeight}px`,
-              }}
-              // subHeaderContent={<CompanyLogo />}
-              // upHeaderContent={<CompanyLogo />}
-              dialog={selectedDialog.entity}
-              dialogViewModel={dialogsViewModel}
-              onCloseDialogInformationHandler={informationCloseHandler}
-            />
-          ))
-        }
-      />
-    </div>
+                }
+                maxWidthToResize={maxWidthToResizing}
+                theme={theme}
+              />
+            ) : null
+          }
+          dialogInfoView={
+            showDialogInformation &&
+            selectedDialog &&
+            needDialogInformation &&
+            (isAllMembersShow ? (
+              <MembersList
+                closeInformationHandler={() => {
+                  setIsAllMembersShow(false);
+                }}
+                members={userViewModel.users}
+                maxHeight={clientHeight - 64 - 6} // todo: artik 29.12.2023 same value like DialogList
+              />
+            ) : (
+              <DialogInfo
+                onShowAllMemberClick={(value: boolean) => {
+                  setIsAllMembersShow(value);
+                }}
+                users={userViewModel.users}
+                rootStyles={{
+                  minHeight: `${clientHeight}px`,
+                  maxHeight: `${clientHeight}px`,
+                }}
+                // subHeaderContent={<CompanyLogo />}
+                // upHeaderContent={<CompanyLogo />}
+                dialog={selectedDialog.entity}
+                dialogViewModel={dialogsViewModel}
+                onCloseDialogInformationHandler={informationCloseHandler}
+                onLeaveDialog={leaveDialogHandler}
+              />
+            ))
+          }
+        />
+        <DialogWindow
+          open={isOpen}
+          title="Leave dialog?"
+          onClose={handleDialogOnClick}
+        >
+          <div className="dialog-leave-container">
+            <Button variant="outlined" onClick={handleDialogOnClick}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={handleLeaveDialog}>
+              Leave
+            </Button>
+          </div>
+        </DialogWindow>
+      </div>
+    </ToastProvider>
   );
 };
 

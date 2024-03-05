@@ -88,13 +88,10 @@ export class FileRepository implements IFileRepository {
 
   // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
   async saveFileInRemote(entity: FileEntity): Promise<FileEntity> {
-    // todo exception convert error exception
     const remoteFileDTO: RemoteFileDTO =
       await this.fileRemoteDTOMapper.fromEntity(entity);
 
-    // todo auth exception, restricted accsess, connection faild
     try {
-      // todo MUST uncomment
       const resultDTO: RemoteFileDTO = await this.remoteDataSource.createFile(
         remoteFileDTO,
       );

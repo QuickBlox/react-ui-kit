@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, RefObject, useEffect, useRef, useState } from 'react';
 
 import { createUseComponent, usePrevious } from './hooks';
 
@@ -28,7 +28,10 @@ export interface SectionListProps<T> {
    */
   onEndReachedThreshold?: number;
   // Default renderer for every item in every section. Can be over-ridden on a per-section basis.
-  renderItem: (item: [string, T[]]) => ReactNode;
+  renderItem: (
+    item: [string, T[]],
+    listRef: RefObject<HTMLDivElement>,
+  ) => ReactNode;
   // Rendered at the top of each section.
   renderSectionHeader?: (section: SectionItem<T>) => ReactNode;
   // Rendered at the bottom of each section.

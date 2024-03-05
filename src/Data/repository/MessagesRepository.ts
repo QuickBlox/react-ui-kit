@@ -106,7 +106,6 @@ export default class MessagesRepository implements IMessagesRepository {
       const messagesDTO: LocalMessagesDTO =
         await this.localDataStorage.getMessages(dto);
 
-      // TODO: check loop
       // eslint-disable-next-line no-restricted-syntax
       for (const item of messagesDTO.messages) {
         // eslint-disable-next-line no-await-in-loop
@@ -163,8 +162,6 @@ export default class MessagesRepository implements IMessagesRepository {
       const messagesDTO: RemoteMessagesDTO =
         await this.remoteDataSource.getMessages(dialogId, new Pagination());
 
-      // todo: change loop
-      // for (let i ; i < ; i+=)
       // eslint-disable-next-line no-restricted-syntax
       for (const item of messagesDTO.messages) {
         const entity: MessageEntity =

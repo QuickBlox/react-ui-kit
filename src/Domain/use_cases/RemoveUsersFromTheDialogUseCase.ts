@@ -70,14 +70,6 @@ export class RemoveUsersFromTheDialogUseCase
       }
     });
 
-    // send visual message
-    // this.eventMessagesRepository.dispatchEvent<RemoteMessageDTO>(
-    //   EventMessageType.RegularMessage,
-    //   remoteMessageDTO,
-    //   updatedRecivers,
-    // );
-    //
-
     await this.dialogRepository
       .deleteUsersFromDialogFromRemote(this.dialogToLeave.id, this.usersIds)
       .then(() => {

@@ -88,10 +88,3 @@ const RowRightContainer: React.FC<RowRightContainerProps> = ({
 };
 
 export default RowRightContainer;
-
-/*
- *
- *
- *
- *
- * */

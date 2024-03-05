@@ -3,14 +3,13 @@ import './ForwardMessagePreview.scss';
 import ForwardFilled from '../../../../components/UI/svgs/Icons/Actions/ForwardFilled';
 import { MessageEntity } from '../../../../../Domain/entity/MessageEntity';
 import { FileType } from '../../../../../Domain/entity/FileTypes';
-import ReplyImagePreviewAttachment from '../../ReplyMessagePreview/ReplyImagePreviewAttachment/ReplyImagePreviewAttachment';
+import ReplyImagePreviewAttachment from '../../../../ui-components/MessageInput/ReplyMessagePreview/ReplyImagePreviewAttachment/ReplyImagePreviewAttachment';
 import TextDocument from '../../../../components/UI/svgs/Icons/Media/TextDocument';
 import { MessageDTOMapper } from '../../../../../Data/source/remote/Mapper/MessageDTOMapper';
 
 type ForwardMessagePreviewProps = {
   messages: MessageEntity[];
-  userNameSentMessage: string; //! !!currentUser: UserEntity
-  // userId: string;
+  userNameSentMessage: string;
 };
 
 function trimMessage(messageText: string) {
@@ -28,11 +27,10 @@ const ForwardMessagePreview: React.FC<ForwardMessagePreviewProps> = ({
     const value = MessageDTOMapper.formatMessage(messages[0].message);
 
     setMessageTextValue(value);
-  }, [messages, messages[0]?.message]);
+  }, [messages[0]?.message]);
 
   return (
     <div className="forward-message-preview">
-      {/* <img className="photo" src="photo.png" /> */}
       {messages.length > 0 &&
       messages[0].attachments &&
       messages[0].attachments.length > 0 ? (

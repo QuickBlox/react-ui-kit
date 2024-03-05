@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './MembersList.scss';
-import ActiveSvg from '../../../components/UI/svgs/ActiveSvg/ActiveSvg';
-import Close from '../../../components/UI/svgs/Icons/Navigation/Close';
 import { FunctionTypeVoidToVoid } from '../../../../CommonTypes/BaseViewModel';
 import { UserEntity } from '../../../../Domain/entity/UserEntity';
 import Search from '../../../components/UI/svgs/Icons/Navigation/Search';
 import UsersList from '../UsersList/UsersList';
+import Header from '../../../ui-components/Header/Header';
+import { CloseSvg } from '../../../icons';
+import Badge from '../../../ui-components/Badge/Badge';
 
 type MembersListProps = {
   closeInformationHandler: FunctionTypeVoidToVoid;
@@ -41,29 +42,16 @@ const MembersList: React.FC<MembersListProps> = ({
 
   return (
     <div className="members-container">
-      <div className="members-container-header">
-        <div className="members-container-header-left">
-          <div className="members-container-header-left-headline">Members</div>
-          <div className="members-container-header-left-headline-badge">
-            <div className="members-container-header-left-headline-badge-value">
-              {members.length}
-            </div>
-          </div>
-        </div>
-        <div className="members-container-header-icon">
-          <ActiveSvg
-            content={
-              <Close
-                width="24px"
-                height="24px"
-                applyZoom
-                color="var(--secondary-elements)"
-              />
-            }
-            onClick={closeInformationHandler}
-          />
-        </div>
-      </div>
+      <Header
+        title="Members"
+        badge={<Badge count={members.length} mute limit={9} />}
+        className="members-container-header"
+      >
+        <CloseSvg
+          onClick={closeInformationHandler}
+          className="members-container-header-icon"
+        />
+      </Header>
       <div className="members-container-search">
         <div className="members-container-search-text-field">
           <div className="members-container-search-text-field-f">

@@ -1,0 +1,18 @@
+.message-attachment-video-body{
+  max-height: 130px;
+  max-width: var(--max-width-audio-message);
+  width: var(--max-width-audio-message);
+  padding: 0;
+  border-radius: 4px;
+}
+
+.message-attachment-video {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+  //max-width: 300px;
+  max-width: var(--max-width-audio-message);
+  width: var(--max-width-audio-message);
+  max-height: 160px;
+}

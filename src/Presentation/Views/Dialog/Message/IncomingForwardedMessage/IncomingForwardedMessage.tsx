@@ -146,11 +146,7 @@ function IncomingForwardedMessage(props: {
   return (
     <div>
       {props.messages.map((item) => (
-        <div
-          className="incoming-forward-message"
-          // onMouseEnter={() => setHaveHover(true)}
-          // onMouseLeave={() => setHaveHover(false)}
-        >
+        <div className="incoming-forward-message">
           <div className="incoming-forward-message-avatar-wrap">
             <div className="incoming-forward-message-avatar">
               <div className="incoming-forward-message-avatar-rectangle" />
@@ -185,6 +181,7 @@ function IncomingForwardedMessage(props: {
                 <div
                   className="incoming-forward-message-incoming-bubble-background"
                   style={{
+                    // todo need refactoring - should use only item.attachments[0].type
                     background:
                       item.attachments &&
                       (item.attachments[0].type

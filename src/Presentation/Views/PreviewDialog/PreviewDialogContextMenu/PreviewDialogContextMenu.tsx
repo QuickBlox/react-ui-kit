@@ -19,17 +19,30 @@ export default function PreviewDialogContextMenu(
   props: PreviewDialogContextMenuProps,
 ) {
   const { theme, dialog, onLeave, enableLeaveDialog } = props;
-  const menuItems: MenuItem[] = [];
-
-  if (enableLeaveDialog) {
-    menuItems.push({
-      title: 'Leave Dialog',
-      action: () => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        if (onLeave) onLeave(dialog);
-      },
-    });
-  }
+  // const menuItems: MenuItem[] = [];
+  //
+  // if (enableLeaveDialog) {
+  //   menuItems.push({
+  //     title: 'Leave Dialog',
+  //     action: () => {
+  //       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  //       if (onLeave) onLeave(dialog);
+  //     },
+  //   });
+  // }
+  //
+  const menuItems: MenuItem[] = enableLeaveDialog
+    ? [
+        {
+          title: 'Leave Dialog',
+          action: () => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+            if (onLeave) onLeave(dialog);
+          },
+        },
+      ]
+    : [];
+  //
 
   return (
     <div className="dialog-context-menu">

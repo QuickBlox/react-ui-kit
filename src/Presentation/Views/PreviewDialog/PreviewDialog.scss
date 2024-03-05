@@ -20,8 +20,7 @@
   box-sizing: border-box;
 }
 .dialog-preview {
-  // padding: 8px 8px 8px 16px; //todo comment padding value for desktop artik 21-12-2023
-  padding: 6px 6px 6px 6px; //todo new padding fro mobile artik 21-12-2023
+  padding: 6px 6px 6px 6px;
   display: flex;
   flex-direction: row;
   gap: 16px;
@@ -184,8 +183,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 12px; // todo artik 21-12-2020 change width value from 32px to 12px
-  height: 22px; // todo artik 21-12-2020 change width value from 32px to 22px
+  width: 12px;
+  height: 22px;
   position: relative;
   cursor: pointer;
 }

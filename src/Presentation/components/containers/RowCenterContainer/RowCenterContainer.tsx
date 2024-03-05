@@ -86,10 +86,3 @@ const RowCenterContainer: React.FC<RowCenterContainerProps> = ({
 };
 
 export default RowCenterContainer;
-
-/*
- *
- *
- *
- *
- * */

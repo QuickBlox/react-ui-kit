@@ -1,0 +1,72 @@
+@import '../../themes/styles/mixins';
+
+.dialog-header {
+  @include applyBorderBox;
+
+  width: 100%;
+  padding: 12px 16px 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 33px;
+
+  &__icon {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  &__back {
+    color: var(--main-elements);
+  }
+
+  &__body {
+    width: 100%;
+    display: flex;
+    gap: 33px;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+
+    &-left {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+      overflow: hidden;
+    }
+
+    &-right {
+      height: 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+  }
+
+  &__title {
+    color: var(--main-text, #0b1b0f);
+    text-align: left;
+    font: var(--title-title-medium);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &__line {
+    border-style: solid;
+    border-color: var(--color-divider, #e7efff);
+    border-width: 0 0 1px 0;
+  }
+}
+
+@media only screen and (max-width: var(--min-width-screen-desktop)) {
+  .dialog-header__body-left {
+    gap: 3px;
+  }
+}
+@media only screen and (min-width: 981px) {
+  .dialog-header__back {
+    display: none;
+  }
+}

@@ -6,7 +6,6 @@ $dialog-information-container-dialog-information-height: 64px;
   // max-height: $dialog-information-container-height;
   // height: $dialog-information-container-height;
   // border: 1px solid var(--divider);
-
 }
 .header-dialog-info,
 .header-dialog-info * {
@@ -23,6 +22,7 @@ $dialog-information-container-dialog-information-height: 64px;
   flex-shrink: 0;
   position: relative;
   border-bottom: 1px solid var(--divider);
+  height: $dialog-information-container-dialog-information-height;
 }
 .header-dialog-info-headline {
   color: var(--main-text, #0b1b0f);
@@ -122,7 +122,6 @@ $dialog-information-container-dialog-information-height: 64px;
   position: relative;
 }
 
-
 .dialog-info-action-wrapper-settings,
 .dialog-info-action-wrapper-settings * {
   box-sizing: border-box;
@@ -209,3 +208,14 @@ $dialog-information-container-dialog-information-height: 64px;
   padding: 0px 5px 0px 5px;
 }
 
+.dialog-info-leave {
+  fill: var(--error);
+
+  border-bottom: 1px solid var(--divider);
+}
+
+.dialog-info-members {
+  fill: var(--main-elements);
+
+  border-bottom: 1px solid var(--divider);
+}

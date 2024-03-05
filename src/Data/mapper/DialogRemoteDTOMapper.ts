@@ -79,17 +79,6 @@ export class DialogRemoteDTOMapper implements IMapper {
 
       return '';
     }
-    /*
-              let tmpFileUrl = '';
-
-          if (dialog.photo && dialog.photo !== 'null') {
-            const { blobFile } = await Creator.createBlobFromUrl(
-              dialog.photo && QB.content.privateUrl(dialog.photo),
-            );
-
-            tmpFileUrl = blobFile ? URL.createObjectURL(blobFile) : '';
-          }
-           */
     switch (dialog.type) {
       case DialogType.private:
         entity = new PrivateDialogEntity(
@@ -107,7 +96,6 @@ export class DialogRemoteDTOMapper implements IMapper {
           dialog.type,
           dialog.unreadMessageCount,
           dialog.updatedAt,
-          // interlocutorId,
           parseInt(dialog.participantId, 10),
         );
         break;
@@ -164,10 +152,6 @@ export class DialogRemoteDTOMapper implements IMapper {
   }
 
   private static getPhoto(entity: unknown): string | null {
-    // if (
-    //   dialogEntity instanceof GroupDialogEntity ||
-    //   dialogEntity instanceof PublicDialogEntity
-    // )
     const dialogEntity = entity as DialogEntity;
 
     if (dialogEntity && dialogEntity.type === DialogType.public)
@@ -179,12 +163,6 @@ export class DialogRemoteDTOMapper implements IMapper {
   }
 
   private static getDialogName(dialogEntity: unknown): string {
-    // if (
-    //   dialogEntity instanceof GroupDialogEntity ||
-    //   dialogEntity instanceof PublicDialogEntity ||
-    //   dialogEntity instanceof PrivateDialogEntity
-    // )
-
     return (dialogEntity as GroupDialogEntity).name;
   }
 
@@ -256,13 +234,6 @@ export class DialogRemoteDTOMapper implements IMapper {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { lastMessage } = v as PrivateDialogEntity;
 
-        // return (
-        //   lastMessage !== undefined &&
-        //   lastMessage !== null &&
-        //   lastMessage.dateSent !== undefined &&
-        //   lastMessage.text !== undefined &&
-        //   lastMessage.userId !== undefined
-        // );
         return true;
       },
       ownerId(v: unknown): v is PrivateDialogEntity['ownerId'] {
@@ -366,13 +337,6 @@ export class DialogRemoteDTOMapper implements IMapper {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { lastMessage } = v as PublicDialogEntity;
 
-        // return (
-        //   lastMessage !== undefined &&
-        //   lastMessage !== null &&
-        //   lastMessage.dateSent !== undefined &&
-        //   lastMessage.text !== undefined &&
-        //   lastMessage.userId !== undefined
-        // );
         return true;
       },
       ownerId(v: unknown): v is PublicDialogEntity['ownerId'] {
@@ -483,13 +447,6 @@ export class DialogRemoteDTOMapper implements IMapper {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { lastMessage } = v as PublicDialogEntity;
 
-        // return (
-        //   lastMessage !== undefined &&
-        //   lastMessage !== null &&
-        //   lastMessage.dateSent !== undefined &&
-        //   lastMessage.text !== undefined &&
-        //   lastMessage.userId !== undefined
-        // );
         return true;
       },
       ownerId(v: unknown): v is GroupDialogEntity['ownerId'] {
@@ -616,9 +573,6 @@ export class DialogRemoteDTOMapper implements IMapper {
         break;
       case DialogType.group:
         dialogEntity = entity as GroupDialogEntity;
-        // entity instanceof GroupDialogEntity
-        //   ? (entity as unknown as GroupDialogEntity)
-        //   : null;
         break;
       default:
         dialogEntity = null;

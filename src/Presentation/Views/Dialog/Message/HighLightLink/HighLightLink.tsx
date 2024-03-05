@@ -1,17 +1,6 @@
 import './HighLightLink.scss';
 import React from 'react';
 
-// const pattern =
-//   '^(https?:\\/\\/)?' + // protocol
-//   '((([a-zA-Z\\d]([a-zA-Z\\d-]{0,61}[a-zA-Z\\d])*\\.)+' + // sub-domain + domain name
-//   '[a-zA-Z]{2,13})' + // extension
-//   '|((\\d{1,3}\\.){3}\\d{1,3})' + // OR ip (v4) address
-//   '|localhost)' + // OR localhost
-//   '(\\:\\d{1,5})?' + // port
-//   '(\\/[a-zA-Z\\&\\d%_.~+-:@]*)*' + // path
-//   '(\\?[a-zA-Z\\&\\d%_.,~+-:@=;&]*)?' + // query string
-//   '(\\#[-a-zA-Z&\\d_]*)?$'; // fragment locator
-
 const pattern =
   /(https?:\/\/)?([\p{L}\p{N}_-]+(?:(?:\.[\p{L}\p{N}_-]+)+)[\p{L}\p{N}.,@?^=%&:/~+#-]*[\p{L}\p{N}@?^=%&/~+#-])/gu;
 
@@ -86,41 +75,31 @@ type HighLightLinkProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-//
-// export const HighLightLink: React.FC<HighLightLinkProps> = ({
-//   urlText,
-// }: HighLightLinkProps) => {
-//   return (
-//     <div className="high-light-link-container">
-//       <div className="high-light-link-container--header-wrapper">
-//         <a
-//           href={urlText}
-//           target="blank"
-//           className="high-light-link-container--header-wrapper__link_url"
-//         >
-//           {getNameUrl(urlText)}
-//         </a>
-//       </div>
-//       <div className="high-light-link-container--footer-wrapper">
-//         <div className="high-light-link-container--footer-wrapper__content">
-//           {getURIParts(urlText).host}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// eslint-disable-next-line react/function-component-definition
 export const HighLightLink: React.FC<HighLightLinkProps> = ({
   messageText,
 }: HighLightLinkProps) => {
+  /*
+// todo: need to add  this replace to the messageText
+messageText.replace(
+            /(https?:\/\/)?([\p{L}\p{N}_-]+(?:(?:\.[\p{L}\p{N}_-]+)+)[\p{L}\p{N}.,@?^=%&:/~+#-]*[\p{L}\p{N}@?^=%&/~+#-])/gu,
+            (url, protocol, path) =>
+              `<a href="${
+                protocol || typeof path !== 'string' ? url : `http://${path}`
+              }" rel="noopener noreferrer" target="_blank">${url}</a>`,
+          )
+    */
   const strings = messageText.split(/\n| /);
   const elements = strings.map((item, index) => {
     if (isURL(item)) {
       return (
         <div className="message-urls">
           <span>
-            <a key={index} href={`${getRuleUrl(item)}`} target="blank">
+            <a
+              key={index}
+              href={`${getRuleUrl(item)}`}
+              target="_blank"
+              rel="noreferrer"
+            >
               {item}
             </a>{' '}
           </span>

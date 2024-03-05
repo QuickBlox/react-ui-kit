@@ -99,10 +99,7 @@ export default class DialogsRepository implements IDialogsRepository {
       console.log('for entity: ', JSON.stringify(entity));
 
       // eslint-disable-next-line prefer-promise-reject-errors
-      // return Promise.reject(false);
       return Promise.reject(exceptionMessage);
-      // todo: pay attention on Promise.resolve
-      // return Promise.resolve(false);
     }
   }
 
@@ -111,24 +108,16 @@ export default class DialogsRepository implements IDialogsRepository {
       'call createDialogInRemote in Repository with param: ',
       JSON.stringify(entity),
     );
-    // todo exception convert error exception
     const remoteDialogDTO: RemoteDialogDTO =
       await this.dialogRemoteDTOMapper.fromEntity(entity);
 
     console.log('have remoteDialogDTO: ', JSON.stringify(remoteDialogDTO));
 
-    // todo auth exception, restricted accsess, connection faild
     try {
-      // todo MUST uncomment
       const resultDTO: RemoteDialogDTO =
         await this.remoteDataSource.createDialog(remoteDialogDTO);
       const resultEntity: DialogEntity =
         await this.dialogRemoteDTOMapper.toEntity(resultDTO);
-
-      // todo MUST delete
-      // const resultDTO: RemoteDialogDTO = remoteDialogDTO;
-      // const resultEntity: DialogEntity =
-      //   await this.dialogRemoteDTOMapper.toEntity(resultDTO);
 
       console.log(
         'have result entity in createDialogInRemote:',
@@ -142,7 +131,6 @@ export default class DialogsRepository implements IDialogsRepository {
   }
 
   async updateDialogInLocal(entity: DialogEntity): Promise<DialogEntity> {
-    console.log('call updateDialogInLocal');
     try {
       const dto: LocalDialogDTO = await this.dialogLocalDTOMapper.fromEntity(
         entity,
@@ -161,14 +149,12 @@ export default class DialogsRepository implements IDialogsRepository {
 
   // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
   async updateDialogInRemote(entity: DialogEntity): Promise<DialogEntity> {
-    // todo exception convert error exception
     const remoteDialogDTO: RemoteDialogDTO =
       await this.dialogRemoteDTOMapper.fromEntity<
         GroupDialogEntity,
         RemoteDialogDTO
       >(entity as GroupDialogEntity);
 
-    // todo auth exception, restricted accsess, connection faild
     try {
       const resultDTO: RemoteDialogDTO =
         await this.remoteDataSource.updateDialog(remoteDialogDTO);
@@ -188,12 +174,6 @@ export default class DialogsRepository implements IDialogsRepository {
 
     let checkResult = true;
 
-    /*
-    if (dialogId === '0' || dialogId === '') {
-      checkResult = false;
-    }
-
-     */
     let dialog: DialogEntity =
       DialogRemoteDTOMapper.createDefaultDialogEntity('0');
 
@@ -249,7 +229,6 @@ export default class DialogsRepository implements IDialogsRepository {
 
     dto.id = dialogId;
 
-    // todo auth exception, restricted accsess, connection faild
     try {
       const resultDTO: RemoteDialogDTO = await this.remoteDataSource.getDialog(
         dto,
@@ -272,7 +251,6 @@ export default class DialogsRepository implements IDialogsRepository {
       );
       const entyties: Array<DialogEntity> = [];
 
-      // TODO: check this loop
       // eslint-disable-next-line no-restricted-syntax
       for (const item of resultDTO.dialogs) {
         // eslint-disable-next-line no-await-in-loop
@@ -287,47 +265,17 @@ export default class DialogsRepository implements IDialogsRepository {
     } catch (e) {
       return Promise.reject(e);
     }
-    /*
-    let dialogs: Array<DialogEntity> = [];
-
-    try {
-      dialogs = await this.localDataStorage.getDialogs();
-    } catch (e) {
-      if (e instanceof LocalDataSourceException) {
-        if (e.code !== UNEXPECTED_LOCAL_DATASOURCE_EXCEPTION_CODE) {
-          return Promise.reject(
-            new RepositoryException(
-              NOT_FOUND_LOCAL_DATASOURCE_EXCEPTION_MESSAGE,
-              NOT_FOUND_LOCAL_DATASOURCE_EXCEPTION_CODE,
-            ),
-          );
-        }
-
-        return Promise.reject(
-          new RepositoryException(
-            UNEXPECTED_REPOSITORY_EXCEPTION_MESSAGE,
-            UNEXPECTED_REPOSITORY_EXCEPTION_CODE,
-          ),
-        );
-      }
-    }
-
-    return Promise.resolve(dialogs);
-
-     */
   }
 
   // eslint-disable-next-line class-methods-use-this
   async getDialogsFromRemote(
     pagination?: Pagination,
   ): Promise<PaginatedResult<DialogEntity>> {
-    // todo auth exception, restricted accsess, connection faild
     try {
       const resultDTO: RemoteDialogsDTO =
         await this.remoteDataSource.getDialogs(pagination);
       const entyties: Array<DialogEntity> = [];
 
-      // TODO: check this loop
       // eslint-disable-next-line no-restricted-syntax
       for (const item of resultDTO.dialogs) {
         // eslint-disable-next-line no-await-in-loop
@@ -337,10 +285,6 @@ export default class DialogsRepository implements IDialogsRepository {
 
         entyties.push(entity);
       }
-
-      // const DialogsDictionary: Record<number, DialogEntity[]> = {};
-      //
-      // DialogsDictionary[resultDTO.pagination.getCurrentPage()] = entyties;
 
       const result: PaginatedResult<DialogEntity> = {
         // PaginatedList: DialogsDictionary,
@@ -367,17 +311,6 @@ export default class DialogsRepository implements IDialogsRepository {
 
       return Promise.reject(e);
     }
-    /*
-    try {
-      const resultDeleteDialog = await this.localDataStorage.deleteDialog(
-        dialogId,
-      );
-
-      return resultDeleteDialog;
-    } catch (e) {
-      return Promise.resolve(false);
-    }
-     */
   }
 
   // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
@@ -386,7 +319,6 @@ export default class DialogsRepository implements IDialogsRepository {
 
     dto.id = dialogId;
 
-    // todo auth exception, restricted accsess, connection faild
     try {
       await this.remoteDataSource.deleteDialog(dto);
 

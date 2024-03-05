@@ -121,11 +121,6 @@ export class UserRemoteDTOMapper implements IMapper {
       custom_data(v: unknown): v is UserEntity['custom_data'] {
         const { custom_data } = v as UserEntity;
 
-        // return (
-        //   custom_data !== undefined &&
-        //   custom_data !== null &&
-        //   custom_data.length > 0
-        // );
         return (custom_data as unknown as boolean) || true;
       },
       email(v: unknown): v is UserEntity['email'] {
@@ -171,9 +166,6 @@ export class UserRemoteDTOMapper implements IMapper {
       user_tags(v: unknown): v is UserEntity['user_tags'] {
         const { user_tags } = v as UserEntity;
 
-        // return (
-        //   user_tags !== undefined && user_tags !== null && user_tags.length > 0
-        // );
         return (user_tags as unknown as boolean) || true;
       },
     };

@@ -1,8 +1,6 @@
 import { FunctionResult } from '../../../CommonTypes/FunctionResult';
 import { PublicDialogEntity } from '../../../Domain/entity/PublicDialogEntity';
 
-// const COLLECTION = 'CHATS';
-// request to server with sDK
 const listChats: PublicDialogEntity[] = [
   {
     id: '1',

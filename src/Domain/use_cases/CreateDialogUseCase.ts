@@ -17,7 +17,6 @@ export class CreateDialogUseCase implements IUseCase<void, DialogEntity> {
 
   private textInformationMessage: string;
 
-  // todo: delete synUseCase: BaseUseCase<boolean>, use only dialogRepository
   constructor(
     eventMessagesRepository: EventMessagesRepository,
     dialogRepository: DialogsRepository,

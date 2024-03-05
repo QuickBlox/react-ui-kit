@@ -10,7 +10,7 @@ export const QBConfig = {
     AIAnswerAssistWidgetConfig: {
       organizationName: 'Quickblox',
       openAIModel: 'gpt-3.5-turbo',
-      apiKey: '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',
+      apiKey: '',
       maxTokens: 3584,
       useDefault: true,
       proxyConfig: {
@@ -22,7 +22,7 @@ export const QBConfig = {
     AITranslateWidgetConfig: {
       organizationName: 'Quickblox',
       openAIModel: 'gpt-3.5-turbo',
-      apiKey: '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',
+      apiKey: '',
       maxTokens: 3584,
       useDefault: true,
       defaultLanguage: '',
@@ -48,7 +48,7 @@ export const QBConfig = {
     AIRephraseWidgetConfig: {
       organizationName: 'Quickblox',
       openAIModel: 'gpt-3.5-turbo',
-      apiKey: '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',
+      apiKey: '',
       maxTokens: 3584,
       useDefault: true,
       defaultTone: 'Professional',
@@ -130,7 +130,7 @@ export const QBConfig = {
     debug: true,
     enableForwarding: true,
     enableReplying: true,
-    regexUserName: '^(?=[a-zA-Z])[-a-zA-Z_ ]{3,49}(?<! )$',
+    regexUserName: '',
     endpoints: {
       api: 'api.quickblox.com',
       chat: 'chat.quickblox.com',
@@ -148,77 +148,4 @@ export const QBConfig = {
       enable: true,
     },
   },
-  // credentials: {
-  //   appId: -1,
-  //   accountKey: '',
-  //   authKey: '',
-  //   authSecret: '',
-  //   sessionToken: '',
-  // },
-  // configAIApi: {
-  //   AIAnswerAssistWidgetConfig: {
-  //     apiKey: '',
-  //     useDefault: true,
-  //     proxyConfig: {
-  //       api: 'v1/chat/completions',
-  //       servername: 'http://localhost',
-  //       port: '3011',
-  //       sessionToken: '',
-  //     },
-  //   },
-  //   AITranslateWidgetConfig: {
-  //     apiKey: '',
-  //     useDefault: true,
-  //     defaultLanguage: 'English',
-  //     languages: [
-  //       'English',
-  //       'Spanish',
-  //       'French',
-  //       'Portuguese',
-  //       'German',
-  //       'Ukrainian',
-  //     ],
-  //     proxyConfig: {
-  //       api: 'v1/chat/completions',
-  //       servername: 'http://localhost',
-  //       port: '3011',
-  //       sessionToken: '',
-  //     },
-  //   },
-  //   AIRephraseWidgetConfig: {
-  //     apiKey: '',
-  //     useDefault: true,
-  //     defaultTone: 'Professional',
-  //     proxyConfig: {
-  //       api: 'v1/chat/completions',
-  //       servername: 'http://localhost',
-  //       port: '3011',
-  //       sessionToken: '',
-  //     },
-  //   },
-  // },
-  // appConfig: {
-  //   maxFileSize: 10 * 1024 * 1024,
-  //   sessionTimeOut: 122,
-  //   chatProtocol: {
-  //     active: 2,
-  //   },
-  //   debug: true,
-  //   endpoints: {
-  //     api: 'api.quickblox.com',
-  //     chat: 'chat.quickblox.com',
-  //   },
-  //   on: {
-  //     // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/require-await
-  //     async sessionExpired(handleResponse: any, retry: any) {
-  //       console.log(
-  //         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-  //         `QBconfig sessionExpired handle: ${handleResponse} ${retry}`,
-  //       );
-  //     },
-  //   },
-  //   streamManagement: {
-  //     enable: true,
-  //   },
-  // },
 };

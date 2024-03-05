@@ -15,7 +15,6 @@ export class SubscribeToDialogEventsUseCase extends BaseUseCase<
 
   private callBackExecute: CallBackFunction<DialogEventInfo> | undefined;
 
-  // todo: delete synUseCase: BaseUseCase<boolean>, use only dialogRepository
   constructor(
     eventMessagesRepository: EventMessagesRepository,
     nameSubscription: string = SubscriptionPerformer.DEFAULT_SUBSCRIPTION_NAME,
@@ -30,7 +29,6 @@ export class SubscribeToDialogEventsUseCase extends BaseUseCase<
   }
 
   execute(callBack: CallBackFunction<DialogEventInfo>): Promise<boolean> {
-    // console.log('execute SubscribeToDialogEventsUseCase', callBack); //todo artik changed 28.12.2023
     this.callBackExecute = callBack;
     if (
       this.callBackExecute !== undefined &&

@@ -16,30 +16,7 @@ export default class BaseViewModel<TResult> {
     this._entity = value;
   }
 
-  // private _id?: number | undefined;
-  //
-  // private _name?: string | undefined;
-  //
-  // get id(): number | undefined {
-  //   return this._id;
-  // }
-  //
-  // set id(value: number | undefined) {
-  //   this._id = value;
-  // }
-  //
-  // get name(): string | undefined {
-  //   return this._name;
-  // }
-  //
-  // set name(value: string | undefined) {
-  //   this._name = value;
-  // }
-
   protected constructor(baseEntity: TResult) {
-    // id: number, name: string,
-    // this._id = id;
-    // this._name = name;
     this._entity = baseEntity;
   }
 

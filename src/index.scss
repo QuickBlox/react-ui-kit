@@ -1,6 +1,7 @@
-@import "Presentation/themes/styles/fonts";
-@import "Presentation/themes/styles/theme_colors_scheme";
-@import "Presentation/themes/styles/variables";
+@import 'Presentation/themes/styles/fonts';
+@import 'Presentation/themes/styles/theme_colors_scheme';
+@import 'Presentation/themes/styles/variables';
+@import 'Presentation/themes/styles/mixins';
 
 * {
   box-sizing: border-box;

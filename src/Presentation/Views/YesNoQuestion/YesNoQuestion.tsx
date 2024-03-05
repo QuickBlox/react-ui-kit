@@ -7,10 +7,10 @@ import MainButton, {
 
 type YesNoQuestionProps = {
   messageText?: string;
-  ClickYesActionHandler?: FunctionTypeVoidToVoid;
-  TouchYesActionHandler?: FunctionTypeVoidToVoid;
-  ClickNoActionHandler?: FunctionTypeVoidToVoid;
-  TouchNoActionHandler?: FunctionTypeVoidToVoid;
+  onClickYesAction?: FunctionTypeVoidToVoid;
+  OnTouchYesAction?: FunctionTypeVoidToVoid;
+  onClickNoAction?: FunctionTypeVoidToVoid;
+  onTouchNoAction?: FunctionTypeVoidToVoid;
   yesActionCaption?: string;
   noActionCaption?: string;
 };
@@ -19,13 +19,13 @@ const YesNoQuestionComponent: React.FC<YesNoQuestionProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   messageText,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ClickYesActionHandler,
+  onClickYesAction,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  TouchYesActionHandler,
+  OnTouchYesAction,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ClickNoActionHandler,
+  onClickNoAction,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  TouchNoActionHandler,
+  onTouchNoAction,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   yesActionCaption = undefined,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -37,16 +37,16 @@ const YesNoQuestionComponent: React.FC<YesNoQuestionProps> = ({
         <MainButton
           title={noActionCaption || 'No'}
           clickHandler={() => {
-            if (ClickNoActionHandler) {
-              ClickNoActionHandler();
+            if (onClickNoAction) {
+              onClickNoAction();
             }
           }}
           typeButton={TypeButton.outlined}
         />
         <MainButton
           clickHandler={() => {
-            if (ClickYesActionHandler) {
-              ClickYesActionHandler();
+            if (onClickYesAction) {
+              onClickYesAction();
             }
           }}
           title={yesActionCaption || 'Yes'}

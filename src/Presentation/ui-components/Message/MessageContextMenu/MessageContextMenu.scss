@@ -1,0 +1,19 @@
+  .message-context-menu-actions {
+    border-radius: 4px;
+    display: flex;
+    flex-direction: row;
+    gap: 0px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    position: relative;
+
+    &__icon {
+      fill: var(--tertiary-elements, #636D78);
+      path: var(--tertiary-elements, #636D78);
+      width: 24px;
+      height: 24px;
+    }
+  }

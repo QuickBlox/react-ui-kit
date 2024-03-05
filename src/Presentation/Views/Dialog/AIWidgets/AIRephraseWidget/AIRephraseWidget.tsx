@@ -9,7 +9,6 @@ import {
 import { AIMessageWidget } from '../AIMessageWidget';
 import { MessageEntity } from '../../../../../Domain/entity/MessageEntity';
 import AIWidgetActions, { MenuItem } from '../AIWidgetActions/AIWidgetActions';
-import ToneIcon from '../../../../components/UI/svgs/Icons/Actions/Tone';
 import NecktieIcon from '../../../../components/UI/svgs/Icons/AIWidgets/NecktieIcon';
 import HandshakeIcon from '../../../../components/UI/svgs/Icons/AIWidgets/HandshakeIcon';
 import MuscleIcon from '../../../../components/UI/svgs/Icons/AIWidgets/MuscleIcon';
@@ -23,13 +22,13 @@ import PerformingArtsIcon from '../../../../components/UI/svgs/Icons/AIWidgets/P
 import { AIUtils } from '../../../../../utils/utils';
 import WhiteCheckMarkIcon from '../../../../components/UI/svgs/Icons/AIWidgets/WhiteCheckMarkIcon';
 import UiKitTheme from '../../../../themes/UiKitTheme';
+import { RephraseSvg } from '../../../../icons';
 
 type AIRephraseWidgetProps = {
   messageText: string;
   waitAIWidget: boolean;
   setWaitAIWidget: FunctionTypeBooleanToVoid;
   setMessageErrorToast: FunctionTypeStringToVoid;
-  setShowErrorToast: FunctionTypeBooleanToVoid;
   AIRephrase?: AIMessageWidget;
   messagesToView: MessageEntity[];
   currentUserId: number;
@@ -44,12 +43,12 @@ const AIRephraseWidget: React.FC<AIRephraseWidgetProps> = ({
   waitAIWidget,
   setWaitAIWidget,
   setMessageErrorToast,
-  setShowErrorToast,
   AIRephrase,
   messagesToView,
   currentUserId,
   maxTokensForAIRephrase,
   rephraseTones,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   theme = undefined,
   setPrevValueText,
 }: AIRephraseWidgetProps) => {
@@ -112,13 +111,11 @@ const AIRephraseWidget: React.FC<AIRephraseWidgetProps> = ({
               // eslint-disable-next-line promise/always-return
               if (answerText === 'Rephrase failed.') {
                 setMessageErrorToast('Rephrase failed. Try again.');
-                setShowErrorToast(true);
               }
               setWaitAIWidget(false);
             })
             .catch(() => {
               setMessageErrorToast('Rephrase failed. Try again.');
-              setShowErrorToast(true);
               setWaitAIWidget(false);
             });
         }
@@ -161,12 +158,13 @@ const AIRephraseWidget: React.FC<AIRephraseWidgetProps> = ({
         >
           <AIWidgetActions
             widgetToRender={
-              <ToneIcon
-                width="24"
-                height="24"
-                applyZoom
-                color={theme ? theme.mainText() : 'var(--main-text)'}
-              />
+              <RephraseSvg className="rephrase-icon" />
+              // <ToneIcon
+              //   width="24"
+              //   height="24"
+              //   applyZoom
+              //   color={theme ? theme.mainText() : 'var(--main-text)'}
+              // />
             }
             items={getAIEditingMessagesItems()}
           />

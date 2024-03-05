@@ -88,10 +88,3 @@ const RowLeftContainer: React.FC<RowLeftContainerProps> = ({
 };
 
 export default RowLeftContainer;
-
-/*
- *
- *
- *
- *
- * */

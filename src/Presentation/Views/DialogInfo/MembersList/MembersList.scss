@@ -1,5 +1,5 @@
+$members-container-header-height: 64px;
 .members-container{
-  //min-width: 320px; // todo artik 23.12.2023
 }
 .members-container-header,
 .members-container-header * {
@@ -15,6 +15,12 @@
   align-self: stretch;
   flex-shrink: 0;
   position: relative;
+
+  border-style: solid;
+  border-color: var(--color-divider, #e7efff);
+  border-width: 0 0 1px 0;
+
+  height: $members-container-header-height;
 }
 .members-container-header-left {
   display: flex;
@@ -61,6 +67,7 @@
   width: 32px;
   height: 32px;
   position: relative;
+  cursor: pointer;
 }
 
 
@@ -165,7 +172,5 @@
 
 .members-container-members-list-wrapper{
   display: flex;
-  //max-height: 660px; // todo artik 23.12.2023
-  //height: 660px;
 }
 

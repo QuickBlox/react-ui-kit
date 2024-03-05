@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import './DialogList.scss';
 import ColumnContainer from '../../components/containers/ColumnContainer/ColumnContainer';
 import { DialogType } from '../../../Domain/entity/DialogTypes';
 import BaseViewModel, {
@@ -8,20 +7,23 @@ import BaseViewModel, {
 } from '../../../CommonTypes/BaseViewModel';
 import PreviewDialogViewModel from '../PreviewDialog/PreviewDialogViewModel';
 import PreviewDialog, { ThemeNames } from '../PreviewDialog/PreviewDialog';
-import LoaderComponent from '../../components/UI/Placeholders/LoaderComponent/LoaderComponent';
 import ErrorComponent from '../../components/UI/Placeholders/ErrorComponent/ErrorComponent';
-import DialogListHeader from '../DialogListHeader/DialogListHeader';
 import { ModalContext } from '../../providers/ModalContextProvider/Modal';
 import { DialogListViewModel } from './DialogListViewModel';
 import { DialogEntity } from '../../../Domain/entity/DialogEntity';
 import CreateNewDialogFlow from '../Flow/CreateDialogFlow/CreateNewDialogFlow';
-import { IconTheme } from '../../components/UI/svgs/Icons/IconsCommonTypes';
 import { GroupDialogEntity } from '../../../Domain/entity/GroupDialogEntity';
-import Search from '../../components/UI/svgs/Icons/Navigation/Search';
-import Remove from '../../components/UI/svgs/Icons/Actions/Remove';
 import UiKitTheme from '../../themes/UiKitTheme';
 import { useMobileLayout } from '../../components/containers/SectionList/hooks';
 import { getDateForDialog } from '../../../utils/DateTimeFormatter';
+import Header from '../../ui-components/Header/Header';
+import { NewChatSvg, SearchSvg } from '../../icons';
+import './DialogList.scss';
+import '../DialogListHeader/DialogListHeader.scss';
+import '../../ui-components/Header/Header.scss';
+import Avatar from '../../ui-components/Avatar/Avatar';
+import Loader from '../../ui-components/Loader/Loader';
+import TextField from '../../ui-components/TextField/TextField';
 
 type DialogsComponentSettings = {
   themeName?: ThemeNames;
@@ -69,8 +71,6 @@ const DialogList: React.FC<DialogsProps> = ({
   const [isMobile] = useMobileLayout();
 
   useEffect(() => {
-    console.log('USE EFFECT DIALOG LIST HAS CHANGED');
-    // console.log(JSON.stringify(dialogsViewModel?.dialogs)); //todo artik changed 28.12.2023
     dialogs.slice(0);
 
     dialogsViewModel?.dialogs.forEach((entiy, index) => {
@@ -89,8 +89,6 @@ const DialogList: React.FC<DialogsProps> = ({
             onDialogSelectHandler(it);
           }
         },
-        // Number(entiy.id),
-        // entiy.name,
         entiy,
       );
 
@@ -117,16 +115,6 @@ const DialogList: React.FC<DialogsProps> = ({
       dialogsViewModel?.dialogs.length === dialogsToView.length &&
       dialogsViewModel?.pagination?.hasNextPage()
     ) {
-      // setDialogsToView((prevState) => {
-      //   const newState = [...prevState];
-      //
-      //   const newDialogEntity: DialogEntity =
-      //     dialogsViewModel?.dialogs[prevState.length];
-      //
-      //   newState.push(newDialogEntity);
-      //
-      //   return newState;
-      // });
       const newPagination = dialogsViewModel?.pagination;
 
       newPagination.perPage = 6;
@@ -145,16 +133,6 @@ const DialogList: React.FC<DialogsProps> = ({
     }
   };
 
-  // useEffect(() => {
-  //   const firstPagination = new Pagination(1, 1000);
-  //
-  //   console.log(
-  //     'useEffect DialogList, getDialogs(): ',
-  //     JSON.stringify(firstPagination),
-  //   );
-  //   dialogsViewModel?.getDialogs(firstPagination);
-  // }, []);
-
   const { handleModal } = React.useContext(ModalContext);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const useHeader = !additionalSettings?.withoutHeader || header || false;
@@ -164,36 +142,37 @@ const DialogList: React.FC<DialogsProps> = ({
     additionalSettings?.useUpHeader || upHeaderContent || false;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const HeaderContent = header || (
-    <DialogListHeader
-      title="Dialogs"
-      clickSearchHandler={() => {
-        setShowSearchDialogs(!showSearchDialogs);
-        setNameDialogForSearch('');
-      }}
-      clickActionHandler={() => {
-        handleModal(
-          true,
-          <CreateNewDialogFlow dialogsViewModel={dialogsViewModel} />,
-          'New dialog',
-          false,
-          false,
-          isMobile
-            ? {
-                width: '300px',
-                backgroundColor: 'var(--main-background)',
-              }
-            : {
-                width: '380px',
-                // minWidth: '332px',
-                // maxWidth: '332px',
-                backgroundColor: 'var(--main-background)',
-              },
-        );
-      }}
-      theme={additionalSettings?.themeHeader}
-    />
+    <Header title="Dialogs" className="dialog-list-header">
+      <SearchSvg
+        className="dialog-list-header__icons"
+        onClick={() => {
+          setShowSearchDialogs(!showSearchDialogs);
+          setNameDialogForSearch('');
+        }}
+      />
+      <NewChatSvg
+        className="dialog-list-header__icons"
+        onClick={() => {
+          handleModal(
+            true,
+            <CreateNewDialogFlow dialogsViewModel={dialogsViewModel} />,
+            'New dialog',
+            false,
+            false,
+            isMobile
+              ? {
+                  width: '300px',
+                  backgroundColor: 'var(--main-background)',
+                }
+              : {
+                  width: '380px',
+                  backgroundColor: 'var(--main-background)',
+                },
+          );
+        }}
+      />
+    </Header>
   );
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const renderPreviewDialog = (item: PreviewDialogViewModel, index: number) => {
     function getMessageDateTimeSent() {
@@ -227,12 +206,8 @@ const DialogList: React.FC<DialogsProps> = ({
       ) {
         const imagePhoto = (currentDialog.entity as GroupDialogEntity).photo;
 
-        // console.log('DialogList: renderAvatar: ', imagePhoto || 'NO FOTO');
         AvatarComponent = imagePhoto ? (
-          <img
-            style={{ width: '55px', height: '55px', borderRadius: '50%' }}
-            src={imagePhoto}
-          />
+          <Avatar size="lg" src={imagePhoto} />
         ) : undefined;
       }
 
@@ -280,60 +255,29 @@ const DialogList: React.FC<DialogsProps> = ({
     );
   };
 
-  const loaderTheme: IconTheme = {
-    color: 'var(--color-background-info)',
-    width: '44',
-    height: '44',
-  };
-
   const renderSearchDialogs = () => {
     return (
-      <div className="search-dialog-name-input">
-        <Search
-          applyZoom
-          width="24"
-          height="24"
-          color="var(--tertiary-elements)"
-        />
-        <input
-          type="text"
-          // style={{ width: '268px' }}
-          style={{ width: '85%' }}
-          value={nameDialogForSearch}
-          onChange={(event) => {
-            setNameDialogForSearch(event.target.value);
-          }}
-          placeholder="Search"
-        />
-        {nameDialogForSearch.length > 0 ? (
-          <div
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              setNameDialogForSearch('');
-            }}
-          >
-            <Remove width="24" height="24" color="var(--tertiary-elements)" />
-          </div>
-        ) : null}
-      </div>
+      <TextField
+        className="search-dialog-text-field"
+        disabled={dialogsViewModel?.loading}
+        placeholder="Search"
+        icon={<SearchSvg className="search-dialog-text-field__icon" />}
+        value={nameDialogForSearch}
+        onChange={(value) => {
+          setNameDialogForSearch(value);
+        }}
+      />
     );
   };
 
+  // todo: use createRef with useEffect
   return (
-    <div
-      className="dialog-list"
-      // style={{
-      //   minHeight: '800px',
-      //   minWidth: '322px',
-      //   width: `${100}%`,
-      //   border: '1px solid var(--divider)',
-      // }}
-    >
+    <div className="dialog-list">
       <ColumnContainer maxWidth={isMobile ? '100%' : '320px'}>
         {useUpContent && upHeaderContent}
         {useHeader && HeaderContent}
         {useSubContent && subHeaderContent}
-        {/* <div className="scroll-box"> */}
+
         <div
           className="scroll-box"
           style={{ maxHeight: 'initial', height: 'initial' }}
@@ -354,6 +298,7 @@ const DialogList: React.FC<DialogsProps> = ({
         >
           {dialogsViewModel?.loading && (
             <div
+              className="dialog-list__loader-container"
               style={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -361,27 +306,11 @@ const DialogList: React.FC<DialogsProps> = ({
                 justifyContent: 'center',
               }}
             >
-              <div
-                style={{
-                  height: '44px',
-                  width: '44px',
-                }}
-              >
-                <LoaderComponent
-                  width={loaderTheme.width}
-                  height={loaderTheme.height}
-                  color={loaderTheme.color}
-                />
-              </div>
+              <Loader size="md" className="dialog-list__loader" />
             </div>
           )}
           {dialogsViewModel?.error && (
-            <ErrorComponent
-              title="Something is wrong."
-              ClickActionHandler={() => {
-                alert('call click retry');
-              }}
-            />
+            <ErrorComponent title="Something is wrong." />
           )}
           {showSearchDialogs ? renderSearchDialogs() : null}
           {nameDialogForSearch.length > 0 &&

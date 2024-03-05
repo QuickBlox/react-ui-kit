@@ -24,7 +24,6 @@ export class RemoteMessageDTO {
 
   public updated_at: string;
 
-  // todo: pay attention on those field, we haven't it before
   public notification_type?: string;
 
   public dialog_type?: DialogType;

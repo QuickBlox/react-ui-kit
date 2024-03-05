@@ -24,34 +24,12 @@ export class LocalDataSource
     return Promise.resolve(this.localSynced);
   }
 
-  // public release(): void {
-  //   this.onEventByTypeSubscribers.slice();
-  // }
-
-  // public subscribe(subscriber: FunctionTypeVoidToVoid): void {
-  //   this.onEventByTypeSubscribers.push(subscriber);
-  // }
-
   public setLocalSynced(synced: boolean): void {
     this.localSynced = synced;
     if (synced) {
       this.informSubscribers(synced);
     }
   }
-
-  // protected informSubscribers(): void {
-  //   this.onEventByTypeSubscribers.forEach((subscriber) => {
-  //     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  //     subscriber();
-  //   });
-  // }
-
-  // constructor() {
-  //   super();
-  //   // this.onEventByTypeSubscribers = [];
-  // }
-
-  // private readonly onEventByTypeSubscribers: Array<FunctionTypeVoidToVoid>;
 
   private dialogs: Record<string, LocalDialogDTO> = {};
 
@@ -328,7 +306,6 @@ export class LocalDataSource
     const result: string = storageValue ?? '';
 
     this.dialogs = result === '' ? {} : JSON.parse(result);
-    // todo: const filteredDialogsList: Record<string, DialogEntity> = {};
 
     if (
       this.dialogs[dtoDialog.id] === undefined ||
@@ -354,7 +331,6 @@ export class LocalDataSource
     const result: string = storageValue ?? '';
 
     this.messages = result === '' ? {} : JSON.parse(result);
-    // todo: const filteredMessagesList: Record<string, MessageEntity> = {};
 
     if (
       this.messages[dtoMessage.id] === undefined ||

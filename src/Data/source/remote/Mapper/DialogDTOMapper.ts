@@ -63,9 +63,6 @@ export class DialogDTOMapper implements IDTOMapper {
     dto.lastMessageId = qbDialog.last_message_id || '';
     dto.lastMessageText = qbDialog.last_message as string;
     dto.lastMessageDateSent = qbDialog.last_message_date_sent as string;
-    // dto.lastMessageDateSent = (
-    //   parseInt(qbDialog.last_message_date_sent || '0', 10) * 1000
-    // ).toString();
     dto.lastMessageUserId =
       qbDialog.last_message_user_id === null
         ? ''
@@ -159,7 +156,6 @@ export class DialogDTOMapper implements IDTOMapper {
     return Promise.resolve(dto as unknown as TResult);
   }
 
-  // TODO: check field for validate RemoteDialogDTO
   private static validateDTO(dto: RemoteDialogDTO) {
     const dialogDTOValidator: DtoValidator<RemoteDialogDTO> = {
       id(v: unknown): v is RemoteDialogDTO['id'] {
@@ -199,7 +195,6 @@ export class DialogDTOMapper implements IDTOMapper {
       ownerId(v: unknown): v is RemoteDialogDTO['ownerId'] {
         const { ownerId } = v as RemoteDialogDTO;
 
-        // todo: need check to empty string or string with len <= 3
         return ownerId !== undefined && ownerId !== null;
       },
       participantId(v: unknown): v is RemoteDialogDTO['participantId'] {
@@ -286,7 +281,6 @@ export class DialogDTOMapper implements IDTOMapper {
       );
   }
 
-  // TODO: check field for validate QBChatDialog
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private static validateQBChatDialog(qbDialog: QBChatDialog) {
     const qbDialogValidator: DtoValidator<QBChatDialog> = {

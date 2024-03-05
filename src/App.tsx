@@ -27,7 +27,7 @@ function App() {
   const { connectionRepository } = useQBConnection();
 
   const initLoginData: LoginData = {
-    login: 'anruaav2', // vit1 380990579507
+    login: 'artimed', // vit1 380990579507
     password: 'quickblox',
   };
 
@@ -60,7 +60,6 @@ function App() {
 
   const prepareSDK = async (authData: LoginData): Promise<void> => {
     console.log('call prepareSDK with data:', authData);
-    // todo: must be real remote datasource
     if (remoteDataSource.needInit) {
       console.log('start prepareSDK actions with data:', authData);
       await remoteDataSource.initSDKWithUser(
@@ -74,7 +73,6 @@ function App() {
         authData,
       );
       // await prepareMockData();
-      // todo: temporary off, must turn on and reorganize code rows
       await connectionRepository.initializeStates();
       console.log(
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -110,7 +108,6 @@ function App() {
 
   const reloginSDK = async (authData: LoginData): Promise<void> => {
     //
-    // TODO: 1. disconnect 2. setup new user
     console.log('call reloginSDK with data:', JSON.stringify(authData));
     currentContext.storage.SYNC_DIALOGS_USE_CASE.release();
     connectionRepository.stopKeepAlive();
@@ -119,7 +116,6 @@ function App() {
 
     await remoteDataSource.loginWithUser(authData);
     //
-    // todo: temporary off, must turn on and reorganize code rows
     await connectionRepository.initializeStates();
     console.log(
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
@@ -134,14 +130,7 @@ function App() {
   // eslint-disable-next-line @typescript-eslint/require-await
   const prepareContent = async (): Promise<void> => {
     console.log('PREPARE CONTENT');
-    // todo: must delete it and ADD Preload data (read first page everywhere)
-    // или во все юзкейсы 2) Get/Sync execute(completed/callback):Promise<Entity[]>
-    // await prepareMockData();
     console.log('ADD REAL DATA TO DIALOG MOCK DATA ');
-    // await remoteDataSource.getDialogsFirstPage();
-    // await remoteDataSource.setUpMockStorage();
-    //
-    //
   };
 
   const loginHandler = async (data: LoginData): Promise<void> => {
@@ -201,7 +190,6 @@ function App() {
   //   ...proxyConfig,
   // });
 
-  // todo: uncomment authSecret
   return (
     <QuickBloxUIKitProvider
       maxFileSize={QBConfig.appConfig.maxFileSize}

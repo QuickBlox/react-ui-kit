@@ -1,0 +1,18 @@
+.toast {
+  min-height: 24px;
+  padding: 4px 12px;
+  opacity: 60%;
+  border-radius: 4px;
+  background-color: var(--toast-color);
+
+  &__body {
+    padding: none;
+
+    font-family: 'Roboto';
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.5px;
+    color: var(--main-background);
+  }
+}

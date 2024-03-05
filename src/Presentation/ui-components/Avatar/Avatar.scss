@@ -1,0 +1,55 @@
+@import '../../themes/styles/mixins';
+
+.avatar {
+  @include applyBorderBox;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+  border-radius: 50%;
+  background-color: var(--disabled-elements);
+  color: var(--secondary-text);
+
+  svg {
+    fill: var(--secondary-text);
+    padding: 10px;
+  }
+
+  &__image {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+  &--xs {
+    width: 32px;
+    height: 32px;
+  }
+
+  &--sm {
+    width: 36px;
+    height: 36px;
+  }
+
+  &--md {
+    width: 40px;
+    height: 40px;
+  }
+
+  &--lg {
+    width: 56px;
+    height: 56px;
+  }
+
+  &--xl {
+    width: 64px;
+    height: 64px;
+  }
+
+  &--xxl {
+    width: 80px;
+    height: 80px;
+  }
+}

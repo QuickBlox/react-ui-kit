@@ -5,7 +5,7 @@ $default-height-icon: 44;
 // #Loader{fill: $default-background-color};
 
 .loader {
-  animation: spin 1s linear infinite;
+  animation: spin 2s linear infinite;
   svg path {fill: $default-background-color};
   min-width: $default-width-icon;
   min-height: $default-height-icon;

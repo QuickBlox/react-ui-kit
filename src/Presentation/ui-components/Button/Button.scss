@@ -1,0 +1,133 @@
+@import '../../themes/styles/mixins';
+
+.button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+
+  height: 32px;
+
+  border-radius: 4px;
+
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0.4px;
+
+  cursor: pointer;
+  border: none;
+  outline: none;
+  @include applyBorderBox;
+
+  &--default {
+    color: var(--secondary-background);
+    background-color: var(--main-elements);
+
+    &:hover {
+      background-color: var(--color-default-hover);
+    }
+
+    &:focus {
+      outline: 2px solid var(--color-background-info);
+    }
+
+    &:active {
+      background-color: var(--color-default-hover);
+      color: var(--color-background-info);
+    }
+
+    &.button--disabled {
+      cursor: not-allowed;
+      background-color: var(--disabled-elements);
+      color: var(--secondary-text);
+    }
+  }
+
+  &--outlined {
+    background-color: inherit;
+    border: 1px solid var(--main-elements);
+    color: var(--main-elements);
+
+    &:hover {
+      background-color: var(--outgoing-background);
+    }
+
+    &:focus {
+      border: 2px solid var(--color-background-info);
+    }
+
+    &:active {
+      border: 1px solid var(--main-elements);
+      color: var(--main-elements);
+    }
+
+    &.button--disabled {
+      cursor: not-allowed;
+      border: 1px solid var(--disabled-elements);
+      color: var(--disabled-elements);
+    }
+  }
+
+  &--danger {
+    background-color: var(--error);
+    color: var(--secondary-background);
+
+    &:focus {
+      outline: 2px solid var(--error-secondary);
+    }
+
+    &:active {
+      color: var(--error-secondary);
+    }
+
+    &.button--disabled {
+      cursor: not-allowed;
+      background-color: var(--disabled-elements);
+      color: var(--secondary-text);
+    }
+  }
+
+  &--text {
+    background-color: inherit;
+    color: var(--main-elements);
+
+    &:focus {
+      outline: 2px solid var(--color-background-info);
+    }
+
+    &:active {
+      color: var(--color-default-hover);
+    }
+
+    &.button--disabled {
+      cursor: not-allowed;
+      color: var(--disabled-elements);
+    }
+  }
+
+  &__loader {
+    &--default {
+      fill: var(--secondary-background);
+    }
+
+    &--outlined {
+      fill: var(--main-elements);
+    }
+
+    &--danger {
+      fill: var(--secondary-background);
+    }
+
+    &--text {
+      fill: var(--disabled-elements);
+    }
+  }
+}

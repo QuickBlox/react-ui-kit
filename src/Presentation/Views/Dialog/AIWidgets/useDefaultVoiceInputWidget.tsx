@@ -5,7 +5,6 @@ import VoiceIcon from '../../../components/UI/svgs/Icons/Actions/Voice';
 
 export default function useDefaultVoiceInputWidget(): AIAttachmentWidget {
   const renderWidget = (): JSX.Element => {
-    // return <VoiceIcon width="21" height="18" applyZoom color="red" />;
     return (
       <div
         style={{
@@ -23,7 +22,9 @@ export default function useDefaultVoiceInputWidget(): AIAttachmentWidget {
     );
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [textFromWidgetToInput, setTextFromWidgetToInput] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const textToWidget = (value: string): void => {
     if (value && value.length > 0) {
       setTextFromWidgetToInput(value.toUpperCase());

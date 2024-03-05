@@ -1,7 +1,49 @@
+$header-color-divider: var(--color-divider);
+$header-container-height: 64px;
+.dialog-list-header{
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 24px;
+  letter-spacing: 0.0015em;
+
+  border-style: solid;
+  border-color: var(--color-divider, #e7efff);
+  border-width: 0 0 1px 0;
+
+  border-right: 1px solid $header-color-divider;
+  height: $header-container-height;
+  &__icons{
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    fill: var(--color-icon);
+
+    svg path {
+      fill: var(--color-icon);
+    }
+  }
+}
 .dialog-list {
   min-width: var(--max-width-dialog-list);
   width: 100%;
   border: 1px solid var(--divider);
+
+  &__loader-container{
+    display: flex;
+    flexDirection: row;
+    alignItems: center;
+    justifyContent: center;
+  }
+
+  &__loader{
+    fill: var(--color-background-info);
+
+    svg path {
+      fill: var(--color-background-info);
+    }
+  }
 }
 
 @media only screen and (max-width: var(--min-width-screen-desktop)) {
@@ -12,11 +54,10 @@
 }
 
 .scroll-box{
-  // overflow: hidden !important; //todo artik changed 28.12.2023
   scrollbar-width: none !important;
   ///
-  overflow-y: scroll; //todo artik changed 28.12.2023
-  overflow-x: hidden; //todo artik changed 28.12.2023
+  overflow-y: scroll;
+  overflow-x: hidden;
   &::-webkit-scrollbar {
     width: 0px;
     background: transparent;
@@ -48,22 +89,10 @@
   justify-content: flex-end;
 
 }
-.search-dialog-name-input{
+.search-dialog-text-field{
+  width: 90%;
   margin: 16px;
-
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-
-  align-items: center;
-  text-align: center;
   padding: 8px;
-  // width: 288px;
-  height: 44px;
-
-  border: 1px solid #90979F;
-  border-radius: 4px;
 
   background-color: var(--main-background);
   color: var(--secondary-text);
@@ -87,4 +116,16 @@
     border: none;
     outline: none;
   }
+
+  &__icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    fill: var(--tertiary-elements);
+
+    svg path {
+      fill: var(--tertiary-elements);
+    }
+  }
+
 }

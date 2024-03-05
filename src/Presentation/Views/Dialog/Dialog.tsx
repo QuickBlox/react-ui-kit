@@ -1,24 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import './Dialog.scss';
-import useQBConnection from '../../providers/QuickBloxUIKitProvider/useQBConnection';
 import { DialogViewModel } from './DialogViewModel';
-import LoaderComponent from '../../components/UI/Placeholders/LoaderComponent/LoaderComponent';
 import UiKitTheme from '../../themes/UiKitTheme';
-import { ErrorToast } from './ErrorToast/ErrorToast';
+import Loader from '../../ui-components/Loader/Loader';
 
 type DialogProps = {
   messagesViewModel: DialogViewModel;
   maxWidthToResize?: string;
   warningErrorText: string;
-  showErrorToast: boolean;
-  messageErrorToast: string;
+  // showErrorToast: boolean;
+  // messageErrorToast: string;
   renderHeader: React.ReactNode;
   renderMessageList: React.ReactNode;
-  renderReplyMessagesPreview: React.ReactNode;
-  showReplyMessage: boolean;
   renderMessageInput: React.ReactNode;
   theme?: UiKitTheme;
-  headerContent?: React.ReactNode; // TODO : need refactor for adaptive
+  headerContent?: React.ReactNode;
   rootStyles?: React.CSSProperties;
   messagesContainerStyles?: React.CSSProperties;
 };
@@ -29,40 +25,28 @@ const Dialog: React.FC<DialogProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   maxWidthToResize = undefined,
   warningErrorText,
-  showErrorToast,
-  messageErrorToast,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // showErrorToast,
+  // messageErrorToast,
   renderHeader,
   renderMessageList,
-  renderReplyMessagesPreview,
-  showReplyMessage,
   renderMessageInput,
   theme = undefined,
   headerContent = undefined,
   rootStyles = {},
   messagesContainerStyles = {},
 }: DialogProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const maxWidthToResizing =
-    maxWidthToResize || '$message-view-container-wrapper-min-width';
-  // const maxWidthToResizing = '720px'; // $message-view-container-wrapper-min-width:
+  // const [showCurrentErrorToast, setShowCurrentErrorToast] =
+  //   useState<boolean>(showErrorToast);
+  // const [currentMessageErrorToast, setCurrentMessageErrorToast] =
+  //   useState<string>(messageErrorToast);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { connectionRepository, browserOnline } = useQBConnection();
-
-  //  const [showReplyMessage, setShowReplyMessage] = useState(false);
-  const [showCurrentErrorToast, setShowCurrentErrorToast] =
-    useState<boolean>(showErrorToast);
-  const [currentMessageErrorToast, setCurrentMessageErrorToast] =
-    useState<string>(messageErrorToast);
-
-  useEffect(() => {
-    setShowCurrentErrorToast(showErrorToast);
-  }, [showErrorToast]);
-
-  useEffect(() => {
-    setCurrentMessageErrorToast(messageErrorToast);
-  }, [messageErrorToast]);
+  // useEffect(() => {
+  //   setShowCurrentErrorToast(showErrorToast);
+  // }, [showErrorToast]);
+  //
+  // useEffect(() => {
+  //   setCurrentMessageErrorToast(messageErrorToast);
+  // }, [messageErrorToast]);
 
   const [currentWarningErrorText, setCurrentWarningErrorText] =
     useState<string>('');
@@ -80,9 +64,6 @@ const Dialog: React.FC<DialogProps> = ({
       style={
         maxWidthToResize
           ? {
-              // maxWidth: `${maxWidthToResizing}`,
-              // minWidth: `$message-view-container-wrapper-min-width`,
-              // width: `${maxWidthToResizing}`,
               width: '100%',
               ...rootStyles,
             }
@@ -91,36 +72,20 @@ const Dialog: React.FC<DialogProps> = ({
       className="message-view-container"
     >
       {headerContent || (
-        <div
-          // style={{
-          //   flexGrow: `1`,
-          //   flexShrink: `1`,
-          //   flexBasis: `${maxWidthToResizing}`,
-          // }}
-          className="message-view-container--header"
-        >
-          {renderHeader}
-        </div>
+        <div className="message-view-container--header">{renderHeader}</div>
       )}
-      {showCurrentErrorToast ? (
-        // && !messagesViewModel?.loading
-        <ErrorToast messageText={currentMessageErrorToast} />
-      ) : null}
+      {/* {showCurrentErrorToast ? ( */}
+      {/*  <ErrorToast messageText={currentMessageErrorToast} /> */}
+      {/* ) : null} */}
 
       <div
         style={
           theme
             ? {
-                // flexGrow: `1`,
-                // flexShrink: `1`,
-                // flexBasis: `${maxWidthToResizing}`,
                 backgroundColor: theme.secondaryBackground(), // var(--secondary-background);
                 ...messagesContainerStyles,
               }
             : {
-                // flexGrow: `1`,
-                // flexShrink: `1`,
-                // flexBasis: `${maxWidthToResizing}`,
                 ...messagesContainerStyles,
               }
         }
@@ -137,18 +102,7 @@ const Dialog: React.FC<DialogProps> = ({
           }}
         >
           {messagesViewModel?.loading && (
-            <div
-              style={{
-                height: '44px',
-                width: '44px',
-              }}
-            >
-              <LoaderComponent
-                width="44"
-                height="44"
-                color="var(--color-background-info)"
-              />
-            </div>
+            <Loader size="md" className="message-view-container__loader" />
           )}
         </div>
 
@@ -158,7 +112,6 @@ const Dialog: React.FC<DialogProps> = ({
         >
           {currentWarningErrorText}
         </div>
-        {showReplyMessage ? renderReplyMessagesPreview : null}
       </div>
 
       {renderMessageInput}

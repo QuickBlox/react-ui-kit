@@ -11,15 +11,15 @@ const ImageAttachment: React.FC<ImageAttachmentComponentProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   imageFile,
 }: ImageAttachmentComponentProps) => {
-  const [fileUrl, setFileUrl] = React.useState('');
+  const [imageUrl, setImageUrl] = React.useState('');
 
   async function getFileForPreview() {
     if (imageFile.url && imageFile.url.length > 0) {
-      let tmpFileUrl: string = imageFile.url;
-      const { blobFile } = await Creator.createBlobFromUrl(tmpFileUrl);
+      let fileUrl: string = imageFile.url;
+      const { blobFile } = await Creator.createBlobFromUrl(fileUrl);
 
-      tmpFileUrl = blobFile ? URL.createObjectURL(blobFile) : tmpFileUrl || '';
-      setFileUrl(tmpFileUrl);
+      fileUrl = blobFile ? URL.createObjectURL(blobFile) : fileUrl || '';
+      setImageUrl(fileUrl);
     }
   }
 
@@ -27,33 +27,23 @@ const ImageAttachment: React.FC<ImageAttachmentComponentProps> = ({
     getFileForPreview();
 
     return () => {
-      if (fileUrl) {
-        URL.revokeObjectURL(fileUrl);
+      if (imageUrl) {
+        URL.revokeObjectURL(imageUrl);
       }
     };
   }, []);
 
   return (
     <div className="message-attachment-image">
-      <a href={fileUrl} download="file" target="_blank" rel="noreferrer">
+      <a href={imageUrl} download="file" target="_blank" rel="noreferrer">
         <img
           className="message-attachment-image-body"
           key={imageFile.id}
-          src={fileUrl}
+          src={imageUrl}
           alt={imageFile.name || 'attached image'}
         />
       </a>
     </div>
-    // <div className="message-attachment-image">
-    //   <a href={imageFile.url} download="file" target="_blank" rel="noreferrer">
-    //     <img
-    //       className="message-attachment-image-body"
-    //       key={imageFile.id}
-    //       src={imageFile.url}
-    //       alt={imageFile.name || 'attached image'}
-    //     />
-    //   </a>
-    // </div>
   );
 };
 

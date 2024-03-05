@@ -99,25 +99,31 @@ export default function useDialogListViewModel(
       .then((result) => {
         console.log('EXECUTE COMPLETED: ', JSON.stringify(currentPagination));
         //
-        const tmpItems: PublicDialogEntity[] = (
+        const filteredDialogs: PublicDialogEntity[] = (
           result.ResultData as PublicDialogEntity[]
-        ).reduce((acc: PublicDialogEntity[], u: PublicDialogEntity) => {
-          const isPrivate = u.type === DialogType.private;
-          const isValidName =
-            regex && u.name && u.name.length > 0 && regex.test(u.name);
+        ).reduce(
+          (dialogList: PublicDialogEntity[], dialog: PublicDialogEntity) => {
+            const isPrivate = dialog.type === DialogType.private;
+            const isValidName =
+              regex &&
+              dialog.name &&
+              dialog.name.length > 0 &&
+              regex.test(dialog.name);
 
-          if (isPrivate && !isValidName) {
-            // eslint-disable-next-line no-param-reassign
-            u.name = 'Unknown';
-          }
-          acc.push(u);
+            if (isPrivate && !isValidName) {
+              // eslint-disable-next-line no-param-reassign
+              dialog.name = 'Unknown';
+            }
+            dialogList.push(dialog);
 
-          return acc;
-        }, []);
+            return dialogList;
+          },
+          [],
+        );
 
         //
         // setDialogs([...(result.ResultData as PublicDialogEntity[])]);
-        setDialogs([...tmpItems]);
+        setDialogs([...filteredDialogs]);
         setLoading(false);
         setPagination(result.CurrentPagination);
       })

@@ -53,19 +53,5 @@ export class AIAnswerAssistWithProxyUseCase implements IUseCase<void, string> {
       this.dialogMessages,
       settings,
     );
-
-    // const prompt = AIUtils.createAnswerAssistPrompt(this.textToSend);
-    //
-    // //
-    // return AISource.getDataWithProxyServer(
-    //   prompt,
-    //   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    //   this.dialogMessages,
-    //   this.servername,
-    //   this.api,
-    //   this.port,
-    //   this.sessionToken,
-    //   this.openAIModel,
-    // );
   }
 }

@@ -16,7 +16,7 @@ function OutgoingForwardedMessage(props: {
   onReply: FunctionTypeMessageEntityToVoid;
   onForward: FunctionTypeMessageEntityToVoid;
   repliedUserName: string;
-  renderOringinalMessage: React.ReactNode;
+  renderOriginalMessage: React.ReactNode;
   date_sent: string;
   status_message: number;
   enableForwarding: boolean;
@@ -32,8 +32,6 @@ function OutgoingForwardedMessage(props: {
       {props.messages.map((item) => (
         <div
           className="outgoing-forwarded-message"
-          // onMouseEnter={() => setHaveHover(true)}
-          // onMouseLeave={() => setHaveHover(false)}
           onClick={() => {
             setOpenMenu(!openMenu);
           }}
@@ -101,6 +99,7 @@ function OutgoingForwardedMessage(props: {
             <div
               className="outgoing-forwarded-message-chat-bubble-background"
               style={{
+                // todo: need refactoring this, should use only item.attachments[0].type
                 background:
                   item.attachments &&
                   (item.attachments[0].type
@@ -126,7 +125,7 @@ function OutgoingForwardedMessage(props: {
         </div>
       ))}
 
-      {props.renderOringinalMessage}
+      {props.renderOriginalMessage}
     </div>
   );
 }

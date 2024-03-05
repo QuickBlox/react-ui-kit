@@ -61,7 +61,7 @@ export default function useUsersListViewModel(
     try {
       const data = await getUsersData(participants);
       //
-      const tmpItems: UserEntity[] = [];
+      const filteredUsers: UserEntity[] = [];
 
       for (let i = 0; i < data.length; i += 1) {
         const u = data[i];
@@ -70,11 +70,11 @@ export default function useUsersListViewModel(
         if (!regexResult) {
           u.full_name = 'Unknown';
         }
-        tmpItems.push(u);
+        filteredUsers.push(u);
       }
 
       //
-      handleSuccessfulFetch(participants, tmpItems);
+      handleSuccessfulFetch(participants, filteredUsers);
     } catch (er) {
       const errorMessage = (er as Error).message;
 
