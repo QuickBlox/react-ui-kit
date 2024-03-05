@@ -9,6 +9,10 @@ node_modules
 npm-debug.log
 npm-debug.log.*
 
+# storybook
+storybook-static
+.storybook
+
 # *Storm
 .idea
 .idea/*
@@ -37,3 +41,5 @@ npm-debug.log.*
 coverage
 /.idea/
 /.idea/
+
+/storybook-static
