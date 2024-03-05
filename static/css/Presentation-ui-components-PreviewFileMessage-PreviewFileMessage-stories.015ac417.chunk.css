@@ -1,0 +1,3 @@
+.preview-file-message{display:flex;gap:8px;align-items:center}.preview-file-message__image{object-fit:cover;display:block;width:32px;height:32px;background:#e4e6e8;background:var(--incoming-background, #e4e6e8);border-radius:8px;flex-shrink:0}.preview-file-message__icon{fill:var(--caption);padding:6px}.preview-file-message__name{color:var(--secondary-text);text-align:left;font:400 12px/16px "Roboto",sans-serif;letter-spacing:.4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+
+/*# sourceMappingURL=Presentation-ui-components-PreviewFileMessage-PreviewFileMessage-stories.015ac417.chunk.css.map*/

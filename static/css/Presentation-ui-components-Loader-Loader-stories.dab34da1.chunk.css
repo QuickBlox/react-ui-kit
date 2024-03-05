@@ -1,0 +1,3 @@
+.loader{animation:rotate 1s infinite linear}.loader--sm{width:24px;height:24px}.loader--md{width:48px;height:48px}.loader--lg{width:52px;height:52px}@keyframes rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/*# sourceMappingURL=Presentation-ui-components-Loader-Loader-stories.dab34da1.chunk.css.map*/
