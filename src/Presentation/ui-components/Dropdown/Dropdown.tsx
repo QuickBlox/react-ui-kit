@@ -37,6 +37,11 @@ export default function Dropdown({
     setIsOpen((state) => !state);
   };
 
+  const handleSelect = (value: string) => {
+    onSelect(value);
+    setIsOpen(false);
+  };
+
   useEffect(() => {
     const handleBlur = (e: MouseEvent) => {
       if (
@@ -72,7 +77,7 @@ export default function Dropdown({
           <DropdownOption
             label={label}
             value={value}
-            onSelect={onSelect}
+            onSelect={handleSelect}
             leftIcon={leftIcon}
             rightIcon={rightIcon}
             key={value}

@@ -20,7 +20,7 @@ $create-dialog-container-height: 180px;
   align-items: flex-start;
 }
 
-.edit-btn-container{
+.edit-btn-container {
   //border: 3px solid black;
   min-height: 34px;
   max-height: 34px;
@@ -50,7 +50,7 @@ $create-dialog-container-height: 180px;
 
   margin-bottom: 24px;
 
-  &--wrapper{
+  &--wrapper {
     min-height: 180px;
     display: flex;
     flex-direction: column;
@@ -60,7 +60,7 @@ $create-dialog-container-height: 180px;
 
     //border: 1px solid blue;
 
-    &__inf{
+    &__inf {
       min-height: 20px;
 
       font-family: 'Roboto';
@@ -69,6 +69,7 @@ $create-dialog-container-height: 180px;
       font-size: 14px;
       line-height: 20px;
       letter-spacing: 0.25px;
+      color: var(--main-text);
       // color: var(--color-background);
 
       //border: 1px solid orange;
@@ -91,7 +92,6 @@ $create-dialog-container-height: 180px;
         max-width: 56px;
         height: 56px;
         margin-top: 8px;
-
 
         background-color: var(--disabled-elements);
         border-radius: 50%;
@@ -130,7 +130,7 @@ $create-dialog-container-height: 180px;
       }
     }
 
-    &__upload-error{
+    &__upload-error {
       min-height: 20px;
 
       font-family: 'Roboto';
@@ -143,7 +143,7 @@ $create-dialog-container-height: 180px;
       color: var(--error);
     }
 
-    &__dialog-name-inf{
+    &__dialog-name-inf {
       min-height: 20px;
 
       font-family: 'Roboto';
@@ -157,7 +157,7 @@ $create-dialog-container-height: 180px;
       //border: 1px solid orange;
     }
 
-    &__dialog-name-input{
+    &__dialog-name-input {
       margin-top: 8px;
 
       box-sizing: border-box;
@@ -171,7 +171,7 @@ $create-dialog-container-height: 180px;
       width: 100%;
       height: 44px;
 
-      border: 1px solid var(--tertiary-elements);//#90979F;
+      border: 1px solid var(--tertiary-elements); //#90979F;
       border-radius: 4px;
 
       flex: none;

@@ -8,8 +8,6 @@ type DialogProps = {
   messagesViewModel: DialogViewModel;
   maxWidthToResize?: string;
   warningErrorText: string;
-  // showErrorToast: boolean;
-  // messageErrorToast: string;
   renderHeader: React.ReactNode;
   renderMessageList: React.ReactNode;
   renderMessageInput: React.ReactNode;
@@ -22,11 +20,8 @@ type DialogProps = {
 // eslint-disable-next-line react/function-component-definition
 const Dialog: React.FC<DialogProps> = ({
   messagesViewModel,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   maxWidthToResize = undefined,
   warningErrorText,
-  // showErrorToast,
-  // messageErrorToast,
   renderHeader,
   renderMessageList,
   renderMessageInput,
@@ -35,19 +30,6 @@ const Dialog: React.FC<DialogProps> = ({
   rootStyles = {},
   messagesContainerStyles = {},
 }: DialogProps) => {
-  // const [showCurrentErrorToast, setShowCurrentErrorToast] =
-  //   useState<boolean>(showErrorToast);
-  // const [currentMessageErrorToast, setCurrentMessageErrorToast] =
-  //   useState<string>(messageErrorToast);
-
-  // useEffect(() => {
-  //   setShowCurrentErrorToast(showErrorToast);
-  // }, [showErrorToast]);
-  //
-  // useEffect(() => {
-  //   setCurrentMessageErrorToast(messageErrorToast);
-  // }, [messageErrorToast]);
-
   const [currentWarningErrorText, setCurrentWarningErrorText] =
     useState<string>('');
 
@@ -74,9 +56,6 @@ const Dialog: React.FC<DialogProps> = ({
       {headerContent || (
         <div className="message-view-container--header">{renderHeader}</div>
       )}
-      {/* {showCurrentErrorToast ? ( */}
-      {/*  <ErrorToast messageText={currentMessageErrorToast} /> */}
-      {/* ) : null} */}
 
       <div
         style={
@@ -92,7 +71,6 @@ const Dialog: React.FC<DialogProps> = ({
         className="message-view-container--messages"
       >
         {renderMessageList}
-        {/* {(messagesViewModel?.loading || waitAIWidget) && ( */}
         <div
           style={{
             display: 'flex',

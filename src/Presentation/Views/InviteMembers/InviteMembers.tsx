@@ -5,20 +5,19 @@ import RowRightContainer from '../../components/containers/RowRightContainer/Row
 import MainButton, {
   TypeButton,
 } from '../../components/UI/Buttons/MainButton/MainButton';
-import Search from '../../components/UI/svgs/Icons/Navigation/Search';
-import LoaderComponent from '../../components/UI/Placeholders/LoaderComponent/LoaderComponent';
 import ErrorComponent from '../../components/UI/Placeholders/ErrorComponent/ErrorComponent';
 import { InviteMembersViewModel } from './InviteMembersViewModel';
 import useInviteMembersViewModel from './useInviteMembersViewModel';
 import { Pagination } from '../../../Domain/repository/Pagination';
 import ScrollableContainer from '../../components/containers/ScrollableContainer/ScrollableContainer';
 import { UserEntity } from '../../../Domain/entity/UserEntity';
-import SingleUserWithCheckBox from './InviteUsersList/SingleUserWithCheckBox/SingleUserWithCheckBox';
 import { FunctionTypeVoidToVoid } from '../../../CommonTypes/BaseViewModel';
 import { DialogType } from '../../../Domain/entity/DialogTypes';
 import NotFoundContent from './NotFoundContent/NotFoundContent';
-import Remove from '../../components/UI/svgs/Icons/Actions/Remove';
 import { OpenDialogArcheType, TypeOpenDialog } from '../EditDialog/EditDialog';
+import { Loader, UserListItem } from '../../ui-components';
+import { SearchSvg } from '../../icons';
+import TextField from '../../ui-components/TextField/TextField';
 
 type SelectedItemInfo = { isChecked: boolean; userid: number };
 
@@ -93,16 +92,6 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
     return listExcludedUsers;
   };
 
-  const userSelectedHandler = (item: UserEntity, checkedStatus: boolean) => {
-    const newItems = selectedItems;
-
-    newItems[item.id] = { isChecked: checkedStatus, userid: item.id };
-    setSelectedItems(newItems);
-    const countCheckedUsers = getUsersForIncludeInDialog().length;
-
-    setCountSelected(countCheckedUsers);
-  };
-
   const containsSelectedUser = (id: number) => {
     let result = false;
 
@@ -132,23 +121,15 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
     return false;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const renderUserComponent = (user: UserEntity, index: number) => {
-    const checkedValue = selectedItems[user.id]?.isChecked || false;
+  const handleUserListItemChange = (userId: number, value: boolean) => {
+    setSelectedItems((prevState) => {
+      return {
+        ...prevState,
+        [userId]: { isChecked: value, userid: userId },
+      };
+    });
 
-    if (user.id.toString() !== idOwnerDialog) {
-      return (
-        <SingleUserWithCheckBox
-          user={user}
-          checkedHandler={userSelectedHandler}
-          isElementChecked={checkedValue}
-          keyValue={user.id}
-          isDisabled={getDisabledStatus(user)}
-        />
-      );
-    }
-
-    return null;
+    setCountSelected(getUsersForIncludeInDialog().length);
   };
 
   const fetchMoreData = () => {
@@ -189,37 +170,16 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
       <div className="container-invite-members">
         <div className="container-invite-members--add-members-container">
           <div className="container-invite-members--add-members-container--wrapper">
-            <div className="container-invite-members--add-members-container--wrapper__dialog-name-input">
-              <Search
-                applyZoom
-                width="24"
-                height="24"
-                color="var(--tertiary-elements)"
-              />
-              <input
-                type="text"
-                style={{ width: '268px' }}
-                value={userNameForFilter}
-                onChange={(event) => {
-                  setUserNameForFilter(event.target.value);
-                }}
-                placeholder="Search"
-              />
-              {userNameForFilter.length > 0 ? (
-                <div
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    setUserNameForFilter('');
-                  }}
-                >
-                  <Remove
-                    width="24"
-                    height="24"
-                    color="var(--tertiary-elements)"
-                  />
-                </div>
-              ) : null}
-            </div>
+            <TextField
+              className="filtered-text-field"
+              disabled={userViewModel.loading}
+              placeholder="Search"
+              icon={<SearchSvg className="filtered-text-field__icon" />}
+              value={userNameForFilter}
+              onChange={(value) => {
+                setUserNameForFilter(value);
+              }}
+            />
             <div className="container-invite-members--add-members-container--wrapper__inf">
               {countSelectedItems} selected
             </div>
@@ -233,7 +193,10 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
                         width: '44px',
                       }}
                     >
-                      <LoaderComponent width="44" height="44" />
+                      <Loader
+                        size="md"
+                        className="container-invite-members-loader"
+                      />
                     </div>
                   </div>
                 )}
@@ -249,7 +212,20 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
                   <ScrollableContainer
                     className="container-invite-members--add-members-container--wrapper__members__list"
                     data={userViewModel.users}
-                    renderItem={renderUserComponent}
+                    renderItem={(user) =>
+                      user.id.toString() !== idOwnerDialog ? (
+                        <UserListItem
+                          userName={user.full_name}
+                          key={user.id}
+                          avatarUrl={user.photo!}
+                          checked={selectedItems[user.id]?.isChecked || false}
+                          onChange={(value: boolean) =>
+                            handleUserListItemChange(user.id, value)
+                          }
+                          disabled={getDisabledStatus(user)}
+                        />
+                      ) : null
+                    }
                     onEndReached={fetchMoreData}
                     onEndReachedThreshold={0.8}
                     refreshing={false}

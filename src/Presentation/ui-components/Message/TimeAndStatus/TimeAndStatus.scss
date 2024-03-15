@@ -13,12 +13,9 @@
 
   &__caption {
     display: flex;
-    flex-direction: row;
     gap: 2px;
-    align-items: center;
-    justify-content: flex-start;
+    align-items: flex-end;
     flex-shrink: 0;
-    position: relative;
 
     &__status {
       width: 13px;

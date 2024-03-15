@@ -8,11 +8,10 @@ $header-container-height: 64px;
   line-height: 24px;
   letter-spacing: 0.0015em;
 
-  border-style: solid;
-  border-color: var(--color-divider, #e7efff);
-  border-width: 0 0 1px 0;
+  border-bottom: 1px solid var(--color-divider);
+  border-right: 1px solid var(--color-divider);
 
-  border-right: 1px solid $header-color-divider;
+  // border-right: 1px solid $header-color-divider;
   height: $header-container-height;
   &__icons{
     width: 24px;
@@ -55,9 +54,9 @@ $header-container-height: 64px;
 
 .scroll-box{
   scrollbar-width: none !important;
-  ///
   overflow-y: scroll;
   overflow-x: hidden;
+  border-right: 1px solid var(--color-divider);
   &::-webkit-scrollbar {
     width: 0px;
     background: transparent;
@@ -129,3 +128,18 @@ $header-container-height: 64px;
   }
 
 }
+.dialog-list-new-dialog-mobile-container{
+  width: 300px;
+  background-color: var(--main-background);
+}
+.dialog-list-new-dialog-desktop-container{
+  width: 380px;
+  background-color: var(--main-background);
+}
+
+.dialog-empty-chat-placeholder {
+  justify-content: center;
+  height: 100%;
+  white-space: pre-line;
+}
+

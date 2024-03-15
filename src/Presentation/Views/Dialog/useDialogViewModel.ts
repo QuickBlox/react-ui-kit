@@ -820,6 +820,7 @@ export default function useDialogViewModel(
     },
     set entity(newDialog) {
       setDialog(newDialog);
+      setMessages([]);
     },
     messages,
     loading,

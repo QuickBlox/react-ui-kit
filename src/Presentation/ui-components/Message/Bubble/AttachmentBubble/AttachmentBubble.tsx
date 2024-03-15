@@ -56,5 +56,11 @@ export default function AttachmentBubble({
     return <ImageBubble title={attachment.file?.name || ''} href={fileUrl} />;
   }
 
-  return <FileBubble type={typeMessage} title={attachment.file?.name || ''} />;
+  return (
+    <FileBubble
+      type={typeMessage}
+      title={attachment.file?.name || ''}
+      href={fileUrl}
+    />
+  );
 }

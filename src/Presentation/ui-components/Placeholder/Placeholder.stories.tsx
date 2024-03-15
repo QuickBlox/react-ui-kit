@@ -60,10 +60,10 @@ const meta: Meta<typeof Placeholder> = {
     },
     text: {
       defaultValue: {
-        summary: '',
+        summary: [''],
       },
       table: {
-        type: { summary: 'string' },
+        type: { summary: 'array' },
       },
       description: 'Placeholder text',
     },
@@ -81,14 +81,14 @@ type StoryDefault = StoryObj<typeof meta>;
 
 export const PlaceholderDefault: StoryDefault = {
   args: {
-    text: 'The are no massage',
+    text: ['The are no massage'],
     icon: <PublicChannelSvg />,
   },
 };
 
 export const PlaceholderError: StoryDefault = {
   args: {
-    text: 'Something wrong',
+    text: ['Something wrong'],
     icon: <ErrorSvg />,
     onRetry: () => undefined,
   },

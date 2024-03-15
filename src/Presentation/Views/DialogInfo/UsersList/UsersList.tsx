@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import './UsersList.scss';
 import { UserEntity } from '../../../../Domain/entity/UserEntity';
 import ScrollableContainer from '../../../components/containers/ScrollableContainer/ScrollableContainer';
-import SingleUser from './SingleUser/SingleUser';
+import { UserListItem } from '../../../ui-components';
 
 type UsersListProps = {
   usersFirstPageToView: UserEntity[];
@@ -25,10 +25,6 @@ const UsersList: React.FC<UsersListProps> = ({
   useEffect(() => {
     setUsersToView([...usersFirstPageToView]);
   }, [usersFirstPageToView, allUsers]);
-
-  const renderUserComponent = (user: UserEntity, index: number) => {
-    return <SingleUser user={user} keyValue={user.id + index} />;
-  };
 
   const fetchMoreData = () => {
     if (usersToView.length >= usersInDialogCount) {
@@ -58,7 +54,13 @@ const UsersList: React.FC<UsersListProps> = ({
     <ScrollableContainer
       rootStyles={rootStyles}
       data={usersToView}
-      renderItem={renderUserComponent}
+      renderItem={(user) => (
+        <UserListItem
+          userName={user.full_name}
+          avatarUrl={user.photo!}
+          key={user.id}
+        />
+      )}
       onEndReached={fetchMoreData}
       onEndReachedThreshold={0.8}
       refreshing={false}

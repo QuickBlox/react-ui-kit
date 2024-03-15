@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import { LocationSvg, NextSVG } from '../../icons';
 import Dropdown from './Dropdown';
+import Button from '../Button/Button';
 
 const meta: Meta<typeof Dropdown> = {
   title: 'Dropdown',
@@ -80,7 +81,7 @@ type StoryDefault = StoryObj<typeof meta>;
 
 export const DropdownDefault: StoryDefault = {
   args: {
-    children: <button type="button">Button</button>,
+    children: <Button>Button</Button>,
     disabled: false,
     options: [
       {
@@ -101,7 +102,7 @@ export const DropdownDefault: StoryDefault = {
 
 export const DropdownRightIcon = {
   args: {
-    children: <button type="button">Button</button>,
+    children: <Button>Button</Button>,
     disable: false,
     options: [
       {
@@ -125,7 +126,7 @@ export const DropdownRightIcon = {
 
 export const DropdownLeftIcon = {
   args: {
-    children: <button type="button">Button</button>,
+    children: <Button>Button</Button>,
     disable: false,
     options: [
       {

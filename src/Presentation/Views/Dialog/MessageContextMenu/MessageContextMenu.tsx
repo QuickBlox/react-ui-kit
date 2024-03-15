@@ -1,8 +1,8 @@
-import Dropdown from '../../Dropdown/Dropdown';
+import Dropdown from '../../../ui-components/Dropdown/Dropdown';
 import { MessageEntity } from '../../../../Domain/entity/MessageEntity';
 import { FunctionTypeMessageEntityToVoid } from '../../../../CommonTypes/BaseViewModel';
 import { ReactComponent as MoreSvg } from '../../../icons/navigation/more.svg';
-import { Option } from '../../Dropdown/DropdownOption';
+import { Option } from '../../../ui-components/Dropdown/DropdownOption';
 import './MessageContextMenu.scss';
 
 export type MessageContextMenuProps = {

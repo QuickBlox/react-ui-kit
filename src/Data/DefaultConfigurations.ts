@@ -133,10 +133,10 @@ export class DefaultConfigurations {
   static getDefaultQBConfig(): QBConfig {
     return {
       credentials: {
-        appId: 75949,
-        accountKey: 'uK_8uinNyz8-npTNB6tx',
-        authKey: 'DdS7zxMEm5Q7DaS',
-        authSecret: 'g88RhdOjnDOqFkv',
+        appId: -1,
+        accountKey: '',
+        authKey: '',
+        authSecret: '',
         sessionToken: '',
       },
       configAIApi: {

@@ -18,7 +18,7 @@ const meta = {
       control: { type: 'select' },
       table: {
         defaultValue: {
-          summary: '',
+          summary: 'md',
         },
         type: { summary: 'string' },
       },

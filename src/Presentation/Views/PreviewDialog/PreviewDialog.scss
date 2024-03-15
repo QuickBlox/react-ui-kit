@@ -200,7 +200,11 @@
   height: 64.29%;
   overflow: visible;
 }
-
+.dialog-item-preview-border{
+  border-style: solid;
+  border-color: var(--color-divider, #e7efff);
+  border-width: 0 0 1px 0;
+}
 
 
 

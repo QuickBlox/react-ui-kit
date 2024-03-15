@@ -276,6 +276,7 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
 
   return (
     <DialogItemPreview
+      className="dialog-item-preview-border"
       active={theme?.selected}
       avatar={avatar}
       title={title || ''}

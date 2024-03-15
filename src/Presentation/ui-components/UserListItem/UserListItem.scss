@@ -1,0 +1,33 @@
+.user-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  height: 56px;
+  padding: 8px 19px 8px 16px;
+  gap: 16px;
+  background-color: var(--color-background);
+
+  &--disabled {
+    cursor: not-allowed;
+    color: var(--disabled-elements);
+    fill: var(--disabled-elements);
+  }
+
+  &__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__name {
+    margin-left: 16px;
+
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0.15px;
+    color: var(--main-text);
+  }
+}

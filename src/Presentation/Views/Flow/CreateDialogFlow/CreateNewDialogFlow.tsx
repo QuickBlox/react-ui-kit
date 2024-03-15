@@ -3,7 +3,6 @@ import CreateDialog from '../CreateDialog/CreateDialog';
 import { DialogType } from '../../../../Domain/entity/DialogTypes';
 import EditDialog, { TypeOpenDialog } from '../../EditDialog/EditDialog';
 import InviteMembers from '../../InviteMembers/InviteMembers';
-import { ModalContext } from '../../../providers/ModalContextProvider/Modal';
 import { DialogListViewModel } from '../../DialogList/DialogListViewModel';
 import { GroupDialogEntity } from '../../../../Domain/entity/GroupDialogEntity';
 import { Stubs } from '../../../../Data/Stubs';
@@ -12,16 +11,20 @@ import { EditDialogParams } from '../../../../CommonTypes/BaseViewModel';
 import { FileEntity } from '../../../../Domain/entity/FileEntity';
 import { qbDataContext } from '../../../providers/QuickBloxUIKitProvider/QuickBloxUIKitProvider';
 import { RemoteDataSource } from '../../../../Data/source/remote/RemoteDataSource';
+import { DialogEntity } from '../../../../Domain/entity/DialogEntity';
 
 type CreateNewDialogFlowProps = {
   dialogsViewModel: DialogListViewModel;
+  onFinished: (newEntity: DialogEntity) => void;
+  onCancel?: () => void;
 };
 
 // eslint-disable-next-line react/function-component-definition
 const CreateNewDialogFlow: React.FC<CreateNewDialogFlowProps> = ({
   dialogsViewModel,
+  onFinished,
+  onCancel,
 }: CreateNewDialogFlowProps) => {
-  const { handleModal } = React.useContext(ModalContext);
   const currentContext = React.useContext(qbDataContext);
   const remoteDataSourceMock: RemoteDataSource =
     currentContext.storage.REMOTE_DATA_SOURCE;
@@ -102,12 +105,7 @@ const CreateNewDialogFlow: React.FC<CreateNewDialogFlowProps> = ({
         .createDialog(dialog)
         // eslint-disable-next-line promise/always-return
         .then((newEntity) => {
-          handleModal(false, '', '', false, false);
-          console.log(
-            `HAVE CREATED DIALOG from param: ${JSON.stringify(
-              newEntity,
-            )} from viewmodel ${JSON.stringify(dialogsViewModel.entity)} `,
-          );
+          onFinished(newEntity);
         })
         .catch((e) => {
           console.log('Have exception: ', stringifyError(e));
@@ -117,7 +115,9 @@ const CreateNewDialogFlow: React.FC<CreateNewDialogFlowProps> = ({
   };
 
   const closeModal = () => {
-    handleModal(false, '', '', false, false);
+    if (onCancel) {
+      onCancel();
+    }
   };
 
   return (
@@ -145,16 +145,7 @@ const CreateNewDialogFlow: React.FC<CreateNewDialogFlowProps> = ({
         />
       )}
       {stepToCreate === setDialogTitle && (
-        <div
-        // style={{
-        //   minHeight: '160px',
-        //   minWidth: '380px',
-        //   maxHeight: '160px',
-        //   maxWidth: '380px',
-        //   backgroundColor: 'var(--main-background)',
-        //   border: '3px solid blue',
-        // }}
-        >
+        <div>
           <EditDialog
             nameDialog=""
             typeDialog={selectedDialogType!}

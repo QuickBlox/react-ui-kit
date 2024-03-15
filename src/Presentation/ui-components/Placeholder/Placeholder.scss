@@ -8,7 +8,6 @@
   @include applyBorderBox;
 
   &__text {
-    margin: 16px 0px;
 
     font-family: 'Roboto';
     font-weight: 400;
@@ -22,6 +21,7 @@
   &__icon {
     width: 52px;
     height: 52px;
+    margin-bottom: 16px;
 
     fill: var(--caption);
   }

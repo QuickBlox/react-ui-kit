@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './DialogInfo.scss';
+import { toast } from 'react-toastify';
 import ColumnContainer from '../../components/containers/ColumnContainer/ColumnContainer';
 import { DialogEntity } from '../../../Domain/entity/DialogEntity';
 import GroupChat from '../../components/UI/svgs/Icons/Contents/GroupChat';
@@ -7,39 +8,32 @@ import UsersList from './UsersList/UsersList';
 import {
   EditDialogParams,
   FunctionTypeBooleanToVoid,
-  FunctionTypeDialogEntityToVoid,
   FunctionTypeVoidToVoid,
 } from '../../../CommonTypes/BaseViewModel';
 import { DialogType } from '../../../Domain/entity/DialogTypes';
 import PublicChannel from '../../components/UI/svgs/Icons/Contents/PublicChannel';
 import User from '../../components/UI/svgs/Icons/Contents/User';
-import ActiveButton from '../../components/UI/Buttons/ActiveButton/ActiveButton';
-import { ModalContext } from '../../providers/ModalContextProvider/Modal';
 import EditDialog, { TypeOpenDialog } from '../EditDialog/EditDialog';
-import InviteMembers from '../InviteMembers/InviteMembers';
 import { PublicDialogEntity } from '../../../Domain/entity/PublicDialogEntity';
 import { DialogListViewModel } from '../DialogList/DialogListViewModel';
 import { GroupDialogEntity } from '../../../Domain/entity/GroupDialogEntity';
 import { FileEntity } from '../../../Domain/entity/FileEntity';
 import UserAvatar from '../EditDialog/UserAvatar/UserAvatar';
-import MainButton, {
-  TypeButton,
-} from '../../components/UI/Buttons/MainButton/MainButton';
 import useQbInitializedDataContext from '../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
 import UiKitTheme from '../../themes/UiKitTheme';
 import { UserEntity } from '../../../Domain/entity/UserEntity';
-import { useMobileLayout } from '../../components/containers/SectionList/hooks';
 import useUsersListViewModel from './UsersList/useUsersListViewModel';
 import { PrivateDialogEntity } from '../../../Domain/entity/PrivateDialogEntity';
-import Header from '../../ui-components/Header/Header';
 import { CloseSvg, GroupChatSvg, LeaveSvg } from '../../icons';
-import { Badge, SettingsItem } from '../../ui-components';
+import { Badge, Button, DialogWindow, SettingsItem } from '../../ui-components';
+import useModal from '../../../hooks/useModal';
+import Header from '../../ui-components/Header/Header';
+import InviteMembers from '../InviteMembers/InviteMembers';
 
 type HeaderDialogsProps = {
   dialog: DialogEntity;
   dialogViewModel: DialogListViewModel;
   onCloseDialogInformationHandler: FunctionTypeVoidToVoid;
-  onLeaveDialog: FunctionTypeDialogEntityToVoid;
   onShowAllMemberClick: FunctionTypeBooleanToVoid;
   users: UserEntity[];
   theme?: UiKitTheme;
@@ -52,7 +46,6 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
   dialog,
   dialogViewModel,
   onCloseDialogInformationHandler,
-  onLeaveDialog,
   onShowAllMemberClick,
   users,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -61,31 +54,40 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
   upHeaderContent = undefined,
   rootStyles = {},
 }: HeaderDialogsProps) => {
+  const [dialogAvatarUrl, setDialogAvatarUrl] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [themeName, setThemeName] = React.useState(
+    document.documentElement.getAttribute('data-theme'),
+  );
+
+  const userViewModel = useUsersListViewModel(dialog);
+  const editModal = useModal();
+  const inviteMembersModal = useModal();
+  const leaveModal = useModal();
+
   const currentContext = useQbInitializedDataContext();
   const currentUserId =
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId.toString();
-  const { handleModal } = React.useContext(ModalContext);
-  const [isMobile] = useMobileLayout();
+  const useSubContent = subHeaderContent || false;
+  const useUpContent = upHeaderContent || false;
 
-  const closeModal = () => {
-    handleModal(false, '', '', false, false);
-  };
   const leaveDialogHandler = () => {
-    // handleModal(
-    //   true,
-    //   <LeaveDialogFlow
-    //     dialog={(dialogViewModel?.entity || dialog) as GroupDialogEntity}
-    //     dialogsViewModel={dialogViewModel}
-    //   />,
-    //   'Leave dialog?',
-    //   false,
-    //   true,
-    // );
-    onLeaveDialog((dialogViewModel?.entity || dialog) as GroupDialogEntity);
+    // onLeaveDialog((dialogViewModel?.entity || dialog) as GroupDialogEntity);
+    dialogViewModel
+      .deleteDialog((dialogViewModel?.entity || dialog) as GroupDialogEntity)
+      .then((result) => {
+        // eslint-disable-next-line promise/always-return
+        if (!result) {
+          toast('Dialog have not been left');
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        toast("Can't leave dialog");
+      });
   };
-  const userViewModel = useUsersListViewModel(dialog);
-  const [dialogAvatarUrl, setDialogAvatarUrl] = React.useState('');
+
   const getUserAvatarByUid = async () => {
     let result = '';
     const participants: Array<number> =
@@ -111,15 +113,6 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
     }
   }
 
-  useEffect(() => {
-    getDialogPhotoFileForPreview();
-
-    return () => {
-      if (dialogAvatarUrl) {
-        URL.revokeObjectURL(dialogAvatarUrl);
-      }
-    };
-  }, []);
   // eslint-disable-next-line consistent-return
   const renderIconForTypeDialog = (dialogEntity: DialogEntity) => {
     console.log(JSON.stringify(dialogEntity));
@@ -223,7 +216,6 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
         // eslint-disable-next-line promise/always-return
         .then((data) => {
           console.log('result update title dialog: ', JSON.stringify(data));
-          // closeModal();
         })
         .catch((e) => {
           console.log('Exception: ', e);
@@ -239,14 +231,10 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
 
     // eslint-disable-next-line promise/catch-or-return,promise/always-return
     executeUpdateActions(params).then(() => {
-      closeModal();
+      editModal.toggleModal();
     });
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [themeName, setThemeName] = React.useState(
-    document.documentElement.getAttribute('data-theme'),
-  );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const changeThemeActions = () => {
     setThemeName(document.documentElement.getAttribute('data-theme'));
@@ -256,21 +244,14 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
     switch (dialogEntity.type) {
       case DialogType.group:
         return (dialogEntity as GroupDialogEntity).photo || undefined;
-        break;
       case DialogType.public:
         return (dialogEntity as PublicDialogEntity).photo || undefined;
-        break;
       case DialogType.private:
         return undefined;
-        break;
       default:
         return undefined;
-        break;
     }
   };
-
-  const useSubContent = subHeaderContent || false;
-  const useUpContent = upHeaderContent || false;
 
   const applyInviteUsersHandler = (
     usersForInvite: number[],
@@ -298,7 +279,14 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
         .updateDialog(dialogForUpdate)
         // eslint-disable-next-line promise/always-return,@typescript-eslint/no-unused-vars
         .then((data) => {
-          closeModal();
+          if (editModal.isOpen) {
+            editModal.toggleModal();
+          }
+          if (inviteMembersModal.isOpen) {
+            inviteMembersModal.toggleModal();
+          }
+
+          return data;
         })
         .catch((e) => {
           console.log('Exception: ', e);
@@ -317,7 +305,7 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
         .removeMembers(dialogForUpdate)
         // eslint-disable-next-line promise/always-return,@typescript-eslint/no-unused-vars
         .then((data) => {
-          closeModal();
+          inviteMembersModal.toggleModal();
         })
         .catch((e) => {
           console.log('Exception: ', e);
@@ -325,25 +313,15 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
     }
   };
 
-  const handleToggleModal = () =>
-    handleModal(
-      true,
-      <InviteMembers
-        participants={PublicDialogEntity.getParticipants(
-          dialogViewModel?.entity || dialog,
-        )}
-        applyInviteUsersHandler={applyInviteUsersHandler}
-        cancelInviteMembersHandler={() => {
-          closeModal();
-        }}
-        typeAddEditDialog={TypeOpenDialog.edit}
-        typeDialog={dialog.type}
-        idOwnerDialog={dialog.ownerId}
-      />,
-      'Edit dialog',
-      false,
-      false,
-    );
+  useEffect(() => {
+    getDialogPhotoFileForPreview();
+
+    return () => {
+      if (dialogAvatarUrl) {
+        URL.revokeObjectURL(dialogAvatarUrl);
+      }
+    };
+  }, []);
 
   return (
     <div style={{ ...rootStyles }} className="dialog-information-container">
@@ -368,41 +346,23 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
             {dialog.type !== DialogType.private &&
             dialog.ownerId === currentUserId ? (
               <div className="dialog-information-profile-edit-button">
-                <ActiveButton
-                  content="Edit"
-                  clickAction={() => {
-                    handleModal(
-                      true,
-                      <EditDialog
-                        nameDialog={dialogViewModel?.entity.name || dialog.name}
-                        typeDialog={dialogViewModel?.entity.type || dialog.type}
-                        ulrIcon={getUrlAvatar(
-                          dialogViewModel?.entity || dialog,
-                        )}
-                        typeAddEditDialog={TypeOpenDialog.edit}
-                        clickUpdatedHandler={getDialogUpdatedInfoHandler}
-                        clickCancelHandler={closeModal}
-                      />,
-                      'Edit dialog',
-                      false,
-                      false,
-                      isMobile
-                        ? {
-                            width: '300px',
-                            backgroundColor: 'var(--main-background)',
-                          }
-                        : {
-                            width: '380px',
-                            // minWidth: '332px',
-                            // maxWidth: '332px',
-                            backgroundColor: 'var(--main-background)',
-                          },
-                    );
-                  }}
-                  touchAction={() => {
-                    console.log('call onTouch');
-                  }}
-                />
+                <Button variant="text" onClick={editModal.toggleModal}>
+                  Edit
+                </Button>
+                <DialogWindow
+                  title="Edit dialog"
+                  onClose={editModal.toggleModal}
+                  open={editModal.isOpen}
+                >
+                  <EditDialog
+                    nameDialog={dialogViewModel?.entity.name || dialog.name}
+                    typeDialog={dialogViewModel?.entity.type || dialog.type}
+                    ulrIcon={getUrlAvatar(dialogViewModel?.entity || dialog)}
+                    typeAddEditDialog={TypeOpenDialog.edit}
+                    clickUpdatedHandler={getDialogUpdatedInfoHandler}
+                    clickCancelHandler={editModal.toggleModal}
+                  />
+                </DialogWindow>
               </div>
             ) : null}
           </div>
@@ -426,17 +386,38 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
                 </div>
               )}
               <div className="dialog-info-action-wrapper-settings">
-                <MainButton
-                  title="Invite members"
-                  clickHandler={handleToggleModal}
-                  typeButton={TypeButton.outlined}
+                <DialogWindow
+                  title="Edit dialog"
+                  open={inviteMembersModal.isOpen}
+                  onClose={inviteMembersModal.toggleModal}
+                >
+                  <InviteMembers
+                    participants={PublicDialogEntity.getParticipants(
+                      dialogViewModel?.entity || dialog,
+                    )}
+                    applyInviteUsersHandler={applyInviteUsersHandler}
+                    cancelInviteMembersHandler={inviteMembersModal.toggleModal}
+                    typeAddEditDialog={TypeOpenDialog.edit}
+                    typeDialog={dialog.type}
+                    idOwnerDialog={dialog.ownerId}
+                  />
+                </DialogWindow>
+                <Button
+                  className="dialog-info-action-wrapper-button"
+                  onClick={inviteMembersModal.toggleModal}
+                  variant="outlined"
                   disabled={dialog.ownerId !== currentUserId}
-                />
-                <MainButton
-                  title="See all members"
-                  typeButton={TypeButton.outlined}
-                  clickHandler={() => onShowAllMemberClick(true)}
-                />
+                >
+                  Invite members
+                </Button>
+                <Button
+                  className="dialog-info-action-wrapper-button"
+                  onClick={() => onShowAllMemberClick(true)}
+                  variant="outlined"
+                  disabled={dialog.ownerId !== currentUserId}
+                >
+                  See all members
+                </Button>
               </div>
             </ColumnContainer>
           </SettingsItem>
@@ -444,9 +425,23 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
         <SettingsItem
           icon={<LeaveSvg />}
           title="Leave dialog"
-          onClick={leaveDialogHandler}
+          onClick={leaveModal.toggleModal}
           className="dialog-info-leave"
         />
+        <DialogWindow
+          open={leaveModal.isOpen}
+          title="Leave dialog?"
+          onClose={leaveModal.toggleModal}
+        >
+          <div className="dialog-leave-container">
+            <Button variant="outlined" onClick={leaveModal.toggleModal}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={leaveDialogHandler}>
+              Leave
+            </Button>
+          </div>
+        </DialogWindow>
       </ColumnContainer>
     </div>
   );

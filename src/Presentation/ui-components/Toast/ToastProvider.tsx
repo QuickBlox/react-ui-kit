@@ -16,7 +16,6 @@ export default function ToastProvider({ children }: ToastProps) {
       <ToastContainer
         position="top-center"
         autoClose={3000}
-        className="toast-wrapper"
         bodyClassName="toast__body"
         toastClassName="toast"
         pauseOnHover={false}

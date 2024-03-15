@@ -8,7 +8,7 @@ interface LoaderProps {
   className?: string;
 }
 
-export default function Loader({ className, size }: LoaderProps) {
+export default function Loader({ className, size = 'md' }: LoaderProps) {
   return (
     <LoaderSvg className={cn('loader', size && `loader--${size}`, className)} />
   );

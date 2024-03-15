@@ -1,6 +1,5 @@
 import React from 'react';
 import { ProviderProps } from '../ProviderProps';
-import ModalContextProvider from '../ModalContextProvider/ModalContextProvider';
 import { LocalDataSource } from '../../../Data/source/local/LocalDataSource';
 import {
   AuthorizationData,
@@ -332,7 +331,7 @@ function QuickBloxUIKitProvider({
         updateStorage,
       }}
     >
-      <ModalContextProvider>{children}</ModalContextProvider>
+      {children}
     </Provider>
   );
 }

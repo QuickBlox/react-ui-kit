@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react';
+import cn from 'classnames';
 import ColumnContainer from '../../components/containers/ColumnContainer/ColumnContainer';
 import { DialogType } from '../../../Domain/entity/DialogTypes';
 import BaseViewModel, {
   FunctionTypeDialogEntityToVoid,
   FunctionTypeViewModelToVoid,
+  FunctionTypeVoidToVoid,
 } from '../../../CommonTypes/BaseViewModel';
 import PreviewDialogViewModel from '../PreviewDialog/PreviewDialogViewModel';
 import PreviewDialog, { ThemeNames } from '../PreviewDialog/PreviewDialog';
 import ErrorComponent from '../../components/UI/Placeholders/ErrorComponent/ErrorComponent';
-import { ModalContext } from '../../providers/ModalContextProvider/Modal';
 import { DialogListViewModel } from './DialogListViewModel';
 import { DialogEntity } from '../../../Domain/entity/DialogEntity';
-import CreateNewDialogFlow from '../Flow/CreateDialogFlow/CreateNewDialogFlow';
 import { GroupDialogEntity } from '../../../Domain/entity/GroupDialogEntity';
 import UiKitTheme from '../../themes/UiKitTheme';
 import { useMobileLayout } from '../../components/containers/SectionList/hooks';
@@ -24,6 +24,8 @@ import '../../ui-components/Header/Header.scss';
 import Avatar from '../../ui-components/Avatar/Avatar';
 import Loader from '../../ui-components/Loader/Loader';
 import TextField from '../../ui-components/TextField/TextField';
+import { Placeholder } from '../../ui-components';
+import { ReactComponent as ChatSvg } from '../../icons/contents/chat.svg';
 
 type DialogsComponentSettings = {
   themeName?: ThemeNames;
@@ -38,9 +40,11 @@ type DialogsProps = {
   header?: React.ReactNode;
   subHeaderContent?: React.ReactNode;
   upHeaderContent?: React.ReactNode;
-  onDialogSelectHandler?: FunctionTypeViewModelToVoid<DialogEntity>;
+  selectedDialog?: DialogEntity;
+  onDialogSelected?: FunctionTypeViewModelToVoid<DialogEntity>;
   onLeaveDialog: FunctionTypeDialogEntityToVoid;
-  dialogsViewModel: DialogListViewModel;
+  onCreateDialog?: FunctionTypeVoidToVoid;
+  dialogListViewModel: DialogListViewModel;
   additionalSettings?: DialogsComponentSettings;
   scrollableHeight?: number;
 };
@@ -50,9 +54,11 @@ const DialogList: React.FC<DialogsProps> = ({
   header,
   subHeaderContent,
   upHeaderContent,
-  onDialogSelectHandler,
+  selectedDialog = undefined,
+  onDialogSelected,
   onLeaveDialog,
-  dialogsViewModel,
+  onCreateDialog,
+  dialogListViewModel,
   additionalSettings = undefined,
   scrollableHeight = 736,
 }: DialogsProps) => {
@@ -61,10 +67,14 @@ const DialogList: React.FC<DialogsProps> = ({
     PreviewDialogViewModel[]
   >([]);
 
-  const [selectedItem, setSelectedItem] = React.useState<{
-    selectedIndex: number | undefined;
-    item: BaseViewModel<DialogEntity> | undefined;
-  }>({ selectedIndex: undefined, item: undefined });
+  // const [selectedItem, setSelectedItem] = React.useState<{
+  //   selectedIndex: number | undefined;
+  //   item: BaseViewModel<DialogEntity> | undefined;
+  // }>({ selectedIndex: undefined, item: undefined });
+
+  const [selectedItem, setSelectedItem] = React.useState<
+    BaseViewModel<DialogEntity> | undefined
+  >(undefined);
 
   const [showSearchDialogs, setShowSearchDialogs] = React.useState(false);
   const [nameDialogForSearch, setNameDialogForSearch] = React.useState('');
@@ -73,49 +83,52 @@ const DialogList: React.FC<DialogsProps> = ({
   useEffect(() => {
     dialogs.slice(0);
 
-    dialogsViewModel?.dialogs.forEach((entiy, index) => {
+    dialogListViewModel?.dialogs.forEach((entity) => {
       const pw: PreviewDialogViewModel = new PreviewDialogViewModel(
         (it) => {
-          if (onDialogSelectHandler) {
-            setSelectedItem({ selectedIndex: index, item: it });
+          if (onDialogSelected) {
+            setSelectedItem(it);
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            onDialogSelectHandler(it);
+            onDialogSelected(it);
           }
         },
         (it) => {
-          if (onDialogSelectHandler) {
-            setSelectedItem({ selectedIndex: index, item: it });
+          if (onDialogSelected) {
+            setSelectedItem(it);
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            onDialogSelectHandler(it);
+            onDialogSelected(it);
           }
         },
-        entiy,
+        entity,
       );
 
-      if (selectedItem && selectedItem.selectedIndex === index) {
+      if (
+        (selectedItem && selectedItem.entity.id === entity.id) ||
+        (selectedDialog && selectedDialog.id === entity.id)
+      ) {
         pw.isSelected = true;
       }
       dialogs.push(pw);
     });
 
     setDialogsToView(dialogs);
-  }, [dialogsViewModel?.dialogs]);
+  }, [dialogListViewModel?.dialogs, selectedDialog]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const fetchMoreData = () => {
     console.log(
       'call fetchMoreData with: pagination: ',
-      JSON.stringify(dialogsViewModel?.pagination),
+      JSON.stringify(dialogListViewModel?.pagination),
       'View length: ',
       dialogsToView.length,
       'Model length: ',
-      dialogsViewModel?.dialogs.length,
+      dialogListViewModel?.dialogs.length,
     );
     if (
-      dialogsViewModel?.dialogs.length === dialogsToView.length &&
-      dialogsViewModel?.pagination?.hasNextPage()
+      dialogListViewModel?.dialogs.length === dialogsToView.length &&
+      dialogListViewModel?.pagination?.hasNextPage()
     ) {
-      const newPagination = dialogsViewModel?.pagination;
+      const newPagination = dialogListViewModel?.pagination;
 
       newPagination.perPage = 6;
       newPagination.nextPage(); // curPage + 1
@@ -126,14 +139,13 @@ const DialogList: React.FC<DialogsProps> = ({
         'View length: ',
         dialogsToView.length,
         'Model length: ',
-        dialogsViewModel?.dialogs.length,
+        dialogListViewModel?.dialogs.length,
       );
       // eslint-disable-next-line @typescript-eslint/await-thenable
-      dialogsViewModel?.getDialogs(newPagination);
+      dialogListViewModel?.getDialogs(newPagination);
     }
   };
 
-  const { handleModal } = React.useContext(ModalContext);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const useHeader = !additionalSettings?.withoutHeader || header || false;
   const useSubContent =
@@ -152,24 +164,7 @@ const DialogList: React.FC<DialogsProps> = ({
       />
       <NewChatSvg
         className="dialog-list-header__icons"
-        onClick={() => {
-          handleModal(
-            true,
-            <CreateNewDialogFlow dialogsViewModel={dialogsViewModel} />,
-            'New dialog',
-            false,
-            false,
-            isMobile
-              ? {
-                  width: '300px',
-                  backgroundColor: 'var(--main-background)',
-                }
-              : {
-                  width: '380px',
-                  backgroundColor: 'var(--main-background)',
-                },
-          );
-        }}
+        onClick={onCreateDialog}
       />
     </Header>
   );
@@ -219,15 +214,26 @@ const DialogList: React.FC<DialogsProps> = ({
         key={index}
         onClick={() => {
           setDialogsToView((prevState) => {
-            const newState = [...prevState];
+            // const newState = [...prevState];
 
-            if (selectedItem && selectedItem.selectedIndex) {
-              newState[selectedItem.selectedIndex].isSelected = false;
-            }
+            // if (selectedItem && selectedItem.selectedIndex) {
+            //   newState[selectedItem.selectedIndex].isSelected = false;
+            // }
+
+            const newState = prevState.map((el) => {
+              // eslint-disable-next-line no-param-reassign
+              el.isSelected = false;
+
+              return el;
+            });
+
             newState[index].isSelected = true;
 
             return newState;
           });
+        }}
+        style={{
+          pointerEvents: !dialogListViewModel?.loading ? 'auto' : 'none',
         }}
       >
         <PreviewDialog
@@ -259,7 +265,7 @@ const DialogList: React.FC<DialogsProps> = ({
     return (
       <TextField
         className="search-dialog-text-field"
-        disabled={dialogsViewModel?.loading}
+        disabled={dialogListViewModel?.loading}
         placeholder="Search"
         icon={<SearchSvg className="search-dialog-text-field__icon" />}
         value={nameDialogForSearch}
@@ -270,6 +276,17 @@ const DialogList: React.FC<DialogsProps> = ({
     );
   };
 
+  const searchedDialogs = nameDialogForSearch
+    ? dialogsToView.filter(({ entity }) =>
+        entity.name.toUpperCase().includes(nameDialogForSearch.toUpperCase()),
+      )
+    : dialogsToView;
+
+  const isEmptyDialogList =
+    dialogsToView &&
+    dialogsToView.length === 0 &&
+    nameDialogForSearch.length === 0;
+
   // todo: use createRef with useEffect
   return (
     <div className="dialog-list">
@@ -279,7 +296,9 @@ const DialogList: React.FC<DialogsProps> = ({
         {useSubContent && subHeaderContent}
 
         <div
-          className="scroll-box"
+          className={cn({
+            'scroll-box': !showSearchDialogs || !(searchedDialogs.length === 0),
+          })}
           style={{ maxHeight: 'initial', height: 'initial' }}
           ref={(el) => {
             if (el) {
@@ -296,7 +315,7 @@ const DialogList: React.FC<DialogsProps> = ({
             }
           }}
         >
-          {dialogsViewModel?.loading && (
+          {dialogListViewModel?.loading && (
             <div
               className="dialog-list__loader-container"
               style={{
@@ -309,11 +328,13 @@ const DialogList: React.FC<DialogsProps> = ({
               <Loader size="md" className="dialog-list__loader" />
             </div>
           )}
-          {dialogsViewModel?.error && (
+          {dialogListViewModel?.error && (
             <ErrorComponent title="Something is wrong." />
           )}
           {showSearchDialogs ? renderSearchDialogs() : null}
+
           {nameDialogForSearch.length > 0 &&
+            searchedDialogs.length > 0 &&
             dialogsToView
               .filter((item) =>
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -322,10 +343,24 @@ const DialogList: React.FC<DialogsProps> = ({
                   .includes(nameDialogForSearch.toUpperCase(), 0),
               )
               .map((item, index) => renderPreviewDialog(item, index))}
-          {nameDialogForSearch.length === 0 &&
-            (dialogsToView && dialogsToView.length) > 0 &&
+
+          {!isEmptyDialogList &&
+            nameDialogForSearch.length === 0 &&
             dialogsToView.map((item, index) =>
               renderPreviewDialog(item, index),
+            )}
+
+          {(isEmptyDialogList || searchedDialogs.length === 0) &&
+            !dialogListViewModel?.loading && (
+              <Placeholder
+                icon={<ChatSvg />}
+                text={
+                  !isEmptyDialogList
+                    ? 'There are no dialogs.'
+                    : ['There are no dialogs.', 'Please, create one.']
+                }
+                className="dialog-empty-chat-placeholder"
+              />
             )}
         </div>
       </ColumnContainer>

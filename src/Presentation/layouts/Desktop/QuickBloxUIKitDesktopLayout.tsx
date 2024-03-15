@@ -35,7 +35,6 @@ import { MessageEntity } from '../../../Domain/entity/MessageEntity';
 import { stringifyError } from '../../../utils/parse';
 import ReplyMessagePreview from '../../ui-components/MessageInput/ReplyMessagePreview/ReplyMessagePreview';
 import ForwardMessageFlow from '../../Views/Dialog/ForwardMessageFlow/ForwardMessageFlow';
-import { ModalContext } from '../../providers/ModalContextProvider/Modal';
 import SectionList from '../../components/containers/SectionList';
 import { SectionItem } from '../../components/containers/SectionList/useComponent';
 import { useMobileLayout } from '../../components/containers/SectionList/hooks';
@@ -56,9 +55,11 @@ import Button from '../../ui-components/Button/Button';
 import DialogWindow from '../../ui-components/DialogWindow/DialogWindow';
 import MessageInput from '../../ui-components/MessageInput/MessageInput';
 import AIRephraseWidget from '../../Views/Dialog/AIWidgets/AIRephraseWidget/AIRephraseWidget';
-import MessageItem from '../../ui-components/MessageItem/MessageItem';
-import { MessageSeparator } from '../../ui-components';
+import MessageItem from '../../Views/Dialog/MessageItem/MessageItem';
+import { MessageSeparator, Placeholder } from '../../ui-components';
 import ToastProvider from '../../ui-components/Toast/ToastProvider';
+import CreateNewDialogFlow from '../../Views/Flow/CreateDialogFlow/CreateNewDialogFlow';
+import useModal from '../../../hooks/useModal';
 
 type AIWidgetPlaceHolder = {
   enabled: boolean;
@@ -88,8 +89,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   uikitHeightOffset = '0px',
 }: QuickBloxUIKitDesktopLayoutProps) => {
   console.log('create QuickBloxUIKitDesktopLayout');
-  const [selectedDialog, setSelectedDialog] =
-    React.useState<BaseViewModel<DialogEntity>>();
+  const [forwardMessage, setForwardMessage] = useState<null | MessageEntity>();
+  const forwardMessageModal = useModal();
+  const [selectedDialog, setSelectedDialog] = React.useState<DialogEntity>();
 
   const currentContext = useQbInitializedDataContext();
   const QBConfig =
@@ -229,13 +231,12 @@ const QuickBloxUIKitDesktopLayout: React.FC<
 
   const selectDialogActions = (item: BaseViewModel<DialogEntity>): void => {
     if (!dialogsViewModel.loading) {
-      setSelectedDialog(item);
+      setSelectedDialog(item.entity);
     }
   };
 
   const [showReplyMessage, setShowReplyMessage] = useState(false);
   const [messagesToReply, setMessagesToReply] = useState<MessageEntity[]>([]);
-  const { handleModal } = React.useContext(ModalContext);
   const [isMobile, width, height, breakpoint] = useMobileLayout();
   const [clientHeight, setClientHeight] = useState<number>(0);
 
@@ -269,7 +270,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   };
 
   useEffect(() => {
-    const codeVersion = '0.2.8';
+    const codeVersion = '0.3.0';
 
     console.log(`React UIKit CODE VERSION IS ${codeVersion}`);
     console.log('TestStage: GET DATA ');
@@ -320,7 +321,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   //
   //   return participants.length;
   // };
-  const userViewModel = useUsersListViewModel(selectedDialog?.entity);
+  const userViewModel = useUsersListViewModel(selectedDialog);
   const [dialogAvatarUrl, setDialogAvatarUrl] = React.useState('');
   const getUserAvatarByUid = async () => {
     let result = '';
@@ -388,7 +389,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   useEffect(() => {
     console.log(
       `Clear selected dialog: ${
-        selectedDialog?.entity?.name || 'Dialog Name is empty'
+        selectedDialog?.name || 'Dialog Name is empty'
       }`,
     );
     if (!dialogsViewModel.entity) {
@@ -842,58 +843,36 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     setShowReplyMessage(true);
   };
 
-  const closeModal = () => {
-    handleModal(false, '', '', false, false);
-  };
+  const handleSendData = (
+    dialogsForForward: DialogEntity[],
+    messagesForForward: MessageEntity[],
+    relatedText: string,
+  ) => {
+    const forwardingData: ForwardMessagesParams = {
+      messagesToForward: messagesForForward,
+      targetDialogs: dialogsForForward,
+      relatedTextMessage:
+        relatedText || MessageDTOMapper.FORWARD_MESSAGE_PREFIX,
+    };
 
-  const handleForward = (message: MessageEntity): void => {
-    handleModal(
-      true,
-      <ForwardMessageFlow
-        messages={[message]}
-        currentDialog={selectedDialog!.entity}
-        currentUserName={userName || ''}
-        dialogs={dialogsViewModel.dialogs}
-        onSendData={(dialogsForForward, messagesForForward, relatedText) => {
-          const forwardingData: ForwardMessagesParams = {
-            messagesToForward: messagesForForward,
-            targetDialogs: dialogsForForward,
-            relatedTextMessage:
-              relatedText || MessageDTOMapper.FORWARD_MESSAGE_PREFIX,
-          };
+    messagesViewModel
+      .sendForwardedMessages(forwardingData)
+      .then((opResult: boolean) => {
+        if (opResult) {
+          toast('Message have been forwarded');
+        } else {
+          toast('Message have not been forwarded');
+        }
+        forwardMessageModal.toggleModal();
 
-          // eslint-disable-next-line promise/catch-or-return
-          messagesViewModel
-            .sendForwardedMessages(forwardingData)
-            .then((opResult: boolean) => {
-              // eslint-disable-next-line promise/always-return
-              if (opResult) {
-                toast('Message have been forwarded');
-              } else {
-                toast('Message have not been forwarded');
-              }
-            })
-            .catch((reason) => {
-              const errorMessage = stringifyError(reason);
+        return null;
+      })
+      .catch((reason) => {
+        const errorMessage = stringifyError(reason);
 
-              showErrorMessage(errorMessage);
-            })
-            .finally(() => {
-              closeModal();
-            });
-        }}
-      />,
-      'Forward',
-      false,
-      false,
-      {
-        minHeight: '200px',
-        minWidth: '380px',
-        maxWidth: '380px',
-        backgroundColor: 'var(--main-background)',
-        // border: '3px solid red',
-      },
-    );
+        forwardMessageModal.toggleModal();
+        showErrorMessage(errorMessage);
+      });
   };
 
   function getSectionData(messages2View: MessageEntity[]) {
@@ -966,14 +945,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   }, [isMobile]);
 
   useEffect(() => {
-    console.log(
-      `TestStage: selectedDialog: ${
-        selectedDialog?.entity?.name || 'Dialog Name is empty'
-      }`,
-    );
-    if (selectedDialog && selectedDialog.entity) {
-      dialogsViewModel.entity = selectedDialog.entity;
-      userViewModel.entity = selectedDialog.entity;
+    if (selectedDialog && selectedDialog) {
+      dialogsViewModel.entity = selectedDialog;
+      userViewModel.entity = selectedDialog;
 
       if (isMobile) {
         setShowDialogList(false);
@@ -1013,13 +987,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   const [dialogToLeave, setDialogToLeave] = useState<DialogEntity>();
   const leaveDialogHandler = (dialog: DialogEntity) => {
     setDialogToLeave(dialog);
-    // handleModal(
-    //   true,
-    //   <LeaveDialogFlow dialog={dialog} dialogsViewModel={dialogsViewModel} />,
-    //   'Leave dialog?',
-    //   false,
-    //   true,
-    // );
   };
 
   const [isOpen, setIsOpen] = useState(false);
@@ -1098,6 +1065,11 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   const messagesContainerHeight = showReplyMessage
     ? `calc(${clientHeight}px - 128px - 64px)`
     : `calc(${clientHeight}px - 128px - 1px)`;
+  const clientContainerHeight = `${clientHeight - 5}px`;
+  const headerHeight = 64;
+  const dialogListScrollableHeight = clientHeight - headerHeight - 6;
+
+  const newModal = useModal();
 
   return (
     <ToastProvider>
@@ -1115,11 +1087,13 @@ const QuickBloxUIKitDesktopLayout: React.FC<
           dialogsView={
             showDialogList ? (
               <DialogList
-                scrollableHeight={clientHeight - 64 - 6}
+                scrollableHeight={dialogListScrollableHeight}
                 // subHeaderContent={<CompanyLogo />}
                 // upHeaderContent={<CompanyLogo />}
-                dialogsViewModel={dialogsViewModel} // 1 Get 2 Update UseCase
-                onDialogSelectHandler={selectDialogActions}
+                dialogListViewModel={dialogsViewModel} // 1 Get 2 Update UseCase
+                selectedDialog={dialogsViewModel.entity}
+                onDialogSelected={selectDialogActions}
+                onCreateDialog={() => newModal.toggleModal()}
                 onLeaveDialog={leaveDialogHandler}
                 additionalSettings={{
                   withoutHeader: false,
@@ -1134,12 +1108,12 @@ const QuickBloxUIKitDesktopLayout: React.FC<
           dialogMessagesView={
             showDialogMessages &&
             selectedDialog &&
-            selectedDialog.entity &&
+            selectedDialog &&
             dialogsViewModel.entity ? (
               <Dialog
                 rootStyles={{
-                  minHeight: `${clientHeight}px`,
-                  maxHeight: `${clientHeight}px`,
+                  minHeight: clientContainerHeight,
+                  maxHeight: clientContainerHeight,
                 }}
                 messagesContainerStyles={
                   isMobile
@@ -1201,7 +1175,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                         </div>
                       )}
                       renderItem={([, groupMessages], listRef) =>
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                         groupMessages.map((message) => (
                           <MessageItem
                             // defaultGetSenderName={defaultGetSenderName}
@@ -1213,12 +1186,12 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                               handleOnReply(m);
                             }}
                             onForward={(m: MessageEntity) => {
-                              handleForward(m);
+                              setForwardMessage(m);
+                              forwardMessageModal.toggleModal();
                             }}
                             listRef={listRef}
-                            loading={waitAIWidget}
-                            AIAssistWidget={defaultAIAssistWidget!}
-                            AITranslateWidget={defaultAITranslateWidget!}
+                            AIAssistWidget={defaultAIAssistWidget}
+                            AITranslateWidget={defaultAITranslateWidget}
                             languagesForAITranslate={DefaultConfigurations.getAdditionalLanguagesForAITranslate(
                               currentContext.InitParams.qbConfig.configAIApi
                                 .AITranslateWidgetConfig,
@@ -1227,13 +1200,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                               currentContext.InitParams.qbConfig.configAIApi
                                 .AITranslateWidgetConfig,
                             )}
-                            onStartLoader={() => {
-                              setWaitAIWidget(true);
-                            }}
-                            onStopLoader={() => {
-                              setWaitAIWidget(false);
-                            }}
-                            onErrorToast={(messageError: string) => {
+                            onError={(messageError: string) => {
                               toast(messageError);
                             }}
                             messagesToView={messagesToView}
@@ -1304,7 +1271,22 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                 maxWidthToResize={maxWidthToResizing}
                 theme={theme}
               />
-            ) : null
+            ) : (
+              !isMobile && (
+                <div
+                  className="empty-chat-placeholder"
+                  style={{
+                    minHeight: clientContainerHeight,
+                    maxHeight: clientContainerHeight,
+                  }}
+                >
+                  <Placeholder
+                    text={['Select a chat to start messaging.']}
+                    className="empty-chat-history-placeholder"
+                  />
+                </div>
+              )
+            )
           }
           dialogInfoView={
             showDialogInformation &&
@@ -1316,7 +1298,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                   setIsAllMembersShow(false);
                 }}
                 members={userViewModel.users}
-                maxHeight={clientHeight - 64 - 6} // todo: artik 29.12.2023 same value like DialogList
+                maxHeight={dialogListScrollableHeight}
               />
             ) : (
               <DialogInfo
@@ -1325,15 +1307,14 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                 }}
                 users={userViewModel.users}
                 rootStyles={{
-                  minHeight: `${clientHeight}px`,
-                  maxHeight: `${clientHeight}px`,
+                  minHeight: clientContainerHeight,
+                  maxHeight: clientContainerHeight,
                 }}
                 // subHeaderContent={<CompanyLogo />}
                 // upHeaderContent={<CompanyLogo />}
-                dialog={selectedDialog.entity}
+                dialog={selectedDialog}
                 dialogViewModel={dialogsViewModel}
                 onCloseDialogInformationHandler={informationCloseHandler}
-                onLeaveDialog={leaveDialogHandler}
               />
             ))
           }
@@ -1352,6 +1333,39 @@ const QuickBloxUIKitDesktopLayout: React.FC<
             </Button>
           </div>
         </DialogWindow>
+        <DialogWindow
+          title="New dialog"
+          onClose={newModal.toggleModal}
+          open={newModal.isOpen}
+          className={
+            isMobile
+              ? 'dialog-list-new-dialog-mobile-container'
+              : 'dialog-list-new-dialog-desktop-container'
+          }
+        >
+          <CreateNewDialogFlow
+            dialogsViewModel={dialogsViewModel}
+            onCancel={newModal.toggleModal}
+            onFinished={() => {
+              newModal.toggleModal();
+            }}
+          />
+        </DialogWindow>
+        {selectedDialog && (
+          <DialogWindow
+            title="Forward"
+            open={forwardMessageModal.isOpen}
+            onClose={forwardMessageModal.toggleModal}
+          >
+            <ForwardMessageFlow
+              messages={[forwardMessage!]}
+              currentDialog={selectedDialog}
+              currentUserName={userName || ''}
+              dialogs={dialogsViewModel.dialogs}
+              onSendData={handleSendData}
+            />
+          </DialogWindow>
+        )}
       </div>
     </ToastProvider>
   );

@@ -1,15 +1,12 @@
 import './YesNoQuestion.scss';
 import React from 'react';
 import { FunctionTypeVoidToVoid } from '../../../CommonTypes/BaseViewModel';
-import MainButton, {
-  TypeButton,
-} from '../../components/UI/Buttons/MainButton/MainButton';
+import { Button } from '../../ui-components';
 
 type YesNoQuestionProps = {
   messageText?: string;
   onClickYesAction?: FunctionTypeVoidToVoid;
   OnTouchYesAction?: FunctionTypeVoidToVoid;
-  onClickNoAction?: FunctionTypeVoidToVoid;
   onTouchNoAction?: FunctionTypeVoidToVoid;
   yesActionCaption?: string;
   noActionCaption?: string;
@@ -23,7 +20,6 @@ const YesNoQuestionComponent: React.FC<YesNoQuestionProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   OnTouchYesAction,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onClickNoAction,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onTouchNoAction,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -34,23 +30,15 @@ const YesNoQuestionComponent: React.FC<YesNoQuestionProps> = ({
   return (
     <div>
       <div className="ynq-dialog-actions">
-        <MainButton
-          title={noActionCaption || 'No'}
-          clickHandler={() => {
-            if (onClickNoAction) {
-              onClickNoAction();
-            }
-          }}
-          typeButton={TypeButton.outlined}
-        />
-        <MainButton
-          clickHandler={() => {
+        <Button title={noActionCaption || 'No'} variant="outlined" />
+        <Button
+          title={yesActionCaption || 'Yes'}
+          variant="danger"
+          onClick={() => {
             if (onClickYesAction) {
               onClickYesAction();
             }
           }}
-          title={yesActionCaption || 'Yes'}
-          typeButton={TypeButton.danger}
         />
       </div>
     </div>

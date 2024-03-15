@@ -65,7 +65,9 @@ export default function useUsersListViewModel(
 
       for (let i = 0; i < data.length; i += 1) {
         const u = data[i];
-        const regexResult = u.full_name && regex && regex.test(u.full_name);
+        const regexResult = regex
+          ? u.full_name && regex.test(u.full_name)
+          : true;
 
         if (!regexResult) {
           u.full_name = 'Unknown';

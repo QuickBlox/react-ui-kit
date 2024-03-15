@@ -219,3 +219,17 @@ $dialog-information-container-dialog-information-height: 64px;
 
   border-bottom: 1px solid var(--divider);
 }
+
+.dialog-info-action-wrapper-button {
+  border: 1px solid var(--secondary-elements);
+  color: var(--secondary-elements);
+
+  &:active {
+    border: 1px solid var(--secondary-elements);
+    color: var(--secondary-elements);
+  }
+
+  &:focus {
+    border: 1px solid var(--secondary-elements);
+  }
+}

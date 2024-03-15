@@ -12,9 +12,9 @@ export type MessageProps = {
   type: 'outgoing' | 'incoming';
   subtype?: 'reply' | 'forward';
   status?: 'sent' | 'delivered' | 'viewed' | 'error';
-  enableSelect: boolean;
-  isSelect: boolean;
-  disabled: boolean;
+  enableSelect?: boolean;
+  isSelect?: boolean;
+  disabled?: boolean;
   onSelect?: (isSelected: boolean) => void;
   bottomPart?: ReactElement;
   additionalPart?: ReactElement;
@@ -29,7 +29,7 @@ export default function Message({
   type,
   status,
   subtype,
-  enableSelect = true,
+  enableSelect = false,
   isSelect = false,
   disabled = false,
   onSelect,
@@ -74,7 +74,7 @@ export default function Message({
                   {bottomPart}
                 </div>
                 {additionalPart}
-                <TimeAndStatus status={status} time={time} />
+                <TimeAndStatus time={time} />
               </div>
             </div>
           </div>

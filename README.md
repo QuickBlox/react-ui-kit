@@ -14,6 +14,8 @@ The main goal of the QuickBlox UIKit for React is to offer developers a streamli
 
 The QuickBlox UIKit for React offers modules that encapsulate complex chat functionalities, such as dialogs and chat management and real-time updates. These modules provide a simplified interface for integrating chat features into applications without the need for extensive knowledge of the underlying protocols or server-side infrastructure.
 
+You can view and interact with the interface components of the UI Kit using Storybook. In fact, this provides an interactive environment showcasing different scenarios that UI components might encounter in a live application. To view these, visit our [documentation](https://quickblox.github.io/react-ui-kit/).
+
 # Screenshots
 
 Chat dashboard with list of dialogs and create new chat dialog;
@@ -291,8 +293,10 @@ and specify selected components:
 />
 ```
 # Sample
-
+The source code of the sample is available on GitHub:
 https://github.com/QuickBlox/quickblox-javascript-sdk/tree/gh-pages/samples/react-chat-ui-kit-init-sample
+You can view and interact with the interface components of the UI Kit using Storybook. In fact, this provides an interactive environment showcasing different scenarios that UI components might encounter in a live application. To view these, visit our [documentation](https://quickblox.github.io/react-ui-kit/).
+
 ## Video guide "How to use AI Feature"
 [Youtube video about AI Assistant](https://youtu.be/BneMtDagOy4)
 # License

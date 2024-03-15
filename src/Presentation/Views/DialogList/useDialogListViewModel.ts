@@ -78,11 +78,6 @@ export default function useDialogListViewModel(
   const regex = regexUserName ? new RegExp(regexUserName) : null;
 
   async function getDialogs(currentPagination: Pagination) {
-    console.log('getDialogs in useDialogListViewModel');
-    console.log(
-      'EXECUTE USE CASES GET DIALOG WITH PAGINATION: ',
-      JSON.stringify(currentPagination),
-    );
     setLoading(true);
     const useCaseGetAllDialogs: GetAllDialogsUseCaseWithMock =
       new GetAllDialogsUseCaseWithMock(
@@ -97,18 +92,17 @@ export default function useDialogListViewModel(
       ?.execute()
       // eslint-disable-next-line promise/always-return
       .then((result) => {
-        console.log('EXECUTE COMPLETED: ', JSON.stringify(currentPagination));
-        //
         const filteredDialogs: PublicDialogEntity[] = (
           result.ResultData as PublicDialogEntity[]
         ).reduce(
           (dialogList: PublicDialogEntity[], dialog: PublicDialogEntity) => {
             const isPrivate = dialog.type === DialogType.private;
             const isValidName =
-              regex &&
-              dialog.name &&
-              dialog.name.length > 0 &&
-              regex.test(dialog.name);
+              (regex &&
+                dialog.name &&
+                dialog.name.length > 0 &&
+                regex.test(dialog.name)) ||
+              !regex;
 
             if (isPrivate && !isValidName) {
               // eslint-disable-next-line no-param-reassign
@@ -121,32 +115,46 @@ export default function useDialogListViewModel(
           [],
         );
 
-        //
-        // setDialogs([...(result.ResultData as PublicDialogEntity[])]);
-        setDialogs([...filteredDialogs]);
+        const sortedData = [...filteredDialogs].sort((a, b) => {
+          return (
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          );
+        });
+
+        setDialogs([...sortedData]);
         setLoading(false);
         setPagination(result.CurrentPagination);
       })
       .catch((e) => {
-        console.log('call catch....', JSON.stringify(e));
+        console.log(
+          'call in useCaseGetAllDialogs catch....',
+          JSON.stringify(e),
+        );
         setError(`${(e as unknown as Error).message}`);
         setLoading(false);
       });
     await useCaseSubscribeToDialogsUpdates?.execute((data) => {
       try {
-        console.log('3.SUBSCRIBE EXECUTE in useDialogListViewModel:', data);
-        setDialogs([...(data as PublicDialogEntity[])]);
+        const sortedData = [...(data as PublicDialogEntity[])].sort((a, b) => {
+          return (
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          );
+        });
+
+        setDialogs(sortedData);
         setLoading(false);
         setError('');
       } catch (e) {
-        console.log('catch error2');
-        setError('ERROR2!!!');
+        console.log(
+          'call in useCaseSubscribeToDialogsUpdates catch....',
+          JSON.stringify(e),
+        );
+        setError(`${(e as Error).message}`);
       }
     });
   }
 
   const dialogUpdateHandler = (dialogInfo: DialogEventInfo) => {
-    console.log('call dialogUpdateHandler in useDialogListViewModel');
     if (
       dialogInfo.eventMessageType === EventMessageType.SystemMessage
       // || dialogInfo.eventMessageType === EventMessageType.RegularMessage
@@ -242,10 +250,6 @@ export default function useDialogListViewModel(
   const createDialog = async (
     dialogInfo: GroupDialogEntity,
   ): Promise<DialogEntity> => {
-    console.log(
-      'call createDialog in use case with params: ',
-      JSON.stringify(dialogInfo),
-    );
     const textInformationMessage = `${currentUserName} create the chat`;
     const createDialogUseCase: CreateDialogUseCase = new CreateDialogUseCase(
       eventMessageRepository,

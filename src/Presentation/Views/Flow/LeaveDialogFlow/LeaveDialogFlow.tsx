@@ -4,7 +4,6 @@ import YesNoQuestionComponent from '../../YesNoQuestion/YesNoQuestion';
 import { GroupDialogEntity } from '../../../../Domain/entity/GroupDialogEntity';
 import { stringifyError } from '../../../../utils/parse';
 import { DialogEntity } from '../../../../Domain/entity/DialogEntity';
-import { ModalContext } from '../../../providers/ModalContextProvider/Modal';
 
 type LeaveDialogFlowProps = {
   dialogsViewModel: DialogListViewModel;
@@ -16,11 +15,6 @@ const LeaveDialogFlow: React.FC<LeaveDialogFlowProps> = ({
   dialogsViewModel,
   dialog,
 }: LeaveDialogFlowProps) => {
-  const { handleModal } = React.useContext(ModalContext);
-  const closeModal = () => {
-    handleModal(false, '', '', false, false);
-  };
-
   return (
     // <ColumnContainer gapBetweenItem="8px">
     <YesNoQuestionComponent
@@ -30,16 +24,11 @@ const LeaveDialogFlow: React.FC<LeaveDialogFlowProps> = ({
         dialogsViewModel
           .deleteDialog(dialog as GroupDialogEntity)
           .then((result) => {
-            if (result) closeModal();
-
             return result;
           })
           .catch((e) => {
             console.log('exception in LeaveDialogFlow', stringifyError(e));
           });
-      }}
-      onClickNoAction={() => {
-        closeModal();
       }}
     />
   );

@@ -24,9 +24,14 @@
     background-color: var(--main-background);
     box-shadow: 0 9px 15px 0 rgba(0, 0, 0, 0.04),
       0 9px 46px 0 rgba(0, 0, 0, 0.08);
+
+    @media (max-width: 767px) {
+      width: 300px;
+    }
   }
 
   &__header {
+    margin-bottom: 28px;
     padding: 0px !important;
   }
 

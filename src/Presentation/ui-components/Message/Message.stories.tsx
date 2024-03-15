@@ -8,8 +8,6 @@ import FileBubble from './Bubble/FileBubble/FileBubble';
 import ImageBubble from './Bubble/ImageBubble/ImageBubble';
 import AudioBubble from './Bubble/AudioBubble/AudioBubble';
 import VideoBubble from './Bubble/VideoBubble/VideoBubble';
-import AITranslate from './AITranslate/AITranslate';
-import AIAssist from './AIAssist/AIAssist';
 
 function createBubbleByType(
   type: 'incoming' | 'outgoing',
@@ -226,36 +224,26 @@ export const MessageFile: Story = {
   },
 };
 
-export const MessageTextWithAIfeatures: Story = {
-  args: {
-    children: <TextBubble text="Test Message" type="incoming" />,
-    bottomPart: (
-      <AITranslate
-        languagesForAITranslate={[
-          'English',
-          'French',
-          'Portuguese',
-          'German',
-          'Ukrainian',
-        ]}
-        onClickOriginalText={() => {
-          console.log('orig');
-        }}
-        defaultLanguageForAITranslate="English"
-        originalTextMessage={false}
-        waitAIWidget={false}
-        onTranslate={() => {
-          console.log('translate');
-        }}
-      />
-    ),
-    additionalPart: (
-      <AIAssist
-        onAssistAnswer={() => {
-          console.log('ai-assist');
-        }}
-        waitAIWidget={false}
-      />
-    ),
-  },
-};
+// export const MessageTextWithAIfeatures: Story = {
+//   args: {
+//     children: <TextBubble text="Test Message" type="incoming" />,
+//     bottomPart: (
+//       <AITranslate
+//         languages={['English', 'French', 'Portuguese', 'German', 'Ukrainian']}
+//         defaultLanguage="English"
+//         originalTextMessage={false}
+//         loading={false}
+//         onTranslated={() => console.log('Function not implemented.')}
+//         onError={() => console.log('Function not implemented.')}
+//         onLoading={() => console.log('Function not implemented.')}
+//       />
+//     ),
+//     additionalPart: (
+//       <AIAssist
+//         loading={false}
+//         onError={() => console.log('Function not implemented.')}
+//         onLoading={() => console.log('Function not implemented.')}
+//       />
+//     ),
+//   },
+// };

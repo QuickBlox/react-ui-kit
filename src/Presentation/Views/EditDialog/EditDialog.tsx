@@ -3,9 +3,6 @@ import './EditDialog.scss';
 import ColumnContainer from '../../components/containers/ColumnContainer/ColumnContainer';
 import User from '../../components/UI/svgs/Icons/Contents/User';
 import RowRightContainer from '../../components/containers/RowRightContainer/RowRightContainer';
-import MainButton, {
-  TypeButton,
-} from '../../components/UI/Buttons/MainButton/MainButton';
 import {
   EditDialogParams,
   FunctionTypeEditDialogParamsToVoid,
@@ -16,6 +13,7 @@ import { DialogType } from '../../../Domain/entity/DialogTypes';
 import GroupChat from '../../components/UI/svgs/Icons/Contents/GroupChat';
 import PublicChannel from '../../components/UI/svgs/Icons/Contents/PublicChannel';
 import useQbInitializedDataContext from '../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
+import { Button } from '../../ui-components';
 
 export const TypeOpenDialog = {
   edit: 'edit',
@@ -32,11 +30,11 @@ type EditDialogProps = {
   clickUpdatedHandler?: FunctionTypeEditDialogParamsToVoid;
   clickCancelHandler?: FunctionTypeVoidToVoid;
 };
+
 // eslint-disable-next-line react/function-component-definition,@typescript-eslint/no-unused-vars
 const EditDialog: React.FC<EditDialogProps> = ({
   nameDialog = '',
   typeDialog,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ulrIcon = '',
   typeAddEditDialog = TypeOpenDialog.create,
   clickUpdatedHandler,
@@ -49,6 +47,7 @@ const EditDialog: React.FC<EditDialogProps> = ({
   const errorMessageUploadMaxSize = `file size must be less than ${
     maxUploadFileSize / 1024 / 1024
   } Mb`;
+
   const [dialogName, setDialogName] = useState(nameDialog);
   const [fileUploadAvatar, setFileUploadAvatar] = useState<File | null>(null);
   const [urlAvatar, setUrlAvatar] = useState(ulrIcon || '');
@@ -58,21 +57,24 @@ const EditDialog: React.FC<EditDialogProps> = ({
   );
   const [errorMessageUpload, setErrorMessageUpload] = useState('');
 
-  useEffect(() => {
-    setDisabledButton(
-      dialogName.length < minLengthNameDialog ||
-        dialogName.length > maxLengthNameDialog,
-    );
-  }, [dialogName]);
+  const handleUploadAvatar = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const allowedExtensions = ['jpg', 'jpeg', 'gif', 'png', 'heic', 'heif'];
 
-  const ChangeFileHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setErrorMessageUpload('');
     const reader = new FileReader();
     const file = event.currentTarget.files
       ? event.currentTarget.files[0]
       : null;
 
-    console.log('file: ', file);
+    if (file === null) return;
+
+    if (!allowedExtensions.includes(file.type.split('/')[1])) {
+      setErrorMessageUpload(
+        'Unsupported file format. Please use JPG, JPEG, PNG, HEIC, HEIF, or GIF.',
+      );
+
+      return;
+    }
 
     const fileSize = file?.size || 0;
 
@@ -103,7 +105,6 @@ const EditDialog: React.FC<EditDialogProps> = ({
               color="var(--secondary-text)"
             />
           );
-          break;
         case DialogType.group:
           return (
             <GroupChat
@@ -113,7 +114,6 @@ const EditDialog: React.FC<EditDialogProps> = ({
               color="var(--secondary-text)"
             />
           );
-          break;
         case DialogType.public:
           return (
             <PublicChannel
@@ -123,7 +123,6 @@ const EditDialog: React.FC<EditDialogProps> = ({
               color="var(--secondary-text)"
             />
           );
-          break;
         default:
           return (
             <User
@@ -139,11 +138,35 @@ const EditDialog: React.FC<EditDialogProps> = ({
         <UserAvatar
           urlAvatar={urlAvatar}
           clickRemoveAvatarHandler={() => {
-            setUrlAvatar('null');
+            setUrlAvatar('');
             setErrorMessageUpload('');
           }}
         />
       );
+    }
+  };
+
+  useEffect(() => {
+    setDisabledButton(
+      dialogName.length < minLengthNameDialog ||
+        dialogName.length > maxLengthNameDialog,
+    );
+  }, [dialogName]);
+
+  const handleUpdate = () => {
+    if (clickUpdatedHandler) {
+      const params: EditDialogParams = {
+        dialogTitle: dialogName,
+        dialogAvatar: urlAvatar.length ? fileUploadAvatar : '',
+      };
+
+      clickUpdatedHandler(params);
+    }
+  };
+
+  const handleCancel = () => {
+    if (clickCancelHandler) {
+      clickCancelHandler();
     }
   };
 
@@ -180,7 +203,7 @@ const EditDialog: React.FC<EditDialogProps> = ({
                     accept="image/*"
                     style={{ display: 'none' }}
                     onChange={(event) => {
-                      ChangeFileHandler(event);
+                      handleUploadAvatar(event);
                     }}
                     disabled={typeDialog === DialogType.private}
                   />
@@ -218,36 +241,9 @@ const EditDialog: React.FC<EditDialogProps> = ({
               maxHeight: '32px',
             }}
             RightItem={
-              <div>
-                <MainButton
-                  clickHandler={() => {
-                    if (clickUpdatedHandler) {
-                      // if (urlAvatar !== 'null') {
-                      //   setUrlAvatar(
-                      //     fileUploadAvatar === null
-                      //       ? ''
-                      //       : fileUploadAvatar.name,
-                      //   );
-                      // }
-
-                      const params: EditDialogParams = {
-                        dialogTitle: dialogName,
-                        dialogAvatar:
-                          urlAvatar === 'null' ? 'null' : fileUploadAvatar,
-                      };
-
-                      clickUpdatedHandler(params);
-                    }
-                  }}
-                  title={
-                    typeAddEditDialog === TypeOpenDialog.create
-                      ? 'Next'
-                      : 'Save'
-                  }
-                  typeButton={TypeButton.default}
-                  disabled={disabledButton}
-                />
-              </div>
+              <Button onClick={handleUpdate} disabled={disabledButton}>
+                {typeAddEditDialog === TypeOpenDialog.create ? 'Next' : 'Save'}
+              </Button>
             }
             CenterContainerSize={{
               flexBasis: '78px',
@@ -257,17 +253,9 @@ const EditDialog: React.FC<EditDialogProps> = ({
               maxHeight: '32px',
             }}
             CenterItem={
-              <div>
-                <MainButton
-                  title="Cancel"
-                  clickHandler={() => {
-                    if (clickCancelHandler) {
-                      clickCancelHandler();
-                    }
-                  }}
-                  typeButton={TypeButton.outlined}
-                />
-              </div>
+              <Button variant="outlined" onClick={handleCancel}>
+                Cancel
+              </Button>
             }
           />
         </div>

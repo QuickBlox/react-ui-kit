@@ -1,13 +1,12 @@
 .toast {
   min-height: 24px;
   padding: 4px 12px;
-  opacity: 60%;
+  opacity: 60% !important;
   border-radius: 4px;
   background-color: var(--toast-color);
 
   &__body {
-    padding: none;
-
+    padding: 0;
     font-family: 'Roboto';
     font-weight: 500;
     font-size: 12px;
