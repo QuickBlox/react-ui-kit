@@ -4,6 +4,13 @@
   width: var(--max-width-audio-message);
   padding: 0;
   border-radius: 4px;
+
+  &__link {
+    color: var(--secondary-text, #636d78);
+    text-align: left;
+    font: var(--label-label-small);
+    height: 16px;
+  }
 }
 
 .message-attachment-video {
@@ -16,3 +23,5 @@
   width: var(--max-width-audio-message);
   max-height: 160px;
 }
+
+

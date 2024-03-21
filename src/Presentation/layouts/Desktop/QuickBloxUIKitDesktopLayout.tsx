@@ -60,6 +60,7 @@ import { MessageSeparator, Placeholder } from '../../ui-components';
 import ToastProvider from '../../ui-components/Toast/ToastProvider';
 import CreateNewDialogFlow from '../../Views/Flow/CreateDialogFlow/CreateNewDialogFlow';
 import useModal from '../../../hooks/useModal';
+import useQBConnection from '../../providers/QuickBloxUIKitProvider/useQBConnection';
 
 type AIWidgetPlaceHolder = {
   enabled: boolean;
@@ -102,15 +103,33 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   // @ts-ignore
   const userName =
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userName;
-  const userId =
+  const currentUserId =
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId;
-  // const currentUserName =
-  //  currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userName;
   const sessionToken =
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.sessionToken;
 
   const dialogsViewModel: DialogListViewModel =
     useDialogListViewModel(currentContext);
+
+  // must re-create as result dialog changing
+  const messagesViewModel: DialogViewModel = useDialogViewModel(
+    dialogsViewModel.entity?.type,
+    dialogsViewModel.entity,
+  );
+
+  const { connectionRepository, browserOnline } = useQBConnection();
+  const [isOnline, setIsOnline] = useState<boolean>(browserOnline);
+
+  useEffect(() => {
+    if (
+      isOnline === false ||
+      connectionRepository.isChatConnected() === false
+    ) {
+      setIsOnline(false);
+    } else {
+      setIsOnline(true);
+    }
+  }, [browserOnline, connectionRepository.isChatConnected()]);
 
   let defaultAIRephraseWidget = AIRephrase?.AIWidget; // useDefaultTextInputWidget();
   let defaultAITranslateWidget = AITranslate?.AIWidget;
@@ -232,6 +251,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   const selectDialogActions = (item: BaseViewModel<DialogEntity>): void => {
     if (!dialogsViewModel.loading) {
       setSelectedDialog(item.entity);
+      // dialogsViewModel.entity = item.entity;
     }
   };
 
@@ -239,9 +259,14 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   const [messagesToReply, setMessagesToReply] = useState<MessageEntity[]>([]);
   const [isMobile, width, height, breakpoint] = useMobileLayout();
   const [clientHeight, setClientHeight] = useState<number>(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [scrollUpToDown, setScrollUpToDown] = React.useState(false);
 
-  // const subscribeToDialogEventsUseCase: SubscribeToDialogEventsUseCase =
-  //   new SubscribeToDialogEventsUseCase(eventMessaging, 'TestStage');
+  // const [dialogMessagesCount, setDialogMessageCount] = useState(100);
+  // const [hasMore, setHasMore] = React.useState(true);
+  // const [messagesToView, setMessagesToView] = React.useState<MessageEntity[]>(
+  //   [],
+  // );
 
   // инициализация СДК и загрузка тестовых данных, запуск пинга - может не быть
   // todo: добавить метод в контекст
@@ -308,19 +333,78 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     }
   }, [currentContext.InitParams]);
 
-  // const getCountDialogMembers = (dialogEntity: DialogEntity): number => {
-  //   let participants = [];
+  // const fetchMoreData = () => {
+  //   if (messagesToView.length >= dialogMessagesCount) {
+  //     setHasMore(false);
   //
-  //   if (dialogEntity.type === DialogType.group) {
-  //     participants = (dialogEntity as GroupDialogEntity).participantIds;
-  //   } else if (dialogEntity.type === DialogType.private) {
-  //     participants = [(dialogEntity as PrivateDialogEntity).participantId];
-  //   } else if (dialogEntity.type === DialogType.public) {
-  //     participants = [];
+  //     return;
   //   }
+  //   if (
+  //     hasMore &&
+  //     messagesToView.length > 0 &&
+  //     messagesToView.length < dialogMessagesCount
+  //   ) {
+  //     setMessagesToView((prevState) => {
+  //       const newState = [...prevState];
   //
-  //   return participants.length;
+  //       const newMessageEntity: MessageEntity =
+  //         messagesViewModel.messages[prevState.length];
+  //
+  //       newState.push(newMessageEntity);
+  //       // newState.unshift(newMessageEntity);
+  //
+  //       return newState;
+  //     });
+  //   }
   // };
+
+  // function prepareFirstPage(initData: MessageEntity[]) {
+  //   const firstPageSize = messagesViewModel.messages.length;
+  //
+  //   for (let i = firstPageSize - 1; i >= 0; i -= 1) {
+  //     initData.push(messagesViewModel.messages[i]);
+  //   }
+  // }
+
+  //
+  // useEffect(() => {
+  //   setDialogMessageCount(messagesViewModel?.messages?.length || 0);
+  //   if (messagesToView?.length === 0 && messagesViewModel.messages.length > 0) {
+  //     const initData: MessageEntity[] = [];
+  //
+  //     console.log(JSON.stringify(messagesViewModel.messages));
+  //     prepareFirstPage(initData);
+  //     setMessagesToView(initData);
+  //   } else if (messagesViewModel.messages.length - messagesToView.length >= 1) {
+  //     setHasMore(true);
+  //     setScrollUpToDown(true);
+  //   }
+  // }, [messagesViewModel.messages]);
+  //
+  // useEffect(() => {
+  //   if (messagesViewModel.messages.length - messagesToView.length >= 1) {
+  //     fetchMoreData();
+  //   }
+  // }, [dialogMessagesCount]);
+  const messagePerPage = 47;
+
+  useEffect(() => {
+    if (messagesViewModel.entity) {
+      messagesViewModel.getMessages(new Pagination(0, messagePerPage));
+    }
+  }, [messagesViewModel.entity]);
+
+  const fetchMoreData = () => {
+    if (messagesViewModel.pagination.hasNextPage()) {
+      const newPagination = messagesViewModel.pagination;
+
+      newPagination.perPage = messagePerPage;
+      newPagination.nextPage();
+
+      messagesViewModel.getMessages(newPagination);
+    }
+  };
+
   const userViewModel = useUsersListViewModel(selectedDialog);
   const [dialogAvatarUrl, setDialogAvatarUrl] = React.useState('');
   const getUserAvatarByUid = async () => {
@@ -417,22 +501,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   const [waitAIWidget, setWaitAIWidget] = useState<boolean>(false);
   const [messageText, setMessageText] = useState<string>('');
 
-  // must re-create as result dialog changing
-  const messagesViewModel: DialogViewModel = useDialogViewModel(
-    dialogsViewModel.entity?.type,
-    dialogsViewModel.entity,
-  );
-
   const [warningErrorText, setWarningErrorText] = useState<string>('');
   // const [showErrorToast, setShowErrorToast] = useState<boolean>(false);
   // const [messageErrorToast, setMessageErrorToast] = useState<string>('');
-
-  const [dialogMessagesCount, setDialogMessageCount] = useState(100);
-  const [hasMore, setHasMore] = React.useState(true);
-  const [scrollUpToDown, setScrollUpToDown] = React.useState(false);
-  const [messagesToView, setMessagesToView] = React.useState<MessageEntity[]>(
-    [],
-  );
 
   const [useAudioWidget, setUseAudioWidget] = useState<boolean>(false);
 
@@ -740,15 +811,10 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   //
   useEffect(() => {
     messagesViewModel.entity = dialogsViewModel.entity;
-    setMessagesToView([]);
+    // setMessagesToView([]);
     setMessageText('');
   }, [dialogsViewModel.entity]);
 
-  useEffect(() => {
-    if (messagesViewModel.entity) {
-      messagesViewModel.getMessages(new Pagination());
-    }
-  }, [messagesViewModel.entity]);
   //
   useEffect(() => {
     if (!isMobile && messagesViewModel.entity) {
@@ -765,13 +831,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     };
   }, [messagesViewModel?.loading]);
   //
-  function prepareFirstPage(initData: MessageEntity[]) {
-    const firstPageSize = messagesViewModel.messages.length;
-
-    for (let i = firstPageSize - 1; i >= 0; i -= 1) {
-      initData.push(messagesViewModel.messages[i]);
-    }
-  }
 
   const ChangeFileHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
@@ -786,51 +845,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     if (file !== null) reader.readAsDataURL(file);
   };
 
-  const fetchMoreData = () => {
-    if (messagesToView.length >= dialogMessagesCount) {
-      setHasMore(false);
-
-      return;
-    }
-    if (
-      hasMore &&
-      messagesToView.length > 0 &&
-      messagesToView.length < dialogMessagesCount
-    ) {
-      setMessagesToView((prevState) => {
-        const newState = [...prevState];
-
-        const newMessageEntity: MessageEntity =
-          messagesViewModel.messages[prevState.length];
-
-        newState.push(newMessageEntity);
-        // newState.unshift(newMessageEntity);
-
-        return newState;
-      });
-    }
-  };
-
-  //
-  useEffect(() => {
-    setDialogMessageCount(messagesViewModel?.messages?.length || 0);
-    if (messagesToView?.length === 0 && messagesViewModel.messages.length > 0) {
-      const initData: MessageEntity[] = [];
-
-      console.log(JSON.stringify(messagesViewModel.messages));
-      prepareFirstPage(initData);
-      setMessagesToView(initData);
-    } else if (messagesViewModel.messages.length - messagesToView.length >= 1) {
-      setHasMore(true);
-      setScrollUpToDown(true);
-    }
-  }, [messagesViewModel.messages]);
-  //
-  useEffect(() => {
-    if (messagesViewModel.messages.length - messagesToView.length >= 1) {
-      fetchMoreData();
-    }
-  }, [dialogMessagesCount]);
   //
   //
   const maxWidthToResizing =
@@ -877,8 +891,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
 
   function getSectionData(messages2View: MessageEntity[]) {
     const groupMessages: { [date: string]: MessageEntity[] } = {};
+    const reversedMessages = [...messages2View].reverse();
 
-    messages2View.forEach((message) => {
+    reversedMessages.forEach((message) => {
       const date = new Date(message.created_at);
 
       date.setUTCHours(0, 0, 0, 0);
@@ -893,12 +908,18 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     Object.keys(groupMessages).forEach((date) => {
       groupMessages[date].sort((a, b) => a.date_sent - b.date_sent);
     });
-    const sections: SectionItem<MessageEntity>[] = Object.keys(
-      groupMessages,
-    ).map((date) => ({
-      title: date,
-      data: { [date]: groupMessages[date] },
-    }));
+    const sections: SectionItem<MessageEntity>[] = Object.keys(groupMessages)
+      .sort((a, b) => a.localeCompare(b))
+      .map((date) => ({
+        title: date,
+        data: { [date]: groupMessages[date] },
+      }));
+    // const sections: SectionItem<MessageEntity>[] = Object.keys(
+    //   groupMessages,
+    // ).map((date) => ({
+    //   title: date,
+    //   data: { [date]: groupMessages[date] },
+    // }));
 
     return sections;
   }
@@ -1148,9 +1169,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                 renderMessageList={
                   messagesViewModel &&
                   messagesViewModel.messages &&
-                  messagesViewModel.messages.length > 0 &&
-                  messagesToView &&
-                  messagesToView.length > 0 && (
+                  messagesViewModel.messages.length > 0 && (
                     <SectionList
                       resetScroll={scrollUpToDown}
                       className="messages-container"
@@ -1179,7 +1198,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                           <MessageItem
                             // defaultGetSenderName={defaultGetSenderName}
                             message={message}
-                            userId={userId || -1}
+                            currentUserId={currentUserId || -1}
                             enableForwarding={enableForwarding}
                             enableReplying={enableReplying}
                             onReply={(m: MessageEntity) => {
@@ -1203,12 +1222,12 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                             onError={(messageError: string) => {
                               toast(messageError);
                             }}
-                            messagesToView={messagesToView}
+                            messagesToView={messagesViewModel.messages}
                             maxTokens={maxTokensForAIRephrase}
                           />
                         ))
                       }
-                      sections={getSectionData(messagesToView)}
+                      sections={getSectionData(messagesViewModel.messages)}
                     />
                   )
                 }
@@ -1260,8 +1279,8 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                         setMessageErrorToast={(e: string) => {
                           toast(e);
                         }}
-                        messagesToView={messagesToView}
-                        currentUserId={userId || -1}
+                        messagesToView={messagesViewModel.messages}
+                        currentUserId={currentUserId || -1}
                         maxTokensForAIRephrase={maxTokensForAIRephrase}
                         rephraseTones={rephraseTones}
                       />

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import './MembersList.scss';
 import { FunctionTypeVoidToVoid } from '../../../../CommonTypes/BaseViewModel';
 import { UserEntity } from '../../../../Domain/entity/UserEntity';
-import Search from '../../../components/UI/svgs/Icons/Navigation/Search';
 import UsersList from '../UsersList/UsersList';
 import Header from '../../../ui-components/Header/Header';
-import { CloseSvg } from '../../../icons';
+import { CloseSvg, SearchSvg } from '../../../icons';
 import Badge from '../../../ui-components/Badge/Badge';
+import { TextField } from '../../../ui-components';
 
 type MembersListProps = {
   closeInformationHandler: FunctionTypeVoidToVoid;
@@ -52,33 +52,13 @@ const MembersList: React.FC<MembersListProps> = ({
           className="members-container-header-icon"
         />
       </Header>
-      <div className="members-container-search">
-        <div className="members-container-search-text-field">
-          <div className="members-container-search-text-field-f">
-            <div className="members-container-search-text-field-f-left">
-              <div className="members-container-search-text-field-f-left-icon">
-                <Search
-                  applyZoom
-                  width="24"
-                  height="24"
-                  color="var(--tertiary-elements)"
-                />
-              </div>
-              <div className="members-container-search-text-field-f-left-input">
-                <input
-                  type="text"
-                  value={userNameForFilter}
-                  onChange={(event) => {
-                    setUserNameForFilter(event.target.value);
-                  }}
-                  placeholder="Search"
-                />
-              </div>
-            </div>
-            <div className="members-container-search-text-field-f-right" />
-          </div>
-        </div>
-      </div>
+      <TextField
+        placeholder="Search"
+        onChange={(value) => setUserNameForFilter(value)}
+        value={userNameForFilter}
+        icon={<SearchSvg className="members-container-text-field-icon" />}
+        className="members-container-text-field"
+      />
       <div className="members-container-members-list-wrapper">
         <UsersList
           maxHeight={maxHeight}

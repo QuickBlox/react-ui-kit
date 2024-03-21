@@ -9,7 +9,7 @@ import {
 import Avatar from './Avatar';
 
 const meta: Meta<typeof Avatar> = {
-  title: 'Avatar',
+  title: '@quickblox-react-ui-kit/Presentation/ui-components/Avatar',
   component: Avatar,
   tags: ['autodocs'],
   parameters: {

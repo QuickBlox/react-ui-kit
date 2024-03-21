@@ -5,7 +5,7 @@ import UserListItem from './UserListItem';
 import ScrollableContainer from '../../components/containers/ScrollableContainer/ScrollableContainer';
 
 const meta = {
-  title: 'User List Item',
+  title: '@quickblox-react-ui-kit/Presentation/ui-components/UserListItem',
   component: UserListItem,
   tags: ['autodocs'],
   parameters: {
@@ -118,11 +118,13 @@ function UserListExample() {
 }
 
 export const UserListItemDefault: StoryDefault = {
+  name: 'UserListItem Default',
   args: {
     userName: 'User name',
   },
 };
 
 export const UserList: StoryDefault = {
+  name: 'UserListItem Multiple',
   render: () => <UserListExample />,
 };

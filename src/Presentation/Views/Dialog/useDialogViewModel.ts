@@ -42,9 +42,9 @@ export default function useDialogViewModel(
 ): DialogViewModel {
   console.log('useDialogViewModel');
   const [loading, setLoading] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState('');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const startPagination: Pagination = new Pagination(0, 0);
+  const [pagination, setPagination] = useState<Pagination>(startPagination);
   const [messages, setMessages] = useState<MessageEntity[]>([]);
   // const [users, setUsers] = useState<Record<number, UserEntity>>();
   const [dialog, setDialog] = useState<DialogEntity>(dialogEntity);
@@ -64,14 +64,9 @@ export default function useDialogViewModel(
 
   const [typingText, setTypingText] = useState<string>('');
 
-  async function getMessages(pagination?: Pagination) {
-    console.log(
-      'call getMessages in MessagesViewModelWithMockUseCase for dialog: ',
-      JSON.stringify(dialog),
-    );
+  async function getMessages(currentPagination?: Pagination) {
     setLoading(true);
-    //
-    //
+
     let participants: Array<number> = [];
     let userDictionary: Record<number, UserEntity> = {};
 
@@ -93,12 +88,6 @@ export default function useDialogViewModel(
       .execute()
       // eslint-disable-next-line promise/always-return
       .then((data) => {
-        console.log(
-          `use Message have dialog: ${JSON.stringify(
-            dialogEntity,
-          )} getUsers:${JSON.stringify(data)}`,
-        );
-        console.log('have users ids :', JSON.stringify(participants));
         userDictionary = data.reduce((acc, item) => {
           const obj = acc;
 
@@ -109,10 +98,6 @@ export default function useDialogViewModel(
           return obj;
         }, {});
 
-        console.log(
-          'have dictionary of users:',
-          JSON.stringify(userDictionary),
-        );
         setLoading(false);
         setError('');
       })
@@ -123,12 +108,11 @@ export default function useDialogViewModel(
       });
 
     //
-    //
     const getDialogMessages: GetAllMessagesForDialogMock =
       new GetAllMessagesForDialogMock(
         new MessagesRepository(LOCAL_DATA_SOURCE, REMOTE_DATA_SOURCE),
         dialog.id,
-        pagination || new Pagination(),
+        currentPagination || startPagination || new Pagination(),
       );
 
     //
@@ -138,11 +122,11 @@ export default function useDialogViewModel(
       .then((data) => {
         console.log(
           `DIALOG: ${JSON.stringify(dialogEntity)} WITH ${
-            data.length
+            data.ResultData.length
           } messages:${JSON.stringify(data)}`,
         );
 
-        const ResultMessages = data.map((message) => {
+        const ResultMessages = data.ResultData.map((message) => {
           const obj = { ...message };
 
           console.log('have sender id:', message.sender_id);
@@ -163,8 +147,18 @@ export default function useDialogViewModel(
         });
 
         console.log(`result messages:${JSON.stringify(ResultMessages)}`);
-        setMessages(ResultMessages);
+        // setMessages(ResultMessages);
+        setMessages((prevState) => {
+          const newItems: MessageEntity[] =
+            currentPagination === undefined ||
+            currentPagination?.getCurrentPage() === 0
+              ? [...ResultMessages]
+              : [...prevState, ...ResultMessages];
+
+          return newItems;
+        });
         setLoading(false);
+        setPagination(data.CurrentPagination);
         setError('');
       })
       .catch((e) => {
@@ -207,7 +201,10 @@ export default function useDialogViewModel(
 
     if (dialogInfo.eventMessageType === EventMessageType.LocalMessage) {
       if (dialogInfo.messageStatus) {
-        if (dialogInfo.messageStatus.isTyping) {
+        if (
+          dialogInfo.messageStatus.isTyping &&
+          dialogInfo.messageStatus.dialogId === dialog?.id
+        ) {
           // eslint-disable-next-line promise/catch-or-return
           getSender(dialogInfo.messageStatus.userId).then((senderUser) => {
             const typingMessage = `User ${
@@ -224,6 +221,40 @@ export default function useDialogViewModel(
         } else {
           setTypingText('');
         }
+        if (
+          (dialogInfo.messageStatus.deliveryStatus === 'read' ||
+            dialogInfo.messageStatus.deliveryStatus === 'delivered') &&
+          dialogInfo.messageStatus.messageId?.length > 0 &&
+          dialogInfo.messageStatus.dialogId === dialog?.id
+        ) {
+          setMessages((prevState) => {
+            let newState = [...prevState];
+
+            if (
+              newState.find(
+                (it) => it.id === dialogInfo.messageStatus!.messageId,
+              )
+            ) {
+              newState = newState.map((elem) => {
+                const v: MessageEntity = {
+                  ...elem,
+                  read_ids: [
+                    ...elem.read_ids,
+                    dialogInfo.messageStatus!.userId,
+                  ],
+                  delivered_ids: [
+                    ...elem.delivered_ids,
+                    dialogInfo.messageStatus!.userId,
+                  ],
+                };
+
+                return v;
+              });
+            }
+
+            return newState; // delivered message
+          });
+        }
       }
     }
     if (dialogInfo.eventMessageType === EventMessageType.RegularMessage) {
@@ -231,7 +262,7 @@ export default function useDialogViewModel(
         dialogInfo.messageInfo &&
         dialogInfo.messageInfo.message &&
         dialogInfo.messageInfo.id &&
-        dialogInfo.messageInfo.dialogId === dialog.id
+        dialogInfo.messageInfo.dialogId === dialog?.id
       ) {
         const messageId = dialogInfo.messageInfo.id;
         const messageText = dialogInfo.messageInfo.message;
@@ -256,7 +287,11 @@ export default function useDialogViewModel(
                 newState = newState.map((elem) => {
                   const v: MessageEntity = {
                     ...elem,
-                    delivered_ids: ResultMessage.delivered_ids,
+                    read_ids: [...elem.read_ids, ...ResultMessage.read_ids],
+                    delivered_ids: [
+                      ...elem.delivered_ids,
+                      ...ResultMessage.delivered_ids,
+                    ],
                   };
 
                   return v;
@@ -265,14 +300,10 @@ export default function useDialogViewModel(
                 newState.push(ResultMessage);
               }
 
-              return newState;
+              return newState; // regular message
             });
           });
       }
-      // else {
-      //   // загрузить все сообщения заново
-      //   getMessages().catch();
-      // }
     }
     if (dialogInfo.eventMessageType === EventMessageType.SystemMessage) {
       if (dialogInfo.notificationTypes === NotificationTypes.UPDATE_DIALOG) {
@@ -823,6 +854,7 @@ export default function useDialogViewModel(
       setMessages([]);
     },
     messages,
+    pagination,
     loading,
     error,
     // eslint-disable-next-line @typescript-eslint/no-misused-promises

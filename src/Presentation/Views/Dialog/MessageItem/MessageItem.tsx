@@ -18,7 +18,7 @@ import './MessageItem.scss';
 
 export type MessageItemProps = {
   message: MessageEntity;
-  userId?: number;
+  currentUserId?: number;
   AITranslateWidget?: AIMessageWidget;
   AIAssistWidget?: AIMessageWidget;
   maxTokens: number;
@@ -65,7 +65,7 @@ function reducer(
 
 export default function MessageItem({
   message,
-  userId,
+  currentUserId,
   enableForwarding,
   enableReplying,
   onReply,
@@ -103,8 +103,8 @@ export default function MessageItem({
       return TypeSystemMessage;
     }
     if (
-      (m.sender && m.sender.id.toString() !== userId?.toString()) ||
-      m.sender_id.toString() !== userId?.toString()
+      (m.sender && m.sender.id.toString() !== currentUserId?.toString()) ||
+      m.sender_id.toString() !== currentUserId?.toString()
     ) {
       return TypeIncomingMessage;
     }
@@ -121,8 +121,16 @@ export default function MessageItem({
   }
 
   function getStatusMessage(messageEntity: MessageEntity) {
-    if (messageEntity.delivered_ids && messageEntity.delivered_ids.length > 0) {
-      if (messageEntity.read_ids && messageEntity.read_ids.length > 0) {
+    if (
+      messageEntity.delivered_ids &&
+      messageEntity.delivered_ids.length > 0 &&
+      messageEntity.delivered_ids.some((id) => id !== currentUserId)
+    ) {
+      if (
+        messageEntity.read_ids &&
+        messageEntity.read_ids.length > 0 &&
+        messageEntity.read_ids.some((id) => id !== currentUserId)
+      ) {
         return 'viewed';
       }
 
@@ -164,7 +172,7 @@ export default function MessageItem({
               onError={onError}
               messageToAssist={item}
               messageHistory={messagesToView}
-              currentUserId={userId}
+              currentUserId={currentUserId}
               maxTokens={maxTokens}
             />
           )}
@@ -217,7 +225,7 @@ export default function MessageItem({
                       onError={onError}
                       messageToTranslate={nestedMessage}
                       messageHistory={messagesToView}
-                      currentUserId={userId}
+                      currentUserId={currentUserId}
                       maxTokens={maxTokens}
                       onTranslated={(id, textTranslated) =>
                         translatedHandler(id, textTranslated)
@@ -317,7 +325,7 @@ export default function MessageItem({
                   onError={onError}
                   messageToTranslate={message}
                   messageHistory={messagesToView}
-                  currentUserId={userId}
+                  currentUserId={currentUserId}
                   maxTokens={maxTokens}
                   onTranslated={(id, textTranslated) =>
                     translatedHandler(id, textTranslated)

@@ -157,47 +157,8 @@ $create-dialog-container-height: 180px;
       //border: 1px solid orange;
     }
 
-    &__dialog-name-input {
-      margin-top: 8px;
-
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 8px;
-
-      //width: 320px;
+    &__text-field {
       width: 100%;
-      height: 44px;
-
-      border: 1px solid var(--tertiary-elements); //#90979F;
-      border-radius: 4px;
-
-      flex: none;
-      order: 1;
-      align-self: stretch;
-      flex-grow: 0;
-
-      background-color: var(--main-background);
-
-      input {
-        color: var(--secondary-text);
-        background-color: var(--main-background);
-
-        font-family: 'Roboto';
-        font-style: normal;
-        font-weight: 400;
-        font-size: 16px;
-        line-height: 24px;
-
-        display: flex;
-        align-items: center;
-        letter-spacing: 0.15px;
-
-        border: none;
-        outline: none;
-      }
     }
   }
 }

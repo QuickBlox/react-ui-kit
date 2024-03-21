@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import Loader from './Loader';
 
 const meta = {
-  title: 'Loader',
+  title: '@quickblox-react-ui-kit/Presentation/ui-components/Loader',
   component: Loader,
   tags: ['autodocs'],
   parameters: {

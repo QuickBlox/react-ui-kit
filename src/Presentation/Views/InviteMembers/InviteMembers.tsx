@@ -43,7 +43,7 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
   participants,
   cancelInviteMembersHandler,
 }) => {
-  const userperPage = 12;
+  const userPerPage = 12;
   const userViewModel: InviteMembersViewModel = useInviteMembersViewModel();
 
   const initRecord: Record<number, SelectedItemInfo> = {};
@@ -61,9 +61,19 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
   );
 
   useEffect(() => {
-    userViewModel.getUsers(new Pagination(0, userperPage));
+    userViewModel.getUsers(new Pagination(0, userPerPage));
   }, []);
 
+  const fetchMoreData = () => {
+    if (userViewModel.pagination.hasNextPage()) {
+      const newPagination = userViewModel.pagination;
+
+      newPagination.perPage = userPerPage;
+      newPagination.nextPage();
+
+      userViewModel.getUsers(newPagination);
+    }
+  };
   const getUsersForIncludeInDialog = () => {
     const listSelectedUsers: number[] = [];
 
@@ -132,17 +142,6 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
     setCountSelected(getUsersForIncludeInDialog().length);
   };
 
-  const fetchMoreData = () => {
-    if (userViewModel.pagination.hasNextPage()) {
-      const newPagination = userViewModel.pagination;
-
-      newPagination.perPage = 12;
-      newPagination.nextPage();
-
-      userViewModel.getUsers(newPagination);
-    }
-  };
-
   const [userNameForFilter, setUserNameForFilter] = useState<string>('');
 
   useEffect(() => {
@@ -158,10 +157,10 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
 
   useEffect(() => {
     if (userNameForFilter.length > 2) {
-      userViewModel.getUsers(new Pagination(0, userperPage));
+      userViewModel.getUsers(new Pagination(0, userPerPage));
     }
     if (userNameForFilter.length === 0) {
-      userViewModel.getUsers(new Pagination(0, userperPage));
+      userViewModel.getUsers(new Pagination(0, userPerPage));
     }
   }, [userViewModel.filter]);
 

@@ -9,6 +9,16 @@
   position: relative;
 }
 
+.dialogs-with-search-icon {
+  width: 24px;
+  height: 24px;
+  fill: var(--tertiary-elements);
+}
+
+.dialogs-with-search-text-field {
+  width: 100%;
+}
+
 .dialogs-with-search-list {
   display: flex;
   flex-direction: column;

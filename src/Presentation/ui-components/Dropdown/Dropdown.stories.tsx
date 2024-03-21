@@ -5,7 +5,7 @@ import Dropdown from './Dropdown';
 import Button from '../Button/Button';
 
 const meta: Meta<typeof Dropdown> = {
-  title: 'Dropdown',
+  title: '@quickblox-react-ui-kit/Presentation/ui-components/Dropdown',
   component: Dropdown,
   tags: ['autodocs'],
   parameters: {
@@ -20,6 +20,7 @@ const meta: Meta<typeof Dropdown> = {
   },
   argTypes: {
     children: {
+      control: false,
       table: {
         defaultValue: {
           summary: null,

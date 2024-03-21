@@ -11,7 +11,7 @@ import {
 } from '../../icons';
 
 const meta: Meta<typeof SettingsItem> = {
-  title: 'Settings Item',
+  title: '@quickblox-react-ui-kit/Presentation/ui-components/SettingsItem',
   component: SettingsItem,
   tags: ['autodocs'],
   parameters: {
@@ -46,6 +46,7 @@ const meta: Meta<typeof SettingsItem> = {
       description: 'Format plug svg or React element ',
     },
     rightSection: {
+      control: false,
       table: {
         defaultValue: {
           summary: 'ReactElement | ReactElement[]',
@@ -79,6 +80,7 @@ export default meta;
 type StoryDefault = StoryObj<typeof meta>;
 
 export const SettingsItemDefault: StoryDefault = {
+  name: 'SettingsItem Default',
   args: {
     title: 'Search in dialog',
     icon: (
@@ -92,6 +94,7 @@ export const SettingsItemDefault: StoryDefault = {
 };
 
 export const SettingsItemNotification: StoryDefault = {
+  name: 'SettingsItem Notification',
   args: {
     title: 'Notification',
     icon: (
@@ -112,6 +115,7 @@ export const SettingsItemNotification: StoryDefault = {
 };
 
 export const SettingsItemMembers: StoryDefault = {
+  name: 'SettingsItem Members',
   args: {
     title: 'Notification',
     icon: (

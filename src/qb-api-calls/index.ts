@@ -479,6 +479,7 @@ export function qbChatGetMessagesExtended(
     sort_desc: 'date_sent' | 'created_at' | 'updated_at';
     sort_asc: 'date_sent' | 'created_at' | 'updated_at';
     _id: string;
+    mark_as_read: 0 | 1;
     date_sent: Partial<{
       lt: number;
       lte: number;

@@ -109,4 +109,6 @@ export interface IRemoteDataSource extends IRemoteMessaging<RemoteMessageDTO> {
   deleteFile(dto: RemoteFileDTO): Promise<void>;
 
   subscribeToChatConnectionEvents(fileId: string): Promise<void>;
+
+  updateCurrentDialog(dto: RemoteDialogDTO): void;
 }

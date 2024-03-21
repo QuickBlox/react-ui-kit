@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import './DialogsWithSearch.scss';
 import { DialogEntity } from '../../../../../Domain/entity/DialogEntity';
-// eslint-disable-next-line import/named
 import { FunctionTypeStringToVoid } from '../../../../../CommonTypes/BaseViewModel';
-import SearchComponent from './SearchComponent/SearchComponent';
 import DialogListItem from './DialogListItem/DialogListItem';
 import ScrollableContainer from '../../../../components/containers/ScrollableContainer/ScrollableContainer';
 import { DialogType } from '../../../../../Domain/entity/DialogTypes';
 import { PublicDialogEntity } from '../../../../../Domain/entity/PublicDialogEntity';
+import { TextField } from '../../../../ui-components';
+import { SearchSvg } from '../../../../icons';
 
 type DialogsWithSearchProps = {
   dialogs: DialogEntity[];
@@ -46,9 +46,6 @@ const DialogsWithSearch: React.FC<DialogsWithSearchProps> = ({
     return [...dialogs.filter((u) => u.id !== currentDialog.id)];
   }
 
-  useEffect(() => {
-    setFilteredDialogs(filterDialogsByName(stringForFilter, currentDialog.id));
-  }, [stringForFilter]);
   const renderItem = (item: DialogEntity) => {
     return (
       <div className="dialogs-with-search-list-item" key={item.id}>
@@ -73,16 +70,19 @@ const DialogsWithSearch: React.FC<DialogsWithSearchProps> = ({
     );
   };
 
-  /* eslint-disable-next-line react/jsx-no-bind */
+  useEffect(() => {
+    setFilteredDialogs(filterDialogsByName(stringForFilter, currentDialog.id));
+  }, [stringForFilter]);
+
   return (
     <div className="dialogs-with-search-body">
-      <SearchComponent
-        onChange={(str) => {
-          setStringForFilter(str);
-        }}
+      <TextField
+        icon={<SearchSvg className="dialogs-with-search-icon" />}
+        value={stringForFilter}
+        onChange={(value) => setStringForFilter(value)}
+        placeholder="Search"
+        className="dialogs-with-search-text-field"
       />
-
-      {/* <div className="dialogs-with-search-list"> */}
       <ScrollableContainer
         className="dialogs-with-search-list"
         data={filteredDialogs}
@@ -90,7 +90,6 @@ const DialogsWithSearch: React.FC<DialogsWithSearchProps> = ({
         onEndReachedThreshold={0.8}
         refreshing={false}
       />
-      {/* </div> */}
     </div>
   );
 };

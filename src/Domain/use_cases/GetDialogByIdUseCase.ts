@@ -18,7 +18,11 @@ export class GetDialogByIdUseCase implements IUseCase<void, DialogEntity> {
     const fromRemote: DialogEntity =
       await this.dialogRepository.getDialogFromRemote(this.dialogId);
 
-    await this.dialogRepository.updateDialogInLocal(fromRemote);
+    try {
+      await this.dialogRepository.updateDialogInLocal(fromRemote);
+    } catch (e) {
+      await this.dialogRepository.saveDialogToLocal(fromRemote);
+    }
 
     const dialogResult: DialogEntity =
       await this.dialogRepository.getDialogFromLocal(this.dialogId);

@@ -76,7 +76,8 @@ function getChildrenByType(type: string, children?: ReactElement) {
 }
 // const meta: Meta<typeof Message> = {
 const meta: Meta<MessageProps> = {
-  title: 'Message',
+  tags: ['autodocs'],
+  title: '@quickblox-react-ui-kit/Presentation/ui-components/Message',
   component: Message,
   decorators: [
     (StoryFn, context) => {
@@ -126,11 +127,66 @@ const meta: Meta<MessageProps> = {
     // ),
   },
   argTypes: {
+    userName: {
+      table: {
+        type: { summary: 'string' },
+        defaultValue: {
+          summary: '',
+        },
+      },
+      description: 'User name',
+    },
+    avatar: {
+      control: false,
+      table: {
+        type: { summary: 'ReactElement' },
+      },
+      description: 'Message sender avatar',
+    },
+    time: {
+      table: {
+        type: { summary: 'string' },
+        defaultValue: {
+          summary: '',
+        },
+      },
+      description: 'Time of sending the message',
+    },
     type: {
+      table: {
+        type: { summary: 'outgoing | incoming' },
+        defaultValue: {
+          summary: 'incoming',
+        },
+      },
       control: 'radio',
       options: ['incoming', 'outgoing'],
+      description: 'The type of message can be either outgoing or incoming',
+    },
+    enableSelect: {
+      description: 'Enables the option to select a message',
+    },
+    isSelect: {
+      description: 'The status of message selection',
+    },
+    disabled: {
+      description: 'Active',
+    },
+    status: {
+      table: {
+        type: { summary: 'sent | delivered | viewed | error' },
+        defaultValue: {
+          summary: '',
+        },
+      },
+      control: 'select',
+      options: ['sent', 'delivered', 'viewed', 'error'],
+      description: 'The status of the message',
     },
     children: {
+      table: {
+        type: { summary: 'ReactElement' },
+      },
       description: 'Message bubble',
       control: 'select',
       options: [
@@ -176,6 +232,29 @@ const meta: Meta<MessageProps> = {
           />
         ),
       },
+    },
+    subtype: {
+      description: 'Additional message subtype',
+    },
+    onSelect: {
+      table: {
+        type: { summary: 'function' },
+      },
+      description: 'The function responsible for message selection',
+    },
+    bottomPart: {
+      table: {
+        type: { summary: 'ReactElement' },
+      },
+      control: false,
+      description: 'The bottom part of the message layout',
+    },
+    additionalPart: {
+      table: {
+        type: { summary: 'ReactElement' },
+      },
+      control: false,
+      description: 'Additional section of the message layout',
     },
   },
 };

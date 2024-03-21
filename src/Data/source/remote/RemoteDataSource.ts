@@ -21,6 +21,8 @@ import {
   QBChatDisconnect,
   qbChatGetMessagesExtended,
   QBChatMarkMessageRead,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // QBChatMarkMessageRead,
   QBChatSendMessage,
   QBChatSendSystemMessage,
   QBCreateAndUploadContent,
@@ -126,6 +128,8 @@ export class RemoteDataSource implements IRemoteDataSource {
     this._authInformation = value;
   }
 
+  private currentDialog: RemoteDialogDTO | undefined;
+
   //
   getCurrentDialogDTOMapper(): IDTOMapper {
     const currentUserId: number = this._authInformation?.userId || -1;
@@ -150,6 +154,10 @@ export class RemoteDataSource implements IRemoteDataSource {
       new SubscriptionPerformer<RemoteMessageDTO>();
     this.subscriptionOnSystemMessages[NotificationTypes.NEW_DIALOG] =
       new SubscriptionPerformer<RemoteMessageDTO>();
+  }
+
+  updateCurrentDialog(dto: RemoteDialogDTO): void {
+    this.currentDialog = dto;
   }
 
   public async setUpMockStorage(): Promise<void> {
@@ -351,12 +359,14 @@ export class RemoteDataSource implements IRemoteDataSource {
           message,
         )}`,
       );
-      // нужно получить реализовать так как при обработке onDeliveredStatusListener
       const dialogId = message.dialog_id || message.extension.dialog_id || '-1';
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const currentUserId = this._authInformation?.userId;
 
       //
       qbChatGetMessagesExtended(dialogId, {
         _id: message.id,
+        mark_as_read: 0,
       })
         // eslint-disable-next-line promise/always-return
         .then((qbMessages: GetMessagesResult) => {
@@ -369,16 +379,22 @@ export class RemoteDataSource implements IRemoteDataSource {
               >(currentItem);
 
             dtoMessage.dialogId = dialogId;
-
             this.subscriptionOnChatMessages.informSubscribers(
               dtoMessage,
               EventMessageType.RegularMessage,
             );
+            //
+            if (this.currentDialog?.id === dialogId) {
+              QBChatMarkMessageRead({
+                messageId: message.id,
+                dialogId,
+                userId: dtoMessage.sender_id,
+              });
+            }
 
+            ///
             return dtoMessage;
           });
-
-          ///
         })
         .catch();
     };
@@ -388,19 +404,49 @@ export class RemoteDataSource implements IRemoteDataSource {
       );
 
       QBGetDialogById(dialogId)
-        .then((result) => {
+        .then(async (result) => {
           //
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const currentUserId = this._authInformation?.userId;
           const dialogs: QBChatDialog[] | undefined = result?.items.filter(
             (v) => v._id === dialogId,
           );
           const current =
             dialogs && dialogs.length > 0 ? dialogs[0] : undefined;
+          //
+          const dialogDTO: RemoteDialogDTO =
+            await this.getCurrentDialogDTOMapper().toTDO(current);
+          const dialogsDTOtoEntityMapper: IMapper = new DialogRemoteDTOMapper();
 
+          const dialogEntity: DialogEntity =
+            await dialogsDTOtoEntityMapper.toEntity(dialogDTO);
+          //
+          //
+          const resultMessage: DialogEventInfo = {
+            eventMessageType: EventMessageType.LocalMessage,
+            dialogInfo: dialogEntity,
+            messageInfo: undefined,
+            messageStatus: {
+              isTyping: false,
+              userId,
+              dialogId,
+              messageId,
+              deliveryStatus: 'delivered',
+            },
+            notificationTypes: undefined,
+          };
+
+          this.subscriptionOnMessageStatus.informSubscribers(
+            resultMessage,
+            EventMessageType.LocalMessage,
+          );
+          //
+          //
           // eslint-disable-next-line promise/always-return
           if (current && current.type === DialogType.private) {
-            //
             qbChatGetMessagesExtended(dialogId, {
               _id: messageId,
+              mark_as_read: 0,
             })
               // eslint-disable-next-line promise/always-return
               .then((qbMessages: GetMessagesResult) => {
@@ -413,11 +459,18 @@ export class RemoteDataSource implements IRemoteDataSource {
                     >(currentItem);
 
                   dtoMessage.dialogId = dialogId;
-
                   this.subscriptionOnChatMessages.informSubscribers(
                     dtoMessage,
                     EventMessageType.RegularMessage,
                   );
+                  //
+                  if (this.currentDialog?.id === dialogId) {
+                    QBChatMarkMessageRead({
+                      messageId,
+                      dialogId,
+                      userId: dtoMessage.sender_id,
+                    });
+                  }
 
                   return dtoMessage;
                 });
@@ -441,7 +494,14 @@ export class RemoteDataSource implements IRemoteDataSource {
       const resultMessage: DialogEventInfo = {
         eventMessageType: EventMessageType.LocalMessage,
         messageInfo: undefined,
-        messageStatus: { isTyping, userId, dialogId },
+        dialogInfo: undefined,
+        messageStatus: {
+          isTyping,
+          userId,
+          dialogId,
+          messageId: '',
+          deliveryStatus: 'sending',
+        },
         notificationTypes: undefined,
       };
 
@@ -489,6 +549,24 @@ export class RemoteDataSource implements IRemoteDataSource {
     QB.chat.onReadStatusListener = (messageId, dialogId, userId) => {
       console.log(
         `EVENT: receive read message id: ${messageId}, dialogid: ${dialogId} userid: ${userId}`,
+      );
+      const resultMessage: DialogEventInfo = {
+        eventMessageType: EventMessageType.LocalMessage,
+        messageInfo: undefined,
+        dialogInfo: undefined,
+        messageStatus: {
+          isTyping: false,
+          userId,
+          dialogId,
+          messageId,
+          deliveryStatus: 'read',
+        },
+        notificationTypes: undefined,
+      };
+
+      this.subscriptionOnMessageStatus.informSubscribers(
+        resultMessage,
+        EventMessageType.LocalMessage,
       );
     };
 
@@ -1009,7 +1087,7 @@ export class RemoteDataSource implements IRemoteDataSource {
           QBChatMarkMessageRead({
             messageId: dtoMessage.id,
             dialogId: dtoMessage.dialogId,
-            userId: currentUserId,
+            userId: dtoMessage.sender_id,
           });
         }
 
@@ -1086,6 +1164,7 @@ export class RemoteDataSource implements IRemoteDataSource {
         ),
       },
       markable: 1,
+      // markable: 0, // mark_as_read ??
     };
 
     if (dto.attachments?.length > 0) {

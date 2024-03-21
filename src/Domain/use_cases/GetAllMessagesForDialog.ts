@@ -4,7 +4,7 @@ import { IMessagesRepository } from '../repository/IMessagesRepository';
 import { PaginatedResult, Pagination } from '../repository/Pagination';
 
 export class GetAllMessagesForDialogMock
-  implements IUseCase<void, Array<MessageEntity>>
+  implements IUseCase<void, PaginatedResult<MessageEntity>>
 {
   private messagesRepository: IMessagesRepository;
 
@@ -24,7 +24,7 @@ export class GetAllMessagesForDialogMock
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async execute(): Promise<Array<MessageEntity>> {
+  async execute(): Promise<PaginatedResult<MessageEntity>> {
     console.log('execute GetAllMessagesForDialog');
     //
     const result: PaginatedResult<MessageEntity> =
@@ -56,6 +56,6 @@ export class GetAllMessagesForDialogMock
     // return this.messagesRepository.getMessagesFromLocal(this.dialogId);
     //
     //
-    return result.ResultData;
+    return result;
   }
 }

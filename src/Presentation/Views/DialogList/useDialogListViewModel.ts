@@ -32,6 +32,7 @@ import { GetUsersByIdsUseCase } from '../../../Domain/use_cases/GetUsersByIdsUse
 import UsersRepository from '../../../Data/repository/UsersRepository';
 import { UserEntity } from '../../../Domain/entity/UserEntity';
 import { DefaultConfigurations } from '../../../Data/DefaultConfigurations';
+import { UpdateCurrentDialogInDataSourceUseCase } from '../../../Domain/use_cases/UpdateCurrentDialogInDataSourceUseCase';
 
 export default function useDialogListViewModel(
   currentContext: QBDataContextType,
@@ -155,6 +156,7 @@ export default function useDialogListViewModel(
   }
 
   const dialogUpdateHandler = (dialogInfo: DialogEventInfo) => {
+    console.log('call dialogUpdateHandler in useDialogListView:', dialogInfo);
     if (
       dialogInfo.eventMessageType === EventMessageType.SystemMessage
       // || dialogInfo.eventMessageType === EventMessageType.RegularMessage
@@ -195,13 +197,70 @@ export default function useDialogListViewModel(
         ) {
           setNewDialog(undefined);
         }
-        getDialogs(pagination);
+        getDialogs(pagination).catch();
       } else if (
         dialogInfo.notificationTypes === NotificationTypes.NEW_DIALOG
       ) {
-        // const pagination: Pagination = new Pagination();
+        if (dialogInfo.messageInfo) {
+          const { dialogId } = dialogInfo.messageInfo;
 
-        getDialogs(pagination).catch();
+          const getDialogByIdUseCase: GetDialogByIdUseCase =
+            new GetDialogByIdUseCase(
+              new DialogsRepository(
+                currentContext.storage.LOCAL_DATA_SOURCE,
+                currentContext.storage.REMOTE_DATA_SOURCE,
+              ),
+              dialogId,
+            );
+
+          // eslint-disable-next-line promise/catch-or-return,promise/always-return
+          getDialogByIdUseCase
+            .execute()
+            // eslint-disable-next-line promise/always-return
+            .then((newItem) => {
+              //
+              setDialogs((prevDialogs) => {
+                const newDialogs = [
+                  ...prevDialogs,
+                  newItem as PublicDialogEntity,
+                ];
+
+                const sortedData = [...newDialogs].sort((a, b) => {
+                  return (
+                    new Date(b.updatedAt).getTime() -
+                    new Date(a.updatedAt).getTime()
+                  );
+                });
+
+                return sortedData;
+              });
+              //
+            })
+            .catch((e) => {
+              console.log('Error getDialogByIdUseCase: ', stringifyError(e));
+            });
+        }
+        // getDialogs(pagination).catch();
+      }
+    } else if (dialogInfo.eventMessageType === EventMessageType.LocalMessage) {
+      if (dialogInfo.dialogInfo) {
+        setDialogs((prevDialogs) => {
+          const newDialogs = prevDialogs.map((dialog) => {
+            if (dialog.id === dialogInfo.dialogInfo?.id) {
+              return dialogInfo.dialogInfo as PublicDialogEntity;
+            }
+
+            return dialog;
+          });
+
+          const sortedData = [...newDialogs].sort((a, b) => {
+            return (
+              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+            );
+          });
+
+          return sortedData;
+        });
       }
     }
   };
@@ -455,12 +514,33 @@ export default function useDialogListViewModel(
     return Promise.resolve(resultEnity);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
+  function informDataSources(item: DialogEntity) {
+    const updateCurrentDialogInDataSourceUseCase: UpdateCurrentDialogInDataSourceUseCase =
+      new UpdateCurrentDialogInDataSourceUseCase(
+        new DialogsRepository(
+          currentContext.storage.LOCAL_DATA_SOURCE,
+          remoteDataSourceMock,
+        ),
+        item as GroupDialogEntity,
+      );
+
+    updateCurrentDialogInDataSourceUseCase.execute().catch((e) => {
+      console.log(
+        'Error updateCurrentDialogInDataSourceUseCase: ',
+        stringifyError(e),
+      );
+      throw new Error(stringifyError(e));
+    });
+  }
+
   return {
     get entity(): DialogEntity {
       return newDialog as DialogEntity;
     },
     set entity(item) {
       setNewDialog(item);
+      informDataSources(item);
     },
     dialogs,
     loading,

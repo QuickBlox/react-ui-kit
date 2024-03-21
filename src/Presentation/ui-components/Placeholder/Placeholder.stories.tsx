@@ -10,16 +10,16 @@ import {
   BannedSvg,
   SearchSvg,
 } from '../../icons';
-import Loader from '../Loader/Loader';
 
 const meta: Meta<typeof Placeholder> = {
-  title: 'Placeholder',
+  title: '@quickblox-react-ui-kit/Presentation/ui-components/Placeholder',
   component: Placeholder,
   tags: ['autodocs'],
   parameters: {
     layout: 'centered',
   },
   args: {
+    text: ['Text for placeholder'],
     className: '',
     onRetry: undefined,
     icon: undefined,
@@ -33,7 +33,6 @@ const meta: Meta<typeof Placeholder> = {
         'Muted',
         'Banned',
         'Search',
-        'Loader',
         'Error',
       ],
       control: 'select',
@@ -44,7 +43,6 @@ const meta: Meta<typeof Placeholder> = {
         Muted: <MutedSvg />,
         Banned: <BannedSvg />,
         Search: <SearchSvg />,
-        Loader: <Loader size="lg" />,
         Error: <ErrorSvg />,
       },
       table: {
@@ -81,14 +79,12 @@ type StoryDefault = StoryObj<typeof meta>;
 
 export const PlaceholderDefault: StoryDefault = {
   args: {
-    text: ['The are no massage'],
     icon: <PublicChannelSvg />,
   },
 };
 
 export const PlaceholderError: StoryDefault = {
   args: {
-    text: ['Something wrong'],
     icon: <ErrorSvg />,
     onRetry: () => undefined,
   },

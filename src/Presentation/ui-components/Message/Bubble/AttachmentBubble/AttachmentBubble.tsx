@@ -52,7 +52,12 @@ export default function AttachmentBubble({
       />
     );
   }
-  if (attachment.type.toString().includes(FileType.image)) {
+
+  if (
+    attachment.type.toString().split('/')[1] !== 'heic' &&
+    attachment.type.toString().split('/')[1] !== 'heif' &&
+    attachment.type.toString().includes(FileType.image)
+  ) {
     return <ImageBubble title={attachment.file?.name || ''} href={fileUrl} />;
   }
 

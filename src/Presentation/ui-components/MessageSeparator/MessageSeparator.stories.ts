@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import MessageSeparator from './MessageSeparator';
 
 const meta = {
-  title: 'MessageSeparator',
+  title: '@quickblox-react-ui-kit/Presentation/ui-components/MessageSeparator',
   component: MessageSeparator,
   tags: ['autodocs'],
   parameters: {
@@ -38,6 +38,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const MessageSeparatorDate: Story = {
+  name: 'MessageSeparator Date',
   args: {
     text: '2024-01-26T00:00:00.000Z',
     type: 'date',
@@ -45,6 +46,7 @@ export const MessageSeparatorDate: Story = {
 };
 
 export const MessageSeparatorSystem: Story = {
+  name: 'MessageSeparator System',
   args: {
     text: 'User created chat',
     type: 'system',

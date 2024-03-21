@@ -27,8 +27,8 @@ function App() {
   const { connectionRepository } = useQBConnection();
 
   const initLoginData: LoginData = {
-    login: 'artimed', // vit1 380990579507
-    password: 'quickblox',
+    login: '',
+    password: '',
   };
 
   const [currentUser, setCurrentUser] = React.useState(initLoginData);

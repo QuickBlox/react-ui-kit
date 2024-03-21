@@ -14,7 +14,7 @@ import PreviewFileMessage from '../PreviewFileMessage/PreviewFileMessage';
 import Dropdown from '../Dropdown/Dropdown';
 
 const meta: Meta<typeof DialogItemPreview> = {
-  title: 'DialogItemPreview',
+  title: '@quickblox-react-ui-kit/Presentation/ui-components/DialogItemPreview',
   tags: ['autodocs'],
   component: DialogItemPreview,
   decorators: [],
@@ -111,13 +111,21 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const DialogItemPreviewDefault: Story = {
+  name: 'DialogItemPreview Default',
   args: {
     title: 'Name',
     avatar: <Avatar size="lg" icon={<UserSvg />} />,
   },
+  render: (args) => {
+    // eslint-disable-next-line no-param-reassign
+    args.date = new Date(args.date!).toLocaleDateString();
+
+    return <DialogItemPreview {...args} />;
+  },
 };
 
 export const DialogItemPreviewFullScreen: Story = {
+  name: 'DialogItemPreview FullScreen',
   args: {
     title: 'Name',
     avatar: <Avatar size="lg" icon={<UserSvg />} />,
@@ -131,9 +139,16 @@ export const DialogItemPreviewFullScreen: Story = {
       defaultViewport: 'responsive',
     },
   },
+  render: (args) => {
+    // eslint-disable-next-line no-param-reassign
+    args.date = new Date(args.date!).toLocaleDateString();
+
+    return <DialogItemPreview {...args} />;
+  },
 };
 
 export const DialogItemPreviewMobileScreen: Story = {
+  name: 'DialogItemPreview MobileScreen',
   args: {
     title: 'Name',
     avatar: <Avatar size="lg" icon={<UserSvg />} />,
@@ -147,9 +162,16 @@ export const DialogItemPreviewMobileScreen: Story = {
       defaultViewport: 'iphonese2',
     },
   },
+  render: (args) => {
+    // eslint-disable-next-line no-param-reassign
+    args.date = new Date(args.date!).toLocaleDateString();
+
+    return <DialogItemPreview {...args} />;
+  },
 };
 
 export const DialogItemPreviewMobileScreenIPad: Story = {
+  name: 'DialogItemPreview MobileScreen IPad',
   args: {
     title: 'Name',
     avatar: <Avatar size="lg" icon={<UserSvg />} />,
@@ -162,5 +184,11 @@ export const DialogItemPreviewMobileScreenIPad: Story = {
     viewport: {
       defaultViewport: 'ipad',
     },
+  },
+  render: (args) => {
+    // eslint-disable-next-line no-param-reassign
+    args.date = new Date(args.date!).toLocaleDateString();
+
+    return <DialogItemPreview {...args} />;
   },
 };

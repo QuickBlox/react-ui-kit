@@ -5,7 +5,7 @@ import ToastProvider from './ToastProvider';
 import Button from '../Button/Button';
 
 const meta: Meta<typeof ToastProvider> = {
-  title: 'Toast',
+  title: '@quickblox-react-ui-kit/Presentation/ui-components/Toast',
   component: ToastProvider,
   tags: ['autodocs'],
   parameters: {

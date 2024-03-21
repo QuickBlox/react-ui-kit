@@ -3,6 +3,12 @@
   gap: 5px;
   flex-direction: row;
   align-items: center;
+
+  &__equalizer-time {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
 }
 .audio-body{
   padding: 5px;
@@ -38,6 +44,13 @@
     width: 2px;
     position: relative;
   }
+}
+
+.time-play {
+  color: var(--secondary-text, #636d78);
+  text-align: left;
+  font: var(--label-label-small);
+  height: 16px;
 }
 
 .audio-bubble-background {

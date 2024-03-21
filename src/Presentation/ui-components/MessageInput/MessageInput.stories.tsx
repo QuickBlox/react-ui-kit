@@ -5,12 +5,16 @@ import ReplyMessagePreview from './ReplyMessagePreview/ReplyMessagePreview';
 import { Stubs } from '../../../Data/Stubs';
 
 const meta: Meta<typeof MessageInput> = {
-  title: 'MessageInput',
+  title: '@quickblox-react-ui-kit/Presentation/ui-components/MessageInput',
   component: MessageInput,
+  tags: ['autodocs'],
   parameters: {
     layout: 'centered',
   },
   argTypes: {
+    rephrase: {
+      control: false,
+    },
     value: {
       control: 'text',
       description: 'Input value',
@@ -96,7 +100,8 @@ const meta: Meta<typeof MessageInput> = {
 
 export default meta;
 
-export const Default: StoryObj<typeof MessageInput> = {
+export const MessageInputDefault: StoryObj<typeof MessageInput> = {
+  name: 'MessageInput Default',
   args: {
     value: '',
     enableVoice: false,
@@ -105,16 +110,18 @@ export const Default: StoryObj<typeof MessageInput> = {
   },
 };
 
-export const WithVoiceMessage: StoryObj<typeof MessageInput> = {
+export const MessageInputWithVoiceMessage: StoryObj<typeof MessageInput> = {
+  name: 'MessageInput With Voice Message',
   args: {
-    ...Default.args,
+    ...MessageInputDefault.args,
     enableVoice: true,
   },
 };
 
-export const WithPreview: StoryObj<typeof MessageInput> = {
+export const MessageInputWithPreview: StoryObj<typeof MessageInput> = {
+  name: 'MessageInput With Preview',
   args: {
-    ...Default.args,
+    ...MessageInputDefault.args,
     previewMessage: (
       <ReplyMessagePreview
         messages={[Stubs.initializeMessagesWithMockData()[0]]}
@@ -127,9 +134,10 @@ export const WithPreview: StoryObj<typeof MessageInput> = {
   },
 };
 
-export const LoadingState: StoryObj<typeof MessageInput> = {
+export const MessageInputLoadingState: StoryObj<typeof MessageInput> = {
+  name: 'MessageInput Loading State',
   args: {
-    ...Default.args,
+    ...MessageInputDefault.args,
     loading: true,
   },
 };

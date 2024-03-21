@@ -53,7 +53,10 @@ const DialogItemPreview: React.FC<DialogItemPreviewProps> = ({
           <div className="dialog-item-preview__content-bottom-message">
             {lastMessage}
           </div>
-          <div className="dialog-item-preview__content-bottom-controls">
+          <div
+            onClick={(event) => event.stopPropagation()}
+            className="dialog-item-preview__content-bottom-controls"
+          >
             {badge}
             {contextMenu && (
               <div className="dialog-item-preview__content-bottom-controls-menu">

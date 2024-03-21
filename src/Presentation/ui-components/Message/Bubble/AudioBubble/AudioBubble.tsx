@@ -27,6 +27,7 @@ export default function AudioBubble({
 
   const handleAudioEnd = () => {
     setIsPlaying(false);
+    setSecondsElapsed(0);
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call,consistent-return
@@ -123,6 +124,16 @@ export default function AudioBubble({
     return divElements;
   };
 
+  const formatTime = (time: number): string => {
+    const minutes = Math.floor((time % 3600) / 60);
+    const seconds = Math.floor(time % 60);
+
+    const formattedMinutes = minutes.toString().padStart(2, '0');
+    const formattedSeconds = seconds.toString().padStart(2, '0');
+
+    return `${formattedMinutes}:${formattedSeconds}`;
+  };
+
   return (
     <div className={`audio-bubble-background__${type}`}>
       <audio ref={audioRef} className="audio-body" preload="auto">
@@ -139,8 +150,11 @@ export default function AudioBubble({
             <PlaySvg className="audio-body__controls--color" />
           )}
         </div>
-        <div className="equalizer">
-          {isPlaying ? renderRandomEqualizer() : renderEqualizer(fileUid!)}
+        <div className="audio-player__equalizer-time">
+          <div className="equalizer">
+            {isPlaying ? renderRandomEqualizer() : renderEqualizer(fileUid!)}
+          </div>
+          <div className="time-play">{formatTime(secondsElapsed)}</div>
         </div>
       </div>
     </div>

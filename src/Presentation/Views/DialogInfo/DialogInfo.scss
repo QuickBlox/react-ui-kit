@@ -31,17 +31,9 @@ $dialog-information-container-dialog-information-height: 64px;
   position: relative;
 }
 .header-dialog-info-icon {
-  border-radius: 4px;
-  padding: 4px;
-  display: flex;
-  flex-direction: row;
-  gap: 0px;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  position: relative;
+  width: 24px;
+  height: 24px;
+  fill: var(--secondary-elements);
 }
 
 .dialog-information-profile,

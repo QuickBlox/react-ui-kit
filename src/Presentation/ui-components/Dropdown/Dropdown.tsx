@@ -53,7 +53,10 @@ export default function Dropdown({
       }
     };
 
-    if (isOpen) document.addEventListener('click', handleBlur);
+    if (isOpen)
+      document.addEventListener('click', handleBlur, {
+        capture: true,
+      });
 
     return () => document.removeEventListener('click', handleBlur);
   }, [isOpen]);

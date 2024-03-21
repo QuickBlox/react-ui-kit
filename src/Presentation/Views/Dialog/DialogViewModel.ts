@@ -8,10 +8,12 @@ import BaseViewModel, {
 } from '../../../CommonTypes/BaseViewModel';
 import { MessageEntity } from '../../../Domain/entity/MessageEntity';
 import { DialogEntity } from '../../../Domain/entity/DialogEntity';
+import { Pagination } from '../../../Domain/repository/Pagination';
 
 export interface DialogViewModel extends BaseViewModel<DialogEntity> {
   loading: boolean;
   error: string;
+  pagination: Pagination;
   messages: MessageEntity[]; // content
   getMessages: FunctionTypePaginationToVoid; // prepareContent
   sendTextMessage: FunctionTypeStringToVoid;

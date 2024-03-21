@@ -147,6 +147,22 @@ export default class DialogsRepository implements IDialogsRepository {
     }
   }
 
+  async updateCurrentDialogInLocalDataSource(
+    entity: DialogEntity,
+  ): Promise<DialogEntity> {
+    try {
+      const dto: RemoteDialogDTO = await this.dialogRemoteDTOMapper.fromEntity(
+        entity,
+      );
+
+      this.remoteDataSource.updateCurrentDialog(dto);
+
+      return Promise.resolve(entity);
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  }
+
   // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
   async updateDialogInRemote(entity: DialogEntity): Promise<DialogEntity> {
     const remoteDialogDTO: RemoteDialogDTO =

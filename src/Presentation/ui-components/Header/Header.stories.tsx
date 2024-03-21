@@ -13,7 +13,7 @@ import {
 import Avatar from '../Avatar/Avatar';
 
 const meta: Meta = {
-  title: 'Header',
+  title: '@quickblox-react-ui-kit/Presentation/ui-components/Header',
   component: Header,
   tags: ['autodocs'],
   parameters: {
@@ -42,6 +42,7 @@ const meta: Meta = {
       },
     },
     badge: {
+      control: false,
       description: 'Badge or dialog status',
     },
     children: {

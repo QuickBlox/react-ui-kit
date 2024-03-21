@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import TextField from './TextField';
 
 const meta: Meta<typeof TextField> = {
-  title: 'TextField',
+  title: '@quickblox-react-ui-kit/Presentation/ui-components/TextField',
   component: TextField,
   tags: ['autodocs'],
   parameters: {
@@ -50,6 +50,7 @@ const meta: Meta<typeof TextField> = {
       description: 'Text field label',
     },
     icon: {
+      control: false,
       table: {
         type: { summary: 'svg' },
       },
@@ -84,9 +85,12 @@ const meta: Meta<typeof TextField> = {
 export default meta;
 type StoryDefault = StoryObj<typeof meta>;
 
-export const TextFieldDefault: StoryDefault = {};
+export const TextFieldDefault: StoryDefault = {
+  name: 'TextField Default',
+};
 
 export const TextFieldDisabled: StoryDefault = {
+  name: 'TextField Disabled',
   args: {
     disabled: true,
     label: 'Text Label',
@@ -95,6 +99,7 @@ export const TextFieldDisabled: StoryDefault = {
 };
 
 export const TextFieldReset: StoryDefault = {
+  name: 'TextField Reset',
   args: {
     label: 'Text Label',
     placeholder: 'Placeholder',

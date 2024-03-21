@@ -13,24 +13,22 @@ export default function VideoBubble({
 }: VideoBubbleProps) {
   return (
     <div className={className}>
-      <div>
-        <div className="message-attachment-video">
-          <video
-            className="message-attachment-video-body"
-            controls
-            key={title}
-            playsInline
-            src={href}
-          >
-            <a href={href} download>
-              Download
-            </a>
-          </video>
-        </div>
-        <a href={href} download>
-          Download
-        </a>
+      <div className="message-attachment-video">
+        <video
+          className="message-attachment-video-body"
+          controls
+          key={title}
+          playsInline
+          src={href}
+        >
+          <a href={href} download>
+            Download
+          </a>
+        </video>
       </div>
+      <a href={href} download className="message-attachment-video-body__link">
+        Download
+      </a>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import DialogWindow from './DialogWindow';
 import Button from '../Button/Button';
 
 const meta: Meta<typeof DialogWindow> = {
-  title: 'Dialog Window',
+  title: '@quickblox-react-ui-kit/Presentation/ui-components/DialogWindow',
   component: DialogWindow,
   tags: ['autodocs'],
   parameters: {
@@ -102,5 +102,6 @@ function DialogWindowExample() {
 }
 
 export const DialogWindowDefault: StoryDefault = {
+  name: 'DialogWindow Default',
   render: () => <DialogWindowExample />,
 };

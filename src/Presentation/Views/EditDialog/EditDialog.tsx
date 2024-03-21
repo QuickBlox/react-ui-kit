@@ -13,7 +13,7 @@ import { DialogType } from '../../../Domain/entity/DialogTypes';
 import GroupChat from '../../components/UI/svgs/Icons/Contents/GroupChat';
 import PublicChannel from '../../components/UI/svgs/Icons/Contents/PublicChannel';
 import useQbInitializedDataContext from '../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
-import { Button } from '../../ui-components';
+import { Button, TextField } from '../../ui-components';
 
 export const TypeOpenDialog = {
   edit: 'edit',
@@ -58,7 +58,7 @@ const EditDialog: React.FC<EditDialogProps> = ({
   const [errorMessageUpload, setErrorMessageUpload] = useState('');
 
   const handleUploadAvatar = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const allowedExtensions = ['jpg', 'jpeg', 'gif', 'png', 'heic', 'heif'];
+    const allowedExtensions = ['jpg', 'jpeg', 'gif', 'png'];
 
     setErrorMessageUpload('');
     const reader = new FileReader();
@@ -69,9 +69,7 @@ const EditDialog: React.FC<EditDialogProps> = ({
     if (file === null) return;
 
     if (!allowedExtensions.includes(file.type.split('/')[1])) {
-      setErrorMessageUpload(
-        'Unsupported file format. Please use JPG, JPEG, PNG, HEIC, HEIF, or GIF.',
-      );
+      setErrorMessageUpload('Please use JPG, JPEG, PNG, or GIF.');
 
       return;
     }
@@ -218,15 +216,12 @@ const EditDialog: React.FC<EditDialogProps> = ({
             <div className="edit-dialog-container--wrapper__dialog-name-inf">
               Dialog name
             </div>
-            <div className="edit-dialog-container--wrapper__dialog-name-input">
-              <input
-                type="text"
-                style={{ width: '100%' }}
-                value={dialogName?.length > 0 ? dialogName : undefined}
-                onChange={(event) => setDialogName(event.target.value)}
-                placeholder="Enter name"
-              />
-            </div>
+            <TextField
+              value={dialogName}
+              onChange={(value) => setDialogName(value)}
+              placeholder="Enter name"
+              className="edit-dialog-container--wrapper__text-field"
+            />
           </div>
         </div>
         <div className="edit-btn-container">
