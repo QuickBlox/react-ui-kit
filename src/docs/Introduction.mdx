@@ -1,0 +1,371 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="📕 Documentation/Introduction" />
+
+# [Introduction](https://docs.quickblox.com/docs/react-uikit-send-your-first-message#importing-dependencies-in-the-project)
+
+The QuickBlox UIKit for React comprises a collection of pre-assembled UI components that enable effortless creation of an in-app chat equipped with all the necessary messaging functionalities. Our development kit encompasses light and dark themes, colors, and various other features. These components can be personalized to fashion an engaging messaging interface that reflects your brand's distinct identity.
+
+The QuickBlox UIKit fully supports both private and group dialogs. To initiate the process of sending a message from the ground up using Java or Kotlin, please refer to the instructions provided in the guide below.
+
+### [Installation](https://docs.quickblox.com/docs/react-uikit-send-your-first-message#step2-adding-dependencies-to-a-react-project)
+
+To successfully integrate QuickBlox functionality into your React project, you need to add two main dependencies: quickblox and quickblox-react-ui-kit. By following the documentation, you can easily add these packages to your project.
+
+```bash
+npm install quickblox --save
+```
+
+```bash
+npm install quickblox-react-ui-kit --save
+```
+
+#### [Importing Dependencies in the Project](https://docs.quickblox.com/docs/react-uikit-send-your-first-message#importing-dependencies-in-the-project)
+
+Open the file where you want to use QuickBlox functionality, such as App.tsx
+Add the following lines at the beginning of the file to import the dependencies:
+
+> **Note: We are using // @ts-ignor in TypeScript because QuickBlox SDK doesn't share types.**
+
+```ts
+// @ts-ignore
+import * as QB from 'quickblox/quickblox';
+import 'quickblox-react-ui-kit';
+```
+
+### [Adding QBconfig.ts File to Your React Application](https://docs.quickblox.com/docs/react-uikit-send-your-first-message#step-3-adding-qbconfigts-file-to-your-react-application)
+
+To ensure proper configuration and functionality of the QuickBlox UIKit in your React application, it is essential to add a QBconfig.ts file to the src folder. This file allows you to define the necessary parameters for the QuickBlox UIKit.
+The QBconfig.ts file contains various configuration settings that determine how the QuickBlox UIKit interacts with the QuickBlox JavaScript SDK and the backend services. These settings include:
+
+appId: This parameter represents the unique identifier assigned to your QuickBlox application. It helps establish a connection between the frontend and backend components.
+authKey and authSecret: These parameters are used for authentication purposes. They ensure secure communication between your application and the QuickBlox backend.
+accountKey: This parameter identifies your QuickBlox account and provides access to the associated services.
+apiEndpoint and chatEndpoint: These parameters define the API and chat endpoints provided by QuickBlox. They specify the URLs to which the QuickBlox UIKit will send requests for various functionalities.
+
+```ts
+export const QBConfig = {
+  credentials: {
+    appId: YOUR_APP_ID_FROM_ADMIN_PANEL,
+    accountKey: 'YOUR_ACCOUNT_KEY_FROM_ADMIN_PANEL',
+    authKey: 'YOUR_AUTH_KEY_FROM_ADMIN_PANEL',
+    authSecret: 'YOUR_AUTH_SECRET_FROM_ADMIN_PANEL',
+    sessionToken: '',
+  },
+  appConfig: {
+    chatProtocol: {
+      Active: 2,
+    },
+    debug: false,
+    endpoints: {
+      apiEndpoint: 'https://api.quickblox.com',
+      chatEndpoint: 'chat.quickblox.com',
+    },
+    on: {
+      async sessionExpired(handleResponse: any, retry: any) {
+        console.log(`Test sessionExpired… ${handleResponse} ${retry}`);
+      },
+    },
+    streamManagement: {
+      Enable: true,
+    },
+  },
+};
+```
+
+In this example, make sure to replace the placeholder values (YOUR_APP_ID_FROM_ADMIN_PANEL, YOUR_ACCOUNT_KEY_FROM_ADMIN_PANEL, YOUR_AUTH_KEY_FROM_ADMIN_PANEL, YOUR_AUTH_SECRET_FROM_ADMIN_PANEL) with the actual values obtained from your QuickBlox application.
+By adding the QBconfig.ts file to your React application, you ensure that the QuickBlox UIKit is properly configured and can interact seamlessly with the QuickBlox backend services.
+
+> **Note: If you initialize your SDK using a session token, you need to not only fill the sessionToken field in QBConfig but also fill other properties in the same way as when using the initWithAppId method. See the link initialize QuickBlox SDK without Authorization Key and Secret.**
+
+Now we can add dependecies in our code. (Open your App.tsx and add that lines.)
+
+```ts
+import * as QB from 'quickblox/quickblox';
+import 'quickblox-react-ui-kit';
+import { QBConfig } from './QBconfig'; // this line is new
+```
+
+### [Updating the project structure according to your needs](https://docs.quickblox.com/docs/react-uikit-send-your-first-message#step-4-updating-the-project-structure-according-to-your-needs)
+
+In order to enhance the organization and maintainability of your project, it is recommended to make changes to the structure of the App.tsx in the src folder.
+You need to add a constant called "currentUser" inside the App() function in the App.tsx file, which describes your user registered in the admin panel, and configure the QuickBloxUIKitProvider. Additionally, import the necessary entities from quickblox-react-ui-kit.
+As a result, you should have the code below:
+
+```ts
+import React from 'react';
+import type { QBSession, QBUser } from 'quickblox/quickblox';
+import {
+  QuickBloxUIKitProvider,
+  QuickBloxUIKitDesktopLayout,
+} from 'quickblox-react-ui-kit';
+import { QBConfig } from '../../configs/QBconfig';
+import Header from '../../components/Header';
+import SettingModal from '../../components/modals/SettingModal';
+import LogoutModal from '../../components/modals/LogoutModal';
+
+interface AppProps {
+  session: QBSession;
+  logout: VoidFunction;
+}
+
+const App = (props: AppProps) => {
+  const { session, logout } = props;
+  const [user, setUser] = useState<QBUser | null>(null);
+
+  return (
+    <QuickBloxUIKitProvider
+      maxFileSize={100 * 1000000}
+      accountData={{ ...QBConfig.credentials, sessionToken: session.token }}
+      qbConfig={{ ...QBConfig }}
+    >
+      <Header
+        avatarUrl={avatarUrl}
+        options={options}
+        handleChange={handleChange}
+        user={user}
+        regex={regex}
+      />
+      <QuickBloxUIKitDesktopLayout uikitHeightOffset={'40px'} />
+      <SettingModal
+        user={user}
+        avatarUrl={avatarUrl}
+        selectedValue={selectedValue}
+        setSelectedValue={setSelectedValue}
+        regex={regex}
+        setUser={setUser}
+      />
+      <LogoutModal
+        selectedValue={selectedValue}
+        setSelectedValue={setSelectedValue}
+        handleLogout={logout}
+      />
+    </QuickBloxUIKitProvider>
+  );
+};
+
+export default App;
+```
+
+QuickBloxUIKitProvider can accept up to three parameters:
+
+- maxFileSize - controls the maximum size of uploaded files.
+- accountData - information about the application's account data.
+- loginData - information about the logged-in user.
+
+Let's add the QuickBlox UIKit chat layer - QuickBloxUIKitDesktopLayout - to the markup of the main component of the application.
+
+If we do not specify a sessionToken in accountData, it means that the login and session start process occurs within our application. In this case, it is necessary to perform the following fifth step in our instruction.
+However, if the session start and application login process is already performed in another application, such as on a server, and we already have a ready sessionToken, then we can skip the next step.
+
+### [Configure QuickBloxUIKitProvider](https://docs.quickblox.com/docs/react-uikit-send-your-first-message#step-5-configure-quickbloxuikitprovider)
+
+To configure QuickBloxUIKitProvider and use QuickBloxUIKit in your application, follow these steps:
+Initialize DataContext:
+
+1. To work with QuickBlox, it is necessary to initialize the UI Kit react DataContext. It contains important data and settings for using QuickBloxSDK. The DataContext connects various components of the application and provides them access to shared data.
+
+```ts
+const qbUIKitContext: QBDataContextType = React.useContext(qbDataContext);
+
+const [isUserAuthorized, setUserAuthorized] = React.useState(false);
+const [isSDKInitialized, setSDKInitialized] = React.useState(false);
+
+const prepareSDK = async (): Promise<void> => {
+  // check if we have installed SDK
+  if ((window as any).QB === undefined) {
+    if (QB !== undefined) {
+      (window as any).QB = QB;
+    } else {
+      let QBLib = require('quickblox/quickblox.min');
+      (window as any).QB = QBLib;
+    }
+  }
+
+  const APPLICATION_ID = QBConfig.credentials.appId;
+  const AUTH_KEY = QBConfig.credentials.authKey;
+  const AUTH_SECRET = QBConfig.credentials.authSecret;
+  const ACCOUNT_KEY = QBConfig.credentials.accountKey;
+  const CONFIG = QBConfig.appConfig;
+
+  QB.init(APPLICATION_ID, AUTH_KEY, AUTH_SECRET, ACCOUNT_KEY, CONFIG);
+};
+```
+
+2. We need to add user authentication, so to do this, we will introduce two states and use the useEffect hook:
+
+```ts
+const [authorized, setAuthorized] = React.useState(false);
+const [initedSDK, setInitedSDK] = React.useState(false);
+
+......
+
+ useEffect(() => {
+    if (!isSDKInitialized) {
+      prepareSDK().then(result => {
+
+        QB.createSession(currentUser, async function (errorCreateSession: any, session: any) {
+          if (errorCreateSession) {
+            console.log('Create User Session has error:', JSON.stringify(errorCreateSession));
+          } else {
+            const userId: number = session.user_id;
+            const password: string = session.token;
+            const paramsConnect = { userId, password };
+
+            QB.chat.connect(paramsConnect, async function (errorConnect: any, resultConnect: any) {
+              if (errorConnect) {
+                console.log('Can not connect to chat server: ', errorConnect);
+              } else {
+                const authData: AuthorizationData = {
+                  userId: userId,
+                  password: password,
+                  userName: currentUser.login,
+                  sessionToken: session.token
+                };
+                await qbUIKitContext.authorize(authData);
+                setSDKInitialized(true);
+                setUserAuthorized(true);
+              }
+            });
+          }
+        });
+      }).catch(
+          e => {
+            console.log('init SDK has error: ', e)
+          });
+    }
+  }, []);
+
+  ......
+```
+
+After implementing all the steps, your App.tsx file should look like this. You can compare it this your code or copy it instead of.
+
+```ts
+import React, { useEffect } from 'react';
+
+// @ts-ignore
+import * as QB from 'quickblox/quickblox';
+import {
+  QuickBloxUIKitProvider,
+  qbDataContext,
+  QuickBloxUIKitDesktopLayout,
+  LoginData,
+  AuthorizationData,
+  QBDataContextType,
+} from 'quickblox-react-ui-kit';
+import { QBConfig } from './QBconfig';
+import './App.css';
+
+function App() {
+  const currentUser: LoginData = {
+    login: '',
+    password: '',
+  };
+
+  const qbUIKitContext: QBDataContextType = React.useContext(qbDataContext);
+
+  const [isUserAuthorized, setUserAuthorized] = React.useState(false);
+  const [isSDKInitialized, setSDKInitialized] = React.useState(false);
+
+  const prepareSDK = async (): Promise<void> => {
+    // check if we have installed SDK
+    if ((window as any).QB === undefined) {
+      if (QB !== undefined) {
+        (window as any).QB = QB;
+      } else {
+        let QBLib = require('quickblox/quickblox.min');
+        (window as any).QB = QBLib;
+      }
+    }
+
+    const APPLICATION_ID = QBConfig.credentials.appId;
+    const AUTH_KEY = QBConfig.credentials.authKey;
+    const AUTH_SECRET = QBConfig.credentials.authSecret;
+    const ACCOUNT_KEY = QBConfig.credentials.accountKey;
+    const CONFIG = QBConfig.appConfig;
+
+    QB.init(APPLICATION_ID, AUTH_KEY, AUTH_SECRET, ACCOUNT_KEY, CONFIG);
+  };
+
+  useEffect(() => {
+    if (!isSDKInitialized) {
+      prepareSDK()
+        .then((result) => {
+          QB.createSession(
+            currentUser,
+            async function (errorCreateSession: any, session: any) {
+              if (errorCreateSession) {
+                console.log(
+                  'Create User Session has error:',
+                  JSON.stringify(errorCreateSession),
+                );
+              } else {
+                const userId: number = session.user_id;
+                const password: string = session.token;
+                const paramsConnect = { userId, password };
+
+                QB.chat.connect(
+                  paramsConnect,
+                  async function (errorConnect: any, resultConnect: any) {
+                    if (errorConnect) {
+                      console.log(
+                        'Can not connect to chat server: ',
+                        errorConnect,
+                      );
+                    } else {
+                      const authData: AuthorizationData = {
+                        userId: userId,
+                        password: password,
+                        userName: currentUser.login,
+                        sessionToken: session.token,
+                      };
+                      await qbUIKitContext.authorize(authData);
+                      setSDKInitialized(true);
+                      setUserAuthorized(true);
+                    }
+                  },
+                );
+              }
+            },
+          );
+        })
+        .catch((e) => {
+          console.log('init SDK has error: ', e);
+        });
+    }
+  }, []);
+
+  return (
+    <div>
+      <QuickBloxUIKitProvider
+        maxFileSize={100 * 1000000}
+        accountData={{ ...QBConfig.credentials }}
+        loginData={{
+          login: currentUser.login,
+          password: currentUser.password,
+        }}
+      >
+        <div className="App">
+          {
+            // React states indicating the ability to render UI
+            isSDKInitialized && isUserAuthorized ? (
+              <QuickBloxUIKitDesktopLayout />
+            ) : (
+              <div>wait while SDK is initializing...</div>
+            )
+          }
+        </div>
+      </QuickBloxUIKitProvider>
+    </div>
+  );
+}
+
+export default App;
+```
+
+You should run the application using the command:
+
+```bash
+npm start
+```
