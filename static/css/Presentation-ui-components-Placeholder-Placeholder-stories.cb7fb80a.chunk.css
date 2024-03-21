@@ -1,0 +1,3 @@
+.placeholder{display:flex;flex-direction:column;align-items:center}.placeholder,.placeholder *{box-sizing:border-box}.placeholder__text{font-family:"Roboto";font-weight:400;font-size:16px;line-height:24px;letter-spacing:.15px;color:var(--caption);text-align:center}.placeholder__icon{width:52px;height:52px;margin-bottom:16px;fill:var(--caption)}.placeholder__retry{display:flex;align-items:center;padding:4px 8px 4px 8px;fill:#3978fc;color:#3978fc;font-family:"Roboto";font-weight:700;font-size:14px;line-height:16px;letter-spacing:.4px}.placeholder__retry-icon{width:24px;height:24px;margin-right:8px;cursor:pointer}
+
+/*# sourceMappingURL=Presentation-ui-components-Placeholder-Placeholder-stories.cb7fb80a.chunk.css.map*/

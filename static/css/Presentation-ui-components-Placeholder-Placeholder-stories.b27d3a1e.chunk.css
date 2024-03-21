@@ -1,4 +1,0 @@
-.placeholder{display:flex;flex-direction:column;align-items:center}.placeholder,.placeholder *{box-sizing:border-box}.placeholder__text{margin:16px 0px;font-family:"Roboto";font-weight:400;font-size:16px;line-height:24px;letter-spacing:.15px;color:var(--caption);text-align:center}.placeholder__icon{width:52px;height:52px;fill:var(--caption)}.placeholder__retry{display:flex;align-items:center;padding:4px 8px 4px 8px;fill:#3978fc;color:#3978fc;font-family:"Roboto";font-weight:700;font-size:14px;line-height:16px;letter-spacing:.4px}.placeholder__retry-icon{width:24px;height:24px;margin-right:8px;cursor:pointer}
-.loader{animation:rotate 1s infinite linear}.loader--sm{width:24px;height:24px}.loader--md{width:48px;height:48px}.loader--lg{width:52px;height:52px}@keyframes rotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-
-/*# sourceMappingURL=Presentation-ui-components-Placeholder-Placeholder-stories.b27d3a1e.chunk.css.map*/
