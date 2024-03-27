@@ -112,6 +112,11 @@ $dialog-information-container-dialog-information-height: 64px;
   text-align: left;
   font: var(--button-default);
   position: relative;
+
+  &--disable {
+    color: var(--disabled-elements);
+    cursor: default;
+  }
 }
 
 .dialog-info-action-wrapper-settings,
@@ -202,8 +207,13 @@ $dialog-information-container-dialog-information-height: 64px;
 
 .dialog-info-leave {
   fill: var(--error);
-
   border-bottom: 1px solid var(--divider);
+  cursor: pointer;
+
+   &--disable {
+     fill: var(--disabled-elements);
+     cursor: default;
+   }
 }
 
 .dialog-info-members {

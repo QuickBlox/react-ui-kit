@@ -32,6 +32,7 @@ export type MessageItemProps = {
   listRef?: RefObject<HTMLDivElement>;
   messagesToView: MessageEntity[];
   onError: (messageError: string) => void;
+  disableAction?: boolean;
 };
 
 interface MessageStates {
@@ -79,6 +80,7 @@ export default function MessageItem({
   defaultTranslationLanguage,
   languagesForAITranslate,
   onError,
+  disableAction = false,
 }: MessageItemProps) {
   const messageStates: Record<string, MessageStates> = {};
 
@@ -152,6 +154,7 @@ export default function MessageItem({
           onForward={onForward}
           enableReplying={enableReplying}
           enableForwarding={enableForwarding}
+          disableActions={disableAction}
         />
         {currentMessageType === 'incoming' && state[item.id]?.loading && (
           <Loader size="sm" className="message-item-additional-part__loader" />
@@ -160,6 +163,7 @@ export default function MessageItem({
           !(item.attachments && item.attachments.length > 0) &&
           AIAssistWidget && (
             <AIAssist
+              disableAction={disableAction}
               AIAssistWidget={AIAssistWidget}
               loading={
                 state[item.id] && state[item.id].loading
@@ -204,6 +208,7 @@ export default function MessageItem({
                     nestedMessage.attachments.length > 0
                   ) && AITranslateWidget ? (
                     <AITranslate
+                      disableAction={disableAction}
                       AITranslateWidget={AITranslateWidget}
                       defaultLanguage={defaultTranslationLanguage}
                       languages={languagesForAITranslate}
@@ -306,6 +311,7 @@ export default function MessageItem({
               !(message.attachments && message.attachments.length > 0) &&
               AITranslateWidget ? (
                 <AITranslate
+                  disableAction={disableAction}
                   AITranslateWidget={AITranslateWidget}
                   defaultLanguage={defaultTranslationLanguage}
                   languages={languagesForAITranslate}

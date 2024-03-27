@@ -18,9 +18,9 @@ export class FileDTOMapper implements IDTOMapper {
     FileDTOMapper.validateDTO(fileDTO);
 
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    const fileContentParam: QBContentParam = {
+    const fileContentParam: QBBlobCreateUploadParams = {
       name: fileDTO.name || '',
-      file: fileDTO.data,
+      file: fileDTO.data!,
       type: fileDTO.type || '',
       size: fileDTO.size || 0,
       public: false, // optional, "false" by default
@@ -31,7 +31,7 @@ export class FileDTOMapper implements IDTOMapper {
 
   // eslint-disable-next-line class-methods-use-this
   toTDO<TArg, TResult>(qbEntity: TArg): Promise<TResult> {
-    const qbFile: QBContentObject = qbEntity as unknown as QBContentObject;
+    const qbFile: QBBlobCreate = qbEntity as unknown as QBBlobCreate;
 
     FileDTOMapper.validateQBFileDialog(qbFile);
 
@@ -145,27 +145,27 @@ export class FileDTOMapper implements IDTOMapper {
     return Promise.resolve();
   }
 
-  private static validateQBFileDialog(qbFile: QBContentObject) {
+  private static validateQBFileDialog(qbFile: QBBlobCreate) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const qbFileValidator: DtoValidator<QBContentObject> = {
-      account_id(v: unknown): v is QBContentObject['account_id'] {
-        const { account_id } = v as QBContentObject;
+    const qbFileValidator: DtoValidator<QBBlobCreate> = {
+      account_id(v: unknown): v is QBBlobCreate['account_id'] {
+        const { account_id } = v as QBBlobCreate;
 
         return account_id !== undefined && account_id !== null;
       },
-      app_id(v: unknown): v is QBContentObject['app_id'] {
-        const { app_id } = v as QBContentObject;
+      app_id(v: unknown): v is QBBlobCreate['app_id'] {
+        const { app_id } = v as QBBlobCreate;
 
         return app_id !== undefined && app_id !== null;
       },
-      content_type(v: unknown): v is QBContentObject['content_type'] {
-        const { content_type } = v as QBContentObject;
+      content_type(v: unknown): v is QBBlobCreate['content_type'] {
+        const { content_type } = v as QBBlobCreate;
 
         return content_type !== undefined && content_type !== null;
       },
-      created_at(v: unknown): v is QBContentObject['created_at'] {
-        const { created_at } = v as QBContentObject;
+      created_at(v: unknown): v is QBBlobCreate['created_at'] {
+        const { created_at } = v as QBBlobCreate;
 
         return (
           created_at !== undefined &&
@@ -173,28 +173,28 @@ export class FileDTOMapper implements IDTOMapper {
           created_at.length > 0
         );
       },
-      id(v: unknown): v is QBContentObject['id'] {
-        const { id } = v as QBContentObject;
+      id(v: unknown): v is QBBlobCreate['id'] {
+        const { id } = v as QBBlobCreate;
 
         return id !== undefined && id !== null;
       },
-      name(v: unknown): v is QBContentObject['name'] {
-        const { name } = v as QBContentObject;
+      name(v: unknown): v is QBBlobCreate['name'] {
+        const { name } = v as QBBlobCreate;
 
         return name !== undefined && name !== null && name.length > 0;
       },
-      size(v: unknown): v is QBContentObject['size'] {
-        const { size } = v as QBContentObject;
+      size(v: unknown): v is QBBlobCreate['size'] {
+        const { size } = v as QBBlobCreate;
 
         return size !== undefined && size !== null;
       },
-      uid(v: unknown): v is QBContentObject['uid'] {
-        const { uid } = v as QBContentObject;
+      uid(v: unknown): v is QBBlobCreate['uid'] {
+        const { uid } = v as QBBlobCreate;
 
         return uid !== undefined && uid !== null && uid.length > 0;
       },
-      updated_at(v: unknown): v is QBContentObject['updated_at'] {
-        const { updated_at } = v as QBContentObject;
+      updated_at(v: unknown): v is QBBlobCreate['updated_at'] {
+        const { updated_at } = v as QBBlobCreate;
 
         return (
           updated_at !== undefined &&

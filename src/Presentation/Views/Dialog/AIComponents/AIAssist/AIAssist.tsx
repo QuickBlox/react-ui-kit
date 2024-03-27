@@ -1,3 +1,4 @@
+import cn from 'classnames';
 import { ReactComponent as RobotSvg } from '../../../../icons/actions/robot.svg';
 import { AIMessageWidget } from '../../AIWidgets/AIMessageWidget';
 import { MessageEntity } from '../../../../../Domain/entity/MessageEntity';
@@ -13,6 +14,7 @@ interface AIAssistProps {
   messageToAssist?: MessageEntity;
   messageHistory?: MessageEntity[];
   currentUserId?: number;
+  disableAction?: boolean;
 }
 
 export default function AIAssist({
@@ -24,9 +26,10 @@ export default function AIAssist({
   messageToAssist,
   messageHistory,
   currentUserId,
+  disableAction = false,
 }: AIAssistProps) {
   async function assistAnswerHandler() {
-    if (loading) {
+    if (loading || disableAction) {
       return;
     }
 
@@ -56,7 +59,11 @@ export default function AIAssist({
       {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
       <div className="ai-assist-answer__icon" onClick={assistAnswerHandler}>
         {!loading && (
-          <RobotSvg className="ai-assist-answer__icon__media-robot" />
+          <RobotSvg
+            className={cn('ai-assist-answer__icon__media-robot', {
+              'ai-assist-answer__icon__media-robot--disable': disableAction,
+            })}
+          />
         )}
       </div>
     </div>

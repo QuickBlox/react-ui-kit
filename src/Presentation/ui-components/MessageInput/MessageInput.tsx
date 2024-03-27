@@ -23,6 +23,7 @@ export type MessageInputProps = {
   rephrase?: ReactElement;
   loading?: boolean;
   placeholder?: string;
+  disableActions?: boolean;
   className?: string;
 };
 
@@ -42,6 +43,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
   rephrase,
   loading,
   placeholder,
+  disableActions = false,
   className,
 }: MessageInputProps) => {
   const [isVoiceMessage, setVoiceMessage] = useState(true);
@@ -60,7 +62,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
   function sendTextMessageActions() {
     if (value && onSend) {
       onSend(value);
-      if (onChange) {
+      if (onChange && !disableActions) {
         onChange('');
       }
     }
@@ -78,10 +80,12 @@ const MessageInput: React.FC<MessageInputProps> = ({
         className="chat-input"
       >
         <AttachmentUploader
+          disableAction={disableActions}
           icon={
             <AttachmentSvg
               className={cn('chat-container__icon', {
                 'chat-container__icon--mute': disableAttachment || loading,
+                'chat-container__icon--disable': disableActions,
               })}
             />
           }
@@ -122,8 +126,9 @@ const MessageInput: React.FC<MessageInputProps> = ({
         {!isVoiceMessage && !loading && (
           <div>
             <SendSvg
-              className={cn('chat-container__icon', {
+              className={cn('chat-container__icon__send', {
                 'chat-container__icon--mute': loading,
+                'chat-container__icon--disable': disableActions,
               })}
               onClick={() => {
                 sendTextMessageActions();
@@ -138,6 +143,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
             <VoiceSvg
               className={cn('chat-container__icon', {
                 'chat-container__icon--red': enableVoice,
+                'chat-container__icon--disable': disableActions,
               })}
               onClick={() => {
                 if (onVoice) {

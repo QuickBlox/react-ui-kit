@@ -1,11 +1,11 @@
 import cn from 'classnames';
-import { TextDocumentSvg, AudioFileSvg, VideoFileSvg } from '../../icons';
+import { TextDocumentSvg, AudioFileSvg, PlaySvg } from '../../icons';
 import './PreviewFileMessage.scss';
 
 const iconDictionary = {
   document: TextDocumentSvg,
   audio: AudioFileSvg,
-  video: VideoFileSvg,
+  video: PlaySvg,
 };
 
 export interface PreviewFileMessageProps {

@@ -53,6 +53,7 @@ type PreviewDialogsProps = {
   theme?: PreviewDialogsTheme;
   onLeaveDialog: FunctionTypeDialogEntityToVoid;
   additionalSettings?: PreviewDialogSettings;
+  disableActions?: boolean;
 };
 // eslint-disable-next-line react/function-component-definition
 const PreviewDialog: React.FC<PreviewDialogsProps> = ({
@@ -65,6 +66,7 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
   message_date_time_sent,
   theme = undefined,
   onLeaveDialog,
+  disableActions = false,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   additionalSettings = undefined,
 }: PreviewDialogsProps) => {
@@ -293,8 +295,10 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
             {
               value: 'Leave',
               label: 'Leave',
+              disabled: disableActions,
             },
           ]}
+          disabled={disableActions}
           onSelect={(value: string) => {
             if (value === 'Leave') {
               onLeaveDialog(dialogViewModel?.entity as DialogEntity);

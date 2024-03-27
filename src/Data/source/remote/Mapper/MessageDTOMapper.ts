@@ -143,7 +143,7 @@ export class MessageDTOMapper implements IDTOMapper {
 
       dto.recipient_id = qbMessage.recipient_id || 0;
       dto.attachments = MessageDTOMapper.transformAttachment(
-        qbMessage.message,
+        qbMessage.message || '',
         qbMessage.attachments || [],
       );
       dto.read = qbMessage.read;
@@ -163,7 +163,7 @@ export class MessageDTOMapper implements IDTOMapper {
 
       dto.recipient_id = qbMessage.recipient_id || 0;
       dto.attachments = MessageDTOMapper.transformAttachment(
-        qbMessage.message,
+        qbMessage.message || '',
         qbMessage.attachments || [],
       );
       dto.read = qbMessage.read || 1;

@@ -116,17 +116,7 @@ export default function useInviteMembersViewModel(): InviteMembersViewModel {
 
   return {
     get entity(): UserEntity {
-      return Stubs.createUserEntityWithParams(
-        0,
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-      );
+      return Stubs.createUserEntityWithParams(0, '', '', '', '', '', 0, '', '');
     },
     // id: Date.now(),
     // name: '',

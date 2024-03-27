@@ -123,7 +123,7 @@ export default class UsersRepository {
 
         dto.id = userId.toString();
 
-        const userDTO: LocalUserDTO = await this.remoteDataSource.getUser(dto);
+        const userDTO: RemoteUserDTO = await this.remoteDataSource.getUser(dto);
 
         userEntity = await this.userRemoteDTOMapper.toEntity(userDTO);
       } catch (e) {

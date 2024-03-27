@@ -28,6 +28,11 @@
       position: relative;
       overflow: visible;
       fill: var(--main-elements, #3978FC);
+
+      &--disable {
+        fill: var(--disabled-elements);
+        cursor: default;
+      }
     }
   }
 }

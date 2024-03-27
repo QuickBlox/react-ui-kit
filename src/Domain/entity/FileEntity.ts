@@ -7,5 +7,5 @@ export interface FileEntity {
   name?: string;
   size?: number;
   type?: FileType;
-  data?: string | File;
+  data?: File;
 }

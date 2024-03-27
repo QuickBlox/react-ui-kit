@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './AIRephraseWidget.scss';
 import { Tone } from 'qb-ai-rephrase/src/Tone';
 import { QBAIRephrase } from 'qb-ai-rephrase';
+import cn from 'classnames';
 import {
   FunctionTypeBooleanToVoid,
   FunctionTypeStringToVoid,
@@ -36,6 +37,7 @@ type AIRephraseWidgetProps = {
   rephraseTones: Tone[];
   theme?: UiKitTheme;
   setPrevValueText: FunctionTypeStringToVoid;
+  disableActions?: boolean;
 };
 // eslint-disable-next-line react/function-component-definition
 const AIRephraseWidget: React.FC<AIRephraseWidgetProps> = ({
@@ -51,6 +53,7 @@ const AIRephraseWidget: React.FC<AIRephraseWidgetProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   theme = undefined,
   setPrevValueText,
+  disableActions = false,
 }: AIRephraseWidgetProps) => {
   const [currentMessageText, setCurrentMessageText] =
     useState<string>(messageText);
@@ -91,7 +94,8 @@ const AIRephraseWidget: React.FC<AIRephraseWidgetProps> = ({
         if (
           currentMessageText &&
           currentMessageText.length > 0 &&
-          !waitAIWidget
+          !waitAIWidget &&
+          !disableActions
         ) {
           setWaitAIWidget(true);
           setPrevTextMessage(currentMessageText);
@@ -153,12 +157,17 @@ const AIRephraseWidget: React.FC<AIRephraseWidgetProps> = ({
         <div
           className="icon"
           style={{
-            cursor: !waitAIWidget ? 'pointer' : '',
+            cursor: !waitAIWidget || !disableActions ? 'pointer' : '',
           }}
         >
           <AIWidgetActions
+            disabled={!disableActions}
             widgetToRender={
-              <RephraseSvg className="rephrase-icon" />
+              <RephraseSvg
+                className={cn('rephrase-icon', {
+                  'rephrase-icon--disable': disableActions,
+                })}
+              />
               // <ToneIcon
               //   width="24"
               //   height="24"

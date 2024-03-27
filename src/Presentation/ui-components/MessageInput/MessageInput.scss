@@ -3,16 +3,30 @@ $message-view-container-chat-input-min-height: 54px;
 .chat-container{
   width: 100%;
   &__icon{
-    width: 32px;
-    height: 32px;
-    fill: var(--input-elements);
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    fill: var(--secondary-elements);
+    &__send {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      fill: var(--main-elements);
+    }
 
     svg path{
-      fill: var(--input-elements);
+      fill: var(--main-elements);
     }
   }
   &__icon--mute{
     fill: var(--disabled-elements);
+    svg path{
+      fill: var(--disabled-elements);
+    }
+  }
+  &__icon--disable{
+    fill: var(--disabled-elements);
+    cursor: default;
     svg path{
       fill: var(--disabled-elements);
     }

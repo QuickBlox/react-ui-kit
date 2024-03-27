@@ -47,7 +47,6 @@
 
 .forwarding-message-input-icon-send {
   border-radius: 4px;
-  padding: 4px;
   display: flex;
   flex-direction: row;
   gap: 0px;
@@ -57,6 +56,37 @@
   width: 24px;
   height: 44px;
   position: relative;
+
+  &__icon{
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    fill: var(--secondary-elements);
+    &__send {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      fill: var(--main-elements);
+    }
+
+    svg path{
+      width: 24px;
+      height: 24px;
+      fill: var(--main-elements);
+    }
+  }
+  &__icon--disable{
+    fill: var(--disabled-elements);
+    cursor: default;
+    width: 24px;
+    height: 24px;
+    svg path{
+      width: 24px;
+      height: 24px;
+      fill: var(--disabled-elements);
+    }
+  }
+
 }
 .actions-send {
   flex-shrink: 0;

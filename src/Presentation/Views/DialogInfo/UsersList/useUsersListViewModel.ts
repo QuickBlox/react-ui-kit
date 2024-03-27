@@ -112,6 +112,7 @@ export default function useUsersListViewModel(
     },
     set entity(newDialog) {
       setDialog(newDialog);
+      getUsers().catch();
     },
     users,
     loading,

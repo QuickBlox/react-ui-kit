@@ -66,7 +66,7 @@ export class Creator {
         if (error) {
           reject(error);
         } else {
-          resolve(result.blob.uid);
+          resolve(result!.blob.uid);
         }
       });
     });
@@ -99,7 +99,6 @@ export class Creator {
       name: '',
       size: 0,
       type: FileType.image,
-      data: '',
     };
   }
 }

@@ -11,6 +11,7 @@ export type MessageContextMenuProps = {
   enableReplying: boolean;
   onReply: FunctionTypeMessageEntityToVoid;
   onForward: FunctionTypeMessageEntityToVoid;
+  disableActions?: boolean;
 };
 
 export default function MessageContextMenu({
@@ -19,15 +20,24 @@ export default function MessageContextMenu({
   enableForwarding,
   onReply,
   onForward,
+  disableActions = false,
 }: MessageContextMenuProps) {
   function selectHandler(value: string) {
-    if (value === 'Reply' && enableReplying) {
-      onReply(message);
-    }
-    if (value === 'Forward' && enableForwarding) {
-      onForward(message);
+    if (!disableActions) {
+      if (value === 'Reply' && enableReplying) {
+        onReply(message);
+      }
+      if (value === 'Forward' && enableForwarding) {
+        onForward(message);
+      }
     }
   }
+
+  // const [disabled, setDisabled] = useState(disableActions);
+
+  // useEffect(() => {
+  //   setDisabled(disableActions);
+  // }, [disableActions]);
 
   const options: Option[] = [];
 
@@ -35,6 +45,7 @@ export default function MessageContextMenu({
     options.push({
       value: 'Reply',
       label: 'Reply',
+      disabled: disableActions,
     });
   }
 
@@ -50,7 +61,7 @@ export default function MessageContextMenu({
       {enableForwarding || enableReplying ? (
         <Dropdown
           options={options}
-          disabled={false}
+          disabled={disableActions}
           onSelect={(value) => selectHandler(value)}
         >
           <div className="message-context-menu-actions">

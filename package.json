@@ -1,6 +1,6 @@
 {
   "name": "quickblox-react-ui-kit",
-  "version": "0.3.0-beta.3",
+  "version": "0.3.0-beta.4",
   "main": "dist/index-ui.js",
   "license": "MIT",
   "dependencies": {

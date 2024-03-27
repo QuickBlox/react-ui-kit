@@ -6,7 +6,7 @@ export class RemoteMessageDTO {
 
   public dialogId: string;
 
-  public message: string;
+  public message: string | null;
 
   public created_at: string;
 

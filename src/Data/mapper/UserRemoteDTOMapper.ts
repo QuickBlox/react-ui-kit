@@ -146,7 +146,7 @@ export class UserRemoteDTOMapper implements IMapper {
         return (
           last_request_at !== undefined &&
           last_request_at !== null &&
-          last_request_at.length > 0
+          last_request_at > 0
         );
       },
       login(v: unknown): v is UserEntity['login'] {
@@ -387,7 +387,7 @@ export class UserRemoteDTOMapper implements IMapper {
       email: '',
       full_name: '',
       id: 0,
-      last_request_at: '',
+      last_request_at: 0,
       login: '',
       updated_at: '',
       user_tags: '',

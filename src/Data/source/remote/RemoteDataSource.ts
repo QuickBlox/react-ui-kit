@@ -359,9 +359,8 @@ export class RemoteDataSource implements IRemoteDataSource {
           message,
         )}`,
       );
-      const dialogId = message.dialog_id || message.extension.dialog_id || '-1';
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const currentUserId = this._authInformation?.userId;
+      const dialogId: QBChatDialog['_id'] =
+        message.dialog_id || message.extension.dialog_id || '-1';
 
       //
       qbChatGetMessagesExtended(dialogId, {
@@ -397,6 +396,47 @@ export class RemoteDataSource implements IRemoteDataSource {
           });
         })
         .catch();
+      //
+      QBGetDialogById(dialogId)
+        .then(async (result) => {
+          //
+          const dialogs: QBChatDialog[] | undefined = result?.items.filter(
+            (v) => v._id === dialogId,
+          );
+          const current =
+            dialogs && dialogs.length > 0 ? dialogs[0] : undefined;
+          //
+          const dialogDTO: RemoteDialogDTO =
+            await this.getCurrentDialogDTOMapper().toTDO(current);
+          const dialogsDTOtoEntityMapper: IMapper = new DialogRemoteDTOMapper();
+
+          const dialogEntity: DialogEntity =
+            await dialogsDTOtoEntityMapper.toEntity(dialogDTO);
+          //
+          //
+          const resultEvent: DialogEventInfo = {
+            eventMessageType: EventMessageType.LocalMessage,
+            dialogInfo: dialogEntity,
+            messageInfo: undefined,
+            messageStatus: {
+              isTyping: false,
+              userId,
+              dialogId,
+              messageId: message.id,
+              deliveryStatus: 'read',
+            },
+            notificationTypes: undefined,
+          };
+
+          this.subscriptionOnMessageStatus.informSubscribers(
+            resultEvent,
+            EventMessageType.LocalMessage,
+          );
+
+          return resultEvent;
+        })
+        .catch();
+      //
     };
     QB.chat.onDeliveredStatusListener = (messageId, dialogId, userId) => {
       console.log(
@@ -800,7 +840,7 @@ export class RemoteDataSource implements IRemoteDataSource {
         photo: qbEntity.photo,
       };
     }
-    if (qbEntity.new_occupants_ids?.length > 0) {
+    if (qbEntity.new_occupants_ids && qbEntity.new_occupants_ids.length > 0) {
       data = {
         ...data,
         push_all: { occupants_ids: qbEntity.new_occupants_ids },
@@ -1147,7 +1187,7 @@ export class RemoteDataSource implements IRemoteDataSource {
 
     const qbEntity: QBChatNewMessage = {
       type: dto.dialog_type === DialogType.private ? 'chat' : 'groupchat',
-      body: messageText,
+      body: messageText || '',
       notification_type: dto.notification_type,
       dialog_id: dto.dialogId,
       extension: {
@@ -1316,7 +1356,9 @@ export class RemoteDataSource implements IRemoteDataSource {
   // eslint-disable-next-line @typescript-eslint/require-await,class-methods-use-this,@typescript-eslint/no-unused-vars
   async createFile(dto: RemoteFileDTO): Promise<RemoteFileDTO> {
     console.log('call createFile in remote with params: ', JSON.stringify(dto));
-    const qbParam: QBContentParam = await this.fileDTOMapper.fromDTO(dto);
+    const qbParam: QBBlobCreateUploadParams = await this.fileDTOMapper.fromDTO(
+      dto,
+    );
 
     const result = await QBCreateAndUploadContent(qbParam).catch((err) => {
       console.log('Error: ', stringifyError(err));
@@ -1336,9 +1378,9 @@ export class RemoteDataSource implements IRemoteDataSource {
       );
     }
 
-    const qbContentObject: QBContentObject = result as QBContentObject;
+    const qbContentObject: QBBlobCreate = result as QBBlobCreate;
     const newDto: RemoteFileDTO = await this.fileDTOMapper.toTDO<
-      QBContentObject,
+      QBBlobCreate,
       RemoteFileDTO
     >(qbContentObject);
 

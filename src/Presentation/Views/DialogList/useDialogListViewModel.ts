@@ -117,9 +117,10 @@ export default function useDialogListViewModel(
         );
 
         const sortedData = [...filteredDialogs].sort((a, b) => {
-          return (
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-          );
+          return b.lastMessage.dateSent && a.lastMessage.dateSent
+            ? new Date(b.lastMessage.dateSent).getTime() -
+                new Date(a.lastMessage.dateSent).getTime()
+            : new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
         });
 
         setDialogs([...sortedData]);
@@ -137,9 +138,10 @@ export default function useDialogListViewModel(
     await useCaseSubscribeToDialogsUpdates?.execute((data) => {
       try {
         const sortedData = [...(data as PublicDialogEntity[])].sort((a, b) => {
-          return (
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-          );
+          return b.lastMessage.dateSent && a.lastMessage.dateSent
+            ? new Date(b.lastMessage.dateSent).getTime() -
+                new Date(a.lastMessage.dateSent).getTime()
+            : new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
         });
 
         setDialogs(sortedData);
@@ -174,9 +176,12 @@ export default function useDialogListViewModel(
               dialogId,
             );
 
-          // eslint-disable-next-line promise/catch-or-return,promise/always-return
+          // eslint-disable-next-line promise/catch-or-return
           getDialogByIdUseCase.execute().then((updatedDialog) => {
-            setNewDialog(updatedDialog);
+            // eslint-disable-next-line promise/always-return
+            if (newDialog && newDialog.id === updatedDialog.id) {
+              setNewDialog(updatedDialog);
+            }
           });
         }
       } else if (
@@ -226,10 +231,11 @@ export default function useDialogListViewModel(
                 ];
 
                 const sortedData = [...newDialogs].sort((a, b) => {
-                  return (
-                    new Date(b.updatedAt).getTime() -
-                    new Date(a.updatedAt).getTime()
-                  );
+                  return b.lastMessage.dateSent && a.lastMessage.dateSent
+                    ? new Date(b.lastMessage.dateSent).getTime() -
+                        new Date(a.lastMessage.dateSent).getTime()
+                    : new Date(b.updatedAt).getTime() -
+                        new Date(a.updatedAt).getTime();
                 });
 
                 return sortedData;
@@ -237,7 +243,10 @@ export default function useDialogListViewModel(
               //
             })
             .catch((e) => {
-              console.log('Error getDialogByIdUseCase: ', stringifyError(e));
+              console.log(
+                'Error getDialogByIdUseCase in useDialogListViewModel: ',
+                stringifyError(e),
+              );
             });
         }
         // getDialogs(pagination).catch();
@@ -254,10 +263,18 @@ export default function useDialogListViewModel(
           });
 
           const sortedData = [...newDialogs].sort((a, b) => {
-            return (
-              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-            );
+            return b.lastMessage.dateSent && a.lastMessage.dateSent
+              ? new Date(b.lastMessage.dateSent).getTime() -
+                  new Date(a.lastMessage.dateSent).getTime()
+              : new Date(b.updatedAt).getTime() -
+                  new Date(a.updatedAt).getTime();
           });
+
+          // const sortedData = [...newDialogs].sort((a, b) => {
+          //     return (
+          //         new Date(b.lastMessage.dateSent).getTime() - new Date(a.lastMessage.dateSent).getTime()
+          //     );
+          // });
 
           return sortedData;
         });

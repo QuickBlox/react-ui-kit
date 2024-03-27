@@ -112,7 +112,7 @@ export class MessageRemoteDTOMapper implements IMapper {
     messageEntity.created_at = messageDTO.created_at;
     messageEntity.date_sent = messageDTO.date_sent;
     messageEntity.delivered_ids = messageDTO.delivered_ids;
-    messageEntity.message = messageDTO.message;
+    messageEntity.message = messageDTO.message || '';
     messageEntity.read_ids = messageDTO.read_ids;
     messageEntity.read = messageDTO.read;
     messageEntity.recipient_id = messageDTO.recipient_id;

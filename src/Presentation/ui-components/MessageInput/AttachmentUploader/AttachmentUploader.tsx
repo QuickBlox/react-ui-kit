@@ -3,11 +3,13 @@ import React from 'react';
 type AttachmentMessageProps = {
   icon: React.ReactNode;
   onChangeFile: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  disableAction: boolean;
 };
 // eslint-disable-next-line react/function-component-definition
 const AttachmentUploader: React.FC<AttachmentMessageProps> = ({
   icon,
   onChangeFile,
+  disableAction,
 }: AttachmentMessageProps) => {
   return (
     <label
@@ -25,6 +27,7 @@ const AttachmentUploader: React.FC<AttachmentMessageProps> = ({
         onChange={(event) => {
           onChangeFile(event);
         }}
+        disabled={disableAction}
       />
     </label>
   );

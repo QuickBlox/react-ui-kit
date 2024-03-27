@@ -117,19 +117,45 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     dialogsViewModel.entity,
   );
 
-  const { connectionRepository, browserOnline } = useQBConnection();
-  const [isOnline, setIsOnline] = useState<boolean>(browserOnline);
+  const { browserOnline, connectionStatus, connectionRepository } =
+    useQBConnection();
+
+  const [isOnline, setIsOnline] = useState<boolean>(
+    browserOnline && connectionStatus,
+  );
+
+  connectionRepository.subscribe((status) => {
+    console.log(`Connection status: ${status ? 'CONNECTED' : 'DISCONNECTED'}`);
+    if (status) setIsOnline(true);
+    else setIsOnline(false);
+  });
+
+  const [needRefresh, setNeedRefresh] = useState(false);
+  const toastConnectionErrorId = React.useRef(null);
 
   useEffect(() => {
-    if (
-      isOnline === false ||
-      connectionRepository.isChatConnected() === false
-    ) {
-      setIsOnline(false);
-    } else {
+    if (browserOnline) {
       setIsOnline(true);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      toast.dismiss(toastConnectionErrorId.current);
+    } else {
+      setIsOnline(false);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      toastConnectionErrorId.current = toast('Connection ...', {
+        autoClose: false,
+        isLoading: true,
+      });
     }
-  }, [browserOnline, connectionRepository.isChatConnected()]);
+  }, [browserOnline && connectionStatus]);
+
+  useEffect(() => {
+    if (!isOnline) {
+      setNeedRefresh(true);
+    }
+  }, [isOnline]);
 
   let defaultAIRephraseWidget = AIRephrase?.AIWidget; // useDefaultTextInputWidget();
   let defaultAITranslateWidget = AITranslate?.AIWidget;
@@ -249,9 +275,11 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   const { enableReplying } = QBConfig.appConfig;
 
   const selectDialogActions = (item: BaseViewModel<DialogEntity>): void => {
-    if (!dialogsViewModel.loading) {
-      setSelectedDialog(item.entity);
-      // dialogsViewModel.entity = item.entity;
+    if (isOnline) {
+      if (!dialogsViewModel.loading) {
+        setSelectedDialog(item.entity);
+        // dialogsViewModel.entity = item.entity;
+      }
     }
   };
 
@@ -394,6 +422,15 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     }
   }, [messagesViewModel.entity]);
 
+  useEffect(() => {
+    if (isOnline && needRefresh) {
+      if (messagesViewModel.entity) {
+        messagesViewModel.getMessages(new Pagination(0, messagePerPage));
+
+        setNeedRefresh(false);
+      }
+    }
+  }, [isOnline]);
   const fetchMoreData = () => {
     if (messagesViewModel.pagination.hasNextPage()) {
       const newPagination = messagesViewModel.pagination;
@@ -434,6 +471,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
 
   useEffect(() => {
     getDialogPhotoFileForPreview();
+    if (dialogsViewModel.entity) {
+      userViewModel.entity = dialogsViewModel.entity;
+    }
 
     return () => {
       if (dialogAvatarUrl) {
@@ -577,7 +617,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
         };
 
         repliedActions(replyData);
-      } else {
+      } else if (isOnline) {
         // eslint-disable-next-line promise/catch-or-return
         messagesViewModel
           .sendAttachmentMessage(fileToSend)
@@ -782,30 +822,32 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   //
 
   function sendTextMessageActions(textToSend: string) {
-    // closeReplyMessageFlowHandler
-    if (messagesViewModel?.loading) return;
-    // setVoiceMessage(true);
-    if (textToSend.length > 0 && textToSend.length <= 1000) {
-      setMessageText('');
-      if (showReplyMessage && messagesToReply?.length > 0) {
-        const replyData: ReplyMessagesParams = {
-          messagesToReply,
-          relatedTextMessage: textToSend,
-        };
-
-        repliedActions(replyData);
-      } else {
-        messagesViewModel.sendTextMessage(textToSend);
+    if (isOnline) {
+      // closeReplyMessageFlowHandler
+      if (messagesViewModel?.loading) return;
+      // setVoiceMessage(true);
+      if (textToSend.length > 0 && textToSend.length <= 1000) {
         setMessageText('');
+        if (showReplyMessage && messagesToReply?.length > 0) {
+          const replyData: ReplyMessagesParams = {
+            messagesToReply,
+            relatedTextMessage: textToSend,
+          };
+
+          repliedActions(replyData);
+        } else {
+          messagesViewModel.sendTextMessage(textToSend);
+          setMessageText('');
+        }
+        setMessageText('');
+      } else {
+        setWarningErrorText(
+          'length of text message must be less then 1000 chars.',
+        );
+        setTimeout(() => {
+          setWarningErrorText('');
+        }, 3000);
       }
-      setMessageText('');
-    } else {
-      setWarningErrorText(
-        'length of text message must be less then 1000 chars.',
-      );
-      setTimeout(() => {
-        setWarningErrorText('');
-      }, 3000);
     }
   }
   //
@@ -833,16 +875,18 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   //
 
   const ChangeFileHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const reader = new FileReader();
-    const file = event.currentTarget.files
-      ? event.currentTarget.files[0]
-      : null;
+    if (isOnline) {
+      const reader = new FileReader();
+      const file = event.currentTarget.files
+        ? event.currentTarget.files[0]
+        : null;
 
-    reader.onloadend = () => {
-      setFileToSend(file);
-    };
+      reader.onloadend = () => {
+        setFileToSend(file);
+      };
 
-    if (file !== null) reader.readAsDataURL(file);
+      if (file !== null) reader.readAsDataURL(file);
+    }
   };
 
   //
@@ -1007,7 +1051,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
 
   const [dialogToLeave, setDialogToLeave] = useState<DialogEntity>();
   const leaveDialogHandler = (dialog: DialogEntity) => {
-    setDialogToLeave(dialog);
+    if (isOnline) {
+      setDialogToLeave(dialog);
+    }
   };
 
   const [isOpen, setIsOpen] = useState(false);
@@ -1092,12 +1138,15 @@ const QuickBloxUIKitDesktopLayout: React.FC<
 
   const newModal = useModal();
 
+  const createDialogHandler = () => {
+    if (isOnline) {
+      newModal.toggleModal();
+    }
+  };
+
   return (
     <ToastProvider>
-      <div>
-        {/* <div style={{ height: '18px', border: '1px solid red' }}> */}
-        {/*  h:{height},w:{width},ch:{clientHeight},wh:{workHeight} */}
-        {/* </div> */}
+      <div className="qb-uikit-layout">
         <DesktopLayout
           mainContainerStyles={{
             minHeight: workHeight,
@@ -1108,13 +1157,14 @@ const QuickBloxUIKitDesktopLayout: React.FC<
           dialogsView={
             showDialogList ? (
               <DialogList
+                disableAction={!isOnline}
                 scrollableHeight={dialogListScrollableHeight}
                 // subHeaderContent={<CompanyLogo />}
                 // upHeaderContent={<CompanyLogo />}
                 dialogListViewModel={dialogsViewModel} // 1 Get 2 Update UseCase
                 selectedDialog={dialogsViewModel.entity}
                 onDialogSelected={selectDialogActions}
-                onCreateDialog={() => newModal.toggleModal()}
+                onCreateDialog={createDialogHandler}
                 onLeaveDialog={leaveDialogHandler}
                 additionalSettings={{
                   withoutHeader: false,
@@ -1175,7 +1225,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                       className="messages-container"
                       onEndReached={fetchMoreData}
                       onEndReachedThreshold={0.95}
-                      refreshing={messagesViewModel?.loading}
+                      refreshing={needRefresh || messagesViewModel?.loading}
                       renderSectionHeader={(section) => (
                         <div className="message-view-container--system-message-wrapper">
                           <div
@@ -1196,6 +1246,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                       renderItem={([, groupMessages], listRef) =>
                         groupMessages.map((message) => (
                           <MessageItem
+                            disableAction={!isOnline}
                             // defaultGetSenderName={defaultGetSenderName}
                             message={message}
                             currentUserId={currentUserId || -1}
@@ -1205,8 +1256,10 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                               handleOnReply(m);
                             }}
                             onForward={(m: MessageEntity) => {
-                              setForwardMessage(m);
-                              forwardMessageModal.toggleModal();
+                              if (isOnline) {
+                                setForwardMessage(m);
+                                forwardMessageModal.toggleModal();
+                              }
                             }}
                             listRef={listRef}
                             AIAssistWidget={defaultAIAssistWidget}
@@ -1233,6 +1286,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                 }
                 renderMessageInput={
                   <MessageInput
+                    disableActions={!isOnline}
                     previewMessage={
                       showReplyMessage ? (
                         <ReplyMessagePreview
@@ -1263,11 +1317,12 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                     onAttachment={ChangeFileHandler}
                     enableVoice={isRecording}
                     onVoice={() => {
-                      if (messagesViewModel?.loading) return;
+                      if (messagesViewModel?.loading || !isOnline) return;
                       setIsRecording(!isRecording);
                     }}
                     rephrase={
                       <AIRephraseWidget
+                        disableActions={!isOnline}
                         waitAIWidget={waitAIWidget}
                         messageText={messageText}
                         theme={theme}
@@ -1321,6 +1376,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
               />
             ) : (
               <DialogInfo
+                disableAction={!isOnline}
                 onShowAllMemberClick={(value: boolean) => {
                   setIsAllMembersShow(value);
                 }}
@@ -1368,6 +1424,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
             onFinished={() => {
               newModal.toggleModal();
             }}
+            isOnline={isOnline}
           />
         </DialogWindow>
         {selectedDialog && (
@@ -1382,6 +1439,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
               currentUserName={userName || ''}
               dialogs={dialogsViewModel.dialogs}
               onSendData={handleSendData}
+              disableActions={!isOnline}
             />
           </DialogWindow>
         )}

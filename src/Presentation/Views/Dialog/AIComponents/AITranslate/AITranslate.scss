@@ -28,6 +28,11 @@
       text-align: right;
       font: var(--label-label-small);
       position: relative;
+
+      &--disable {
+        color: var(--disabled-elements);
+        cursor: default;
+      }
     }
   }
 
@@ -55,6 +60,11 @@
       position: relative;
       overflow: visible;
       fill: var(--tertiary-elements, #636D78);
+
+      &--disable {
+        fill: var(--disabled-elements);
+        cursor: default;
+      }
     }
   }
 }

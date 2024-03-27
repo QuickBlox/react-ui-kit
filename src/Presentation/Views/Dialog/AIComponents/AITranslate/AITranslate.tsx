@@ -1,3 +1,4 @@
+import cn from 'classnames';
 import Dropdown from '../../../../ui-components/Dropdown/Dropdown';
 import { ReactComponent as TranslateSvg } from '../../../../icons/actions/translate.svg';
 import { MessageEntity } from '../../../../../Domain/entity/MessageEntity';
@@ -18,6 +19,7 @@ interface AITranslateComponentProps {
   messageToTranslate?: MessageEntity;
   messageHistory?: MessageEntity[];
   currentUserId?: number;
+  disableAction?: boolean;
 }
 
 export default function AITranslate({
@@ -33,11 +35,12 @@ export default function AITranslate({
   messageToTranslate,
   messageHistory,
   currentUserId,
+  disableAction = false,
 }: AITranslateComponentProps) {
   const options = languages.map((lang) => ({ value: lang, label: lang }));
 
   async function translateHandler(translateLanguage: string) {
-    if (loading) {
+    if (loading || disableAction) {
       return;
     }
 
@@ -79,12 +82,14 @@ export default function AITranslate({
   return (
     <div className="ai-translate">
       <div
-        className={
-          loading ? 'translate__caption--disable' : 'ai-translate__caption'
-        }
+        className={cn('ai-translate__caption', {
+          'translate__caption--disable': loading,
+        })}
       >
         <div
-          className="ai-translate__caption__label"
+          className={cn('ai-translate__caption__label', {
+            'ai-translate__caption__label--disable': disableAction,
+          })}
           onClick={() => {
             if (originalTextMessage) {
               translateHandler(defaultLanguage);
@@ -102,13 +107,17 @@ export default function AITranslate({
       <div>
         <Dropdown
           options={options}
-          disabled={loading}
+          disabled={loading || disableAction}
           onSelect={(language) => {
             translateHandler(language);
           }}
         >
           <div className="ai-translate__icon">
-            <TranslateSvg className="ai-translate__icon__media-translate" />
+            <TranslateSvg
+              className={cn('ai-translate__icon__media-translate', {
+                'ai-translate__icon__media-translate--disable': disableAction,
+              })}
+            />
           </div>
         </Dropdown>
       </div>

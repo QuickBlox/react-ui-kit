@@ -64,7 +64,6 @@ export class Stubs {
       name: '',
       size: 0,
       type: FileType.image,
-      data: '',
     };
   }
 
@@ -867,7 +866,7 @@ export class Stubs {
     login: string,
     created_at: string,
     updated_at: string,
-    last_request_at: string,
+    last_request_at: number,
     custom_data: string | null = null,
     user_tags: string | null = null,
     blob_id = '',
@@ -965,7 +964,7 @@ export class Stubs {
       'login_user11',
       '31.03.2023',
       '31.03.2023',
-      '31.03.2023',
+      0,
     );
 
     const user12: UserEntity = Stubs.createUserEntityWithParams(
@@ -975,7 +974,7 @@ export class Stubs {
       'login_user12',
       '31.03.2023',
       '31.03.2023',
-      '31.03.2023',
+      0,
     );
 
     const user13: UserEntity = Stubs.createUserEntityWithParams(
@@ -985,7 +984,7 @@ export class Stubs {
       'login_user13',
       '31.03.2023',
       '31.03.2023',
-      '31.03.2023',
+      0,
     );
 
     users.push(user11);

@@ -46,6 +46,7 @@ type DialogsProps = {
   onCreateDialog?: FunctionTypeVoidToVoid;
   dialogListViewModel: DialogListViewModel;
   additionalSettings?: DialogsComponentSettings;
+  disableAction?: boolean;
   scrollableHeight?: number;
 };
 
@@ -60,6 +61,7 @@ const DialogList: React.FC<DialogsProps> = ({
   onCreateDialog,
   dialogListViewModel,
   additionalSettings = undefined,
+  disableAction = false,
   scrollableHeight = 736,
 }: DialogsProps) => {
   const dialogs: PreviewDialogViewModel[] = [];
@@ -146,6 +148,12 @@ const DialogList: React.FC<DialogsProps> = ({
     }
   };
 
+  const onClickHandler = () => {
+    if (!disableAction && onCreateDialog) {
+      onCreateDialog();
+    }
+  };
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const useHeader = !additionalSettings?.withoutHeader || header || false;
   const useSubContent =
@@ -163,8 +171,10 @@ const DialogList: React.FC<DialogsProps> = ({
         }}
       />
       <NewChatSvg
-        className="dialog-list-header__icons"
-        onClick={onCreateDialog}
+        className={cn('dialog-list-header__icons', {
+          'dialog-list-header__icons--disable': disableAction,
+        })}
+        onClick={onClickHandler}
       />
     </Header>
   );

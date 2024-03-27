@@ -55,10 +55,15 @@ export class UpdateDialogUseCase implements IUseCase<void, DialogEntity> {
     remoteMessageDTO.dialogId = result.id;
     remoteMessageDTO.notification_type = NotificationTypes.UPDATE_DIALOG;
 
+    const participants: Array<number> = [
+      ...(this.updateDialog.participantIds ?? []),
+      ...(this.updateDialog.newParticipantIds ?? []),
+    ];
+
     this.eventMessagesRepository.dispatchEvent<RemoteMessageDTO>(
       EventMessageType.SystemMessage,
       remoteMessageDTO,
-      [...this.updateDialog.participantIds],
+      [...participants],
     );
 
     this.eventMessagesRepository.dispatchEvent<DialogEntity>(

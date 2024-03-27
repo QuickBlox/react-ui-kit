@@ -67,6 +67,10 @@
     padding: 4px 16px;
 
     cursor: pointer;
+
+    &--disabled {
+      color: var(--caption);
+    }
   }
 
   &__label {

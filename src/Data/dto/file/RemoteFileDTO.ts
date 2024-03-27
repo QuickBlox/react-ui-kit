@@ -11,12 +11,12 @@ export class RemoteFileDTO {
 
   public type: string;
 
-  public data: string | File;
+  public data: File | undefined;
 
   constructor() {
     this.id = '';
     this.type = '';
-    this.data = '';
+    this.data = undefined;
 
     this.uid = '';
     this.url = '';

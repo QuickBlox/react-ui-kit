@@ -17,6 +17,7 @@ type ForwardMessageFlowProps = {
     messages: MessageEntity[],
     relatedText: string,
   ) => void;
+  disableActions: boolean;
 };
 
 // eslint-disable-next-line react/function-component-definition
@@ -26,6 +27,7 @@ const ForwardMessageFlow: React.FC<ForwardMessageFlowProps> = ({
   currentDialog,
   currentUserName,
   onSendData,
+  disableActions,
 }: ForwardMessageFlowProps) => {
   const [activeChatsTab, setActiveChatsTab] = useState(true);
   const [selectedDialogs, setSelectedDialogs] = useState<string[]>([]);
@@ -33,11 +35,13 @@ const ForwardMessageFlow: React.FC<ForwardMessageFlowProps> = ({
 
   const userName = currentUserName;
   const sendMessageHandler = () => {
-    const dialogsForSend: DialogEntity[] = dialogs.filter((item) =>
-      selectedDialogs.includes(item.id),
-    );
+    if (!disableActions) {
+      const dialogsForSend: DialogEntity[] = dialogs.filter((item) =>
+        selectedDialogs.includes(item.id),
+      );
 
-    onSendData(dialogsForSend, messages, inputText);
+      onSendData(dialogsForSend, messages, inputText);
+    }
   };
 
   return (
@@ -108,7 +112,7 @@ const ForwardMessageFlow: React.FC<ForwardMessageFlowProps> = ({
           inputText={inputText}
           onChange={(s) => setInputText(s)}
           onSend={sendMessageHandler}
-          disabled={selectedDialogs.length === 0}
+          disabled={selectedDialogs.length === 0 || disableActions}
         />
       </div>
     </div>

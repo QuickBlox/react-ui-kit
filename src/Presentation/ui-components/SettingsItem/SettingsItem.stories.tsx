@@ -37,6 +37,7 @@ const meta: Meta<typeof SettingsItem> = {
       description: 'Additional classes',
     },
     icon: {
+      control: false,
       table: {
         defaultValue: {
           summary: 'svg | ReactElement',
@@ -56,6 +57,7 @@ const meta: Meta<typeof SettingsItem> = {
       description: 'Elements for the right section',
     },
     onClick: {
+      control: false,
       table: {
         defaultValue: {
           summary: 'VoidFunction',

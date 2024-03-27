@@ -43,7 +43,7 @@ export class FileRemoteDTOMapper implements IMapper {
 
     fileDTO.size = fileEntity.size || 0;
 
-    fileDTO.data = fileEntity.data || '';
+    fileDTO.data = fileEntity.data;
 
     return Promise.resolve(fileDTO as TResult);
   }
@@ -143,11 +143,6 @@ export class FileRemoteDTOMapper implements IMapper {
 
   private static validateDTO(fileDTO: RemoteFileDTO) {
     const dtoValidator: DtoValidator<LocalFileDTO> = {
-      data(v: unknown): v is LocalFileDTO['data'] {
-        const { data } = v as LocalFileDTO;
-
-        return data !== undefined && data !== null;
-      },
       id(v: unknown): v is LocalFileDTO['id'] {
         const { id } = v as LocalFileDTO;
 
@@ -167,6 +162,13 @@ export class FileRemoteDTOMapper implements IMapper {
         const { uid } = v as LocalFileDTO;
 
         return uid !== undefined && uid !== null;
+      },
+      data(v: unknown): v is LocalFileDTO['data'] {
+        const { data, uid } = v as LocalFileDTO;
+
+        return <boolean>(
+          ((data !== undefined && data !== null) || (uid && uid.length > 0))
+        );
       },
       url(v: unknown): v is LocalFileDTO['url'] {
         const { url } = v as LocalFileDTO;

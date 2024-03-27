@@ -1,11 +1,12 @@
 import { stringifyError } from '../utils/parse';
+import { QBConfig } from '../CommonTypes/FunctionResult';
 
 export type QBInitParams = {
   appIdOrToken: string | number;
   authKeyOrAppId: string | number;
   authSecret?: string;
   accountKey: string;
-  config?: QBConfig;
+  config?: QBConfig; // todo: change type artan 26.03.24
 };
 
 export function QBInit(params: QBInitParams) {
@@ -20,13 +21,22 @@ export function QBInit(params: QBInitParams) {
 
 export function QBCreateSession(params?: QBLoginParams) {
   return new Promise<QBSession>((resolve, reject) => {
-    QB.createSession(params, (sessionError, session) => {
-      if (sessionError) {
-        reject(stringifyError(sessionError));
-      } else {
-        resolve(session);
-      }
-    });
+    if (!params) {
+      QB.createSession((sessionError, session) => {
+        if (sessionError) {
+          reject(stringifyError(sessionError));
+        } else {
+          resolve(session!);
+        }
+      });
+    } else
+      QB.createSession(params, (sessionError, session) => {
+        if (sessionError) {
+          reject(stringifyError(sessionError));
+        } else {
+          resolve(session!);
+        }
+      });
   });
 }
 
@@ -50,7 +60,7 @@ export function loginToQuickBlox(params: QBLoginParams) {
       if (loginError) {
         reject(stringifyError(loginError));
       } else {
-        resolve(user);
+        resolve(user!);
       }
     });
   });
@@ -90,19 +100,19 @@ export function QBChatDisconnect() {
   QB.chat.disconnect();
 }
 
-export function registrationAccount(params: QBCreateUserParams) {
+export function registrationAccount(params: QBUserCreateParams) {
   return new Promise<QBUser>((resolve, reject) => {
     QB.users.create(params, (error, createdUser) => {
       if (error) {
         reject(stringifyError(error));
       } else {
-        resolve(createdUser);
+        resolve(createdUser!);
       }
     });
   });
 }
 
-export function QBUserCreate(params: QBCreateUserParams) {
+export function QBUserCreate(params: QBUserCreateParams) {
   let session: QBSession;
 
   return QBCreateSession()
@@ -120,7 +130,7 @@ export function QBUserUpdate(userId: QBUser['id'], user: Partial<QBUser>) {
       if (error) {
         reject(stringifyError(error));
       } else {
-        resolve(updatedUser);
+        resolve(updatedUser!);
       }
     });
   });
@@ -133,18 +143,18 @@ export function QBUserGet(params: GetUserParams | number) {
         if (error) {
           reject(error);
         } else {
-          resolve(result);
+          resolve(result!);
         }
       });
     });
   }
 
   return new Promise<ListUserResponse>((resolve, reject) => {
-    QB.users.get(params, (error, result: ListUserResponse) => {
+    QB.users.get(params, (error, result) => {
       if (error) {
         reject(error);
       } else {
-        resolve(result);
+        resolve(result!);
       }
     });
   });
@@ -152,11 +162,11 @@ export function QBUserGet(params: GetUserParams | number) {
 //
 export function QBUsersGet(params: GetUserParams) {
   return new Promise<ListUserResponse>((resolve, reject) => {
-    QB.users.get(params, (error, result: ListUserResponse) => {
+    QB.users.get(params, (error, result) => {
       if (error) {
         reject(error);
       } else {
-        resolve(result);
+        resolve(result!);
       }
     });
   });
@@ -167,7 +177,7 @@ export function QBUsersGetById(params: number) {
       if (error) {
         reject(error);
       } else {
-        resolve(result);
+        resolve(result!);
       }
     });
   });
@@ -180,7 +190,7 @@ export function QBUserList(params: ListUserParams) {
       if (error) {
         reject(stringifyError(error));
       } else {
-        resolve(response);
+        resolve(response!);
       }
     });
   });
@@ -200,7 +210,7 @@ export function QBDataGet<T extends QBCustomObject>(
       if (error) {
         reject(stringifyError(error));
       } else {
-        resolve(result);
+        resolve(result!);
       }
     });
   });
@@ -215,21 +225,22 @@ export function QBDataCreate<T extends QBCustomObject>(
       if (error) {
         reject(stringifyError(error));
       } else {
-        resolve(customObject);
+        resolve(customObject!);
       }
     });
   });
 }
 
-export function QBDataDelete<
-  T extends QBCustomObject['_id'] | Array<QBCustomObject['_id']>,
->(className: string, ids: T) {
+export function QBDataDelete(
+  className: string,
+  ids: QBCustomObject['_id'] | Array<QBCustomObject['_id']>,
+) {
   return new Promise<QBDataDeletedResponse>((resolve, reject) => {
-    QB.data.delete<T>(className, ids, (error, customObject) => {
+    QB.data.delete(className, ids, (error, customObject) => {
       if (error) {
         reject(stringifyError(error));
       } else {
-        resolve(customObject);
+        resolve(customObject!);
       }
     });
   });
@@ -241,17 +252,13 @@ export function QBDataUpdate<T extends QBCustomObject>(
   data: Dictionary<unknown>,
 ) {
   return new Promise<T>((resolve, reject) => {
-    QB.data.update<{ _id: string } & Dictionary<unknown>, T>(
-      className,
-      { _id, ...data },
-      (error, item) => {
-        if (error) {
-          reject(stringifyError(error));
-        } else {
-          resolve(item);
-        }
-      },
-    );
+    QB.data.update<T>(className, { _id, ...data }, (error, item) => {
+      if (error) {
+        reject(stringifyError(error));
+      } else {
+        resolve(item!);
+      }
+    });
   });
 }
 
@@ -262,7 +269,7 @@ export function QBGetDialogs(filters: Dictionary<any>) {
       if (error) {
         reject(stringifyError(error));
       } else {
-        resolve(result);
+        resolve(result!);
       }
     });
   });
@@ -274,7 +281,7 @@ export function QBGetDialogById(id: string) {
       if (error) {
         reject(stringifyError(error));
       } else {
-        resolve(result);
+        resolve(result!);
       }
     });
   });
@@ -298,7 +305,7 @@ export function QBCreatePrivateDialog(
         if (error) {
           reject(stringifyError(error));
         } else {
-          resolve(chat);
+          resolve(chat!);
         }
       },
     );
@@ -345,7 +352,7 @@ export function QBCreateGroupDialog(
         if (error) {
           reject(stringifyError(error));
         } else {
-          resolve(chat);
+          resolve(chat!);
         }
       },
     );
@@ -361,7 +368,7 @@ export function QBUpdateDialog(
       if (error) {
         reject(stringifyError(error));
       } else {
-        resolve(chat);
+        resolve(chat!);
       }
     });
   });
@@ -407,7 +414,7 @@ export function QBLeaveDialog(dialogId: QBChatDialog['_id']) {
   });
 }
 
-export function QBGetInfoFile(fileId: QBContentObject['id']) {
+export function QBGetInfoFile(fileId: QBBlob['id']) {
   return new Promise((resolve, reject) => {
     QB.content.getInfo(fileId, (error, response) => {
       if (error) {
@@ -419,7 +426,7 @@ export function QBGetInfoFile(fileId: QBContentObject['id']) {
   });
 }
 
-export function QBDeleteContent(contentId: QBContentObject['id']) {
+export function QBDeleteContent(contentId: QBBlob['id']) {
   return new Promise((resolve, reject) => {
     QB.content.delete(contentId, (error, response) => {
       if (error) {
@@ -431,7 +438,9 @@ export function QBDeleteContent(contentId: QBContentObject['id']) {
   });
 }
 
-export function QBCreateAndUploadContent(paramContent: QBContentParam) {
+export function QBCreateAndUploadContent(
+  paramContent: QBBlobCreateUploadParams,
+) {
   return new Promise((resolve, reject) => {
     QB.content.createAndUpload(paramContent, (error, response) => {
       if (error) {
@@ -499,7 +508,7 @@ export function qbChatGetMessagesExtended(
         if (error) {
           reject(error);
         } else {
-          resolve(messages);
+          resolve(messages!);
         }
       },
     );
@@ -568,14 +577,14 @@ export function QBChatMarkMessageRead(params: QBMessageStatusParams) {
 
 export function QBWebRTCSessionGetUserMedia(
   session: QBWebRTCSession,
-  params: QBGetUserMediaParams,
+  params: QBMediaParams,
 ) {
   return new Promise<MediaStream | undefined>((resolve, reject) => {
     session.getUserMedia({ ...params }, (error, stream) => {
       if (error) {
         reject(error);
       } else {
-        resolve(stream);
+        resolve(stream!);
       }
     });
   });

@@ -65,7 +65,6 @@ export default function Dropdown({
     <div ref={dropdownRef} className={cn('dropdown', className)}>
       <button
         type="button"
-        disabled={disabled}
         className="dropdown__toggle"
         onClick={handleToggleOpen}
       >
@@ -80,6 +79,7 @@ export default function Dropdown({
           <DropdownOption
             label={label}
             value={value}
+            disabled={disabled}
             onSelect={handleSelect}
             leftIcon={leftIcon}
             rightIcon={rightIcon}

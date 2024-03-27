@@ -1,11 +1,10 @@
-import React from 'react';
-import './InputForForwarding.scss';
+import cn from 'classnames';
 import {
   FunctionTypeStringToVoid,
   FunctionTypeVoidToVoid,
 } from '../../../../../CommonTypes/BaseViewModel';
-import ActiveSvg from '../../../../components/UI/svgs/ActiveSvg/ActiveSvg';
-import SendIcon from '../../../../components/UI/svgs/Icons/Actions/Send';
+import { SendSvg } from '../../../../icons';
+import './InputForForwarding.scss';
 
 type InputForForwardingProps = {
   inputText: string;
@@ -34,10 +33,11 @@ const InputForForwarding: React.FC<InputForForwardingProps> = ({
         />
       </div>
       <div className="forwarding-message-input-icon-send">
-        <ActiveSvg
-          content={<SendIcon width="24" height="24" />}
+        <SendSvg
+          className={cn('forwarding-message-input-icon-send__icon__send', {
+            'forwarding-message-input-icon-send__icon--disable': disabled,
+          })}
           onClick={onSend}
-          disabled={disabled}
         />
       </div>
     </div>

@@ -13,13 +13,13 @@ export class RemoteUserDTO {
 
   public updated_at: string;
 
-  public last_request_at: string;
+  public last_request_at: number;
 
   public custom_data: string | null;
 
   public user_tags: string | null;
 
-  public blob_id: number | string | null;
+  public blob_id: number | null;
 
   constructor() {
     this.id = '';
@@ -29,9 +29,9 @@ export class RemoteUserDTO {
     this.login = '';
     this.created_at = '';
     this.updated_at = '';
-    this.last_request_at = '';
+    this.last_request_at = 0;
     this.custom_data = '';
     this.user_tags = '';
-    this.blob_id = '';
+    this.blob_id = 0;
   }
 }

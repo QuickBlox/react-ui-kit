@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './EditDialog.scss';
+import cn from 'classnames';
 import ColumnContainer from '../../components/containers/ColumnContainer/ColumnContainer';
 import User from '../../components/UI/svgs/Icons/Contents/User';
 import RowRightContainer from '../../components/containers/RowRightContainer/RowRightContainer';
@@ -14,6 +14,7 @@ import GroupChat from '../../components/UI/svgs/Icons/Contents/GroupChat';
 import PublicChannel from '../../components/UI/svgs/Icons/Contents/PublicChannel';
 import useQbInitializedDataContext from '../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
 import { Button, TextField } from '../../ui-components';
+import './EditDialog.scss';
 
 export const TypeOpenDialog = {
   edit: 'edit',
@@ -29,6 +30,7 @@ type EditDialogProps = {
   typeAddEditDialog: OpenDialogArcheType;
   clickUpdatedHandler?: FunctionTypeEditDialogParamsToVoid;
   clickCancelHandler?: FunctionTypeVoidToVoid;
+  disableActions?: boolean;
 };
 
 // eslint-disable-next-line react/function-component-definition,@typescript-eslint/no-unused-vars
@@ -39,6 +41,7 @@ const EditDialog: React.FC<EditDialogProps> = ({
   typeAddEditDialog = TypeOpenDialog.create,
   clickUpdatedHandler,
   clickCancelHandler,
+  disableActions = false,
 }) => {
   const currentContext = useQbInitializedDataContext();
   const maxUploadFileSize = currentContext.InitParams.maxFileSize;
@@ -176,6 +179,11 @@ const EditDialog: React.FC<EditDialogProps> = ({
         }}
         className="edit-container"
       >
+        <div
+          className={cn('', {
+            'edit-dialog-container--disable': disableActions,
+          })}
+        />
         <div className="edit-dialog-container">
           <div className="edit-dialog-container--wrapper">
             <div className="edit-dialog-container--wrapper__inf">

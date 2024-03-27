@@ -3,14 +3,17 @@
 @import 'Presentation/themes/styles/variables';
 @import 'Presentation/themes/styles/mixins';
 
-* {
+.qb-uikit-layout * {
   box-sizing: border-box;
 }
 
-body {
+.qb-uikit-layout {
   font-family: 'Roboto';
   color: var(--main-text);
   background-color: var(--main-background);
+  //to hide the scrollbars if DialogInfo clicked
+  overflow: hidden !important;
+  scrollbar-width: none !important;
 }
 
 /* Media-query for mobile devices */

@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 import { createPortal } from 'react-dom';
 import cn from 'classnames';
 
@@ -12,6 +12,7 @@ interface DialogWindowProps {
   children: ReactElement | ReactElement[];
   onClose?: VoidFunction;
   className?: string;
+  disableActions?: boolean;
 }
 
 export default function DialogWindow({
@@ -20,11 +21,13 @@ export default function DialogWindow({
   open = false,
   title,
   className,
+  disableActions = false,
 }: DialogWindowProps) {
   if (!open) return null;
 
   return createPortal(
     <div className={cn('dialog-window', className)}>
+      <div className={cn('', { 'dialog-window--disable': disableActions })} />
       <div className="dialog-window__content">
         <Header
           className="dialog-window__header"

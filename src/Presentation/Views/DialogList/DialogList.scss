@@ -19,6 +19,11 @@ $header-container-height: 64px;
     cursor: pointer;
     fill: var(--color-icon);
 
+    &--disable {
+      cursor: default;
+      fill: var(--disabled-elements);
+    }
+
     svg path {
       fill: var(--color-icon);
     }

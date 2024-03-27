@@ -224,7 +224,7 @@ export default class MessagesRepository implements IMessagesRepository {
 
   async saveMessageToLocal(entity: MessageEntity): Promise<MessageEntity> {
     try {
-      const dto: RemoteMessageDTO = await this.messageLocalDTOMapper.fromEntity(
+      const dto: LocalMessageDTO = await this.messageLocalDTOMapper.fromEntity(
         entity,
       );
 
@@ -260,7 +260,7 @@ export default class MessagesRepository implements IMessagesRepository {
 
   async updateMessageInLocal(entity: MessageEntity): Promise<boolean> {
     try {
-      const dto: RemoteMessageDTO = await this.messageLocalDTOMapper.fromEntity(
+      const dto: LocalMessageDTO = await this.messageLocalDTOMapper.fromEntity(
         entity,
       );
 

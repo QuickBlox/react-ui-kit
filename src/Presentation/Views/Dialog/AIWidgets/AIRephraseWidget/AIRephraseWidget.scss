@@ -9,10 +9,15 @@
   margin-bottom: 5px;
 }
 .rephrase-icon{
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   cursor: pointer;
   fill: var(--color-icon);
+
+  &--disable {
+    cursor: default;
+    fill: var(--disabled-elements);
+  }
 
   svg path{
     fill: var(--color-icon);

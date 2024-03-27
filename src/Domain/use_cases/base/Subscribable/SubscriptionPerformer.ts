@@ -107,7 +107,7 @@ export class SubscriptionPerformer<TArg> implements ISubscribable<TArg> {
         // local events and leave dialog
         Object.entries(this.onEventByTypeSubscribers[eventType]).forEach(
           (value) => {
-            if (arg) {
+            if (arg !== undefined) {
               // eslint-disable-next-line @typescript-eslint/no-unused-vars
               const currentEventName = value[0];
 

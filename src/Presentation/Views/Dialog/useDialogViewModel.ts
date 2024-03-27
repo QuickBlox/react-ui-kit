@@ -227,6 +227,7 @@ export default function useDialogViewModel(
           dialogInfo.messageStatus.messageId?.length > 0 &&
           dialogInfo.messageStatus.dialogId === dialog?.id
         ) {
+          setTypingText('');
           setMessages((prevState) => {
             let newState = [...prevState];
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './DialogInfo.scss';
 import { toast } from 'react-toastify';
+import cn from 'classnames';
 import ColumnContainer from '../../components/containers/ColumnContainer/ColumnContainer';
 import { DialogEntity } from '../../../Domain/entity/DialogEntity';
 import GroupChat from '../../components/UI/svgs/Icons/Contents/GroupChat';
@@ -40,6 +41,7 @@ type HeaderDialogsProps = {
   subHeaderContent?: React.ReactNode;
   upHeaderContent?: React.ReactNode;
   rootStyles?: React.CSSProperties;
+  disableAction?: boolean;
 };
 // eslint-disable-next-line react/function-component-definition
 const DialogInfo: React.FC<HeaderDialogsProps> = ({
@@ -53,6 +55,7 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
   subHeaderContent = undefined,
   upHeaderContent = undefined,
   rootStyles = {},
+  disableAction = false,
 }: HeaderDialogsProps) => {
   const [dialogAvatarUrl, setDialogAvatarUrl] = useState('');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -73,19 +76,21 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
   const useUpContent = upHeaderContent || false;
 
   const leaveDialogHandler = () => {
-    // onLeaveDialog((dialogViewModel?.entity || dialog) as GroupDialogEntity);
-    dialogViewModel
-      .deleteDialog((dialogViewModel?.entity || dialog) as GroupDialogEntity)
-      .then((result) => {
-        // eslint-disable-next-line promise/always-return
-        if (!result) {
-          toast('Dialog have not been left');
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-        toast("Can't leave dialog");
-      });
+    if (!disableAction) {
+      // onLeaveDialog((dialogViewModel?.entity || dialog) as GroupDialogEntity);
+      dialogViewModel
+        .deleteDialog((dialogViewModel?.entity || dialog) as GroupDialogEntity)
+        .then((result) => {
+          // eslint-disable-next-line promise/always-return
+          if (!result) {
+            toast('Dialog have not been left');
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+          toast("Can't leave dialog");
+        });
+    }
   };
 
   const getUserAvatarByUid = async () => {
@@ -345,8 +350,17 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
           <div className="dialog-information-profile-edit">
             {dialog.type !== DialogType.private &&
             dialog.ownerId === currentUserId ? (
-              <div className="dialog-information-profile-edit-button">
-                <Button variant="text" onClick={editModal.toggleModal}>
+              <div
+                className={cn('dialog-information-profile-edit-button', {
+                  'dialog-information-profile-edit-button--disable':
+                    disableAction,
+                })}
+              >
+                <Button
+                  variant="text"
+                  onClick={editModal.toggleModal}
+                  disabled={disableAction}
+                >
                   Edit
                 </Button>
                 <DialogWindow
@@ -355,6 +369,7 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
                   open={editModal.isOpen}
                 >
                   <EditDialog
+                    disableActions={disableAction}
                     nameDialog={dialogViewModel?.entity.name || dialog.name}
                     typeDialog={dialogViewModel?.entity.type || dialog.type}
                     ulrIcon={getUrlAvatar(dialogViewModel?.entity || dialog)}
@@ -387,6 +402,7 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
               )}
               <div className="dialog-info-action-wrapper-settings">
                 <DialogWindow
+                  disableActions={disableAction}
                   title="Edit dialog"
                   open={inviteMembersModal.isOpen}
                   onClose={inviteMembersModal.toggleModal}
@@ -406,7 +422,7 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
                   className="dialog-info-action-wrapper-button"
                   onClick={inviteMembersModal.toggleModal}
                   variant="outlined"
-                  disabled={dialog.ownerId !== currentUserId}
+                  disabled={dialog.ownerId !== currentUserId || disableAction}
                 >
                   Invite members
                 </Button>
@@ -425,8 +441,10 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
         <SettingsItem
           icon={<LeaveSvg />}
           title="Leave dialog"
-          onClick={leaveModal.toggleModal}
-          className="dialog-info-leave"
+          onClick={!disableAction ? leaveModal.toggleModal : undefined}
+          className={cn('dialog-info-leave', {
+            'dialog-info-leave--disable': disableAction,
+          })}
         />
         <DialogWindow
           open={leaveModal.isOpen}

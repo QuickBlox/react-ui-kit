@@ -17,6 +17,7 @@ type CreateNewDialogFlowProps = {
   dialogsViewModel: DialogListViewModel;
   onFinished: (newEntity: DialogEntity) => void;
   onCancel?: () => void;
+  isOnline: boolean;
 };
 
 // eslint-disable-next-line react/function-component-definition
@@ -24,6 +25,7 @@ const CreateNewDialogFlow: React.FC<CreateNewDialogFlowProps> = ({
   dialogsViewModel,
   onFinished,
   onCancel,
+  isOnline,
 }: CreateNewDialogFlowProps) => {
   const currentContext = React.useContext(qbDataContext);
   const remoteDataSourceMock: RemoteDataSource =
@@ -122,6 +124,18 @@ const CreateNewDialogFlow: React.FC<CreateNewDialogFlowProps> = ({
 
   return (
     <div>
+      <div
+        style={{
+          position: 'absolute',
+          top: '0',
+          left: '0',
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: '100',
+          display: isOnline ? 'none' : 'block',
+        }}
+      />
       {stepToCreate === setUpDialogType && (
         <CreateDialog
           createPrivateDialogOnClick={() => {
