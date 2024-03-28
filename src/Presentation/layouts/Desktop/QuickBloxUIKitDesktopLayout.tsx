@@ -41,8 +41,6 @@ import { useMobileLayout } from '../../components/containers/SectionList/hooks';
 import { MessageDTOMapper } from '../../../Data/source/remote/Mapper/MessageDTOMapper';
 import MembersList from '../../Views/DialogInfo/MembersList/MembersList';
 import useUsersListViewModel from '../../Views/DialogInfo/UsersList/useUsersListViewModel';
-import { GetUserNameFct } from '../../Views/Dialog/Message/IncomingMessage/IncomingMessage';
-import { UserEntity } from '../../../Domain/entity/UserEntity';
 import Header from '../../ui-components/Header/Header';
 import Avatar from '../../ui-components/Avatar/Avatar';
 import {
@@ -81,83 +79,36 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars,react/function-component-definition
 > = ({
   theme = undefined,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   AITranslate = undefined,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   AIRephrase = undefined,
   AIAssist = undefined,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   uikitHeightOffset = '0px',
 }: QuickBloxUIKitDesktopLayoutProps) => {
-  console.log('create QuickBloxUIKitDesktopLayout');
-  const [forwardMessage, setForwardMessage] = useState<null | MessageEntity>();
-  const forwardMessageModal = useModal();
-  const [selectedDialog, setSelectedDialog] = React.useState<DialogEntity>();
+  const mimeType = 'audio/webm;codecs=opus'; // audio/ogg audio/mpeg audio/webm audio/x-wav audio/mp4
+  const messagePerPage = 47;
 
   const currentContext = useQbInitializedDataContext();
   const QBConfig =
     currentContext.InitParams.qbConfig ||
     DefaultConfigurations.getDefaultQBConfig();
-  // const eventMessaging = useEventMessagesRepository();
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const userName =
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userName;
   const currentUserId =
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId;
   const sessionToken =
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.sessionToken;
+  const { enableForwarding } = QBConfig.appConfig;
+  const { enableReplying } = QBConfig.appConfig;
+  const { maxFileSize } = currentContext.InitParams;
 
-  const dialogsViewModel: DialogListViewModel =
-    useDialogListViewModel(currentContext);
+  const maxTokensForAIRephrase =
+    currentContext.InitParams.qbConfig.configAIApi.AIRephraseWidgetConfig
+      .maxTokens;
 
-  // must re-create as result dialog changing
-  const messagesViewModel: DialogViewModel = useDialogViewModel(
-    dialogsViewModel.entity?.type,
-    dialogsViewModel.entity,
-  );
+  const rephraseTones: Tone[] =
+    currentContext.InitParams.qbConfig.configAIApi.AIRephraseWidgetConfig.Tones;
 
-  const { browserOnline, connectionStatus, connectionRepository } =
-    useQBConnection();
-
-  const [isOnline, setIsOnline] = useState<boolean>(
-    browserOnline && connectionStatus,
-  );
-
-  connectionRepository.subscribe((status) => {
-    console.log(`Connection status: ${status ? 'CONNECTED' : 'DISCONNECTED'}`);
-    if (status) setIsOnline(true);
-    else setIsOnline(false);
-  });
-
-  const [needRefresh, setNeedRefresh] = useState(false);
-  const toastConnectionErrorId = React.useRef(null);
-
-  useEffect(() => {
-    if (browserOnline) {
-      setIsOnline(true);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      toast.dismiss(toastConnectionErrorId.current);
-    } else {
-      setIsOnline(false);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      toastConnectionErrorId.current = toast('Connection ...', {
-        autoClose: false,
-        isLoading: true,
-      });
-    }
-  }, [browserOnline && connectionStatus]);
-
-  useEffect(() => {
-    if (!isOnline) {
-      setNeedRefresh(true);
-    }
-  }, [isOnline]);
-
-  let defaultAIRephraseWidget = AIRephrase?.AIWidget; // useDefaultTextInputWidget();
+  let defaultAIRephraseWidget = AIRephrase?.AIWidget;
   let defaultAITranslateWidget = AITranslate?.AIWidget;
   let defaultAIAssistWidget = AIAssist?.AIWidget;
 
@@ -270,9 +221,91 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   getAITranslate();
   getAIRephrase();
   getAIAssistAnswer();
+  const dialogsViewModel: DialogListViewModel =
+    useDialogListViewModel(currentContext);
 
-  const { enableForwarding } = QBConfig.appConfig;
-  const { enableReplying } = QBConfig.appConfig;
+  const messagesViewModel: DialogViewModel = useDialogViewModel(
+    dialogsViewModel.entity?.type,
+    dialogsViewModel.entity,
+  );
+
+  const [forwardMessage, setForwardMessage] = useState<null | MessageEntity>();
+  const forwardMessageModal = useModal();
+  const [selectedDialog, setSelectedDialog] = React.useState<DialogEntity>();
+  const userViewModel = useUsersListViewModel(selectedDialog);
+  const [dialogAvatarUrl, setDialogAvatarUrl] = React.useState('');
+
+  const { browserOnline, connectionStatus, connectionRepository } =
+    useQBConnection();
+
+  const [isOnline, setIsOnline] = useState<boolean>(
+    browserOnline && connectionStatus,
+  );
+
+  connectionRepository.subscribe((status) => {
+    console.log(`Connection status: ${status ? 'CONNECTED' : 'DISCONNECTED'}`);
+    if (status) setIsOnline(true);
+    else setIsOnline(false);
+  });
+
+  const [needRefresh, setNeedRefresh] = useState(false);
+  const toastConnectionErrorId = React.useRef(null);
+
+  //
+  const [waitAIWidget, setWaitAIWidget] = useState<boolean>(false);
+  const [messageText, setMessageText] = useState<string>('');
+
+  const [showReplyMessage, setShowReplyMessage] = useState(false);
+  const [messagesToReply, setMessagesToReply] = useState<MessageEntity[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isMobile, width, height, breakpoint] = useMobileLayout();
+  const [clientHeight, setClientHeight] = useState<number>(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [scrollUpToDown, setScrollUpToDown] = React.useState(false);
+  const [needDialogInformation, setNeedDialogInformation] = useState(false);
+  const informationCloseHandler = (): void => {
+    setNeedDialogInformation(false);
+  };
+  const informationOpenHandler = (): void => {
+    setNeedDialogInformation(true);
+  };
+  //
+  const maxWidthToResizing =
+    selectedDialog && needDialogInformation
+      ? '$message-view-container-wrapper-min-width'
+      : '1040px';
+  const workHeight = isMobile
+    ? `calc(${height.toString()}px - ${uikitHeightOffset} - 28px)`
+    : `calc(100vh - ${uikitHeightOffset} - 28px)`;
+  const messagesContainerMobileHeight = showReplyMessage
+    ? `calc(${clientHeight}px - 128px - 64px - 16px)`
+    : `calc(${clientHeight}px - 128px - 16px)`;
+  const messagesContainerHeight = showReplyMessage
+    ? `calc(${clientHeight}px - 128px - 64px)`
+    : `calc(${clientHeight}px - 128px - 1px)`;
+  const clientContainerHeight = `${clientHeight - 5}px`;
+  const headerHeight = 64;
+  const dialogListScrollableHeight = clientHeight - headerHeight - 6;
+
+  const [warningErrorText, setWarningErrorText] = useState<string>('');
+  const [useAudioWidget, setUseAudioWidget] = useState<boolean>(false);
+  const [fileToSend, setFileToSend] = useState<File | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [permission, setPermission] = useState(false);
+  const [stream, setStream] = useState<MediaStream>();
+  const mediaRecorder = useRef<MediaRecorder>();
+  const [resultAudioBlob, setResultAudioBlob] = useState<Blob>();
+  const [audioChunks, setAudioChunks] = useState<Array<Blob>>([]);
+  const newModal = useModal();
+  const [dialogToLeave, setDialogToLeave] = useState<DialogEntity>();
+  const [showDialogList, setShowDialogList] = useState<boolean>(true);
+  const [showDialogMessages, setShowDialogMessages] = useState<boolean>(true);
+  const [showDialogInformation, setShowDialogInformation] =
+    useState<boolean>(false);
+  const [isAllMembersShow, setIsAllMembersShow] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  // functions
 
   const selectDialogActions = (item: BaseViewModel<DialogEntity>): void => {
     if (isOnline) {
@@ -283,21 +316,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     }
   };
 
-  const [showReplyMessage, setShowReplyMessage] = useState(false);
-  const [messagesToReply, setMessagesToReply] = useState<MessageEntity[]>([]);
-  const [isMobile, width, height, breakpoint] = useMobileLayout();
-  const [clientHeight, setClientHeight] = useState<number>(0);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [scrollUpToDown, setScrollUpToDown] = React.useState(false);
-
-  // const [dialogMessagesCount, setDialogMessageCount] = useState(100);
-  // const [hasMore, setHasMore] = React.useState(true);
-  // const [messagesToView, setMessagesToView] = React.useState<MessageEntity[]>(
-  //   [],
-  // );
-
-  // инициализация СДК и загрузка тестовых данных, запуск пинга - может не быть
-  // todo: добавить метод в контекст
   const isAuthProcessed = (): boolean => {
     console.log('call isAuthProcessed');
     const result =
@@ -322,115 +340,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     return result;
   };
 
-  useEffect(() => {
-    const codeVersion = '0.3.0';
-
-    console.log(`React UIKit CODE VERSION IS ${codeVersion}`);
-    console.log('TestStage: GET DATA ');
-    console.log(
-      `auth data: ${JSON.stringify(
-        currentContext.InitParams.loginData,
-      )} at ${new Date().toLocaleTimeString()}`,
-    );
-    if (isAuthProcessed()) {
-      console.log('auth is completed, CAN GET DATA');
-      const pagination: Pagination = new Pagination();
-
-      dialogsViewModel?.getDialogs(pagination);
-    }
-
-    return () => {
-      console.log('TestStage: USE EFFECT release');
-      dialogsViewModel.release();
-    };
-  }, []);
-
-  useEffect(() => {
-    console.log('TestStage: GET DATA AFTER User data has CHANGED');
-    console.log(
-      `auth is ${JSON.stringify(
-        currentContext.InitParams.loginData,
-      )} at ${new Date().toLocaleTimeString()}`,
-    );
-
-    if (isAuthProcessed()) {
-      console.log('auth is completed, FETCH DATA');
-      const pagination: Pagination = new Pagination();
-
-      dialogsViewModel?.getDialogs(pagination);
-    }
-  }, [currentContext.InitParams]);
-
-  // const fetchMoreData = () => {
-  //   if (messagesToView.length >= dialogMessagesCount) {
-  //     setHasMore(false);
-  //
-  //     return;
-  //   }
-  //   if (
-  //     hasMore &&
-  //     messagesToView.length > 0 &&
-  //     messagesToView.length < dialogMessagesCount
-  //   ) {
-  //     setMessagesToView((prevState) => {
-  //       const newState = [...prevState];
-  //
-  //       const newMessageEntity: MessageEntity =
-  //         messagesViewModel.messages[prevState.length];
-  //
-  //       newState.push(newMessageEntity);
-  //       // newState.unshift(newMessageEntity);
-  //
-  //       return newState;
-  //     });
-  //   }
-  // };
-
-  // function prepareFirstPage(initData: MessageEntity[]) {
-  //   const firstPageSize = messagesViewModel.messages.length;
-  //
-  //   for (let i = firstPageSize - 1; i >= 0; i -= 1) {
-  //     initData.push(messagesViewModel.messages[i]);
-  //   }
-  // }
-
-  //
-  // useEffect(() => {
-  //   setDialogMessageCount(messagesViewModel?.messages?.length || 0);
-  //   if (messagesToView?.length === 0 && messagesViewModel.messages.length > 0) {
-  //     const initData: MessageEntity[] = [];
-  //
-  //     console.log(JSON.stringify(messagesViewModel.messages));
-  //     prepareFirstPage(initData);
-  //     setMessagesToView(initData);
-  //   } else if (messagesViewModel.messages.length - messagesToView.length >= 1) {
-  //     setHasMore(true);
-  //     setScrollUpToDown(true);
-  //   }
-  // }, [messagesViewModel.messages]);
-  //
-  // useEffect(() => {
-  //   if (messagesViewModel.messages.length - messagesToView.length >= 1) {
-  //     fetchMoreData();
-  //   }
-  // }, [dialogMessagesCount]);
-  const messagePerPage = 47;
-
-  useEffect(() => {
-    if (messagesViewModel.entity) {
-      messagesViewModel.getMessages(new Pagination(0, messagePerPage));
-    }
-  }, [messagesViewModel.entity]);
-
-  useEffect(() => {
-    if (isOnline && needRefresh) {
-      if (messagesViewModel.entity) {
-        messagesViewModel.getMessages(new Pagination(0, messagePerPage));
-
-        setNeedRefresh(false);
-      }
-    }
-  }, [isOnline]);
   const fetchMoreData = () => {
     if (messagesViewModel.pagination.hasNextPage()) {
       const newPagination = messagesViewModel.pagination;
@@ -442,8 +351,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     }
   };
 
-  const userViewModel = useUsersListViewModel(selectedDialog);
-  const [dialogAvatarUrl, setDialogAvatarUrl] = React.useState('');
   const getUserAvatarByUid = async () => {
     let result = '';
     const participants: Array<number> =
@@ -469,18 +376,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     }
   }
 
-  useEffect(() => {
-    getDialogPhotoFileForPreview();
-    if (dialogsViewModel.entity) {
-      userViewModel.entity = dialogsViewModel.entity;
-    }
-
-    return () => {
-      if (dialogAvatarUrl) {
-        URL.revokeObjectURL(dialogAvatarUrl);
-      }
-    };
-  }, [dialogsViewModel.entity]);
   // eslint-disable-next-line consistent-return
   const renderIconForTypeDialog = (dialogEntity: DialogEntity) => {
     if (dialogEntity.type === DialogType.group) {
@@ -509,62 +404,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       );
     }
   };
-
-  useEffect(() => {
-    console.log(
-      `Clear selected dialog: ${
-        selectedDialog?.name || 'Dialog Name is empty'
-      }`,
-    );
-    if (!dialogsViewModel.entity) {
-      setSelectedDialog(undefined);
-    }
-  }, [dialogsViewModel.entity]);
-
-  const [needDialogInformation, setNeedDialogInformation] = useState(false);
-  const informationCloseHandler = (): void => {
-    setNeedDialogInformation(false);
-  };
-  const informationOpenHandler = (): void => {
-    setNeedDialogInformation(true);
-  };
-  //
-  const maxTokensForAIRephrase =
-    currentContext.InitParams.qbConfig.configAIApi.AIRephraseWidgetConfig
-      .maxTokens;
-
-  const rephraseTones: Tone[] =
-    currentContext.InitParams.qbConfig.configAIApi.AIRephraseWidgetConfig.Tones;
-
-  const { maxFileSize } = currentContext.InitParams;
-  //
-  const [waitAIWidget, setWaitAIWidget] = useState<boolean>(false);
-  const [messageText, setMessageText] = useState<string>('');
-
-  const [warningErrorText, setWarningErrorText] = useState<string>('');
-  // const [showErrorToast, setShowErrorToast] = useState<boolean>(false);
-  // const [messageErrorToast, setMessageErrorToast] = useState<string>('');
-
-  const [useAudioWidget, setUseAudioWidget] = useState<boolean>(false);
-
-  const [fileToSend, setFileToSend] = useState<File | null>(null);
-
-  const [isRecording, setIsRecording] = useState(false);
-  //
-  const [permission, setPermission] = useState(false);
-
-  // const [recordingStatus, setRecordingStatus] = useState('inactive');
-
-  const [stream, setStream] = useState<MediaStream>();
-  // const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder>();
-  const mediaRecorder = useRef<MediaRecorder>();
-  const [resultAudioBlob, setResultAudioBlob] = useState<Blob>();
-
-  const [audioChunks, setAudioChunks] = useState<Array<Blob>>([]);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const mimeType = 'audio/webm;codecs=opus'; // audio/ogg audio/mpeg audio/webm audio/x-wav audio/mp4
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
   const showErrorMessage = (errorMessage: string) => {
     setWarningErrorText(errorMessage);
@@ -601,41 +440,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       });
   };
 
-  useEffect(() => {
-    const MAXSIZE = maxFileSize || 90 * 1000000;
-    const MAXSIZE_FOR_MESSAGE = MAXSIZE / (1024 * 1024);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const flag = fileToSend?.size && fileToSend?.size < MAXSIZE;
-
-    if (fileToSend?.size && fileToSend?.size < MAXSIZE) {
-      if (showReplyMessage && messagesToReply?.length > 0) {
-        const replyData: ReplyMessagesParams = {
-          messagesToReply,
-          relatedFileMessage: fileToSend,
-          relatedTextMessage:
-            messageText || MessageDTOMapper.REPLY_MESSAGE_PREFIX,
-        };
-
-        repliedActions(replyData);
-      } else if (isOnline) {
-        // eslint-disable-next-line promise/catch-or-return
-        messagesViewModel
-          .sendAttachmentMessage(fileToSend)
-          .then((resultOperation) => {
-            // eslint-disable-next-line promise/always-return
-            if (!resultOperation) {
-              toast(`Incorrect data`);
-            }
-          });
-      }
-    } else if (fileToSend) {
-      toast(
-        `file size ${fileToSend?.size} must be less then ${MAXSIZE_FOR_MESSAGE} mb.`,
-      );
-    }
-  }, [fileToSend]);
-
-  //  const [isVoiceMessage, setVoiceMessage] = useState(true);
   const getMicrophonePermission = async () => {
     if (window) {
       try {
@@ -747,80 +551,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     return resultFile;
   };
 
-  useEffect(() => {
-    const fileExt = 'mp4';
-
-    if (resultAudioBlob) {
-      const voiceMessage = blobToFile(
-        resultAudioBlob,
-        `${userName || ''}_voice_message.${fileExt}`,
-      );
-
-      setFileToSend(voiceMessage);
-      if (useAudioWidget) {
-        setUseAudioWidget(false);
-      }
-      //
-    }
-  }, [resultAudioBlob]);
-
-  useEffect(() => {
-    // setFileToSend(null);
-    if (isRecording) {
-      if (!permission) {
-        // eslint-disable-next-line promise/catch-or-return,promise/always-return
-        getMicrophonePermission().catch(() => {
-          showErrorMessage(`Have no audio.`);
-        });
-      } else {
-        // eslint-disable-next-line promise/catch-or-return,promise/always-return
-        startRecording().then(() => {
-          setWarningErrorText(`Your voice is recording during for 1 minutes`);
-        });
-      }
-    } else {
-      if (permission && mediaRecorder.current) {
-        stopRecording();
-      }
-      setWarningErrorText('');
-    }
-  }, [isRecording]);
-
-  useEffect(() => {
-    if (isRecording && permission) {
-      // eslint-disable-next-line promise/always-return,promise/catch-or-return
-      startRecording().then(() => {
-        setWarningErrorText(`Your voice is recording during for 1 minutes`);
-      });
-    }
-  }, [permission]);
-
-  useEffect(() => {
-    setWaitAIWidget(false);
-    if (
-      defaultAIRephraseWidget?.textToContent &&
-      defaultAIRephraseWidget?.textToContent.length > 0
-    ) {
-      setMessageText(defaultAIRephraseWidget?.textToContent);
-    }
-  }, [defaultAIRephraseWidget?.textToContent]);
-
-  useEffect(() => {
-    setWaitAIWidget(false);
-  }, [defaultAITranslateWidget?.textToContent]);
-
-  useEffect(() => {
-    setWaitAIWidget(false);
-    if (
-      defaultAIAssistWidget?.textToContent &&
-      defaultAIAssistWidget?.textToContent.length > 0
-    ) {
-      setMessageText(defaultAIAssistWidget?.textToContent);
-    }
-  }, [defaultAIAssistWidget?.textToContent]);
-
-  //
-
   function sendTextMessageActions(textToSend: string) {
     if (isOnline) {
       // closeReplyMessageFlowHandler
@@ -850,29 +580,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       }
     }
   }
-  //
-  useEffect(() => {
-    messagesViewModel.entity = dialogsViewModel.entity;
-    // setMessagesToView([]);
-    setMessageText('');
-  }, [dialogsViewModel.entity]);
-
-  //
-  useEffect(() => {
-    if (!isMobile && messagesViewModel.entity) {
-      dialogsViewModel.setWaitLoadingStatus(messagesViewModel?.loading);
-      const timeoutId = setTimeout(() => {
-        dialogsViewModel.setWaitLoadingStatus(false); // wait only for 3 sec
-      }, 3000);
-
-      return () => clearTimeout(timeoutId);
-    }
-
-    return () => {
-      // Placeholder: Cleanup handler is not required
-    };
-  }, [messagesViewModel?.loading]);
-  //
 
   const ChangeFileHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (isOnline) {
@@ -888,13 +595,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       if (file !== null) reader.readAsDataURL(file);
     }
   };
-
-  //
-  //
-  const maxWidthToResizing =
-    selectedDialog && needDialogInformation
-      ? '$message-view-container-wrapper-min-width'
-      : '1040px';
 
   const handleOnReply = (message: MessageEntity): void => {
     setMessagesToReply([message]);
@@ -968,13 +668,107 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     return sections;
   }
 
-  const [showDialogList, setShowDialogList] = useState<boolean>(true);
-  const [showDialogMessages, setShowDialogMessages] = useState<boolean>(true);
-  const [showDialogInformation, setShowDialogInformation] =
-    useState<boolean>(false);
-  //
-  const [isAllMembersShow, setIsAllMembersShow] = React.useState(false);
+  const handleHeightChange = (newHeight: number) => {
+    console.log('The new height is:', newHeight);
+    setClientHeight(newHeight);
+  };
 
+  const leaveDialogHandler = (dialog: DialogEntity) => {
+    if (isOnline) {
+      setDialogToLeave(dialog);
+    }
+  };
+
+  const handleDialogOnClick = () => {
+    if (isOpen) {
+      setDialogToLeave(undefined);
+    }
+    setIsOpen((state) => !state);
+  };
+
+  const handleLeaveDialog = () => {
+    if (dialogToLeave) {
+      dialogsViewModel
+        .deleteDialog(dialogToLeave as GroupDialogEntity)
+        .then((result) => {
+          // eslint-disable-next-line promise/always-return
+          if (!result) {
+            toast('Dialog have not been left');
+          }
+          handleDialogOnClick();
+        })
+        .catch((e) => {
+          console.log(e);
+          toast("Can't leave dialog");
+        });
+    }
+  };
+  // // eslint-disable-next-line react/prop-types,@typescript-eslint/no-unused-vars
+  // const defaultGetSenderName: GetUserNameFct = async (props: {
+  //   userId?: number;
+  //   sender?: UserEntity;
+  // }): Promise<string | undefined> => {
+  //   let result = 'undefined user';
+  //
+  //   // eslint-disable-next-line react/prop-types
+  //   if (!props.sender) {
+  //     // eslint-disable-next-line react/prop-types
+  //     if (props.userId && props.userId > 0) {
+  //       // eslint-disable-next-line react/prop-types,@typescript-eslint/no-unsafe-call
+  //       const senderUser = await userViewModel.getUserById(props.userId);
+  //
+  //       if (!senderUser) {
+  //         return result;
+  //       }
+  //       result =
+  //         senderUser.full_name ||
+  //         senderUser.login ||
+  //         senderUser.email ||
+  //         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  //         senderUser.id.toString();
+  //     } else return result;
+  //   } else {
+  //     result =
+  //       // eslint-disable-next-line react/prop-types
+  //       props.sender.full_name ||
+  //       // eslint-disable-next-line react/prop-types
+  //       props.sender.login ||
+  //       // eslint-disable-next-line react/prop-types
+  //       props.sender.email ||
+  //       // eslint-disable-next-line react/prop-types
+  //       props.sender.id.toString();
+  //   }
+  //
+  //   return result;
+  // };
+
+  const createDialogHandler = () => {
+    if (isOnline) {
+      newModal.toggleModal();
+    }
+  };
+
+  useEffect(() => {
+    const codeVersion = '0.3.0';
+
+    console.log(`React UIKit CODE VERSION IS ${codeVersion}`);
+    if (isAuthProcessed()) {
+      const pagination: Pagination = new Pagination();
+
+      dialogsViewModel?.getDialogs(pagination);
+    }
+
+    return () => {
+      dialogsViewModel.release();
+    };
+  }, []);
+  useEffect(() => {
+    if (isAuthProcessed()) {
+      const pagination: Pagination = new Pagination();
+
+      dialogsViewModel?.getDialogs(pagination);
+    }
+  }, [currentContext.InitParams]);
   useEffect(() => {
     if (isMobile) {
       if (!selectedDialog) {
@@ -999,16 +793,78 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       setShowDialogInformation(true);
     }
     //
-    const sizeChangingLogString = `SIZE INFO: height: ${height.toString()} clientHeight: ${clientHeight}  width: ${width.toString()} breakpont: ${breakpoint.toString()} isMobile:
-       ${isMobile?.toString()} selectedDialog:
-      ${selectedDialog ? 'true' : 'false'} showDialogMessages:
-       ${showDialogMessages?.toString()} showDialogList:
-       ${showDialogList?.toString()} showDialogInformation:
-       ${showDialogInformation?.toString()}`;
-
-    console.log(sizeChangingLogString);
+    // const sizeChangingLogString = `SIZE INFO: height: ${height.toString()} clientHeight: ${clientHeight}  width: ${width.toString()} breakpont: ${breakpoint.toString()} isMobile:
+    //    ${isMobile?.toString()} selectedDialog:
+    //   ${selectedDialog ? 'true' : 'false'} showDialogMessages:
+    //    ${showDialogMessages?.toString()} showDialogList:
+    //    ${showDialogList?.toString()} showDialogInformation:
+    //    ${showDialogInformation?.toString()}`;
+    //
+    // console.log(sizeChangingLogString);
   }, [isMobile]);
+  useEffect(() => {
+    if (browserOnline) {
+      setIsOnline(true);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      toast.dismiss(toastConnectionErrorId.current);
+    } else {
+      setIsOnline(false);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      toastConnectionErrorId.current = toast('Connection ...', {
+        autoClose: false,
+        isLoading: true,
+      });
+    }
+  }, [browserOnline && connectionStatus]);
+  useEffect(() => {
+    if (!isOnline) {
+      setNeedRefresh(true);
+    }
+  }, [isOnline]);
+  useEffect(() => {
+    if (isOnline && needRefresh) {
+      if (messagesViewModel.entity) {
+        messagesViewModel.getMessages(new Pagination(0, messagePerPage));
 
+        setNeedRefresh(false);
+      }
+    }
+  }, [isOnline]);
+  useEffect(() => {
+    getDialogPhotoFileForPreview();
+    if (dialogsViewModel.entity) {
+      userViewModel.entity = dialogsViewModel.entity;
+    }
+
+    return () => {
+      if (dialogAvatarUrl) {
+        URL.revokeObjectURL(dialogAvatarUrl);
+      }
+    };
+  }, [dialogsViewModel.entity]);
+  useEffect(() => {
+    console.log(
+      `Clear selected dialog: ${
+        selectedDialog?.name || 'Dialog Name is empty'
+      }`,
+    );
+    if (!dialogsViewModel.entity) {
+      setSelectedDialog(undefined);
+    }
+  }, [dialogsViewModel.entity]);
+  useEffect(() => {
+    messagesViewModel.entity = dialogsViewModel.entity;
+    // setMessagesToView([]);
+    setMessageText('');
+  }, [dialogsViewModel.entity]);
+  useEffect(() => {
+    if (userViewModel.entity) {
+      userViewModel.getUsers();
+    }
+  }, [userViewModel.entity]);
   useEffect(() => {
     if (selectedDialog && selectedDialog) {
       dialogsViewModel.entity = selectedDialog;
@@ -1022,13 +878,124 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       setShowDialogList(true);
     }
   }, [selectedDialog]);
-
   useEffect(() => {
-    if (userViewModel.entity) {
-      userViewModel.getUsers();
+    if (messagesViewModel.entity) {
+      messagesViewModel.getMessages(new Pagination(0, messagePerPage));
     }
-  }, [userViewModel.entity]);
+  }, [messagesViewModel.entity]);
+  useEffect(() => {
+    if (!isMobile && messagesViewModel.entity) {
+      dialogsViewModel.setWaitLoadingStatus(messagesViewModel?.loading);
+      const timeoutId = setTimeout(() => {
+        dialogsViewModel.setWaitLoadingStatus(false); // wait only for 3 sec
+      }, 3000);
 
+      return () => clearTimeout(timeoutId);
+    }
+
+    return () => {
+      // Placeholder: Cleanup handler is not required
+    };
+  }, [messagesViewModel?.loading]);
+  useEffect(() => {
+    const MAXSIZE = maxFileSize || 90 * 1000000;
+    const MAXSIZE_FOR_MESSAGE = MAXSIZE / (1024 * 1024);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const flag = fileToSend?.size && fileToSend?.size < MAXSIZE;
+
+    if (fileToSend?.size && fileToSend?.size < MAXSIZE) {
+      if (showReplyMessage && messagesToReply?.length > 0) {
+        const replyData: ReplyMessagesParams = {
+          messagesToReply,
+          relatedFileMessage: fileToSend,
+          relatedTextMessage:
+            messageText || MessageDTOMapper.REPLY_MESSAGE_PREFIX,
+        };
+
+        repliedActions(replyData);
+      } else if (isOnline) {
+        // eslint-disable-next-line promise/catch-or-return
+        messagesViewModel
+          .sendAttachmentMessage(fileToSend)
+          .then((resultOperation) => {
+            // eslint-disable-next-line promise/always-return
+            if (!resultOperation) {
+              toast(`Incorrect data`);
+            }
+          });
+      }
+    } else if (fileToSend) {
+      toast(
+        `file size ${fileToSend?.size} must be less then ${MAXSIZE_FOR_MESSAGE} mb.`,
+      );
+    }
+  }, [fileToSend]);
+  useEffect(() => {
+    const fileExt = 'mp4';
+
+    if (resultAudioBlob) {
+      const voiceMessage = blobToFile(
+        resultAudioBlob,
+        `${userName || ''}_voice_message.${fileExt}`,
+      );
+
+      setFileToSend(voiceMessage);
+      if (useAudioWidget) {
+        setUseAudioWidget(false);
+      }
+      //
+    }
+  }, [resultAudioBlob]);
+  useEffect(() => {
+    // setFileToSend(null);
+    if (isRecording) {
+      if (!permission) {
+        // eslint-disable-next-line promise/catch-or-return,promise/always-return
+        getMicrophonePermission().catch(() => {
+          showErrorMessage(`Have no audio.`);
+        });
+      } else {
+        // eslint-disable-next-line promise/catch-or-return,promise/always-return
+        startRecording().then(() => {
+          setWarningErrorText(`Your voice is recording during for 1 minutes`);
+        });
+      }
+    } else {
+      if (permission && mediaRecorder.current) {
+        stopRecording();
+      }
+      setWarningErrorText('');
+    }
+  }, [isRecording]);
+  useEffect(() => {
+    if (isRecording && permission) {
+      // eslint-disable-next-line promise/always-return,promise/catch-or-return
+      startRecording().then(() => {
+        setWarningErrorText(`Your voice is recording during for 1 minutes`);
+      });
+    }
+  }, [permission]);
+  useEffect(() => {
+    setWaitAIWidget(false);
+    if (
+      defaultAIRephraseWidget?.textToContent &&
+      defaultAIRephraseWidget?.textToContent.length > 0
+    ) {
+      setMessageText(defaultAIRephraseWidget?.textToContent);
+    }
+  }, [defaultAIRephraseWidget?.textToContent]);
+  useEffect(() => {
+    setWaitAIWidget(false);
+  }, [defaultAITranslateWidget?.textToContent]);
+  useEffect(() => {
+    setWaitAIWidget(false);
+    if (
+      defaultAIAssistWidget?.textToContent &&
+      defaultAIAssistWidget?.textToContent.length > 0
+    ) {
+      setMessageText(defaultAIAssistWidget?.textToContent);
+    }
+  }, [defaultAIAssistWidget?.textToContent]);
   useEffect(() => {
     if (isMobile) {
       if (needDialogInformation) {
@@ -1040,109 +1007,11 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       }
     }
   }, [needDialogInformation]);
-
-  const handleHeightChange = (newHeight: number) => {
-    console.log('The new height is:', newHeight);
-    setClientHeight(newHeight);
-  };
-  const workHeight = isMobile
-    ? `calc(${height.toString()}px - ${uikitHeightOffset} - 28px)`
-    : `calc(100vh - ${uikitHeightOffset} - 28px)`;
-
-  const [dialogToLeave, setDialogToLeave] = useState<DialogEntity>();
-  const leaveDialogHandler = (dialog: DialogEntity) => {
-    if (isOnline) {
-      setDialogToLeave(dialog);
-    }
-  };
-
-  const [isOpen, setIsOpen] = useState(false);
-
-  const handleDialogOnClick = () => {
-    if (isOpen) {
-      setDialogToLeave(undefined);
-    }
-    setIsOpen((state) => !state);
-  };
-
   useEffect(() => {
     if (dialogToLeave) {
       handleDialogOnClick();
     }
   }, [dialogToLeave]);
-
-  const handleLeaveDialog = () => {
-    if (dialogToLeave) {
-      dialogsViewModel
-        .deleteDialog(dialogToLeave as GroupDialogEntity)
-        .then((result) => {
-          // eslint-disable-next-line promise/always-return
-          if (!result) {
-            toast('Dialog have not been left');
-          }
-          handleDialogOnClick();
-        })
-        .catch((e) => {
-          console.log(e);
-          toast("Can't leave dialog");
-        });
-    }
-  };
-  // eslint-disable-next-line react/prop-types,@typescript-eslint/no-unused-vars
-  const defaultGetSenderName: GetUserNameFct = async (props: {
-    userId?: number;
-    sender?: UserEntity;
-  }): Promise<string | undefined> => {
-    let result = 'undefined user';
-
-    // eslint-disable-next-line react/prop-types
-    if (!props.sender) {
-      // eslint-disable-next-line react/prop-types
-      if (props.userId && props.userId > 0) {
-        // eslint-disable-next-line react/prop-types,@typescript-eslint/no-unsafe-call
-        const senderUser = await userViewModel.getUserById(props.userId);
-
-        if (!senderUser) {
-          return result;
-        }
-        result =
-          senderUser.full_name ||
-          senderUser.login ||
-          senderUser.email ||
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-          senderUser.id.toString();
-      } else return result;
-    } else {
-      result =
-        // eslint-disable-next-line react/prop-types
-        props.sender.full_name ||
-        // eslint-disable-next-line react/prop-types
-        props.sender.login ||
-        // eslint-disable-next-line react/prop-types
-        props.sender.email ||
-        // eslint-disable-next-line react/prop-types
-        props.sender.id.toString();
-    }
-
-    return result;
-  };
-  const messagesContainerMobileHeight = showReplyMessage
-    ? `calc(${clientHeight}px - 128px - 64px - 16px)`
-    : `calc(${clientHeight}px - 128px - 16px)`;
-  const messagesContainerHeight = showReplyMessage
-    ? `calc(${clientHeight}px - 128px - 64px)`
-    : `calc(${clientHeight}px - 128px - 1px)`;
-  const clientContainerHeight = `${clientHeight - 5}px`;
-  const headerHeight = 64;
-  const dialogListScrollableHeight = clientHeight - headerHeight - 6;
-
-  const newModal = useModal();
-
-  const createDialogHandler = () => {
-    if (isOnline) {
-      newModal.toggleModal();
-    }
-  };
 
   return (
     <ToastProvider>
