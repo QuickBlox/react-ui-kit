@@ -1,3 +1,4 @@
+import QB, { ChatMessageAttachment, QBChatMessage } from 'quickblox/quickblox';
 import { IDTOMapper } from './IDTOMapper';
 import { RemoteMessageDTO } from '../../../dto/message/RemoteMessageDTO';
 import {

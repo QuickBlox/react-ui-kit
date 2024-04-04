@@ -19,7 +19,7 @@ export class RemoteDialogDTO {
 
   public lastMessageUserId: string;
 
-  public lastMessageDateSent: string;
+  public lastMessageDateSent: number;
 
   public lastMessageId: string;
 
@@ -45,7 +45,7 @@ export class RemoteDialogDTO {
 
     this.lastMessageUserId = '';
 
-    this.lastMessageDateSent = '';
+    this.lastMessageDateSent = 0;
 
     this.lastMessageId = '';
 

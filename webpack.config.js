@@ -14,11 +14,12 @@ module.exports = {
         clean: true
     },
     resolve: {
-        extensions: ['.ts', '.tsx']
+        extensions: ['.ts', '.tsx'],
     },
     externals: {
         "react": "react",
         "react-dom": "react-dom",
+        "quickblox/quickblox": "quickblox/quickblox",
     },
     module: {
         rules: [

@@ -407,6 +407,14 @@ export default function useDialogViewModel(
 
               return newState;
             });
+            if (dialog?.type === DialogType.private) {
+              const updDialog = { ...dialog };
+
+              updDialog.lastMessage.dateSent = messageEntity.date_sent;
+              updDialog.lastMessage.text = messageEntity.message;
+              updDialog.lastMessage.userId = messageEntity.sender_id;
+              setDialog(updDialog);
+            }
           });
         //
       })

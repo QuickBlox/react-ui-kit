@@ -1,3 +1,4 @@
+import { QBUser } from 'quickblox/quickblox';
 import { IDTOMapper } from './IDTOMapper';
 import { RemoteUserDTO } from '../../../dto/user/RemoteUserDTO';
 import {

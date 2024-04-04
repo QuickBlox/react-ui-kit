@@ -1,3 +1,19 @@
+import QB, {
+  ChatMessageAttachment,
+  GetMessagesResult,
+  GetUserParams,
+  ListUserResponse,
+  QBBlobCreate,
+  QBBlobCreateUploadParams,
+  QBChatDialog,
+  QBChatMessage,
+  QBChatXMPPMessage,
+  QBGetDialogResult,
+  QBLoginParams,
+  QBSession,
+  QBSystemMessage,
+  QBUser,
+} from 'quickblox/quickblox';
 import { RemoteDialogDTO } from '../../dto/dialog/RemoteDialogDTO';
 import {
   INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,
@@ -59,6 +75,11 @@ import { FileDTOMapper } from './Mapper/FileDTOMapper';
 import { DialogEventInfo } from '../../../Domain/entity/DialogEventInfo';
 import { IRemoteDataSource } from './IRemoteDataSource';
 import { QBConfig } from '../../../QBconfig';
+import {
+  QBUIKitChatDialog,
+  QBUIKitChatNewMessage,
+  QBUIKitSystemMessage,
+} from '../../../CommonTypes/CommonTypes';
 
 export type PaginatedDTOResult = {
   PaginationResult: Pagination;
@@ -335,18 +356,18 @@ export class RemoteDataSource implements IRemoteDataSource {
 
   public initEventsHandlers() {
     console.log('CALL--initEventsHandlers--CALL');
-    QB.chat.onSystemMessageListener = (message) => {
+    QB.chat.onSystemMessageListener = (message: QBUIKitSystemMessage) => {
       console.log(`EVENT: receive system message: ${JSON.stringify(message)}`);
       const resultMessage = new RemoteMessageDTO();
 
       resultMessage.sender_id = message.userId;
       resultMessage.message = message.body || 'system message';
       resultMessage.notification_type =
-        message.extension.notification_type || NotificationTypes.UPDATE_DIALOG;
+        message.extension?.notification_type || NotificationTypes.UPDATE_DIALOG;
       resultMessage.dialogId = message?.extension?.dialog_id || '';
 
       this.subscriptionOnSystemMessages[
-        resultMessage.notification_type
+        resultMessage.notification_type!
       ].informSubscribers(resultMessage, EventMessageType.SystemMessage);
     };
 
@@ -821,7 +842,7 @@ export class RemoteDataSource implements IRemoteDataSource {
   }
 
   async updateDialog(dto: RemoteDialogDTO): Promise<RemoteDialogDTO> {
-    const qbEntity: QBChatDialog =
+    const qbEntity: QBUIKitChatDialog =
       await this.getCurrentDialogDTOMapper().fromDTO(dto);
 
     let data = {};
@@ -847,7 +868,10 @@ export class RemoteDataSource implements IRemoteDataSource {
       };
     }
 
-    const qbDialogs: QBChatDialog = await QBUpdateDialog(qbEntity._id, data);
+    const qbDialogs: QBUIKitChatDialog = await QBUpdateDialog(
+      qbEntity._id,
+      data,
+    );
 
     if (qbDialogs === null || qbDialogs === undefined) {
       return Promise.reject(
@@ -1185,7 +1209,7 @@ export class RemoteDataSource implements IRemoteDataSource {
     //
     const messageText = dto.message;
 
-    const qbEntity: QBChatNewMessage = {
+    const qbEntity: QBUIKitChatNewMessage = {
       type: dto.dialog_type === DialogType.private ? 'chat' : 'groupchat',
       body: messageText || '',
       notification_type: dto.notification_type,
@@ -1259,10 +1283,7 @@ export class RemoteDataSource implements IRemoteDataSource {
     let qbMessages: QBSystemMessage | QBChatMessage['_id'] | undefined;
 
     if (dto.notification_type && dto.notification_type.length > 0) {
-      const systemMessage: QBSystemMessage = {
-        body: null,
-        id: '',
-        userId: this.authInformation?.userId || 0,
+      const systemMessage: { extension: QBSystemMessage['extension'] } = {
         extension: {
           notification_type: dto.notification_type,
           dialog_id: dto.dialogId,

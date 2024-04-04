@@ -1,5 +1,5 @@
 export interface LastMessageEntity {
   text: string;
-  dateSent: string;
+  dateSent: number;
   userId: number;
 }

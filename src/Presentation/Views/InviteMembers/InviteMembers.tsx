@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './InviteMembers.scss';
 import ColumnContainer from '../../components/containers/ColumnContainer/ColumnContainer';
 import RowRightContainer from '../../components/containers/RowRightContainer/RowRightContainer';
@@ -143,6 +143,7 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
   };
 
   const [userNameForFilter, setUserNameForFilter] = useState<string>('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (userNameForFilter.length > 2) {
@@ -150,6 +151,9 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
 
       userViewModel.updateFilter(newFilter);
     }
+
+    setTimeout(() => inputRef.current?.focus(), 500);
+
     if (userNameForFilter.length === 0) {
       userViewModel.updateFilter('');
     }
@@ -159,6 +163,9 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
     if (userNameForFilter.length > 2) {
       userViewModel.getUsers(new Pagination(0, userPerPage));
     }
+
+    setTimeout(() => inputRef.current?.focus(), 500);
+
     if (userNameForFilter.length === 0) {
       userViewModel.getUsers(new Pagination(0, userPerPage));
     }
@@ -170,6 +177,7 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
         <div className="container-invite-members--add-members-container">
           <div className="container-invite-members--add-members-container--wrapper">
             <TextField
+              ref={inputRef}
               className="filtered-text-field"
               disabled={userViewModel.loading}
               placeholder="Search"

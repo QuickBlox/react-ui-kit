@@ -1,12 +1,37 @@
+import QB, {
+  GetMessagesResult,
+  GetUserParams,
+  ListUserParams,
+  ListUserResponse,
+  QBBlob,
+  QBBlobCreateUploadParams,
+  QBChatMessage,
+  QBCustomObject,
+  QBDataDeletedResponse,
+  QBGetDialogResult,
+  QBLoginParams,
+  QBMediaParams,
+  QBMessageStatusParams,
+  QBSession,
+  QBSystemMessage,
+  QBUser,
+  QBUserCreateParams,
+  QBWebRTCSession,
+} from 'quickblox/quickblox';
 import { stringifyError } from '../utils/parse';
-import { QBConfig } from '../CommonTypes/FunctionResult';
+import {
+  QBChatDialogType,
+  QBUIKitChatDialog,
+  QBUIKitChatNewMessage,
+  QBUIKitConfig,
+} from '../CommonTypes/CommonTypes';
 
 export type QBInitParams = {
   appIdOrToken: string | number;
   authKeyOrAppId: string | number;
   authSecret?: string;
   accountKey: string;
-  config?: QBConfig; // todo: change type artan 26.03.24
+  config?: QBUIKitConfig;
 };
 
 export function QBInit(params: QBInitParams) {
@@ -15,7 +40,7 @@ export function QBInit(params: QBInitParams) {
     params.authKeyOrAppId,
     params.authSecret,
     params.accountKey,
-    params.config,
+    params.config?.appConfig,
   );
 }
 
@@ -298,7 +323,7 @@ export function QBCreatePrivateDialog(
     }`,
   );
 
-  return new Promise<QBChatDialog>((resolve, reject) => {
+  return new Promise<QBUIKitChatDialog>((resolve, reject) => {
     QB.chat.dialog.create(
       { name: dialogName || '-', occupants_ids: [userId], type: 3, data },
       (error, chat) => {
@@ -339,7 +364,7 @@ export function QBCreateGroupDialog(
     };
   }
 
-  return new Promise<QBChatDialog>((resolve, reject) => {
+  return new Promise<QBUIKitChatDialog>((resolve, reject) => {
     QB.chat.dialog.create(
       // {
       //   name: dialogName || '-',
@@ -360,10 +385,10 @@ export function QBCreateGroupDialog(
 }
 
 export function QBUpdateDialog(
-  dialogId: QBChatDialog['_id'],
+  dialogId: QBUIKitChatDialog['_id'],
   data: Dictionary<unknown>,
 ) {
-  return new Promise<QBChatDialog>((resolve, reject) => {
+  return new Promise<QBUIKitChatDialog>((resolve, reject) => {
     QB.chat.dialog.update(dialogId, data, (error, chat) => {
       if (error) {
         reject(stringifyError(error));
@@ -374,7 +399,7 @@ export function QBUpdateDialog(
   });
 }
 
-export function QBJoinGroupDialog(dialogId: QBChatDialog['_id']) {
+export function QBJoinGroupDialog(dialogId: QBUIKitChatDialog['_id']) {
   return new Promise((resolve, reject) => {
     const dialogJid = QB.chat.helpers.getRoomJidFromDialogId(dialogId);
 
@@ -388,7 +413,7 @@ export function QBJoinGroupDialog(dialogId: QBChatDialog['_id']) {
   });
 }
 
-export function QBDeleteDialog(dialogIds: Array<QBChatDialog['_id']>) {
+export function QBDeleteDialog(dialogIds: Array<QBUIKitChatDialog['_id']>) {
   return new Promise<void>((resolve, reject) => {
     QB.chat.dialog.delete(dialogIds, (error) => {
       if (error) {
@@ -400,7 +425,7 @@ export function QBDeleteDialog(dialogIds: Array<QBChatDialog['_id']>) {
   });
 }
 
-export function QBLeaveDialog(dialogId: QBChatDialog['_id']) {
+export function QBLeaveDialog(dialogId: QBUIKitChatDialog['_id']) {
   return new Promise((resolve, reject) => {
     const dialogJid = QB.chat.helpers.getRoomJidFromDialogId(dialogId);
 
@@ -481,7 +506,7 @@ export function QBCreateAndUploadContent(
 // //
 
 export function qbChatGetMessagesExtended(
-  dialogId: QBChatDialog['_id'],
+  dialogId: QBUIKitChatDialog['_id'],
   params: Partial<{
     skip: number;
     limit: number;
@@ -516,7 +541,7 @@ export function qbChatGetMessagesExtended(
 }
 //
 export function QBSendIsTypingStatus(
-  dialog: QBChatDialog,
+  dialog: QBUIKitChatDialog,
   senderId: QBUser['id'],
 ) {
   const isPrivate: QBChatDialogType = 3;
@@ -534,7 +559,7 @@ export function QBSendIsTypingStatus(
   }
 }
 export function QBSendIsStopTypingStatus(
-  dialog: QBChatDialog,
+  dialog: QBUIKitChatDialog,
   senderId: QBUser['id'],
 ) {
   const isPrivate: QBChatDialogType = 3;
@@ -555,7 +580,7 @@ export function QBSendIsStopTypingStatus(
 
 export function QBChatSendMessage(
   to: string | number, // artan 22.06.23
-  message: QBChatNewMessage,
+  message: QBUIKitChatNewMessage,
 ) {
   return new Promise<QBChatMessage['_id']>((resolve) => {
     resolve(QB.chat.send(to, message));

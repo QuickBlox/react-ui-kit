@@ -1,3 +1,4 @@
+import QB from 'quickblox/quickblox';
 import ChatMessageAttachmentEntity from '../Domain/entity/ChatMessageAttachmentEntity';
 import { DialogType } from '../Domain/entity/DialogTypes';
 import { MessageEntity } from '../Domain/entity/MessageEntity';

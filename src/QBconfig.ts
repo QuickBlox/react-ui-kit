@@ -1,4 +1,6 @@
-export const QBConfig = {
+import { QBUIKitConfig } from './CommonTypes/CommonTypes';
+
+export const QBConfig: QBUIKitConfig = {
   credentials: {
     appId: -1,
     accountKey: '',
@@ -122,7 +124,7 @@ export const QBConfig = {
     },
   },
   appConfig: {
-    maxFileSize: 10 * 1024 * 1024,
+    maxFileSize: 10485760,
     sessionTimeOut: 122,
     chatProtocol: {
       active: 2,
@@ -135,15 +137,15 @@ export const QBConfig = {
       api: 'api.quickblox.com',
       chat: 'chat.quickblox.com',
     },
-    on: {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/require-await
-      async sessionExpired(handleResponse: any, retry: any) {
-        console.log(
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          `QBconfig sessionExpired handle: ${handleResponse} ${retry}`,
-        );
-      },
-    },
+    // on: {
+    //   // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/require-await
+    //   async sessionExpired(handleResponse: any, retry: any) {
+    //     console.log(
+    //       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    //       `QBconfig sessionExpired handle: ${handleResponse} ${retry}`,
+    //     );
+    //   },
+    // },
     streamManagement: {
       enable: true,
     },

@@ -1,3 +1,5 @@
+import { QBError } from 'quickblox/quickblox';
+
 export const jsonParse = <P>(text: string): P | string => {
   try {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

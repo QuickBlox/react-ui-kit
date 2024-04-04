@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import React, { useEffect } from 'react';
+import QB from 'quickblox/quickblox';
 import './PreviewDialog.scss';
 import { DialogType } from '../../../Domain/entity/DialogTypes';
 import PreviewDialogViewModel from './PreviewDialogViewModel';

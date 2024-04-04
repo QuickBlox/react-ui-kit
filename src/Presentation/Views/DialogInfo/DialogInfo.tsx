@@ -430,7 +430,7 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
                   className="dialog-info-action-wrapper-button"
                   onClick={() => onShowAllMemberClick(true)}
                   variant="outlined"
-                  disabled={dialog.ownerId !== currentUserId}
+                  disabled={disableAction}
                 >
                   See all members
                 </Button>

@@ -59,6 +59,7 @@ import ToastProvider from '../../ui-components/Toast/ToastProvider';
 import CreateNewDialogFlow from '../../Views/Flow/CreateDialogFlow/CreateNewDialogFlow';
 import useModal from '../../../hooks/useModal';
 import useQBConnection from '../../providers/QuickBloxUIKitProvider/useQBConnection';
+import { ProxyConfig } from '../../../CommonTypes/CommonTypes';
 
 type AIWidgetPlaceHolder = {
   enabled: boolean;
@@ -1134,10 +1135,12 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                             AIAssistWidget={defaultAIAssistWidget}
                             AITranslateWidget={defaultAITranslateWidget}
                             languagesForAITranslate={DefaultConfigurations.getAdditionalLanguagesForAITranslate(
+                              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                               currentContext.InitParams.qbConfig.configAIApi
                                 .AITranslateWidgetConfig,
                             )}
                             defaultTranslationLanguage={DefaultConfigurations.getDefaultLanguageForAITranslate(
+                              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                               currentContext.InitParams.qbConfig.configAIApi
                                 .AITranslateWidgetConfig,
                             )}
@@ -1290,8 +1293,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
           <CreateNewDialogFlow
             dialogsViewModel={dialogsViewModel}
             onCancel={newModal.toggleModal}
-            onFinished={() => {
+            onFinished={(newDialog) => {
               newModal.toggleModal();
+              setSelectedDialog(newDialog);
             }}
             isOnline={isOnline}
           />

@@ -20,6 +20,7 @@ import { MessageLocalDTOMapper } from './mapper/MessageLocalDTOMapper';
 import { LocalMessageDTO } from './dto/message/LocalMessageDTO';
 import { LocalDataSource } from './source/local/LocalDataSource';
 import { FileEntity } from '../Domain/entity/FileEntity';
+import { QBUIKitChatDialog } from '../CommonTypes/CommonTypes';
 
 export class Stubs {
   static createMessageEntityWithParams(
@@ -379,7 +380,7 @@ export class Stubs {
           '',
           '_',
           {
-            dateSent: '',
+            dateSent: 0,
             text: '',
             userId: 0,
           },
@@ -395,7 +396,7 @@ export class Stubs {
           { todo: '' },
           '',
           {
-            dateSent: '',
+            dateSent: 0,
             text: '',
             userId: 0,
           },
@@ -412,7 +413,7 @@ export class Stubs {
           { todo: '' },
           '',
           {
-            dateSent: '',
+            dateSent: 0,
             text: '',
             userId: 0,
           },
@@ -430,7 +431,7 @@ export class Stubs {
           customData: { todo: '' },
           id: '',
           name: '_',
-          lastMessage: { dateSent: '', text: '', userId: 0 },
+          lastMessage: { dateSent: 0, text: '', userId: 0 },
           ownerId: '',
           type: -1,
           unreadMessageCount: 0,
@@ -461,7 +462,7 @@ export class Stubs {
           '111',
           '_111',
           {
-            dateSent: '01.02.2023',
+            dateSent: 0,
             text: 'text test',
             userId: 777,
           },
@@ -477,7 +478,7 @@ export class Stubs {
           { todo: '' },
           '111',
           {
-            dateSent: '01.02.2023',
+            dateSent: 0,
             text: 'text test',
             userId: 777,
           },
@@ -494,7 +495,7 @@ export class Stubs {
           { todo: '' },
           '111',
           {
-            dateSent: '01.02.2023',
+            dateSent: 0,
             text: 'text test',
             userId: 777,
           },
@@ -513,7 +514,7 @@ export class Stubs {
           id: '111',
           name: '_111',
           lastMessage: {
-            dateSent: '01.02.2023',
+            dateSent: 0,
             text: 'text test',
             userId: 777,
           },
@@ -534,7 +535,7 @@ export class Stubs {
     switch (dialogType) {
       case DialogType.private:
         dto.id = '111';
-        dto.lastMessageDateSent = '01.02.2023';
+        dto.lastMessageDateSent = 0;
         dto.lastMessageText = 'text test';
         dto.lastMessageUserId = '777';
         dto.ownerId = '999';
@@ -545,7 +546,7 @@ export class Stubs {
         break;
       case DialogType.public:
         dto.id = '111';
-        dto.lastMessageDateSent = '01.02.2023';
+        dto.lastMessageDateSent = 0;
         dto.lastMessageText = 'text test';
         dto.lastMessageUserId = '777';
         dto.ownerId = '999';
@@ -557,7 +558,7 @@ export class Stubs {
         break;
       case DialogType.group:
         dto.id = '111';
-        dto.lastMessageDateSent = '01.02.2023';
+        dto.lastMessageDateSent = 0;
         dto.lastMessageText = 'text test';
         dto.lastMessageUserId = '777';
         dto.ownerId = '999';
@@ -602,7 +603,7 @@ export class Stubs {
         participantId: '',
         participantsIds: [],
         lastMessageText: '',
-        lastMessageDateSent: '',
+        lastMessageDateSent: 0,
         lastMessageUserId: '',
         lastMessageId: '',
         unreadMessageCount: 0,
@@ -617,7 +618,7 @@ export class Stubs {
         participantId: '',
         participantsIds: [],
         lastMessageText: '',
-        lastMessageDateSent: '',
+        lastMessageDateSent: 0,
         lastMessageUserId: '',
         lastMessageId: '',
         unreadMessageCount: 0,
@@ -632,7 +633,7 @@ export class Stubs {
         participantId: '',
         participantsIds: [],
         lastMessageText: '',
-        lastMessageDateSent: '',
+        lastMessageDateSent: 0,
         lastMessageUserId: '',
         lastMessageId: '',
         unreadMessageCount: 0,
@@ -647,7 +648,7 @@ export class Stubs {
         participantId: '',
         participantsIds: [],
         lastMessageText: '',
-        lastMessageDateSent: '',
+        lastMessageDateSent: 0,
         lastMessageUserId: '',
         lastMessageId: '',
         unreadMessageCount: 0,
@@ -662,7 +663,7 @@ export class Stubs {
         participantId: '',
         participantsIds: [],
         lastMessageText: '',
-        lastMessageDateSent: '',
+        lastMessageDateSent: 0,
         lastMessageUserId: '',
         lastMessageId: '',
         unreadMessageCount: 0,
@@ -677,7 +678,7 @@ export class Stubs {
         participantId: '',
         participantsIds: [],
         lastMessageText: '',
-        lastMessageDateSent: '',
+        lastMessageDateSent: 0,
         lastMessageUserId: '',
         lastMessageId: '',
         unreadMessageCount: 0,
@@ -692,7 +693,7 @@ export class Stubs {
         participantId: '',
         participantsIds: [],
         lastMessageText: '',
-        lastMessageDateSent: '',
+        lastMessageDateSent: 0,
         lastMessageUserId: '',
         lastMessageId: '',
         unreadMessageCount: 0,
@@ -704,11 +705,11 @@ export class Stubs {
   }
 
   static createPublicDialogQBWithEmptyValues() {
-    const qbDialog: QBChatDialog = {
+    const qbDialog: QBUIKitChatDialog = {
       _id: '111',
       created_at: '01.03.2023',
       last_message: 'test message',
-      last_message_date_sent: '02.03.2023',
+      last_message_date_sent: 0,
       last_message_id: '100',
       last_message_user_id: 112,
       name: '',
@@ -726,11 +727,11 @@ export class Stubs {
   }
 
   static createPrivateDialogQBWithEmptyValues() {
-    const qbDialog: QBChatDialog = {
+    const qbDialog: QBUIKitChatDialog = {
       _id: '111',
       created_at: '01.03.2023',
       last_message: 'test message',
-      last_message_date_sent: '02.03.2023',
+      last_message_date_sent: 0,
       last_message_id: '100',
       last_message_user_id: 112,
       name: '',
@@ -748,11 +749,11 @@ export class Stubs {
   }
 
   static createGroupDialogQBWithEmptyValues() {
-    const qbDialog: QBChatDialog = {
+    const qbDialog: QBUIKitChatDialog = {
       _id: '111',
       created_at: '01.03.2023',
       last_message: 'test message',
-      last_message_date_sent: '02.03.2023',
+      last_message_date_sent: 0,
       last_message_id: '100',
       last_message_user_id: 112,
       name: '',
@@ -773,7 +774,7 @@ export class Stubs {
     dialogType: DialogType,
     id: string,
     name: string,
-    dateSentLastMessage: string,
+    dateSentLastMessage: number,
     textLastMessage: string,
     userIdLastMessage: number,
     ownerId: string,
@@ -844,7 +845,7 @@ export class Stubs {
           id: '012345',
           name: 'error dialog',
           lastMessage: {
-            dateSent: '31.03.2023',
+            dateSent: 0,
             text: 'text test',
             userId: 12345,
           },
@@ -906,7 +907,7 @@ export class Stubs {
       DialogType.private,
       '101',
       'Stub1 Private Dialog',
-      '31.03.2023',
+      0,
       'Test text message for private dialog',
       11,
       '11',
@@ -921,7 +922,7 @@ export class Stubs {
       DialogType.public,
       '102',
       'Stub2 Public Dialog',
-      '31.03.2023',
+      0,
       'Test text message for public dialog',
       12,
       '12',
@@ -938,7 +939,7 @@ export class Stubs {
       DialogType.group,
       '103',
       'Stub 3 Group Dialog',
-      '31.03.2023',
+      0,
       'Test text message for group dialog',
       13,
       '13',

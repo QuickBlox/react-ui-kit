@@ -1,3 +1,4 @@
+import QB from 'quickblox/quickblox';
 import { SubscriptionPerformer } from '../../Domain/use_cases/base/Subscribable/SubscriptionPerformer';
 import { stringifyError } from '../../utils/parse';
 

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import './App.scss';
 import { Route, Routes, useNavigate } from 'react-router-dom';
+import QB from 'quickblox/quickblox';
 import useQBConnection from './Presentation/providers/QuickBloxUIKitProvider/useQBConnection';
 import { LocalDataSource } from './Data/source/local/LocalDataSource';
 import Login from './Presentation/layouts/TestStage/LoginView/Login';
@@ -27,8 +28,8 @@ function App() {
   const { connectionRepository } = useQBConnection();
 
   const initLoginData: LoginData = {
-    login: '',
-    password: '',
+    login: 'artimed',
+    password: 'quickblox',
   };
 
   const [currentUser, setCurrentUser] = React.useState(initLoginData);

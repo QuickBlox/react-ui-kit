@@ -8,6 +8,10 @@ import {
   UNEXPECTED_MAPPER_DTO_EXCEPTION_EXCEPTION_CODE,
   UNEXPECTED_MAPPER_DTO_EXCEPTION_MESSAGE,
 } from '../../exception/MapperDTOException';
+import {
+  QBChatDialogType,
+  QBUIKitChatDialog,
+} from '../../../../CommonTypes/CommonTypes';
 
 type DtoValidator<T> = {
   [key in keyof T]: (v: unknown) => v is T[key];
@@ -26,7 +30,7 @@ export class DialogDTOMapper implements IDTOMapper {
 
     DialogDTOMapper.validateDTO(dialogDTO);
 
-    const dialog: QBChatDialog = {
+    const dialog: QBUIKitChatDialog = {
       _id: dialogDTO.id,
       created_at: '',
       last_message: DialogDTOMapper.formatLastMessageText(
@@ -53,7 +57,8 @@ export class DialogDTOMapper implements IDTOMapper {
 
   // eslint-disable-next-line class-methods-use-this
   toTDO<TArg, TResult>(qbEntity: TArg): Promise<TResult> {
-    const qbDialog: QBChatDialog = qbEntity as unknown as QBChatDialog;
+    const qbDialog: QBUIKitChatDialog =
+      qbEntity as unknown as QBUIKitChatDialog;
 
     DialogDTOMapper.validateQBChatDialog(qbDialog);
 
@@ -62,11 +67,13 @@ export class DialogDTOMapper implements IDTOMapper {
     dto.id = qbDialog._id;
     dto.lastMessageId = qbDialog.last_message_id || '';
     dto.lastMessageText = qbDialog.last_message as string;
-    dto.lastMessageDateSent = qbDialog.last_message_date_sent as string;
+    dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
     dto.lastMessageUserId =
       qbDialog.last_message_user_id === null
         ? ''
-        : qbDialog.last_message_user_id.toString();
+        : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+          qbDialog.last_message_user_id.toString();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     dto.ownerId = qbDialog.user_id.toString();
     dto.type = qbDialog.type as number;
     dto.unreadMessageCount =
@@ -74,6 +81,7 @@ export class DialogDTOMapper implements IDTOMapper {
         ? 0
         : qbDialog.unread_messages_count;
     dto.updatedAt = qbDialog.updated_at;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     dto.participantId = qbDialog.user_id.toString();
     dto.name = qbDialog.name;
     dto.photo = qbDialog.photo === null ? '' : qbDialog.photo;
@@ -89,14 +97,17 @@ export class DialogDTOMapper implements IDTOMapper {
 
         dto.participantId = interlocutorId
           ? interlocutorId.toString()
-          : qbDialog.user_id.toString();
+          : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+            qbDialog.user_id.toString();
         dto.id = qbDialog._id;
         dto.lastMessageText = qbDialog.last_message as string;
-        dto.lastMessageDateSent = qbDialog.last_message_date_sent as string;
+        dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
         dto.lastMessageUserId =
           qbDialog.last_message_user_id === null
             ? ''
-            : qbDialog.last_message_user_id.toString();
+            : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+              qbDialog.last_message_user_id.toString();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         dto.ownerId = qbDialog.user_id.toString();
         dto.type = qbDialog.type;
         dto.unreadMessageCount =
@@ -108,11 +119,13 @@ export class DialogDTOMapper implements IDTOMapper {
       case DialogType.public:
         dto.id = qbDialog._id;
         dto.lastMessageText = qbDialog.last_message as string;
-        dto.lastMessageDateSent = qbDialog.last_message_date_sent as string;
+        dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
         dto.lastMessageUserId =
           qbDialog.last_message_user_id === null
             ? ''
-            : qbDialog.last_message_user_id.toString();
+            : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+              qbDialog.last_message_user_id.toString();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         dto.ownerId = qbDialog.user_id.toString();
         dto.type = qbDialog.type;
         dto.unreadMessageCount =
@@ -120,6 +133,7 @@ export class DialogDTOMapper implements IDTOMapper {
             ? 0
             : qbDialog.unread_messages_count;
         dto.updatedAt = qbDialog.updated_at;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         dto.participantId = qbDialog.user_id.toString();
         dto.name = qbDialog.name;
         dto.photo = qbDialog.photo === null ? '' : qbDialog.photo;
@@ -127,11 +141,13 @@ export class DialogDTOMapper implements IDTOMapper {
       case DialogType.group:
         dto.id = qbDialog._id;
         dto.lastMessageText = qbDialog.last_message as string;
-        dto.lastMessageDateSent = qbDialog.last_message_date_sent as string;
+        dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
         dto.lastMessageUserId =
           qbDialog.last_message_user_id === null
             ? ''
-            : qbDialog.last_message_user_id.toString();
+            : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+              qbDialog.last_message_user_id.toString();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         dto.ownerId = qbDialog.user_id.toString();
         dto.type = qbDialog.type;
         dto.unreadMessageCount =
@@ -282,105 +298,107 @@ export class DialogDTOMapper implements IDTOMapper {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private static validateQBChatDialog(qbDialog: QBChatDialog) {
-    const qbDialogValidator: DtoValidator<QBChatDialog> = {
-      _id(v: unknown): v is QBChatDialog['_id'] {
-        const { _id } = v as QBChatDialog;
+  private static validateQBChatDialog(qbDialog: QBUIKitChatDialog) {
+    const qbDialogValidator: DtoValidator<QBUIKitChatDialog> = {
+      _id(v: unknown): v is QBUIKitChatDialog['_id'] {
+        const { _id } = v as QBUIKitChatDialog;
 
         return _id !== undefined && _id !== null;
       },
-      created_at(v: unknown): v is QBChatDialog['created_at'] {
-        const { created_at } = v as QBChatDialog;
+      created_at(v: unknown): v is QBUIKitChatDialog['created_at'] {
+        const { created_at } = v as QBUIKitChatDialog;
 
         return created_at !== undefined && created_at !== null;
       },
-      data(v: unknown): v is QBChatDialog['data'] {
-        const { data } = v as QBChatDialog;
+      data(v: unknown): v is QBUIKitChatDialog['data'] {
+        const { data } = v as QBUIKitChatDialog;
 
         return data !== undefined && data !== null;
       },
-      joined(v: unknown): v is QBChatDialog['joined'] {
-        const { joined } = v as QBChatDialog;
+      joined(v: unknown): v is QBUIKitChatDialog['joined'] {
+        const { joined } = v as QBUIKitChatDialog;
 
         return joined !== undefined && joined !== null;
       },
-      last_message(v: unknown): v is QBChatDialog['last_message'] {
+      last_message(v: unknown): v is QBUIKitChatDialog['last_message'] {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { last_message } = v as QBChatDialog;
+        const { last_message } = v as QBUIKitChatDialog;
 
         // return last_message !== undefined && last_message !== null;
         return true;
       },
       last_message_date_sent(
         v: unknown,
-      ): v is QBChatDialog['last_message_date_sent'] {
-        const { last_message_date_sent } = v as QBChatDialog;
+      ): v is QBUIKitChatDialog['last_message_date_sent'] {
+        const { last_message_date_sent } = v as QBUIKitChatDialog;
 
         return (
           last_message_date_sent !== undefined &&
           last_message_date_sent !== null
         );
       },
-      last_message_id(v: unknown): v is QBChatDialog['last_message_id'] {
-        const { last_message_id } = v as QBChatDialog;
+      last_message_id(v: unknown): v is QBUIKitChatDialog['last_message_id'] {
+        const { last_message_id } = v as QBUIKitChatDialog;
 
         return last_message_id !== undefined && last_message_id !== null;
       },
       last_message_user_id(
         v: unknown,
-      ): v is QBChatDialog['last_message_user_id'] {
-        const { last_message_user_id } = v as QBChatDialog;
+      ): v is QBUIKitChatDialog['last_message_user_id'] {
+        const { last_message_user_id } = v as QBUIKitChatDialog;
 
         return (
           last_message_user_id !== undefined && last_message_user_id !== null
         );
       },
-      name(v: unknown): v is QBChatDialog['name'] {
-        const { name } = v as QBChatDialog;
+      name(v: unknown): v is QBUIKitChatDialog['name'] {
+        const { name } = v as QBUIKitChatDialog;
 
         return name !== undefined && name !== null;
       },
-      occupants_ids(v: unknown): v is QBChatDialog['occupants_ids'] {
-        const { occupants_ids } = v as QBChatDialog;
+      occupants_ids(v: unknown): v is QBUIKitChatDialog['occupants_ids'] {
+        const { occupants_ids } = v as QBUIKitChatDialog;
 
         return occupants_ids !== undefined && occupants_ids !== null;
       },
-      new_occupants_ids(v: unknown): v is QBChatDialog['new_occupants_ids'] {
-        const { new_occupants_ids } = v as QBChatDialog;
+      new_occupants_ids(
+        v: unknown,
+      ): v is QBUIKitChatDialog['new_occupants_ids'] {
+        const { new_occupants_ids } = v as QBUIKitChatDialog;
 
         return new_occupants_ids !== undefined && new_occupants_ids !== null;
       },
-      photo(v: unknown): v is QBChatDialog['photo'] {
-        const { photo } = v as QBChatDialog;
+      photo(v: unknown): v is QBUIKitChatDialog['photo'] {
+        const { photo } = v as QBUIKitChatDialog;
 
         return photo !== undefined && photo !== null;
       },
-      type(v: unknown): v is QBChatDialog['type'] {
-        const { type } = v as QBChatDialog;
+      type(v: unknown): v is QBUIKitChatDialog['type'] {
+        const { type } = v as QBUIKitChatDialog;
 
         return type !== undefined && type !== null;
       },
       unread_messages_count(
         v: unknown,
-      ): v is QBChatDialog['unread_messages_count'] {
-        const { unread_messages_count } = v as QBChatDialog;
+      ): v is QBUIKitChatDialog['unread_messages_count'] {
+        const { unread_messages_count } = v as QBUIKitChatDialog;
 
         return (
           unread_messages_count !== undefined && unread_messages_count !== null
         );
       },
-      updated_at(v: unknown): v is QBChatDialog['updated_at'] {
-        const { updated_at } = v as QBChatDialog;
+      updated_at(v: unknown): v is QBUIKitChatDialog['updated_at'] {
+        const { updated_at } = v as QBUIKitChatDialog;
 
         return updated_at !== undefined && updated_at !== null;
       },
-      user_id(v: unknown): v is QBChatDialog['user_id'] {
-        const { user_id } = v as QBChatDialog;
+      user_id(v: unknown): v is QBUIKitChatDialog['user_id'] {
+        const { user_id } = v as QBUIKitChatDialog;
 
         return user_id !== undefined && user_id !== null;
       },
-      xmpp_room_jid(v: unknown): v is QBChatDialog['xmpp_room_jid'] {
-        const { xmpp_room_jid } = v as QBChatDialog;
+      xmpp_room_jid(v: unknown): v is QBUIKitChatDialog['xmpp_room_jid'] {
+        const { xmpp_room_jid } = v as QBUIKitChatDialog;
 
         return xmpp_room_jid !== undefined && xmpp_room_jid !== null;
       },

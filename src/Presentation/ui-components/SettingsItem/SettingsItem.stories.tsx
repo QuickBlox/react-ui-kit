@@ -67,6 +67,7 @@ const meta: Meta<typeof SettingsItem> = {
       description: 'function onClick for icon',
     },
     children: {
+      control: false,
       table: {
         defaultValue: {
           summary: 'ReactElement | ReactElement[]',

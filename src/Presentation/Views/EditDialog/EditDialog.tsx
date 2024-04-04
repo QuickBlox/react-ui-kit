@@ -14,6 +14,7 @@ import GroupChat from '../../components/UI/svgs/Icons/Contents/GroupChat';
 import PublicChannel from '../../components/UI/svgs/Icons/Contents/PublicChannel';
 import useQbInitializedDataContext from '../../providers/QuickBloxUIKitProvider/useQbInitializedDataContext';
 import { Button, TextField } from '../../ui-components';
+import { formatFileSize } from '../../../utils/formatFileSize';
 import './EditDialog.scss';
 
 export const TypeOpenDialog = {
@@ -47,9 +48,9 @@ const EditDialog: React.FC<EditDialogProps> = ({
   const maxUploadFileSize = currentContext.InitParams.maxFileSize;
   const minLengthNameDialog = 3;
   const maxLengthNameDialog = 60;
-  const errorMessageUploadMaxSize = `file size must be less than ${
-    maxUploadFileSize / 1024 / 1024
-  } Mb`;
+  const errorMessageUploadMaxSize = `The file should not exceed this size: ${formatFileSize(
+    maxUploadFileSize,
+  )}`;
 
   const [dialogName, setDialogName] = useState(nameDialog);
   const [fileUploadAvatar, setFileUploadAvatar] = useState<File | null>(null);

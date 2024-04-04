@@ -203,7 +203,7 @@ export default class UsersRepository {
       for (let i = 0; i < usersIds.length; i += 1) {
         let dto: RemoteUserDTO = new RemoteUserDTO();
 
-        dto.id = usersIds[i].toString();
+        dto.id = usersIds[i]?.toString() || '-1';
         // eslint-disable-next-line no-await-in-loop
         dto = await this.remoteDataSource.getUser(dto);
         arrayUserDTO.push(dto);

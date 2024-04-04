@@ -71,9 +71,7 @@ export class DialogLocalDTOMapper implements IMapper {
           dialog.id,
           dialog.name,
           {
-            dateSent: dialog.lastMessageDateSent
-              ? dialog.lastMessageDateSent
-              : '',
+            dateSent: dialog.lastMessageDateSent,
             text: dialog.lastMessageText ? dialog.lastMessageText : '',
             userId: parseInt(dialog.lastMessageUserId, 10),
           },
@@ -89,9 +87,7 @@ export class DialogLocalDTOMapper implements IMapper {
           { todo: '' },
           dialog.id,
           {
-            dateSent: dialog.lastMessageDateSent
-              ? dialog.lastMessageDateSent
-              : '',
+            dateSent: dialog.lastMessageDateSent,
             text: dialog.lastMessageText ? dialog.lastMessageText : '',
             userId: parseInt(dialog.lastMessageUserId, 10),
           },
@@ -108,9 +104,7 @@ export class DialogLocalDTOMapper implements IMapper {
           { todo: '' },
           dialog.id,
           {
-            dateSent: dialog.lastMessageDateSent
-              ? dialog.lastMessageDateSent
-              : '',
+            dateSent: dialog.lastMessageDateSent,
             text: dialog.lastMessageText ? dialog.lastMessageText : '',
             userId: parseInt(dialog.lastMessageUserId, 10),
           },
@@ -730,7 +724,7 @@ export class DialogLocalDTOMapper implements IMapper {
   public static createDefaultDialogEntity(owner_id: string): DialogEntity {
     return {
       customData: { todo: '' },
-      lastMessage: { dateSent: '', text: '', userId: 0 },
+      lastMessage: { dateSent: 0, text: '', userId: 0 },
       ownerId: owner_id,
       type: DialogType.public,
       unreadMessageCount: 0,

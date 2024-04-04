@@ -1,3 +1,7 @@
+import QB, {
+  QBBlobCreate,
+  QBBlobCreateUploadParams,
+} from 'quickblox/quickblox';
 import { IDTOMapper } from './IDTOMapper';
 import { RemoteFileDTO } from '../../../dto/file/RemoteFileDTO';
 import {

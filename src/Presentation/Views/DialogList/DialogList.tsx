@@ -81,6 +81,8 @@ const DialogList: React.FC<DialogsProps> = ({
   const [showSearchDialogs, setShowSearchDialogs] = React.useState(false);
   const [nameDialogForSearch, setNameDialogForSearch] = React.useState('');
   const [isMobile] = useMobileLayout();
+  const [pointerEventsValue, setPointerEventsValue] =
+    React.useState<string>('auto');
 
   useEffect(() => {
     dialogs.slice(0);
@@ -115,6 +117,27 @@ const DialogList: React.FC<DialogsProps> = ({
 
     setDialogsToView(dialogs);
   }, [dialogListViewModel?.dialogs, selectedDialog]);
+  let timeout: NodeJS.Timeout | number | undefined;
+
+  useEffect(() => {
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, []);
+  useEffect(() => {
+    // let timeout: NodeJS.Timeout | number | undefined;
+
+    if (dialogListViewModel && dialogListViewModel.loading) {
+      setPointerEventsValue('none');
+      timeout = setTimeout(() => {
+        setPointerEventsValue('auto');
+      }, 12000); // блокировать нажатие на 12 секунд
+    } else {
+      setPointerEventsValue('auto');
+    }
+  }, [dialogListViewModel.loading]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const fetchMoreData = () => {
@@ -185,7 +208,7 @@ const DialogList: React.FC<DialogsProps> = ({
       let formattedValue = '';
 
       if (item.entity.lastMessage.dateSent) {
-        dateInt = parseInt(item.entity.lastMessage.dateSent, 10);
+        dateInt = item.entity.lastMessage.dateSent;
         if (Number.isNaN(dateInt)) {
           return formattedValue;
         }
@@ -219,6 +242,43 @@ const DialogList: React.FC<DialogsProps> = ({
       return AvatarComponent;
     };
 
+    /*
+import React, {useState, useEffect} from 'react';
+
+// предполагая, что dialogListViewModel определен в родительском компоненте и передан в этот компонент как проп
+const YourComponent = ({ dialogListViewModel }) => {
+  const [pointerEventsValue, setPointerEvents] = useState('auto');
+  
+  // поведение на 12 секунд
+  useEffect(() => {
+    let timeout;
+    if (dialogListViewModel && dialogListViewModel.loading) {
+      setPointerEvents('none');
+      timeout = setTimeout(() => {
+        setPointerEvents('auto');
+      }, 12000); // блокировать нажатие на 12 секунд
+    } 
+    
+    // поведение на отмену эффекта
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    }
+  }, [dialogListViewModel]);
+  
+  return (
+    <div 
+      style={{
+        pointerEventsValue: pointerEventsValue
+      }}
+    >
+    ... 
+    </div>
+  );
+}
+ */
+
     return (
       <div
         key={index}
@@ -243,7 +303,10 @@ const DialogList: React.FC<DialogsProps> = ({
           });
         }}
         style={{
-          pointerEvents: !dialogListViewModel?.loading ? 'auto' : 'none',
+          // pointerEvents: !dialogListViewModel?.loading ? 'auto' : 'none',
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          pointerEvents: pointerEventsValue || 'auto',
         }}
       >
         <PreviewDialog

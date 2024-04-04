@@ -15,7 +15,7 @@ export class LocalDialogDTO {
 
   public lastMessageText: string;
 
-  public lastMessageDateSent: string;
+  public lastMessageDateSent: number;
 
   public lastMessageUserId: string;
 
@@ -33,7 +33,7 @@ export class LocalDialogDTO {
     this.participantsIds = [];
     this.updatedAt = '';
     this.lastMessageText = '';
-    this.lastMessageDateSent = '';
+    this.lastMessageDateSent = 0;
     this.lastMessageUserId = '';
     this.unreadMessageCount = 0;
     this.name = '';

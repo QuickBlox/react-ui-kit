@@ -1,4 +1,8 @@
-import { ProxyConfig, QBConfig } from '../CommonTypes/FunctionResult';
+import {
+  AITranslateWidgetConfig,
+  ProxyConfig,
+  QBUIKitConfig,
+} from '../CommonTypes/CommonTypes';
 
 const supportedLanguagesForIATranslate: string[] = [
   'English',
@@ -130,7 +134,7 @@ export class DefaultConfigurations {
   }
 
   //
-  static getDefaultQBConfig(): QBConfig {
+  static getDefaultQBConfig(): QBUIKitConfig {
     return {
       credentials: {
         appId: -1,

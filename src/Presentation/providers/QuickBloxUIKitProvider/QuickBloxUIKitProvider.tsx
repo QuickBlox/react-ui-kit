@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { ProviderProps } from '../ProviderProps';
 import { LocalDataSource } from '../../../Data/source/local/LocalDataSource';
 import {
@@ -13,6 +15,7 @@ import ConnectionRepository from '../../../Data/repository/ConnectionRepository'
 import EventMessagesRepository from '../../../Data/repository/EventMessagesRepository';
 import { CallBackFunction } from '../../../Domain/use_cases/base/IUseCase';
 import { DefaultConfigurations } from '../../../Data/DefaultConfigurations';
+import { QBUIKitConfig } from '../../../CommonTypes/CommonTypes';
 
 const initialValues = {
   LOCAL_DATA_SOURCE: new LocalDataSource(), // localstorage or session storage
@@ -50,7 +53,7 @@ type AccountData = {
 export type InitParams = {
   maxFileSize: number;
   accountData: AccountData;
-  qbConfig: QBConfig;
+  qbConfig: QBUIKitConfig;
   loginData?: LoginData;
 };
 
@@ -317,6 +320,31 @@ function QuickBloxUIKitProvider({
   //   console.log('updateAuthProcessedStatus, set ', status);
   //   setAuthProcessed(status);
   // };
+
+  useEffect(() => {
+    if (!accountData.accountKey || !accountData.appId || !accountData.authKey) {
+      toast(
+        'Please input AppId, AuthKey, AuthSecret, AccountKey to sign in/up',
+      );
+    }
+  }, []);
+
+  if (!accountData.accountKey || !accountData.appId || !accountData.authKey) {
+    return (
+      <>
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          bodyClassName="toast__body"
+          toastClassName="toast"
+          pauseOnHover={false}
+          closeButton={false}
+          hideProgressBar
+        />
+        {children}
+      </>
+    );
+  }
 
   return (
     <Provider
