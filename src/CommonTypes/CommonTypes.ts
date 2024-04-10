@@ -5,6 +5,7 @@ import {
   QBChatDialog,
   QBChatNewMessage,
   QBConfig,
+  QBCustomField,
 } from 'quickblox';
 import { Tone } from '../Presentation/Views/Dialog/AIWidgets/Tone';
 

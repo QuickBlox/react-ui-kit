@@ -50,7 +50,7 @@ export class DialogRemoteDTOMapper implements IMapper {
 
     dialog.lastMessageText = dialogEntity.lastMessage.text;
 
-    dialog.lastMessageUserId = dialogEntity.lastMessage.userId.toString();
+    dialog.lastMessageUserId = dialogEntity.lastMessage.userId;
 
     dialog.lastMessageDateSent = dialogEntity.lastMessage.dateSent;
 
@@ -89,7 +89,7 @@ export class DialogRemoteDTOMapper implements IMapper {
           {
             dateSent: dialog.lastMessageDateSent,
             text: dialog.lastMessageText ? dialog.lastMessageText : '',
-            userId: parseInt(dialog.lastMessageUserId, 10),
+            userId: dialog.lastMessageUserId,
           },
           dialog.ownerId,
           dialog.type,
@@ -105,7 +105,7 @@ export class DialogRemoteDTOMapper implements IMapper {
           {
             dateSent: dialog.lastMessageDateSent,
             text: dialog.lastMessageText ? dialog.lastMessageText : '',
-            userId: parseInt(dialog.lastMessageUserId, 10),
+            userId: dialog.lastMessageUserId,
           },
           dialog.ownerId,
           dialog.type,
@@ -122,7 +122,7 @@ export class DialogRemoteDTOMapper implements IMapper {
           {
             dateSent: dialog.lastMessageDateSent,
             text: dialog.lastMessageText ? dialog.lastMessageText : '',
-            userId: parseInt(dialog.lastMessageUserId, 10),
+            userId: dialog.lastMessageUserId,
           },
           dialog.ownerId,
           dialog.type,
@@ -555,16 +555,10 @@ export class DialogRemoteDTOMapper implements IMapper {
 
     switch (dialogType) {
       case DialogType.private:
-        dialogEntity =
-          entity instanceof PrivateDialogEntity
-            ? (entity as unknown as PrivateDialogEntity)
-            : null;
+        dialogEntity = entity as PrivateDialogEntity;
         break;
       case DialogType.public:
-        dialogEntity =
-          entity instanceof PublicDialogEntity
-            ? (entity as unknown as PublicDialogEntity)
-            : null;
+        dialogEntity = entity as PublicDialogEntity;
         break;
       case DialogType.group:
         dialogEntity = entity as GroupDialogEntity;

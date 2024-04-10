@@ -85,6 +85,7 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
           if (!result) {
             toast('Dialog have not been left');
           }
+          leaveModal.toggleModal();
         })
         .catch((e) => {
           console.log(e);

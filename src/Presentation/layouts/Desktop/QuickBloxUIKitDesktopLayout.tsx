@@ -374,6 +374,8 @@ const QuickBloxUIKitDesktopLayout: React.FC<
 
     if (tmpFileUrl && tmpFileUrl.length > 0) {
       setDialogAvatarUrl(tmpFileUrl);
+    } else {
+      setDialogAvatarUrl('');
     }
   }
 
@@ -704,44 +706,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
         });
     }
   };
-  // // eslint-disable-next-line react/prop-types,@typescript-eslint/no-unused-vars
-  // const defaultGetSenderName: GetUserNameFct = async (props: {
-  //   userId?: number;
-  //   sender?: UserEntity;
-  // }): Promise<string | undefined> => {
-  //   let result = 'undefined user';
-  //
-  //   // eslint-disable-next-line react/prop-types
-  //   if (!props.sender) {
-  //     // eslint-disable-next-line react/prop-types
-  //     if (props.userId && props.userId > 0) {
-  //       // eslint-disable-next-line react/prop-types,@typescript-eslint/no-unsafe-call
-  //       const senderUser = await userViewModel.getUserById(props.userId);
-  //
-  //       if (!senderUser) {
-  //         return result;
-  //       }
-  //       result =
-  //         senderUser.full_name ||
-  //         senderUser.login ||
-  //         senderUser.email ||
-  //         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  //         senderUser.id.toString();
-  //     } else return result;
-  //   } else {
-  //     result =
-  //       // eslint-disable-next-line react/prop-types
-  //       props.sender.full_name ||
-  //       // eslint-disable-next-line react/prop-types
-  //       props.sender.login ||
-  //       // eslint-disable-next-line react/prop-types
-  //       props.sender.email ||
-  //       // eslint-disable-next-line react/prop-types
-  //       props.sender.id.toString();
-  //   }
-  //
-  //   return result;
-  // };
 
   const createDialogHandler = () => {
     if (isOnline) {
@@ -750,7 +714,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   };
 
   useEffect(() => {
-    const codeVersion = '0.3.0';
+    const codeVersion = '0.3.1';
 
     console.log(`React UIKit CODE VERSION IS ${codeVersion}`);
     if (isAuthProcessed()) {
@@ -835,8 +799,8 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     }
   }, [isOnline]);
   useEffect(() => {
-    getDialogPhotoFileForPreview();
     if (dialogsViewModel.entity) {
+      getDialogPhotoFileForPreview().catch();
       userViewModel.entity = dialogsViewModel.entity;
     }
 

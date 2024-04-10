@@ -150,8 +150,8 @@ export default function MessageItem({
       <div className="message-item-additional-part__actions">
         <MessageContextMenu
           message={message}
-          onReply={onReply}
-          onForward={onForward}
+          onReply={() => onReply(item)}
+          onForward={() => onForward(item)}
           enableReplying={enableReplying}
           enableForwarding={enableForwarding}
           disableActions={disableAction}

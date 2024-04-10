@@ -13,6 +13,7 @@ import QB, {
   QBSession,
   QBSystemMessage,
   QBUser,
+  QBMessageStatusParams,
 } from 'quickblox/quickblox';
 import { RemoteDialogDTO } from '../../dto/dialog/RemoteDialogDTO';
 import {
@@ -36,6 +37,7 @@ import {
   QBChatConnect,
   QBChatDisconnect,
   qbChatGetMessagesExtended,
+  QBChatMarkMessageDelivered,
   QBChatMarkMessageRead,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   // QBChatMarkMessageRead,
@@ -177,8 +179,40 @@ export class RemoteDataSource implements IRemoteDataSource {
       new SubscriptionPerformer<RemoteMessageDTO>();
   }
 
-  updateCurrentDialog(dto: RemoteDialogDTO): void {
+  async updateCurrentDialog(dto: RemoteDialogDTO): Promise<void> {
     this.currentDialog = dto;
+    //
+    //
+    const dialogsDTOtoEntityMapper: IMapper = new DialogRemoteDTOMapper();
+
+    const dialogEntity: DialogEntity = await dialogsDTOtoEntityMapper.toEntity(
+      this.currentDialog,
+    );
+    const userId = this._authInformation?.userId || -1;
+    const dialogId = this.currentDialog.id;
+    const messageId = this.currentDialog.lastMessageId;
+    //
+    //
+    const resultMessage: DialogEventInfo = {
+      eventMessageType: EventMessageType.LocalMessage,
+      dialogInfo: dialogEntity,
+      messageInfo: undefined,
+      messageStatus: {
+        isTyping: false,
+        userId,
+        dialogId,
+        messageId,
+        deliveryStatus: 'delivered',
+      },
+      notificationTypes: undefined,
+    };
+
+    this.subscriptionOnMessageStatus.informSubscribers(
+      resultMessage,
+      EventMessageType.LocalMessage,
+    );
+    //
+    //
   }
 
   public async setUpMockStorage(): Promise<void> {
@@ -468,7 +502,7 @@ export class RemoteDataSource implements IRemoteDataSource {
         .then(async (result) => {
           //
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const currentUserId = this._authInformation?.userId;
+
           const dialogs: QBChatDialog[] | undefined = result?.items.filter(
             (v) => v._id === dialogId,
           );
@@ -790,6 +824,15 @@ export class RemoteDataSource implements IRemoteDataSource {
         }
 
         //
+        const currentUserId = this._authInformation?.userId || 0;
+        const statusMessageParams: QBMessageStatusParams = {
+          userId: newDTO.lastMessageUserId || currentUserId,
+          dialogId: newDTO.id,
+          messageId: newDTO.lastMessageId,
+        };
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        QBChatMarkMessageDelivered(statusMessageParams);
 
         dialogsDTO.push(newDTO);
       }

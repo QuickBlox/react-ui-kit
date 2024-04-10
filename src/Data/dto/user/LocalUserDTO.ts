@@ -13,7 +13,7 @@ export class LocalUserDTO {
 
   public updated_at: string;
 
-  public last_request_at: number;
+  public last_request_at: string;
 
   public custom_data: string | null;
 
@@ -29,7 +29,7 @@ export class LocalUserDTO {
     this.login = '';
     this.created_at = '';
     this.updated_at = '';
-    this.last_request_at = 0;
+    this.last_request_at = '';
     this.custom_data = '';
     this.user_tags = '';
     this.blob_id = '';

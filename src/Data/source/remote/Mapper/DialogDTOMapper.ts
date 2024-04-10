@@ -38,7 +38,7 @@ export class DialogDTOMapper implements IDTOMapper {
       ),
       last_message_date_sent: dialogDTO.lastMessageDateSent,
       last_message_id: null,
-      last_message_user_id: parseInt(dialogDTO.lastMessageUserId, 10),
+      last_message_user_id: dialogDTO.lastMessageUserId,
       name: dialogDTO.name,
       occupants_ids: dialogDTO.participantsIds,
       new_occupants_ids: dialogDTO.newParticipantsIds
@@ -70,9 +70,9 @@ export class DialogDTOMapper implements IDTOMapper {
     dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
     dto.lastMessageUserId =
       qbDialog.last_message_user_id === null
-        ? ''
+        ? 0
         : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-          qbDialog.last_message_user_id.toString();
+          qbDialog.last_message_user_id;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     dto.ownerId = qbDialog.user_id.toString();
     dto.type = qbDialog.type as number;
@@ -104,9 +104,9 @@ export class DialogDTOMapper implements IDTOMapper {
         dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
         dto.lastMessageUserId =
           qbDialog.last_message_user_id === null
-            ? ''
+            ? 0
             : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-              qbDialog.last_message_user_id.toString();
+              qbDialog.last_message_user_id;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         dto.ownerId = qbDialog.user_id.toString();
         dto.type = qbDialog.type;
@@ -122,9 +122,9 @@ export class DialogDTOMapper implements IDTOMapper {
         dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
         dto.lastMessageUserId =
           qbDialog.last_message_user_id === null
-            ? ''
+            ? 0
             : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-              qbDialog.last_message_user_id.toString();
+              qbDialog.last_message_user_id;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         dto.ownerId = qbDialog.user_id.toString();
         dto.type = qbDialog.type;
@@ -144,9 +144,9 @@ export class DialogDTOMapper implements IDTOMapper {
         dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
         dto.lastMessageUserId =
           qbDialog.last_message_user_id === null
-            ? ''
+            ? 0
             : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-              qbDialog.last_message_user_id.toString();
+              qbDialog.last_message_user_id;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         dto.ownerId = qbDialog.user_id.toString();
         dto.type = qbDialog.type;

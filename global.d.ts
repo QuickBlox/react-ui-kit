@@ -173,32 +173,32 @@ type Dictionary<T> = Record<string, T>;
 // }
 
 // TODO: add export to SDK
-type ChatConnectParams =
-  | {
-      /** Connect to the chat by user id */
-      userId: QBUser['id'];
-      /** The user's password or session token */
-      password: string;
-    }
-  | {
-      /** Connect to the chat by user jid */
-      jid: string;
-      /** The user's password or session token */
-      password: string;
-    }
-  | {
-      /** Connect to the chat by user's email */
-      email: string;
-      /** The user's password or session token */
-      password: string;
-    };
-
-type QBCustomField =
-  | string
-  | string[]
-  | number
-  | number[]
-  | boolean
-  | boolean[]
-  | null
-  | undefined;
+// type ChatConnectParams =
+//   | {
+//       /** Connect to the chat by user id */
+//       userId: QBUser['id'];
+//       /** The user's password or session token */
+//       password: string;
+//     }
+//   | {
+//       /** Connect to the chat by user jid */
+//       jid: string;
+//       /** The user's password or session token */
+//       password: string;
+//     }
+//   | {
+//       /** Connect to the chat by user's email */
+//       email: string;
+//       /** The user's password or session token */
+//       password: string;
+//     };
+//
+// type QBCustomField =
+//   | string
+//   | string[]
+//   | number
+//   | number[]
+//   | boolean
+//   | boolean[]
+//   | null
+//   | undefined;

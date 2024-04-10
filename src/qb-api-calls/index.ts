@@ -1,4 +1,5 @@
 import QB, {
+  ChatConnectParams,
   GetMessagesResult,
   GetUserParams,
   ListUserParams,
@@ -598,6 +599,10 @@ export function QBChatSendSystemMessage(
 
 export function QBChatMarkMessageRead(params: QBMessageStatusParams) {
   QB.chat.sendReadStatus(params);
+}
+
+export function QBChatMarkMessageDelivered(params: QBMessageStatusParams) {
+  QB.chat.sendDeliveredStatus(params);
 }
 
 export function QBWebRTCSessionGetUserMedia(

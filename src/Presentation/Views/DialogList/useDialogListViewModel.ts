@@ -417,6 +417,9 @@ export default function useDialogListViewModel(
         console.log('Error leaveDialogUseCase: ', stringifyError(e));
         throw new Error(stringifyError(e));
       });
+      if (leaveResult) {
+        setNewDialog(undefined);
+      }
     } else {
       const usersForDeleteFromDialog: Array<number> = new Array<number>();
 

@@ -5,7 +5,7 @@ export interface UserEntity {
   login: string;
   created_at: string;
   updated_at: string;
-  last_request_at: number;
+  last_request_at: string;
   blob_id: string | null;
   photo: string | null;
   custom_data: string | null;

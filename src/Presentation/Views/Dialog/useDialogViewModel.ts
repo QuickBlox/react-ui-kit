@@ -35,6 +35,8 @@ import { ReplyMessagesUseCase } from '../../../Domain/use_cases/ReplyMessagesUse
 import { Creator, MessageEntityParams } from '../../../Data/Creator';
 import { DefaultConfigurations } from '../../../Data/DefaultConfigurations';
 import { MessageDTOMapper } from '../../../Data/source/remote/Mapper/MessageDTOMapper';
+import { UpdateCurrentDialogInDataSourceUseCase } from '../../../Domain/use_cases/UpdateCurrentDialogInDataSourceUseCase';
+import { RemoteDataSource } from '../../../Data/source/remote/RemoteDataSource';
 
 export default function useDialogViewModel(
   dialogType: DialogType,
@@ -51,6 +53,8 @@ export default function useDialogViewModel(
   // const [dialogsParticipants, setDialogsParticipants] = useState<number[]>([]);
 
   const currentContext = useQbInitializedDataContext();
+  const remoteDataSourceMock: RemoteDataSource =
+    currentContext.storage.REMOTE_DATA_SOURCE;
   const QBConfig =
     currentContext.InitParams.qbConfig ||
     DefaultConfigurations.getDefaultQBConfig();
@@ -239,14 +243,14 @@ export default function useDialogViewModel(
               newState = newState.map((elem) => {
                 const v: MessageEntity = {
                   ...elem,
-                  read_ids: [
-                    ...elem.read_ids,
-                    dialogInfo.messageStatus!.userId,
-                  ],
-                  delivered_ids: [
-                    ...elem.delivered_ids,
-                    dialogInfo.messageStatus!.userId,
-                  ],
+                  read_ids:
+                    dialogInfo.messageStatus?.deliveryStatus === 'read'
+                      ? [...elem.read_ids, dialogInfo.messageStatus.userId]
+                      : [...elem.read_ids],
+                  delivered_ids:
+                    dialogInfo.messageStatus?.deliveryStatus === 'delivered'
+                      ? [...elem.delivered_ids, dialogInfo.messageStatus.userId]
+                      : [...elem.delivered_ids],
                 };
 
                 return v;
@@ -381,6 +385,26 @@ export default function useDialogViewModel(
     return Promise.resolve(resultEnity);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
+  function informDataSources(item: DialogEntity) {
+    const updateCurrentDialogInDataSourceUseCase: UpdateCurrentDialogInDataSourceUseCase =
+      new UpdateCurrentDialogInDataSourceUseCase(
+        new DialogsRepository(
+          currentContext.storage.LOCAL_DATA_SOURCE,
+          remoteDataSourceMock,
+        ),
+        item as GroupDialogEntity,
+      );
+
+    updateCurrentDialogInDataSourceUseCase.execute().catch((e) => {
+      console.log(
+        'useDialogViewModel Error updateCurrentDialogInDataSourceUseCase: ',
+        stringifyError(e),
+      );
+      throw new Error(stringifyError(e));
+    });
+  }
+
   const sendMessage = (messageToSend: MessageEntity) => {
     const sendTextMessageUseCase: SendTextMessageUseCase =
       new SendTextMessageUseCase(
@@ -413,7 +437,11 @@ export default function useDialogViewModel(
               updDialog.lastMessage.dateSent = messageEntity.date_sent;
               updDialog.lastMessage.text = messageEntity.message;
               updDialog.lastMessage.userId = messageEntity.sender_id;
+              updDialog.unreadMessageCount = 0;
               setDialog(updDialog);
+              //
+              informDataSources(updDialog);
+              //
             }
           });
         //
@@ -522,73 +550,6 @@ export default function useDialogViewModel(
 
     return true;
   };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const sendAttachmentMessage = async (newMessage: File): Promise<boolean> => {
-  //   console.log('call sendTextMessage');
-  //   setLoading(true);
-  //   const currentUserId = REMOTE_DATA_SOURCE.authInformation?.userId || 0;
-  //
-  //   try {
-  //     await uploadFile(newMessage)
-  //       // eslint-disable-next-line promise/always-return
-  //       .then((fileMessage: FileEntity) => {
-  //         console.log(JSON.stringify(fileMessage));
-  //
-  //         const recipientId =
-  //           dialog.type === DialogType.private
-  //             ? (dialog as PrivateDialogEntity).participantId
-  //             : currentUserId;
-  //
-  //         // eslint-disable-next-line promise/always-return
-  //         const messageBody = fileMessage.name || '[attachment]';
-  //         //
-  //         const messageEntityParams: MessageEntityParams = {
-  //           dialogId: dialog.id,
-  //           message: messageBody,
-  //           sender_id: currentUserId,
-  //           recipient_id: recipientId,
-  //           dialog_type: DialogType.group,
-  //         };
-  //         const messageToSend: MessageEntity =
-  //           Creator.createMessageEntity(messageEntityParams);
-  //         //
-  //
-  //         messageToSend.dialogType = dialog.type;
-  //         const attachments: ChatMessageAttachmentEntity[] = [
-  //           {
-  //             id: fileMessage.id as string,
-  //             uid: fileMessage.uid,
-  //             type: fileMessage.type!,
-  //             file: fileMessage,
-  //             name: fileMessage.name,
-  //             size: fileMessage.size,
-  //             url: fileMessage.url,
-  //           },
-  //         ];
-  //
-  //         messageToSend.attachments = attachments;
-  //
-  //         messageToSend.message = `MediaContentEntity|${messageBody}|${
-  //           fileMessage.uid
-  //         }|${fileMessage.type!.toString()}`;
-  //         sendMessage(messageToSend);
-  //         //
-  //       })
-  //       .catch((reason) => {
-  //         setLoading(false);
-  //         const errorMessage = stringifyError(reason);
-  //
-  //         console.log('EXCEPTION in sendAttachmentMessage', errorMessage);
-  //
-  //         throw new Error(errorMessage);
-  //       });
-  //   } catch (e) {
-  //     return false;
-  //   }
-  //
-  //   return true;
-  // };
 
   const forwardMessage = async (
     targetDialogs: DialogEntity[],
@@ -778,81 +739,6 @@ export default function useDialogViewModel(
 
     return isOperationSuccessful;
   };
-  // const sendReplyMessages = async (
-  //   replyData: ReplyMessagesParams,
-  //   // eslint-disable-next-line @typescript-eslint/require-await
-  // ): Promise<boolean> => {
-  //   setLoading(true);
-  //   const currentUserId = REMOTE_DATA_SOURCE.authInformation?.userId || 0;
-  //   const messageEntityParams: MessageEntityParams = {
-  //     dialogId: dialog.id,
-  //     message: replyData.relatedTextMessage || '',
-  //     sender_id: currentUserId,
-  //     recipient_id:
-  //       // eslint-disable-next-line promise/always-return
-  //       dialog.type === DialogType.private
-  //         ? (dialog as PrivateDialogEntity).participantId
-  //         : currentUserId,
-  //     dialog_type: DialogType.group,
-  //   };
-  //   const relatedMessage: MessageEntity =
-  //     Creator.createMessageEntity(messageEntityParams);
-  //
-  //   relatedMessage.dialogType = dialog.type;
-  //
-  //   let resultOperation = true;
-  //
-  //   if (replyData.relatedFileMessage) {
-  //     try {
-  //       await uploadFile(replyData.relatedFileMessage)
-  //         .then(async (fileMessage: FileEntity) => {
-  //           const attachments: ChatMessageAttachmentEntity[] = [
-  //             {
-  //               id: fileMessage.id as string,
-  //               uid: fileMessage.uid,
-  //               type: fileMessage.type!,
-  //               file: fileMessage,
-  //               name: fileMessage.name,
-  //               size: fileMessage.size,
-  //               url: fileMessage.url,
-  //             },
-  //           ];
-  //
-  //           relatedMessage.attachments = attachments;
-  //
-  //           await replyMessage(replyData.messagesToReply, relatedMessage);
-  //           resultOperation = true;
-  //
-  //           return resultOperation;
-  //           //
-  //         })
-  //         .catch((reason) => {
-  //           setLoading(false);
-  //           const errorMessage = stringifyError(reason);
-  //
-  //           console.log('EXCEPTION in sendAttachmentMessage', errorMessage);
-  //           resultOperation = false;
-  //           throw new Error(errorMessage);
-  //         });
-  //     } catch (e) {
-  //       resultOperation = false;
-  //
-  //       return resultOperation;
-  //     }
-  //   } else {
-  //     await replyMessage(replyData.messagesToReply, relatedMessage).catch(
-  //       () => {
-  //         resultOperation = false;
-  //
-  //         return resultOperation;
-  //       },
-  //     );
-  //   }
-  //
-  //   return resultOperation;
-  // };
-
-  //
 
   return {
     get entity(): DialogEntity {
