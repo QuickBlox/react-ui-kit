@@ -74,9 +74,15 @@ export class DialogRemoteDTOMapper implements IMapper {
     );
 
     function formatPhotoUrl() {
-      if (dialog.photo && dialog.photo !== 'null') {
+      if (
+        !dialog.photo.includes('https') &&
+        dialog.photo &&
+        dialog.photo !== 'null'
+      ) {
         return dialog.photo && QB.content.privateUrl(dialog.photo);
       }
+
+      if (dialog.photo.includes('https')) return dialog.photo;
 
       return '';
     }

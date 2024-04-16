@@ -434,7 +434,7 @@ export default function useDialogViewModel(
             if (dialog?.type === DialogType.private) {
               const updDialog = { ...dialog };
 
-              updDialog.lastMessage.dateSent = messageEntity.date_sent;
+              updDialog.lastMessage.dateSent = messageEntity.date_sent / 1000;
               updDialog.lastMessage.text = messageEntity.message;
               updDialog.lastMessage.userId = messageEntity.sender_id;
               updDialog.unreadMessageCount = 0;

@@ -362,9 +362,14 @@ const QuickBloxUIKitDesktopLayout: React.FC<
               .participantId,
           ]
         : [];
-    const senderUser = await userViewModel.getUserById(participants[0]);
 
-    result = senderUser?.photo || '';
+    if (participants.length > 0) {
+      const senderUser = await userViewModel.getUserById(participants[0]);
+
+      result = senderUser?.photo || '';
+    } else {
+      result = '';
+    }
 
     return result;
   };
