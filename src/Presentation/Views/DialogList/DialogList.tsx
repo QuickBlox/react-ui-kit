@@ -281,7 +281,7 @@ const YourComponent = ({ dialogListViewModel }) => {
 
     return (
       <div
-        key={index}
+        key={item.entity.id}
         onClick={() => {
           setDialogsToView((prevState) => {
             // const newState = [...prevState];

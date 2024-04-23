@@ -74,10 +74,18 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
     currentContext.storage.REMOTE_DATA_SOURCE.authInformation?.userId.toString();
   const useSubContent = subHeaderContent || false;
   const useUpContent = upHeaderContent || false;
-
+  const [isLeaving, setIsLeaving] = useState(false);
+  const toastLeavingId = React.useRef(null);
   const leaveDialogHandler = () => {
     if (!disableAction) {
-      // onLeaveDialog((dialogViewModel?.entity || dialog) as GroupDialogEntity);
+      setIsLeaving(true);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      toastLeavingId.current = toast('leaving dialog', {
+        autoClose: false,
+        isLoading: true,
+      });
+      // eslint-disable-next-line promise/catch-or-return
       dialogViewModel
         .deleteDialog((dialogViewModel?.entity || dialog) as GroupDialogEntity)
         .then((result) => {
@@ -90,6 +98,12 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
         .catch((e) => {
           console.log(e);
           toast("Can't leave dialog");
+        })
+        .finally(() => {
+          setIsLeaving(false);
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          toast.dismiss(toastLeavingId.current);
         });
     }
   };
@@ -331,6 +345,18 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
 
   return (
     <div style={{ ...rootStyles }} className="dialog-information-container">
+      <div
+        style={{
+          position: 'absolute',
+          top: '0',
+          left: '0',
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: '100',
+          display: isLeaving ? 'block' : 'none',
+        }}
+      />
       <ColumnContainer>
         {useUpContent && upHeaderContent}
         <Header title="Dialog information" className="header-dialog-info">
@@ -371,8 +397,8 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
                 >
                   <EditDialog
                     disableActions={disableAction}
-                    nameDialog={dialogViewModel?.entity.name || dialog.name}
-                    typeDialog={dialogViewModel?.entity.type || dialog.type}
+                    nameDialog={dialogViewModel?.entity.name || dialog?.name}
+                    typeDialog={dialogViewModel?.entity.type || dialog?.type}
                     ulrIcon={getUrlAvatar(dialogViewModel?.entity || dialog)}
                     typeAddEditDialog={TypeOpenDialog.edit}
                     clickUpdatedHandler={getDialogUpdatedInfoHandler}

@@ -322,14 +322,22 @@ function QuickBloxUIKitProvider({
   // };
 
   useEffect(() => {
-    if (!accountData.accountKey || !accountData.appId || !accountData.authKey) {
+    if (
+      !accountData.accountKey ||
+      !accountData.appId ||
+      (!accountData.authKey && !accountData.sessionToken)
+    ) {
       toast(
         'Please input AppId, AuthKey, AuthSecret, AccountKey to sign in/up',
       );
     }
   }, []);
 
-  if (!accountData.accountKey || !accountData.appId || !accountData.authKey) {
+  if (
+    !accountData.accountKey ||
+    !accountData.appId ||
+    (!accountData.authKey && !accountData.sessionToken)
+  ) {
     return (
       <>
         <ToastContainer

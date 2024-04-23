@@ -13,6 +13,9 @@
   color: var(--secondary-text);
 
   svg {
+    height: 100%;
+    width: 100%;
+    
     fill: var(--secondary-text);
     padding: 10px;
   }

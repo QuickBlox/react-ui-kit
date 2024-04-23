@@ -60,6 +60,7 @@ import CreateNewDialogFlow from '../../Views/Flow/CreateDialogFlow/CreateNewDial
 import useModal from '../../../hooks/useModal';
 import useQBConnection from '../../providers/QuickBloxUIKitProvider/useQBConnection';
 import { ProxyConfig } from '../../../CommonTypes/CommonTypes';
+import EventMessageType from '../../../Domain/entity/EventMessageType';
 
 type AIWidgetPlaceHolder = {
   enabled: boolean;
@@ -243,11 +244,17 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     browserOnline && connectionStatus,
   );
 
-  connectionRepository.subscribe((status) => {
-    console.log(`Connection status: ${status ? 'CONNECTED' : 'DISCONNECTED'}`);
-    if (status) setIsOnline(true);
-    else setIsOnline(false);
-  });
+  connectionRepository.subscribe(
+    (status) => {
+      console.log(
+        `Connection status: ${status ? 'CONNECTED' : 'DISCONNECTED'}`,
+      );
+      if (status) setIsOnline(true);
+      else setIsOnline(false);
+    },
+    EventMessageType.LocalMessage,
+    'DESKTOP_LAYOUT',
+  );
 
   const [needRefresh, setNeedRefresh] = useState(false);
   const toastConnectionErrorId = React.useRef(null);
@@ -694,8 +701,18 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     setIsOpen((state) => !state);
   };
 
+  const [isLeaving, setIsLeaving] = useState(false);
+  const toastLeavingId = React.useRef(null);
   const handleLeaveDialog = () => {
     if (dialogToLeave) {
+      setIsLeaving(true);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      toastLeavingId.current = toast('leaving dialog', {
+        autoClose: false,
+        isLoading: true,
+      });
+      // eslint-disable-next-line promise/catch-or-return
       dialogsViewModel
         .deleteDialog(dialogToLeave as GroupDialogEntity)
         .then((result) => {
@@ -708,6 +725,12 @@ const QuickBloxUIKitDesktopLayout: React.FC<
         .catch((e) => {
           console.log(e);
           toast("Can't leave dialog");
+        })
+        .finally(() => {
+          setIsLeaving(false);
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          toast.dismiss(toastLeavingId.current);
         });
     }
   };
@@ -892,12 +915,16 @@ const QuickBloxUIKitDesktopLayout: React.FC<
             if (!resultOperation) {
               toast(`Incorrect data`);
             }
+          })
+          .finally(() => {
+            setFileToSend(null);
           });
       }
     } else if (fileToSend) {
       toast(
         `file size ${fileToSend?.size} must be less then ${MAXSIZE_FOR_MESSAGE} mb.`,
       );
+      setFileToSend(null);
     }
   }, [fileToSend]);
   useEffect(() => {
@@ -986,6 +1013,18 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   return (
     <ToastProvider>
       <div className="qb-uikit-layout">
+        <div
+          style={{
+            position: 'absolute',
+            top: '0',
+            left: '0',
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: '100',
+            display: isLeaving ? 'block' : 'none',
+          }}
+        />
         <DesktopLayout
           mainContainerStyles={{
             minHeight: workHeight,
@@ -1226,7 +1265,11 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                   minHeight: clientContainerHeight,
                   maxHeight: clientContainerHeight,
                 }}
-                // subHeaderContent={<CompanyLogo />}
+                subHeaderContent={
+                  <div>
+                    <p>v0.3.1-beta.5</p>
+                  </div>
+                }
                 // upHeaderContent={<CompanyLogo />}
                 dialog={selectedDialog}
                 dialogViewModel={dialogsViewModel}

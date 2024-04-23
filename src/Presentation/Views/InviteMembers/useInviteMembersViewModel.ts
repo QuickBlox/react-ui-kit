@@ -71,7 +71,10 @@ export default function useInviteMembersViewModel(): InviteMembersViewModel {
             // work
             const filteredUsers: UserEntity[] = data.ResultData.reduce(
               (userList: UserEntity[], u: UserEntity) => {
-                if (!regex || regex.test(u.full_name)) {
+                const nameUserForTest =
+                  u.full_name || u.login || u.email || u.id.toString();
+
+                if (!regex || regex.test(nameUserForTest)) {
                   userList.push(u);
                 }
 

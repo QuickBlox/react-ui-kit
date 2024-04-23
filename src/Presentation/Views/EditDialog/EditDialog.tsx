@@ -140,7 +140,7 @@ const EditDialog: React.FC<EditDialogProps> = ({
         <UserAvatar
           urlAvatar={urlAvatar}
           clickRemoveAvatarHandler={() => {
-            setUrlAvatar('');
+            setUrlAvatar('null');
             setErrorMessageUpload('');
           }}
         />
@@ -159,7 +159,8 @@ const EditDialog: React.FC<EditDialogProps> = ({
     if (clickUpdatedHandler) {
       const params: EditDialogParams = {
         dialogTitle: dialogName,
-        dialogAvatar: urlAvatar.length ? fileUploadAvatar : '',
+        // dialogAvatar: urlAvatar.length ? fileUploadAvatar : '',
+        dialogAvatar: urlAvatar === 'null' ? 'null' : fileUploadAvatar,
       };
 
       clickUpdatedHandler(params);

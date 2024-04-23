@@ -231,6 +231,16 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    getFileForPreview();
+
+    return () => {
+      if (fileUrl) {
+        URL.revokeObjectURL(fileUrl);
+      }
+    };
+  }, [previewMessage]);
+
   const trimFileName = (fileName: string): string => {
     if (fileName.length > 16) {
       return `${fileName.substring(0, 15)}... .${fileName.slice(
