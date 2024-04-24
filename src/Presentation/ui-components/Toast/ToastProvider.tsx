@@ -14,6 +14,7 @@ export default function ToastProvider({ children }: ToastProps) {
   return (
     <ToastContext.Provider value={undefined}>
       <ToastContainer
+        className="container"
         position="top-center"
         autoClose={3000}
         bodyClassName="toast__body"

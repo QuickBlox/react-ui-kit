@@ -1,3 +1,7 @@
+.container {
+  width: 100%;
+}
+
 .toast {
   min-height: 24px;
   padding: 4px 12px;
@@ -13,5 +17,6 @@
     line-height: 16px;
     letter-spacing: 0.5px;
     color: var(--main-background);
+    text-align: center;
   }
 }

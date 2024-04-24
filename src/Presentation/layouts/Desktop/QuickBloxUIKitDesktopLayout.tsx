@@ -61,6 +61,7 @@ import useModal from '../../../hooks/useModal';
 import useQBConnection from '../../providers/QuickBloxUIKitProvider/useQBConnection';
 import { ProxyConfig } from '../../../CommonTypes/CommonTypes';
 import EventMessageType from '../../../Domain/entity/EventMessageType';
+import { formatFileSize } from '../../../utils/formatFileSize';
 
 type AIWidgetPlaceHolder = {
   enabled: boolean;
@@ -922,7 +923,9 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       }
     } else if (fileToSend) {
       toast(
-        `file size ${fileToSend?.size} must be less then ${MAXSIZE_FOR_MESSAGE} mb.`,
+        `file size ${formatFileSize(
+          fileToSend?.size,
+        )} must be less then ${MAXSIZE_FOR_MESSAGE} mb.`,
       );
       setFileToSend(null);
     }

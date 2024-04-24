@@ -635,9 +635,13 @@ export class RemoteDataSource implements IRemoteDataSource {
     };
     QB.chat.onMessageErrorListener = (messageId: string, error: unknown) => {
       console.log(
-        `EVENT: receive error messageid: ${messageId}, error: ${stringifyError(
+        `EVENT: receive error message id: ${messageId}, error: ${stringifyError(
           error,
-        )}`,
+        )}, current auth status is: ${this.authProcessed ? 'true' : 'false'}`,
+      );
+      this.subscriptionOnSessionExpiredListener.informSubscribers(
+        true,
+        EventMessageType.LocalMessage,
       );
     };
 
