@@ -242,43 +242,6 @@ const DialogList: React.FC<DialogsProps> = ({
       return AvatarComponent;
     };
 
-    /*
-import React, {useState, useEffect} from 'react';
-
-// предполагая, что dialogListViewModel определен в родительском компоненте и передан в этот компонент как проп
-const YourComponent = ({ dialogListViewModel }) => {
-  const [pointerEventsValue, setPointerEvents] = useState('auto');
-  
-  // поведение на 12 секунд
-  useEffect(() => {
-    let timeout;
-    if (dialogListViewModel && dialogListViewModel.loading) {
-      setPointerEvents('none');
-      timeout = setTimeout(() => {
-        setPointerEvents('auto');
-      }, 12000); // блокировать нажатие на 12 секунд
-    } 
-    
-    // поведение на отмену эффекта
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    }
-  }, [dialogListViewModel]);
-  
-  return (
-    <div 
-      style={{
-        pointerEventsValue: pointerEventsValue
-      }}
-    >
-    ... 
-    </div>
-  );
-}
- */
-
     return (
       <div
         key={item.entity.id}

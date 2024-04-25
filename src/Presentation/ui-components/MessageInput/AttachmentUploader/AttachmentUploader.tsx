@@ -26,6 +26,8 @@ const AttachmentUploader: React.FC<AttachmentMessageProps> = ({
         style={{ display: 'none' }}
         onChange={(event) => {
           onChangeFile(event);
+          // eslint-disable-next-line no-param-reassign
+          event.target.value = '';
         }}
         disabled={disableAction}
       />

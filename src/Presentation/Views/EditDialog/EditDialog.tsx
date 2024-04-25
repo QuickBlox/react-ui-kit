@@ -80,6 +80,7 @@ const EditDialog: React.FC<EditDialogProps> = ({
 
     const fileSize = file?.size || 0;
 
+    console.log('MAX_FILE_SIZE', maxUploadFileSize, ' fileSize', fileSize);
     if (fileSize >= maxUploadFileSize) {
       setErrorMessageUpload(errorMessageUploadMaxSize);
 
