@@ -1023,9 +1023,12 @@ const QuickBloxUIKitDesktopLayout: React.FC<
             left: '0',
             width: '100%',
             height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backgroundColor: 'rgba(0, 0, 0, 0.05)',
             zIndex: '100',
-            display: isLeaving ? 'block' : 'none',
+            display:
+              isLeaving || (messagesViewModel && messagesViewModel.loading)
+                ? 'block'
+                : 'none',
           }}
         />
         <DesktopLayout
