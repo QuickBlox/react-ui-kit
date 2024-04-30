@@ -819,7 +819,8 @@ export class RemoteDataSource implements IRemoteDataSource {
         // artan 27/06/23
         if (newDTO.type === DialogType.group) {
           // eslint-disable-next-line no-await-in-loop
-          await QBJoinGroupDialog(newDTO.id).catch(() => {
+          await QBJoinGroupDialog(newDTO.id).catch((reason) => {
+            console.log('getDialogs. QBJoinGroupDialog error', reason);
             throw new RemoteDataSourceException(
               INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_MESSAGE,
               INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,

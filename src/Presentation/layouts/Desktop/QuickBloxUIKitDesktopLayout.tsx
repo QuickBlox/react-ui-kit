@@ -1271,11 +1271,11 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                   minHeight: clientContainerHeight,
                   maxHeight: clientContainerHeight,
                 }}
-                subHeaderContent={
-                  <div>
-                    <p>v0.3.1-beta.5</p>
-                  </div>
-                }
+                // subHeaderContent={
+                //   <div>
+                //     <p>v0.3.1-beta.5</p>
+                //   </div>
+                // }
                 // upHeaderContent={<CompanyLogo />}
                 dialog={selectedDialog}
                 dialogViewModel={dialogsViewModel}
