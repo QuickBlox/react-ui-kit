@@ -14,6 +14,7 @@ import QB, {
   QBSystemMessage,
   QBUser,
   QBMessageStatusParams,
+  AIChatHistory,
 } from 'quickblox/quickblox';
 import { RemoteDialogDTO } from '../../dto/dialog/RemoteDialogDTO';
 import {
@@ -34,6 +35,8 @@ import { DialogDTOMapper } from './Mapper/DialogDTOMapper';
 import { IDTOMapper } from './Mapper/IDTOMapper';
 import { Stubs } from '../../Stubs';
 import {
+  AIAnswerResponse,
+  QBAnswerAssist,
   QBChatConnect,
   QBChatDisconnect,
   qbChatGetMessagesExtended,
@@ -56,6 +59,7 @@ import {
   QBLogout,
   QBSendIsStopTypingStatus,
   QBSendIsTypingStatus,
+  QBTranslate,
   QBUpdateDialog,
   QBUsersGet,
   QBUsersGetById,
@@ -177,6 +181,24 @@ export class RemoteDataSource implements IRemoteDataSource {
       new SubscriptionPerformer<RemoteMessageDTO>();
     this.subscriptionOnSystemMessages[NotificationTypes.NEW_DIALOG] =
       new SubscriptionPerformer<RemoteMessageDTO>();
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  createAnswer(
+    text: string,
+    messages: AIChatHistory,
+    smartChatAssistantId: string,
+  ): Promise<AIAnswerResponse> {
+    return QBAnswerAssist(smartChatAssistantId, text, messages);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  translate(
+    text: string,
+    languageCode: string,
+    smartChatAssistantId: string,
+  ): Promise<AIAnswerResponse> {
+    return QBTranslate(smartChatAssistantId, text, languageCode);
   }
 
   async updateCurrentDialog(dto: RemoteDialogDTO): Promise<void> {

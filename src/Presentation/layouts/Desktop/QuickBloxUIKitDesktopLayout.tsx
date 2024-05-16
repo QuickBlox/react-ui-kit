@@ -62,6 +62,8 @@ import useQBConnection from '../../providers/QuickBloxUIKitProvider/useQBConnect
 import { ProxyConfig } from '../../../CommonTypes/CommonTypes';
 import EventMessageType from '../../../Domain/entity/EventMessageType';
 import { formatFileSize } from '../../../utils/formatFileSize';
+import UseDefaultAIAssistAnswerWidgetWithSDK from '../../Views/Dialog/AIWidgets/UseDefaultAIAssistAnswerWidgetWithSDK';
+import UseDefaultAITranslateWidgetWithSDK from '../../Views/Dialog/AIWidgets/UseDefaultAITranslateWidgetWithSDK';
 
 type AIWidgetPlaceHolder = {
   enabled: boolean;
@@ -116,7 +118,12 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   let defaultAIAssistWidget = AIAssist?.AIWidget;
 
   const getAIAssistAnswer = (): void => {
-    if (AIAssist?.enabled && !AIAssist?.default) {
+    if (QBConfig.configAIApi.AIAnswerAssistWidgetConfig.smartChatAssistantId) {
+      defaultAIAssistWidget = UseDefaultAIAssistAnswerWidgetWithSDK(
+        currentContext.storage.REMOTE_DATA_SOURCE,
+        QBConfig.configAIApi.AIAnswerAssistWidgetConfig.smartChatAssistantId,
+      );
+    } else if (AIAssist?.enabled && !AIAssist?.default) {
       defaultAIAssistWidget = AIAssist.AIWidget;
     } else if (
       AIAssist?.enabled ||
@@ -151,7 +158,12 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     }
   };
   const getAITranslate = (): void => {
-    if (AITranslate?.enabled && !AITranslate?.default) {
+    if (QBConfig.configAIApi.AITranslateWidgetConfig.smartChatAssistantId) {
+      defaultAITranslateWidget = UseDefaultAITranslateWidgetWithSDK(
+        currentContext.storage.REMOTE_DATA_SOURCE,
+        QBConfig.configAIApi.AITranslateWidgetConfig.smartChatAssistantId,
+      );
+    } else if (AITranslate?.enabled && !AITranslate?.default) {
       defaultAITranslateWidget = AITranslate.AIWidget;
     } else if (
       AITranslate?.enabled ||

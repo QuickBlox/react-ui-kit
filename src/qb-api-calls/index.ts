@@ -1,4 +1,5 @@
 import QB, {
+  AIChatHistory,
   ChatConnectParams,
   GetMessagesResult,
   GetUserParams,
@@ -617,5 +618,52 @@ export function QBWebRTCSessionGetUserMedia(
         resolve(stream!);
       }
     });
+  });
+}
+export interface AIAnswerResponse {
+  answer: string;
+}
+
+export function QBAnswerAssist(
+  smartChatAssistantId: string,
+  messageToAssist: string,
+  history: AIChatHistory,
+) {
+  return new Promise<AIAnswerResponse>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    QB.ai.answerAssist(
+      smartChatAssistantId,
+      messageToAssist,
+      history,
+      (err, res) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res as unknown as AIAnswerResponse);
+        }
+      },
+    );
+  });
+}
+
+export function QBTranslate(
+  smartChatAssistantId: string,
+  textToTranslate: string,
+  languageCode: string,
+) {
+  return new Promise<AIAnswerResponse>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    QB.ai.translate(
+      smartChatAssistantId,
+      textToTranslate,
+      languageCode,
+      (err, res) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res as unknown as AIAnswerResponse);
+        }
+      },
+    );
   });
 }

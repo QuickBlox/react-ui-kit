@@ -21,6 +21,7 @@ export interface WidgetConfig {
   maxTokens: number;
   useDefault: boolean;
   proxyConfig: ProxyConfig;
+  smartChatAssistantId: string;
 }
 
 export interface AITranslateWidgetConfig extends WidgetConfig {

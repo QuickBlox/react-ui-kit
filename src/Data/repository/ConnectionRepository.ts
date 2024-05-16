@@ -104,7 +104,8 @@ export default class ConnectionRepository extends SubscriptionPerformer<boolean>
     const pingChat = (): Promise<string> => {
       return new Promise<string>((resolve, reject) => {
         try {
-          QB.chat.ping((error) => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+          QB.chat.pingchat((error) => {
             if (error) {
               console.log('ping failed: ', stringifyError(error));
               resolve('failed');

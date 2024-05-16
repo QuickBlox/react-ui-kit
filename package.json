@@ -1,6 +1,6 @@
 {
   "name": "quickblox-react-ui-kit",
-  "version": "0.3.1",
+  "version": "0.4.0-beta.1",
   "main": "dist/index-ui.js",
   "license": "MIT",
   "dependencies": {
@@ -12,7 +12,7 @@
     "qb-ai-core": "^0.1.3",
     "qb-ai-rephrase": "^0.1.2",
     "qb-ai-translate": "^0.1.2",
-    "quickblox": "^2.16.4",
+    "quickblox": "^2.17.0-beta.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.11.1",

@@ -12,6 +12,7 @@ export const QBConfig: QBUIKitConfig = {
     AIAnswerAssistWidgetConfig: {
       organizationName: 'Quickblox',
       openAIModel: 'gpt-3.5-turbo',
+      smartChatAssistantId: '',
       apiKey: '',
       maxTokens: 3584,
       useDefault: true,
@@ -24,6 +25,7 @@ export const QBConfig: QBUIKitConfig = {
     AITranslateWidgetConfig: {
       organizationName: 'Quickblox',
       openAIModel: 'gpt-3.5-turbo',
+      smartChatAssistantId: '',
       apiKey: '',
       maxTokens: 3584,
       useDefault: true,
@@ -50,6 +52,7 @@ export const QBConfig: QBUIKitConfig = {
     AIRephraseWidgetConfig: {
       organizationName: 'Quickblox',
       openAIModel: 'gpt-3.5-turbo',
+      smartChatAssistantId: '',
       apiKey: '',
       maxTokens: 3584,
       useDefault: true,

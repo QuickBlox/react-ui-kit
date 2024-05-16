@@ -1,3 +1,7 @@
+import { ChatMessage } from 'qb-ai-core';
+import { AIAnswerAssistantSettings } from 'qb-ai-answer-assistant';
+import { AITranslateSettings } from 'qb-ai-translate';
+import {AIChatHistory, AIChatMessage} from 'quickblox';
 import { RemoteDialogDTO } from '../../dto/dialog/RemoteDialogDTO';
 import { RemoteDialogsDTO } from '../../dto/dialog/RemoteDialogsDTO';
 import { RemoteUserDTO } from '../../dto/user/RemoteUserDTO';
@@ -8,6 +12,7 @@ import { RemoteFileDTO } from '../../dto/file/RemoteFileDTO';
 import { Pagination } from '../../../Domain/repository/Pagination';
 import { CallBackFunction } from '../../../Domain/use_cases/base/IUseCase';
 import { NotificationTypes } from '../../../Domain/entity/NotificationTypes';
+import {AIAnswerResponse} from "../../../qb-api-calls";
 // todo list of all actions - for what we need to create tests
 /*
  0!!! не реализованы эксепшены для createDialog RemouteDataSource и
@@ -111,4 +116,16 @@ export interface IRemoteDataSource extends IRemoteMessaging<RemoteMessageDTO> {
   subscribeToChatConnectionEvents(fileId: string): Promise<void>;
 
   updateCurrentDialog(dto: RemoteDialogDTO): void;
+
+  createAnswer(
+    text: string,
+    messages: AIChatHistory,
+    smartChatAssistantId: string,
+  ): Promise<AIAnswerResponse>;
+
+  translate(
+    text: string,
+    languageCode: string,
+    smartChatAssistantId: string,
+  ): Promise<AIAnswerResponse>;
 }
