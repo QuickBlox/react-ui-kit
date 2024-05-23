@@ -1,13 +1,12 @@
 // eslint-disable-next-line import/extensions
-import { AIChatMessage, AIRole } from 'quickblox';
+import { AIAnswerResponse, AIChatMessage, AIRole } from 'quickblox';
 import { IChatMessage } from '../../../Data/source/AISource';
 import { IUseCase } from '../base/IUseCase';
 import { IRemoteDataSource } from '../../../Data/source/remote/IRemoteDataSource';
-import { AIAnswerResponse } from '../../../qb-api-calls';
 
-interface AIChatMessageEx extends AIChatMessage {
-  content: string;
-}
+// interface AIChatMessageEx extends AIChatMessage {
+//   content: string;
+// } // artik 19.05.2024
 export class AIAnswerAssistWithSDKUseCase implements IUseCase<void, string> {
   private textToSend: string;
 
@@ -32,13 +31,12 @@ export class AIAnswerAssistWithSDKUseCase implements IUseCase<void, string> {
 
   async execute(): Promise<string> {
     console.log('execute AIAnswerAssistWithSDKUseCase');
-    const history: AIChatMessageEx[] = this.dialogMessages.map(
+    const history: AIChatMessage[] = this.dialogMessages.map(
       (msg: IChatMessage) => {
         return {
           role: msg.role as AIRole,
           message: msg.content,
-          content: msg.content,
-        } as AIChatMessageEx;
+        } as AIChatMessage;
       },
     );
     const response: AIAnswerResponse = await this.dataSource.createAnswer(

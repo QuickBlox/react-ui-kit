@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/extensions
+import { AIAnswerResponse } from 'quickblox/quickblox';
 import { IUseCase } from '../base/IUseCase';
 import { IRemoteDataSource } from '../../../Data/source/remote/IRemoteDataSource';
-import { AIAnswerResponse } from '../../../qb-api-calls';
 
 export class AITranslateWithSDKUseCase implements IUseCase<void, string> {
   private languageCodes: { [key: string]: string } = {

@@ -181,7 +181,7 @@ export class DefaultConfigurations {
           organizationName: 'Quickblox',
           openAIModel: 'gpt-3.5-turbo',
           smartChatAssistantId: '',
-          apiKey: '6633a1300fea600001bd6e71',
+          apiKey: '',
           maxTokens: 3584,
           useDefault: true,
           defaultTone: 'Professional',

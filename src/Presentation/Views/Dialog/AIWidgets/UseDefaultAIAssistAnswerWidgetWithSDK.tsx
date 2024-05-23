@@ -48,11 +48,19 @@ export default function UseDefaultAIAssistAnswerWidgetWithSDK(
       );
 
       // eslint-disable-next-line no-return-await
-      return await useCaseAIAnswerAssist.execute().then((data) => {
-        setTextFromWidgetToContent(data);
+      return await useCaseAIAnswerAssist
+        .execute()
+        .then((data) => {
+          setTextFromWidgetToContent(data);
 
-        return data;
-      });
+          return data;
+        })
+        .catch((reason) => {
+          console.log('SDK: ai answer assist error: ', reason);
+          setTextFromWidgetToContent(JSON.stringify(reason));
+
+          return reason;
+        });
     }
 
     return '';

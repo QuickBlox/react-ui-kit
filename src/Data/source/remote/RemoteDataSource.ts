@@ -15,6 +15,7 @@ import QB, {
   QBUser,
   QBMessageStatusParams,
   AIChatHistory,
+  AIAnswerResponse,
 } from 'quickblox/quickblox';
 import { RemoteDialogDTO } from '../../dto/dialog/RemoteDialogDTO';
 import {
@@ -35,7 +36,6 @@ import { DialogDTOMapper } from './Mapper/DialogDTOMapper';
 import { IDTOMapper } from './Mapper/IDTOMapper';
 import { Stubs } from '../../Stubs';
 import {
-  AIAnswerResponse,
   QBAnswerAssist,
   QBChatConnect,
   QBChatDisconnect,

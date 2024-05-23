@@ -1,4 +1,5 @@
 import QB, {
+  AIAnswerResponse,
   AIChatHistory,
   ChatConnectParams,
   GetMessagesResult,
@@ -620,9 +621,9 @@ export function QBWebRTCSessionGetUserMedia(
     });
   });
 }
-export interface AIAnswerResponse {
-  answer: string;
-}
+// export interface AIAnswerResponse {
+//   answer: string;
+// } // artim 19.05.2024
 
 export function QBAnswerAssist(
   smartChatAssistantId: string,
