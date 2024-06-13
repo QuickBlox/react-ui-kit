@@ -1,6 +1,6 @@
 {
   "name": "quickblox-react-ui-kit",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "main": "dist/index-ui.js",
   "license": "MIT",
   "dependencies": {
@@ -26,7 +26,6 @@
     "@storybook/addon-essentials": "^7.6.12",
     "@storybook/addon-interactions": "^7.6.12",
     "@storybook/addon-links": "^7.6.12",
-    "@storybook/addon-onboarding": "^1.0.11",
     "@storybook/addon-viewport": "^7.6.16",
     "@storybook/blocks": "^7.6.12",
     "@storybook/preset-create-react-app": "^7.6.12",
@@ -87,8 +86,7 @@
     "lint": "eslint ./src",
     "eject": "react-scripts eject",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "build:storybook": "storybook build"
+    "build-storybook": "storybook build"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": "eslint"

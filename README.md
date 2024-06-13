@@ -41,7 +41,7 @@ The QuickBlox UIKit fully supports both private and group dialogs. To initiate t
 ## Requirements
 
 The minimum requirements for QuickBlox UIKit for React are:
-- JS QuickBlox SDK v2.15.5
+- JS QuickBlox SDK v2.16.4
 - React v.18.0
 - TypeScript v.4.9.3
 

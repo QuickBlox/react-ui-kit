@@ -15,23 +15,53 @@ export type ProxyConfig = {
   port: string;
 };
 export interface WidgetConfig {
-  organizationName: string;
-  openAIModel: string;
-  apiKey: string;
-  maxTokens: number;
-  useDefault: boolean;
-  proxyConfig: ProxyConfig;
-  smartChatAssistantId: string;
+  smartChatAssistantId: string; // This field will be deprecated in a future release. Please avoid using it.
+  /**
+   * @deprecated This field will be deprecated in a future release. Please avoid using it.
+   */
+  organizationName: string; // This field will be deprecated in a future release. Please avoid using it.
+  /**
+   * @deprecated This field will be deprecated in a future release. Please avoid using it.
+   */
+  openAIModel: string; // This field will be deprecated in a future release. Please avoid using it.
+  /**
+   * @deprecated This field will be deprecated in a future release. Please avoid using it.
+   */
+  apiKey: string; // This field will be deprecated in a future release. Please avoid using it.
+  /**
+   * @deprecated This field will be deprecated in a future release. Please avoid using it.
+   */
+  maxTokens: number; // This field will be deprecated in a future release. Please avoid using it.
+  /**
+   * @deprecated This field will be deprecated in a future release. Please avoid using it.
+   */
+  useDefault: boolean; // This field will be deprecated in a future release. Please avoid using it.
+  /**
+   * @deprecated This field will be deprecated in a future release. Please avoid using it.
+   */
+  proxyConfig: ProxyConfig; // This field will be deprecated in a future release. Please avoid using it.
 }
 
 export interface AITranslateWidgetConfig extends WidgetConfig {
-  defaultLanguage: string;
-  languages: string[];
+  /**
+   * @deprecated This field will be deprecated in a future release. Please avoid using it.
+   */
+  defaultLanguage: string; // This field will be deprecated in a future release. Please avoid using it.
+  /**
+   * @deprecated This field will be deprecated in a future release. Please avoid using it.
+   */
+  languages: string[]; // This field will be deprecated in a future release. Please avoid using it.
 }
 
 export interface AIRephraseWidgetConfig extends WidgetConfig {
-  defaultTone: string;
-  Tones: Tone[];
+  /**
+   * @deprecated This field will be deprecated in a future release. Please avoid using it.
+   */
+  defaultTone: string; // This field will be deprecated in a future release. Please avoid using it.
+  /**
+   * @deprecated This field will be deprecated in a future release. Please avoid using it.
+   */
+  Tones: Tone[]; // This field will be deprecated in a future release. Please avoid using it.
 }
 
 export interface QBUIKitConfig extends QBConfig {

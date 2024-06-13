@@ -145,9 +145,9 @@ export class DefaultConfigurations {
       },
       configAIApi: {
         AIAnswerAssistWidgetConfig: {
+          smartChatAssistantId: '',
           organizationName: 'Quickblox',
           openAIModel: 'gpt-3.5-turbo',
-          smartChatAssistantId: '',
           apiKey: '',
           maxTokens: 3584,
           useDefault: true,
@@ -158,9 +158,9 @@ export class DefaultConfigurations {
           },
         },
         AITranslateWidgetConfig: {
+          smartChatAssistantId: '',
           organizationName: 'Quickblox',
           openAIModel: 'gpt-3.5-turbo',
-          smartChatAssistantId: '',
           apiKey: '',
           maxTokens: 3584,
           useDefault: true,
@@ -178,9 +178,9 @@ export class DefaultConfigurations {
           // },
         },
         AIRephraseWidgetConfig: {
+          smartChatAssistantId: '',
           organizationName: 'Quickblox',
           openAIModel: 'gpt-3.5-turbo',
-          smartChatAssistantId: '',
           apiKey: '',
           maxTokens: 3584,
           useDefault: true,

@@ -10,9 +10,9 @@ export const QBConfig: QBUIKitConfig = {
   },
   configAIApi: {
     AIAnswerAssistWidgetConfig: {
+      smartChatAssistantId: '',
       organizationName: 'Quickblox',
       openAIModel: 'gpt-3.5-turbo',
-      smartChatAssistantId: '',
       apiKey: '',
       maxTokens: 3584,
       useDefault: true,
@@ -23,9 +23,9 @@ export const QBConfig: QBUIKitConfig = {
       },
     },
     AITranslateWidgetConfig: {
+      smartChatAssistantId: '',
       organizationName: 'Quickblox',
       openAIModel: 'gpt-3.5-turbo',
-      smartChatAssistantId: '',
       apiKey: '',
       maxTokens: 3584,
       useDefault: true,
@@ -43,16 +43,11 @@ export const QBConfig: QBUIKitConfig = {
         servername: 'https://api.openai.com/',
         port: '',
       },
-      // proxyConfig: {
-      //   api: 'v1/chat/completions',
-      //   servername: 'http://localhost',
-      //   port: '3012',
-      // },
     },
     AIRephraseWidgetConfig: {
+      smartChatAssistantId: '',
       organizationName: 'Quickblox',
       openAIModel: 'gpt-3.5-turbo',
-      smartChatAssistantId: '',
       apiKey: '',
       maxTokens: 3584,
       useDefault: true,
