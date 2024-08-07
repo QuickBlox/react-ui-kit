@@ -39,8 +39,7 @@ import { UpdateCurrentDialogInDataSourceUseCase } from '../../../Domain/use_case
 import { RemoteDataSource } from '../../../Data/source/remote/RemoteDataSource';
 
 export default function useDialogViewModel(
-  dialogType: DialogType,
-  dialogEntity: DialogEntity,
+  dialogEntity: DialogEntity | undefined,
 ): DialogViewModel {
   console.log('useDialogViewModel');
   const [loading, setLoading] = useState(false);
@@ -49,7 +48,8 @@ export default function useDialogViewModel(
   const [pagination, setPagination] = useState<Pagination>(startPagination);
   const [messages, setMessages] = useState<MessageEntity[]>([]);
   // const [users, setUsers] = useState<Record<number, UserEntity>>();
-  const [dialog, setDialog] = useState<DialogEntity>(dialogEntity);
+  // const [dialog, setDialog] = useState<DialogEntity | undefined>(dialogEntity);
+  const [dialog, setDialog] = useState<DialogEntity>(dialogEntity || {id:'',name: '',customData: {todo:''},lastMessage: {dateSent: 0, text: '', userId: 0},ownerId: '',type: DialogType.group,updatedAt: '', unreadMessageCount:0});
   // const [dialogsParticipants, setDialogsParticipants] = useState<number[]>([]);
 
   const currentContext = useQbInitializedDataContext();
@@ -69,6 +69,9 @@ export default function useDialogViewModel(
   const [typingText, setTypingText] = useState<string>('');
 
   async function getMessages(currentPagination?: Pagination) {
+    if (!dialog || !dialog.id) {
+      return;
+    }
     setLoading(true);
 
     let participants: Array<number> = [];
@@ -115,7 +118,7 @@ export default function useDialogViewModel(
     const getDialogMessages: GetAllMessagesForDialogMock =
       new GetAllMessagesForDialogMock(
         new MessagesRepository(LOCAL_DATA_SOURCE, REMOTE_DATA_SOURCE),
-        dialog.id,
+        dialog!.id,
         currentPagination || startPagination || new Pagination(),
       );
 

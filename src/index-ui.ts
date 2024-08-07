@@ -43,6 +43,7 @@ import PreviewDialogViewModel from './Presentation/Views/PreviewDialog/PreviewDi
 import { AvatarContentIncomingUserProps } from './Presentation/Views/Dialog/Message/IncomingMessage/AvatarContentIncomingUser/AvatarContentIncomingUser';
 
 import { GetUserNameFct } from './Presentation/Views/Dialog/Message/IncomingMessage/IncomingMessage';
+import { RemoteMessageDTO } from './Data/dto/message/RemoteMessageDTO';
 
 export {
   MainButton,
@@ -84,4 +85,5 @@ export {
   type FunctionTypeViewModelToVoid,
   type AvatarContentIncomingUserProps,
   type GetUserNameFct,
+  type RemoteMessageDTO,
 };

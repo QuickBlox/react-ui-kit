@@ -577,7 +577,7 @@ export class DialogRemoteDTOMapper implements IMapper {
       throw new MapperDTOException(
         UNEXPECTED_MAPPER_DTO_EXCEPTION_MESSAGE,
         UNEXPECTED_MAPPER_DTO_EXCEPTION_EXCEPTION_CODE,
-        'wrong entity type',
+        `wrong entity type ${dialogType} entity=${JSON.stringify(entity)}`,
       );
 
     return dialogEntity;

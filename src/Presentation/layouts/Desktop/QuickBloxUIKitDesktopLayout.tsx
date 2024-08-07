@@ -15,6 +15,7 @@ import { Pagination } from '../../../Domain/repository/Pagination';
 import UiKitTheme from '../../themes/UiKitTheme';
 import BaseViewModel, {
   ForwardMessagesParams,
+  FunctionTypeViewModelToVoid,
   ReplyMessagesParams,
 } from '../../../CommonTypes/BaseViewModel';
 import { AIMessageWidget } from '../../Views/Dialog/AIWidgets/AIMessageWidget';
@@ -77,6 +78,9 @@ type QuickBloxUIKitDesktopLayoutProps = {
   AITranslate?: AIWidgetPlaceHolder;
   AIAssist?: AIWidgetPlaceHolder;
   uikitHeightOffset?: string;
+  dialogsView?: React.ReactNode;
+  selectedDialogInParent?: DialogEntity;
+  setSelectedDialogInParent?: (dialogEntity: DialogEntity| undefined) => void;
 };
 
 const QuickBloxUIKitDesktopLayout: React.FC<
@@ -88,9 +92,13 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   AIRephrase = undefined,
   AIAssist = undefined,
   uikitHeightOffset = '0px',
+  dialogsView = undefined,
+  selectedDialogInParent = undefined,
+  setSelectedDialogInParent = undefined,
 }: QuickBloxUIKitDesktopLayoutProps) => {
   const mimeType = 'audio/webm;codecs=opus'; // audio/ogg audio/mpeg audio/webm audio/x-wav audio/mp4
   const messagePerPage = 47;
+  const isSelectedStateInParent = setSelectedDialogInParent !== undefined;
 
   const currentContext = useQbInitializedDataContext();
   const QBConfig =
@@ -239,16 +247,30 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   const dialogsViewModel: DialogListViewModel =
     useDialogListViewModel(currentContext);
 
-  const messagesViewModel: DialogViewModel = useDialogViewModel(
-    dialogsViewModel.entity?.type,
-    dialogsViewModel.entity,
-  );
 
   const [forwardMessage, setForwardMessage] = useState<null | MessageEntity>();
   const forwardMessageModal = useModal();
-  const [selectedDialog, setSelectedDialog] = React.useState<DialogEntity>();
-  const userViewModel = useUsersListViewModel(selectedDialog);
+  const [localSelectedDialog, setLocalSelectedDialog] = React.useState<DialogEntity | undefined>();
   const [dialogAvatarUrl, setDialogAvatarUrl] = React.useState('');
+  const setSelectedDialog = (dialogEntity: DialogEntity | undefined): void => {
+    if (isSelectedStateInParent) {
+      setSelectedDialogInParent(dialogEntity);
+    } else {
+      setLocalSelectedDialog(dialogEntity);
+    }
+  }
+  const getSelectedDialog = (): DialogEntity | undefined => {
+    if (isSelectedStateInParent) {
+      return selectedDialogInParent;
+    }
+    return localSelectedDialog;
+  }
+  const selectedDialog = getSelectedDialog();
+  const userViewModel = useUsersListViewModel(selectedDialog);
+  const messagesViewModel: DialogViewModel = useDialogViewModel(
+    selectedDialog,
+  );
+  console.log('QuickBloxUIKitDesktopLayout - selectedDialog', {selectedDialog, userViewModel, dialogsViewModel, messagesViewModel});
 
   const { browserOnline, connectionStatus, connectionRepository } =
     useQBConnection();
@@ -831,14 +853,14 @@ const QuickBloxUIKitDesktopLayout: React.FC<
     }
   }, [isOnline]);
   useEffect(() => {
-    if (isOnline && needRefresh) {
+    if (isOnline && needRefresh && selectedDialog?.id) {
       if (messagesViewModel.entity) {
         messagesViewModel.getMessages(new Pagination(0, messagePerPage));
 
         setNeedRefresh(false);
       }
     }
-  }, [isOnline]);
+  }, [isOnline, selectedDialog?.id]);
   useEffect(() => {
     if (dialogsViewModel.entity) {
       getDialogPhotoFileForPreview().catch();
@@ -1052,6 +1074,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
           theme={theme}
           dialogsView={
             showDialogList ? (
+              dialogsView ? dialogsView :
               <DialogList
                 disableAction={!isOnline}
                 scrollableHeight={dialogListScrollableHeight}

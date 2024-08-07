@@ -4,7 +4,6 @@ const path = require('path');
 module.exports = {
     mode: 'development',
     entry: './src/index-ui.ts',
-    devtool: 'source-map',
     output: {
         // filename: "research-ui-react-library-" +
         //     packageInfo.version + ".js",
@@ -14,26 +13,16 @@ module.exports = {
         clean: true
     },
     resolve: {
-        extensions: ['.ts', '.tsx'],
+        extensions: ['.ts', '.tsx', '.js']
     },
     externals: {
         "react": "react",
         "react-dom": "react-dom",
-        "quickblox/quickblox": "quickblox/quickblox",
     },
     module: {
         rules: [
             {
-                test: [/\.css$/i],
-                use: [
-                    // Creates style nodes from JS strings
-                    'style-loader',
-                    // Translates CSS into CommonJS
-                    'css-loader'
-                ],
-            },
-            {
-                test: [/\.s[ac]ss$/i],
+                test: [/\.s[ac]ss$/i, /\.css$/i],
                 use: [
                     // Creates style nodes from JS strings
                     'style-loader',
@@ -41,8 +30,16 @@ module.exports = {
                     'css-loader',
                     // Compiles Sass to CSS
                     'sass-loader',
-                ],
-                exclude: /node_modules/
+                ]
+            },
+            {
+                test: /\.svg$/,
+                use: {
+                    loader: 'svg-url-loader',
+                    options: {
+                        encoding: 'base64'
+                    }
+                }
             },
             {
                 test: /\.(ts|tsx)?$/,
@@ -58,12 +55,10 @@ module.exports = {
                 },
 
                 exclude: ['/node_modules/', '/src/__tests__'],
-            },
-            {
-              test: /\.svg$/i,
-              issuer: /\.[jt]sx?$/,
-              use: ['@svgr/webpack', 'url-loader'],
-            },
+            }
+
+
+
         ],
     }
 };
