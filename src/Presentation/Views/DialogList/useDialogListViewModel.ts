@@ -157,6 +157,27 @@ export default function useDialogListViewModel(
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
+  function informDataSources(item: DialogEntity) {
+    const updateCurrentDialogInDataSourceUseCase: UpdateCurrentDialogInDataSourceUseCase =
+      new UpdateCurrentDialogInDataSourceUseCase(
+        new DialogsRepository(
+          currentContext.storage.LOCAL_DATA_SOURCE,
+          remoteDataSourceMock,
+        ),
+        item as GroupDialogEntity,
+        QBConfig,
+      );
+
+    updateCurrentDialogInDataSourceUseCase.execute().catch((e) => {
+      console.log(
+        'Error updateCurrentDialogInDataSourceUseCase: ',
+        stringifyError(e),
+      );
+      throw new Error(stringifyError(e));
+    });
+  }
+
   const dialogUpdateHandler = (dialogInfo: DialogEventInfo) => {
     console.log('call dialogUpdateHandler in useDialogListView:', dialogInfo);
     if (
@@ -256,7 +277,15 @@ export default function useDialogListViewModel(
         setDialogs((prevDialogs) => {
           const newDialogs = prevDialogs.map((dialog) => {
             if (dialog.id === dialogInfo.dialogInfo?.id) {
-              return dialogInfo.dialogInfo as PublicDialogEntity;
+              const updatedDialogInfo = {
+                ...dialogInfo.dialogInfo,
+                unreadMessageCount:
+                  dialog.id === newDialog?.id
+                    ? 0
+                    : dialogInfo.dialogInfo.unreadMessageCount,
+              };
+
+              return updatedDialogInfo as PublicDialogEntity;
             }
 
             return dialog;
@@ -269,12 +298,6 @@ export default function useDialogListViewModel(
               : new Date(b.updatedAt).getTime() -
                   new Date(a.updatedAt).getTime();
           });
-
-          // const sortedData = [...newDialogs].sort((a, b) => {
-          //     return (
-          //         new Date(b.lastMessage.dateSent).getTime() - new Date(a.lastMessage.dateSent).getTime()
-          //     );
-          // });
 
           return sortedData;
         });
@@ -534,33 +557,16 @@ export default function useDialogListViewModel(
     return Promise.resolve(resultEnity);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
-  function informDataSources(item: DialogEntity) {
-    const updateCurrentDialogInDataSourceUseCase: UpdateCurrentDialogInDataSourceUseCase =
-      new UpdateCurrentDialogInDataSourceUseCase(
-        new DialogsRepository(
-          currentContext.storage.LOCAL_DATA_SOURCE,
-          remoteDataSourceMock,
-        ),
-        item as GroupDialogEntity,
-      );
-
-    updateCurrentDialogInDataSourceUseCase.execute().catch((e) => {
-      console.log(
-        'Error updateCurrentDialogInDataSourceUseCase: ',
-        stringifyError(e),
-      );
-      throw new Error(stringifyError(e));
-    });
-  }
-
   return {
     get entity(): DialogEntity {
       return newDialog as DialogEntity;
     },
     set entity(item) {
-      setNewDialog(item);
-      informDataSources(item);
+      const updDialog = { ...item };
+
+      updDialog.unreadMessageCount = 0;
+      setNewDialog(updDialog);
+      informDataSources(updDialog);
     },
     dialogs,
     loading,

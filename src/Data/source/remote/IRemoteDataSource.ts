@@ -9,6 +9,7 @@ import { RemoteFileDTO } from '../../dto/file/RemoteFileDTO';
 import { Pagination } from '../../../Domain/repository/Pagination';
 import { CallBackFunction } from '../../../Domain/use_cases/base/IUseCase';
 import { NotificationTypes } from '../../../Domain/entity/NotificationTypes';
+import { QBUIKitConfig } from '../../../CommonTypes/CommonTypes';
 // todo list of all actions - for what we need to create tests
 /*
  0!!! не реализованы эксепшены для createDialog RemouteDataSource и
@@ -111,7 +112,7 @@ export interface IRemoteDataSource extends IRemoteMessaging<RemoteMessageDTO> {
 
   subscribeToChatConnectionEvents(fileId: string): Promise<void>;
 
-  updateCurrentDialog(dto: RemoteDialogDTO): void;
+  updateCurrentDialog(dto: RemoteDialogDTO, qbConfig: QBUIKitConfig): void;
 
   createAnswer(
     text: string,

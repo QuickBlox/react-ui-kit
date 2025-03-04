@@ -1,4 +1,3 @@
-import QB from 'quickblox/quickblox';
 import { IMapper } from './IMapper';
 import { DialogEntity } from '../../Domain/entity/DialogEntity';
 import { DialogType } from '../../Domain/entity/DialogTypes';
@@ -14,6 +13,7 @@ import {
   UNEXPECTED_MAPPER_DTO_EXCEPTION_EXCEPTION_CODE,
   UNEXPECTED_MAPPER_DTO_EXCEPTION_MESSAGE,
 } from '../source/exception/MapperDTOException';
+import { getQB } from '../../qb-api-calls';
 
 type DtoValidator<T> = {
   [key in keyof T]: (v: unknown) => v is T[key];
@@ -26,49 +26,57 @@ export class DialogRemoteDTOMapper implements IMapper {
 
     const dialogEntity: DialogEntity = this.defineType(entity);
 
-    DialogRemoteDTOMapper.validateEntity(dialogEntity);
+    try {
+      DialogRemoteDTOMapper.validateEntity(dialogEntity);
 
-    dialog.id = dialogEntity.id;
-    dialog.type = dialogEntity.type;
+      dialog.id = dialogEntity.id;
+      dialog.type = dialogEntity.type;
 
-    dialog.ownerId = dialogEntity.ownerId;
+      dialog.ownerId = dialogEntity.ownerId;
 
-    dialog.participantsIds =
-      DialogRemoteDTOMapper.getParticipantsIds(dialogEntity);
+      dialog.participantsIds =
+        DialogRemoteDTOMapper.getParticipantsIds(dialogEntity);
 
-    dialog.newParticipantsIds =
-      DialogRemoteDTOMapper.getNewParticipantsIds(dialogEntity);
+      dialog.newParticipantsIds =
+        DialogRemoteDTOMapper.getNewParticipantsIds(dialogEntity);
 
-    if (dialog.participantsIds.length > 0) {
-      dialog.participantId = dialog.participantsIds[0].toString();
-    } else {
-      dialog.participantId =
-        DialogRemoteDTOMapper.getParticipantId(dialogEntity);
+      if (dialog.participantsIds.length > 0) {
+        dialog.participantId = dialog.participantsIds[0].toString();
+      } else {
+        dialog.participantId =
+          DialogRemoteDTOMapper.getParticipantId(dialogEntity);
+      }
+
+      dialog.updatedAt = dialogEntity.updatedAt;
+
+      dialog.lastMessageText = dialogEntity.lastMessage.text;
+
+      dialog.lastMessageUserId = dialogEntity.lastMessage.userId;
+
+      dialog.lastMessageDateSent = dialogEntity.lastMessage.dateSent;
+
+      dialog.unreadMessageCount = dialogEntity.unreadMessageCount;
+
+      dialog.name = DialogRemoteDTOMapper.getDialogName(dialogEntity);
+
+      dialog.photo = DialogRemoteDTOMapper.getPhoto(dialogEntity) || '';
+    } catch (e) {
+      console.log('MAPPER ERROR for entity: ', JSON.stringify(entity));
     }
-
-    dialog.updatedAt = dialogEntity.updatedAt;
-
-    dialog.lastMessageText = dialogEntity.lastMessage.text;
-
-    dialog.lastMessageUserId = dialogEntity.lastMessage.userId;
-
-    dialog.lastMessageDateSent = dialogEntity.lastMessage.dateSent;
-
-    dialog.unreadMessageCount = dialogEntity.unreadMessageCount;
-
-    dialog.name = DialogRemoteDTOMapper.getDialogName(dialogEntity);
-
-    dialog.photo = DialogRemoteDTOMapper.getPhoto(dialogEntity) || '';
 
     return Promise.resolve(dialog as TResult);
   }
 
   // eslint-disable-next-line class-methods-use-this
   toEntity<TArg, TResult>(data: TArg): Promise<TResult> {
+    const QB = getQB();
     const dialog = data as unknown as RemoteDialogDTO;
 
-    DialogRemoteDTOMapper.validateRemoteDTO(dialog);
-
+    try {
+      DialogRemoteDTOMapper.validateRemoteDTO(dialog);
+    } catch (e) {
+      console.log('MAPPER ERROR for entity: ', JSON.stringify(dialog));
+    }
     let entity: DialogEntity = DialogRemoteDTOMapper.createDefaultDialogEntity(
       dialog.ownerId,
     );
@@ -86,67 +94,72 @@ export class DialogRemoteDTOMapper implements IMapper {
 
       return '';
     }
-    switch (dialog.type) {
-      case DialogType.private:
-        entity = new PrivateDialogEntity(
-          { todo: '' },
-          dialog.id,
-          dialog.name,
-          {
-            dateSent: dialog.lastMessageDateSent,
-            text: dialog.lastMessageText ? dialog.lastMessageText : '',
-            userId: dialog.lastMessageUserId,
-          },
-          dialog.ownerId,
-          dialog.type,
-          dialog.unreadMessageCount,
-          dialog.updatedAt,
-          parseInt(dialog.participantId, 10),
-        );
-        break;
-      case DialogType.public:
-        entity = new PublicDialogEntity(
-          { todo: '' },
-          dialog.id,
-          {
-            dateSent: dialog.lastMessageDateSent,
-            text: dialog.lastMessageText ? dialog.lastMessageText : '',
-            userId: dialog.lastMessageUserId,
-          },
-          dialog.ownerId,
-          dialog.type,
-          dialog.unreadMessageCount,
-          dialog.updatedAt,
-          dialog.name,
-          formatPhotoUrl(),
-        );
-        break;
-      case DialogType.group:
-        entity = new GroupDialogEntity(
-          { todo: '' },
-          dialog.id,
-          {
-            dateSent: dialog.lastMessageDateSent,
-            text: dialog.lastMessageText ? dialog.lastMessageText : '',
-            userId: dialog.lastMessageUserId,
-          },
-          dialog.ownerId,
-          dialog.type,
-          dialog.unreadMessageCount,
-          dialog.updatedAt,
-          dialog.participantsIds,
-          dialog.name,
-          formatPhotoUrl(),
-        );
-        break;
-      default:
-        return Promise.reject(
-          new MapperDTOException(
-            UNEXPECTED_MAPPER_DTO_EXCEPTION_MESSAGE,
-            UNEXPECTED_MAPPER_DTO_EXCEPTION_EXCEPTION_CODE,
-            'undefinded type dialog in DTO',
-          ),
-        );
+
+    try {
+      switch (dialog.type) {
+        case DialogType.private:
+          entity = new PrivateDialogEntity(
+            { todo: '' },
+            dialog.id,
+            dialog.name,
+            {
+              dateSent: dialog.lastMessageDateSent,
+              text: dialog.lastMessageText ? dialog.lastMessageText : '',
+              userId: dialog.lastMessageUserId,
+            },
+            dialog.ownerId,
+            dialog.type,
+            dialog.unreadMessageCount,
+            dialog.updatedAt,
+            parseInt(dialog.participantId, 10),
+          );
+          break;
+        case DialogType.public:
+          entity = new PublicDialogEntity(
+            { todo: '' },
+            dialog.id,
+            {
+              dateSent: dialog.lastMessageDateSent,
+              text: dialog.lastMessageText ? dialog.lastMessageText : '',
+              userId: dialog.lastMessageUserId,
+            },
+            dialog.ownerId,
+            dialog.type,
+            dialog.unreadMessageCount,
+            dialog.updatedAt,
+            dialog.name,
+            formatPhotoUrl(),
+          );
+          break;
+        case DialogType.group:
+          entity = new GroupDialogEntity(
+            { todo: '' },
+            dialog.id,
+            {
+              dateSent: dialog.lastMessageDateSent,
+              text: dialog.lastMessageText ? dialog.lastMessageText : '',
+              userId: dialog.lastMessageUserId,
+            },
+            dialog.ownerId,
+            dialog.type,
+            dialog.unreadMessageCount,
+            dialog.updatedAt,
+            dialog.participantsIds,
+            dialog.name,
+            formatPhotoUrl(),
+          );
+          break;
+        default:
+          return Promise.reject(
+            new MapperDTOException(
+              UNEXPECTED_MAPPER_DTO_EXCEPTION_MESSAGE,
+              UNEXPECTED_MAPPER_DTO_EXCEPTION_EXCEPTION_CODE,
+              'undefinded type dialog in DTO',
+            ),
+          );
+      }
+    } catch (e) {
+      console.log('MAPPER ERROR for entity: ', JSON.stringify(entity));
     }
 
     return Promise.resolve(entity as unknown as TResult);

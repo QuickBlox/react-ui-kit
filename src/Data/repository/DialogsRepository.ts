@@ -31,6 +31,7 @@ import {
 import { GroupDialogEntity } from '../../Domain/entity/GroupDialogEntity';
 import { stringifyError } from '../../utils/parse';
 import { RemoteUserDTO } from '../dto/user/RemoteUserDTO';
+import { QBUIKitConfig } from '../../CommonTypes/CommonTypes';
 
 export default class DialogsRepository implements IDialogsRepository {
   private localDataStorage: ILocalDataSource;
@@ -149,13 +150,14 @@ export default class DialogsRepository implements IDialogsRepository {
 
   async updateCurrentDialogInLocalDataSource(
     entity: DialogEntity,
+    qbConfig: QBUIKitConfig,
   ): Promise<DialogEntity> {
     try {
       const dto: RemoteDialogDTO = await this.dialogRemoteDTOMapper.fromEntity(
         entity,
       );
 
-      this.remoteDataSource.updateCurrentDialog(dto);
+      this.remoteDataSource.updateCurrentDialog(dto, qbConfig);
 
       return Promise.resolve(entity);
     } catch (e) {

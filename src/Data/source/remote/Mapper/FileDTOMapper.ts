@@ -1,7 +1,4 @@
-import QB, {
-  QBBlobCreate,
-  QBBlobCreateUploadParams,
-} from 'quickblox/quickblox';
+import { QBBlobCreate, QBBlobCreateUploadParams } from 'quickblox/quickblox';
 import { IDTOMapper } from './IDTOMapper';
 import { RemoteFileDTO } from '../../../dto/file/RemoteFileDTO';
 import {
@@ -9,6 +6,7 @@ import {
   INCORRECT_DATA_MAPPER_DTO_EXCEPTION_MESSAGE,
   MapperDTOException,
 } from '../../exception/MapperDTOException';
+import { getQB } from '../../../../qb-api-calls';
 
 type DtoValidator<T> = {
   [key in keyof T]: (v: unknown) => v is T[key];
@@ -35,6 +33,7 @@ export class FileDTOMapper implements IDTOMapper {
 
   // eslint-disable-next-line class-methods-use-this
   toTDO<TArg, TResult>(qbEntity: TArg): Promise<TResult> {
+    const QB = getQB();
     const qbFile: QBBlobCreate = qbEntity as unknown as QBBlobCreate;
 
     FileDTOMapper.validateQBFileDialog(qbFile);

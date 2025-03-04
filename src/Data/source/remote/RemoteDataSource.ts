@@ -1,4 +1,4 @@
-import QB, {
+import {
   ChatMessageAttachment,
   GetMessagesResult,
   GetUserParams,
@@ -63,6 +63,8 @@ import {
   QBUpdateDialog,
   QBUsersGet,
   QBUsersGetById,
+  setQB,
+  getQB,
 } from '../../../qb-api-calls';
 import { UserDTOMapper } from './Mapper/UserDTOMapper';
 import { MessageDTOMapper } from './Mapper/MessageDTOMapper';
@@ -84,6 +86,7 @@ import { QBConfig } from '../../../QBconfig';
 import {
   QBUIKitChatDialog,
   QBUIKitChatNewMessage,
+  QBUIKitConfig,
   QBUIKitSystemMessage,
 } from '../../../CommonTypes/CommonTypes';
 
@@ -115,6 +118,7 @@ export class RemoteDataSource implements IRemoteDataSource {
   private _authProcessed: boolean;
 
   get authProcessed(): boolean {
+    const QB = getQB();
     const auth = this._authProcessed;
     const chatConnection = QB && QB.chat && QB.chat.isConnected;
 
@@ -128,6 +132,7 @@ export class RemoteDataSource implements IRemoteDataSource {
   }
 
   get needInit(): boolean {
+    const QB = getQB();
     const needed = this._needInit;
     const chatConnection = QB && QB.chat && QB.chat.isConnected;
 
@@ -168,6 +173,17 @@ export class RemoteDataSource implements IRemoteDataSource {
   //
   constructor() {
     console.log('CONSTRUCTOR RemoteDataSourceMock');
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    console.log('QB inside RemoteDataSource:', window.QB);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (typeof window !== 'undefined' && window.QB) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      setQB(window.QB); // Устанавливаем ссылку на QuickBlox SDK
+    }
     this.userDTOMapper = new UserDTOMapper();
     this.messageDTOMapper = new MessageDTOMapper();
     this.fileDTOMapper = new FileDTOMapper();
@@ -201,20 +217,57 @@ export class RemoteDataSource implements IRemoteDataSource {
     return QBTranslate(smartChatAssistantId, text, languageCode);
   }
 
-  async updateCurrentDialog(dto: RemoteDialogDTO): Promise<void> {
+  // async updateCurrentDialog(dto: RemoteDialogDTO, qbConfig: QBUIKitConfig): Promise<void> {
+  //   this.currentDialog = dto;
+  //   //
+  //   //
+  //   const dialogsDTOtoEntityMapper: IMapper = new DialogRemoteDTOMapper();
+  //
+  //   const dialogEntity: DialogEntity = await dialogsDTOtoEntityMapper.toEntity(
+  //     this.currentDialog,
+  //   );
+  //   const userId = this._authInformation?.userId || -1;
+  //   const dialogId = this.currentDialog.id;
+  //   const messageId = this.currentDialog.lastMessageId;
+  //   //
+  //   //
+  //   const resultMessage: DialogEventInfo = {
+  //     eventMessageType: EventMessageType.LocalMessage,
+  //     dialogInfo: dialogEntity,
+  //     messageInfo: undefined,
+  //     messageStatus: {
+  //       isTyping: false,
+  //       userId,
+  //       dialogId,
+  //       messageId,
+  //       deliveryStatus: 'delivered',
+  //     },
+  //     notificationTypes: undefined,
+  //   };
+  //
+  //   this.subscriptionOnMessageStatus.informSubscribers(
+  //     resultMessage,
+  //     EventMessageType.LocalMessage,
+  //   );
+  //   //
+  //
+  //   //
+  // }
+  async updateCurrentDialog(
+    dto: RemoteDialogDTO,
+    qbConfig: QBUIKitConfig,
+  ): Promise<void> {
     this.currentDialog = dto;
-    //
-    //
-    const dialogsDTOtoEntityMapper: IMapper = new DialogRemoteDTOMapper();
 
+    const dialogsDTOtoEntityMapper: IMapper = new DialogRemoteDTOMapper();
     const dialogEntity: DialogEntity = await dialogsDTOtoEntityMapper.toEntity(
       this.currentDialog,
     );
+
     const userId = this._authInformation?.userId || -1;
     const dialogId = this.currentDialog.id;
     const messageId = this.currentDialog.lastMessageId;
-    //
-    //
+
     const resultMessage: DialogEventInfo = {
       eventMessageType: EventMessageType.LocalMessage,
       dialogInfo: dialogEntity,
@@ -233,8 +286,58 @@ export class RemoteDataSource implements IRemoteDataSource {
       resultMessage,
       EventMessageType.LocalMessage,
     );
-    //
-    //
+
+    // Mark all messages in the dialog as read
+    await this.markAllMessagesAsRead(dialogId, qbConfig);
+  }
+
+  /**
+   * Marks all messages in the specified dialog as read.
+   * Uses the QuickBlox API endpoint provided in qbConfig, or defaults to api.quickblox.com.
+   */
+  // eslint-disable-next-line class-methods-use-this
+  private async markAllMessagesAsRead(
+    dialogId: string,
+    qbConfig: QBUIKitConfig,
+  ): Promise<void> {
+    try {
+      const apiEndpoint =
+        qbConfig.appConfig.endpoints.api || 'api.quickblox.com';
+      const qbToken = qbConfig.credentials.sessionToken;
+
+      if (!qbToken) {
+        console.warn(
+          'QuickBlox session token is missing. Cannot mark messages as read.',
+        );
+
+        return;
+      }
+
+      const response = await fetch(`https://${apiEndpoint}/chat/Message.json`, {
+        method: 'PUT',
+        headers: {
+          'QB-Token': qbToken,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chat_dialog_id: dialogId,
+          read: '1',
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to mark messages as read. HTTP status: ${response.status}`,
+        );
+      }
+
+      console.log(`All messages in dialog ${dialogId} marked as read.`);
+    } catch (error) {
+      console.error(
+        `Error marking messages as read in dialog ${dialogId}:`,
+        error,
+      );
+    }
   }
 
   public async setUpMockStorage(): Promise<void> {
@@ -285,6 +388,7 @@ export class RemoteDataSource implements IRemoteDataSource {
         accountKey: sdkParams.accountKey,
         config: sdkParams.config,
       });
+      const QB = getQB();
       const QuickBloxVersion = `CALL initData: Init SDK was success: version ${QB.version} build ${QB.buildNumber}`;
 
       console.log(QuickBloxVersion);
@@ -307,6 +411,7 @@ export class RemoteDataSource implements IRemoteDataSource {
         accountKey: sdkParams.accountKey,
         config: sdkParams.config,
       });
+      const QB = getQB();
       const QuickBloxVersion = `CALL initData: Init SDK was success: version ${QB.version} build ${QB.buildNumber}`;
 
       console.log(QuickBloxVersion);
@@ -412,6 +517,19 @@ export class RemoteDataSource implements IRemoteDataSource {
 
   public initEventsHandlers() {
     console.log('CALL--initEventsHandlers--CALL');
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    console.log('QB inside library:', window.QB);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (typeof window !== 'undefined' && window.QB) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      setQB(window.QB); // Устанавливаем ссылку на QuickBlox SDK
+    }
+    const QB = getQB();
+
     QB.chat.onSystemMessageListener = (message: QBUIKitSystemMessage) => {
       console.log(`EVENT: receive system message: ${JSON.stringify(message)}`);
       const resultMessage = new RemoteMessageDTO();
@@ -696,6 +814,8 @@ export class RemoteDataSource implements IRemoteDataSource {
 
   // eslint-disable-next-line class-methods-use-this
   public releaseEventsHandlers() {
+    const QB = getQB();
+
     QB.chat.onSessionExpiredListener = undefined;
     QB.chat.onReconnectListener = undefined;
     QB.chat.onDisconnectedListener = undefined;
@@ -1275,7 +1395,7 @@ export class RemoteDataSource implements IRemoteDataSource {
   async sendMessage(dto: RemoteMessageDTO): Promise<RemoteMessageDTO> {
     console.log('call sendMessage');
     //
-
+    const QB = getQB();
     //
     const messageText = dto.message;
 

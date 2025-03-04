@@ -1,4 +1,4 @@
-import QB, { ChatMessageAttachment, QBChatMessage } from 'quickblox/quickblox';
+import { ChatMessageAttachment, QBChatMessage } from 'quickblox/quickblox';
 import { IDTOMapper } from './IDTOMapper';
 import { RemoteMessageDTO } from '../../../dto/message/RemoteMessageDTO';
 import {
@@ -7,6 +7,7 @@ import {
   MapperDTOException,
 } from '../../exception/MapperDTOException';
 import ChatMessageAttachmentEntity from '../../../../Domain/entity/ChatMessageAttachmentEntity';
+import { getQB } from '../../../../qb-api-calls';
 
 type DtoValidator<T> = {
   [key in keyof T]: (v: unknown) => v is T[key];
@@ -44,6 +45,7 @@ export class MessageDTOMapper implements IDTOMapper {
     qbAtts: ChatMessageAttachment[],
   ) {
     const result: ChatMessageAttachmentEntity[] = qbAtts.map((item) => {
+      const QB = getQB();
       const newItem: ChatMessageAttachmentEntity = {
         id: item.id,
         name: item.name,

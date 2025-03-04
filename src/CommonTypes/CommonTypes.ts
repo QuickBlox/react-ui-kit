@@ -8,6 +8,8 @@ import {
   QBCustomField,
 } from 'quickblox';
 import { Tone } from '../Presentation/Views/Dialog/AIWidgets/Tone';
+import { AIMessageWidget } from '../Presentation/Views/Dialog/AIWidgets/AIMessageWidget';
+import UiKitTheme from '../Presentation/themes/UiKitTheme';
 
 export type ProxyConfig = {
   api: string;
@@ -113,71 +115,6 @@ export interface QBUIKitSystemMessage extends QBSystemMessage {
   extension?: QBSystemMessageExtension | Dictionary<any> | undefined;
 }
 
-// type Primitive = string | number | boolean | undefined | null | Date | File;
-
-// type SetTails<T, R extends Primitive> = T extends Array<unknown>
-//   ? Array<T[number] extends Primitive ? R : SetTails<T[number], R>>
-//   : {
-//       [K in keyof T]: T[K] extends Primitive ? R : SetTails<T[K], R>;
-//     };
-
-// interface QBConfig {
-//   credentials: {
-//     appId: number;
-//     accountKey: string;
-//     authKey: string;
-//     authSecret: string;
-//     sessionToken: string; // ??? ui-kit
-//   };
-//   configAIApi: {
-//     // ui-kit
-//     AIAnswerAssistWidgetConfig: WidgetConfig;
-//     AITranslateWidgetConfig: AITranslateWidgetConfig;
-//     AIRephraseWidgetConfig: AIRephraseWidgetConfig;
-//   };
-//   appConfig: {
-//     maxFileSize: number; // ui-kit
-//     sessionTimeOut: number; // ?? webRTc -> ui-kit
-//     chatProtocol: {
-//       active: number;
-//     };
-//     debug: boolean;
-//     enableForwarding: boolean; // ui-kit
-//     enableReplying: boolean; // ui-kit
-//     regexUserName?: string; // ui-kit
-//     endpoints: {
-//       api: string;
-//       chat: string;
-//     };
-//     // on: {
-//     //   sessionExpired: (handleResponse: any, retry: any) => Promise<void>;
-//     // };
-//     streamManagement: {
-//       enable: boolean;
-//     };
-//   };
-// }
-
-/*
-    * QuickBlox Types - start
-
- */
-
-// type Dictionary<T> = Record<string, T>;
-//
-// type RequiredProps<T, K extends keyof T> = T & Required<Pick<T, K>>;
-//
-// declare enum QBChatProtocol {
-//   BOSH = 1,
-//   WebSockets = 2,
-// }
-//
-// interface ICEServer {
-//   urls: string;
-//   username: string;
-//   credential: string;
-// }
-
 export enum QBChatDialogType {
   PUBLIC_GROUP = 1,
   GROUP = 2,
@@ -257,4 +194,21 @@ export interface QBUIKitChatNewMessage extends QBChatNewMessage {
     qb_original_messages?: string; // TODO: NED ADD TO TYPE
   };
   markable: 0 | 1;
+}
+
+export interface AIWidgetPlaceHolder {
+  enabled: boolean;
+  default: boolean;
+  AIWidget?: AIMessageWidget;
+}
+
+export interface QuickBloxUIKitProps {
+  AIRephrase?: AIWidgetPlaceHolder;
+  AITranslate?: AIWidgetPlaceHolder;
+  AIAssist?: AIWidgetPlaceHolder;
+  uikitHeightOffset?: string;
+}
+
+export interface QuickBloxUIKitDesktopLayoutProps extends QuickBloxUIKitProps {
+  theme?: UiKitTheme;
 }

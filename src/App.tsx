@@ -17,7 +17,16 @@ import useQbUIKitDataContext from './Presentation/providers/QuickBloxUIKitProvid
 import { QBConfig } from './QBconfig';
 
 function App() {
-  // const currentContext = React.useContext(qbDataContext);
+  if ((window as any).QB === undefined) {
+    if (QB !== undefined) {
+      (window as any).QB = QB;
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
+      const QBLib = require('quickblox/quickblox.min');
+
+      (window as any).QB = QBLib;
+    }
+  }
   const currentContext = useQbUIKitDataContext();
 
   const remoteDataSource: RemoteDataSource =

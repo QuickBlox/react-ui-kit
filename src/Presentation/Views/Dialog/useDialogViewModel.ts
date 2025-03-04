@@ -37,6 +37,7 @@ import { DefaultConfigurations } from '../../../Data/DefaultConfigurations';
 import { MessageDTOMapper } from '../../../Data/source/remote/Mapper/MessageDTOMapper';
 import { UpdateCurrentDialogInDataSourceUseCase } from '../../../Domain/use_cases/UpdateCurrentDialogInDataSourceUseCase';
 import { RemoteDataSource } from '../../../Data/source/remote/RemoteDataSource';
+import { QBUIKitConfig } from '../../../CommonTypes/CommonTypes';
 
 export default function useDialogViewModel(
   dialogType: DialogType,
@@ -55,7 +56,7 @@ export default function useDialogViewModel(
   const currentContext = useQbInitializedDataContext();
   const remoteDataSourceMock: RemoteDataSource =
     currentContext.storage.REMOTE_DATA_SOURCE;
-  const QBConfig =
+  const QBConfig: QBUIKitConfig =
     currentContext.InitParams.qbConfig ||
     DefaultConfigurations.getDefaultQBConfig();
   const { regexUserName } = QBConfig.appConfig;
@@ -68,11 +69,59 @@ export default function useDialogViewModel(
 
   const [typingText, setTypingText] = useState<string>('');
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
+  function informDataSources(item: DialogEntity) {
+    const updateCurrentDialogInDataSourceUseCase: UpdateCurrentDialogInDataSourceUseCase =
+      new UpdateCurrentDialogInDataSourceUseCase(
+        new DialogsRepository(
+          currentContext.storage.LOCAL_DATA_SOURCE,
+          remoteDataSourceMock,
+        ),
+        item as GroupDialogEntity,
+        QBConfig,
+      );
+
+    updateCurrentDialogInDataSourceUseCase.execute().catch((e) => {
+      console.log(
+        'useDialogViewModel Error updateCurrentDialogInDataSourceUseCase: ',
+        stringifyError(e),
+      );
+      throw new Error(stringifyError(e));
+    });
+  }
+
+  const getSender = async (sender_id: number) => {
+    const getUser: GetUsersByIdsUseCase = new GetUsersByIdsUseCase(
+      new UsersRepository(
+        currentContext.storage.LOCAL_DATA_SOURCE,
+        currentContext.storage.REMOTE_DATA_SOURCE,
+      ),
+      [sender_id],
+    );
+
+    let userEntity: UserEntity | undefined;
+
+    await getUser
+      .execute()
+      // eslint-disable-next-line promise/always-return
+      .then((data) => {
+        // eslint-disable-next-line prefer-destructuring
+        userEntity = data[0];
+      })
+      .catch((e) => {
+        console.log('have ERROR get users :', JSON.stringify(e));
+      });
+
+    return userEntity;
+  };
+
   async function getMessages(currentPagination?: Pagination) {
     setLoading(true);
 
     let participants: Array<number> = [];
     let userDictionary: Record<number, UserEntity> = {};
+    let userMissingDictionary: Record<number, UserEntity> = {};
+    let messagesDialog: MessageEntity[] = [];
 
     if (dialog?.type === DialogType.group) {
       participants = (dialog as GroupDialogEntity).participantIds;
@@ -102,7 +151,6 @@ export default function useDialogViewModel(
           return obj;
         }, {});
 
-        setLoading(false);
         setError('');
       })
       .catch((e) => {
@@ -130,75 +178,84 @@ export default function useDialogViewModel(
           } messages:${JSON.stringify(data)}`,
         );
 
-        const ResultMessages = data.ResultData.map((message) => {
-          const obj = { ...message };
-
-          console.log('have sender id:', message.sender_id);
-
-          if (userDictionary) {
-            obj.sender = userDictionary[message.sender_id];
-            if (
-              obj.sender &&
-              obj.sender.full_name &&
-              regex &&
-              !regex.test(obj.sender.full_name)
-            ) {
-              obj.sender.full_name = 'Unknown';
-            }
-          }
-
-          return obj;
-        });
-
-        console.log(`result messages:${JSON.stringify(ResultMessages)}`);
-        // setMessages(ResultMessages);
-        setMessages((prevState) => {
-          const newItems: MessageEntity[] =
-            currentPagination === undefined ||
-            currentPagination?.getCurrentPage() === 0
-              ? [...ResultMessages]
-              : [...prevState, ...ResultMessages];
-
-          return newItems;
-        });
-        setLoading(false);
+        messagesDialog = data.ResultData;
         setPagination(data.CurrentPagination);
         setError('');
       })
       .catch((e) => {
-        console.log('have ERROR get users :', JSON.stringify(e));
+        console.log('have ERROR get messages :', JSON.stringify(e));
         setLoading(false);
         setError((e as unknown as Error).message);
       });
+
     //
 
-    console.log('EXECUTE USE CASE MessagesViewModelWithMockUseCase EXECUTED');
-  }
-
-  const getSender = async (sender_id: number) => {
-    const getUser: GetUsersByIdsUseCase = new GetUsersByIdsUseCase(
-      new UsersRepository(
-        currentContext.storage.LOCAL_DATA_SOURCE,
-        currentContext.storage.REMOTE_DATA_SOURCE,
-      ),
-      [sender_id],
+    const senderIds = Array.from(
+      new Set(messagesDialog.map((msg) => msg.sender_id)),
     );
+    const missingSenderIds = senderIds.filter((id) => !(id in userDictionary));
 
-    let userEntity: UserEntity | undefined;
+    const getMissingSenderUsersFromDialogByIdsUseCase: GetUsersByIdsUseCase =
+      new GetUsersByIdsUseCase(
+        new UsersRepository(LOCAL_DATA_SOURCE, REMOTE_DATA_SOURCE),
+        missingSenderIds,
+      );
 
-    await getUser
+    await getMissingSenderUsersFromDialogByIdsUseCase
       .execute()
       // eslint-disable-next-line promise/always-return
       .then((data) => {
-        // eslint-disable-next-line prefer-destructuring
-        userEntity = data[0];
+        userMissingDictionary = data.reduce((acc, item) => {
+          const obj = acc;
+
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          acc[item.id] = item;
+
+          return obj;
+        }, {});
+
+        setError('');
       })
       .catch((e) => {
-        console.log('have ERROR get users :', JSON.stringify(e));
+        console.log('have ERROR get missing users :', JSON.stringify(e));
+        setLoading(false);
+        setError((e as unknown as Error).message);
       });
 
-    return userEntity;
-  };
+    userDictionary = { ...userDictionary, ...userMissingDictionary };
+
+    const ResultMessages = messagesDialog.map((message) => {
+      const obj = { ...message };
+
+      if (userDictionary) {
+        obj.sender = userDictionary[message.sender_id];
+        if (
+          obj.sender &&
+          obj.sender.full_name &&
+          regex &&
+          !regex.test(obj.sender.full_name)
+        ) {
+          obj.sender.full_name = 'Unknown';
+        }
+      }
+
+      return obj;
+    });
+
+    console.log(`result messages:${JSON.stringify(ResultMessages)}`);
+    setMessages((prevState) => {
+      const newItems: MessageEntity[] =
+        currentPagination === undefined ||
+        currentPagination?.getCurrentPage() === 0
+          ? [...ResultMessages]
+          : [...prevState, ...ResultMessages];
+
+      return newItems;
+    });
+    setLoading(false);
+    console.log('EXECUTE USE CASE MessagesViewModelWithMockUseCase EXECUTED');
+  }
 
   const dialogUpdateHandler = (dialogInfo: DialogEventInfo) => {
     console.log('call dialogUpdateHandler in useDialogViewModel');
@@ -385,26 +442,6 @@ export default function useDialogViewModel(
     return Promise.resolve(resultEnity);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/no-empty-function
-  function informDataSources(item: DialogEntity) {
-    const updateCurrentDialogInDataSourceUseCase: UpdateCurrentDialogInDataSourceUseCase =
-      new UpdateCurrentDialogInDataSourceUseCase(
-        new DialogsRepository(
-          currentContext.storage.LOCAL_DATA_SOURCE,
-          remoteDataSourceMock,
-        ),
-        item as GroupDialogEntity,
-      );
-
-    updateCurrentDialogInDataSourceUseCase.execute().catch((e) => {
-      console.log(
-        'useDialogViewModel Error updateCurrentDialogInDataSourceUseCase: ',
-        stringifyError(e),
-      );
-      throw new Error(stringifyError(e));
-    });
-  }
-
   const sendMessage = (messageToSend: MessageEntity) => {
     const sendTextMessageUseCase: SendTextMessageUseCase =
       new SendTextMessageUseCase(
@@ -431,7 +468,10 @@ export default function useDialogViewModel(
 
               return newState;
             });
-            if (dialog?.type === DialogType.private) {
+            if (
+              dialog?.type === DialogType.private ||
+              dialog?.type === DialogType.group
+            ) {
               const updDialog = { ...dialog };
 
               updDialog.lastMessage.dateSent = messageEntity.date_sent / 1000;

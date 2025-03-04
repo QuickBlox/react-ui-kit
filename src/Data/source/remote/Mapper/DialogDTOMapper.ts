@@ -28,8 +28,11 @@ export class DialogDTOMapper implements IDTOMapper {
   fromDTO<TArg, TResult>(dto: TArg): Promise<TResult> {
     const dialogDTO: RemoteDialogDTO = dto as unknown as RemoteDialogDTO;
 
-    DialogDTOMapper.validateDTO(dialogDTO);
-
+    try {
+      DialogDTOMapper.validateDTO(dialogDTO);
+    } catch (e) {
+      console.log('MAPPER DTO ERROR for dto: ', JSON.stringify(dialogDTO));
+    }
     const dialog: QBUIKitChatDialog = {
       _id: dialogDTO.id,
       created_at: '',
@@ -60,113 +63,120 @@ export class DialogDTOMapper implements IDTOMapper {
     const qbDialog: QBUIKitChatDialog =
       qbEntity as unknown as QBUIKitChatDialog;
 
-    DialogDTOMapper.validateQBChatDialog(qbDialog);
-
+    try {
+      DialogDTOMapper.validateQBChatDialog(qbDialog);
+    } catch (e) {
+      console.log('MAPPER DTO ERROR for qbDialog: ', JSON.stringify(qbDialog));
+    }
     const dto: RemoteDialogDTO = new RemoteDialogDTO();
 
-    dto.id = qbDialog._id;
-    dto.lastMessageId = qbDialog.last_message_id || '';
-    dto.lastMessageText = qbDialog.last_message as string;
-    dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
-    dto.lastMessageUserId =
-      qbDialog.last_message_user_id === null
-        ? 0
-        : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-          qbDialog.last_message_user_id;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    dto.ownerId = qbDialog.user_id.toString();
-    dto.type = qbDialog.type as number;
-    dto.unreadMessageCount =
-      qbDialog.unread_messages_count === null
-        ? 0
-        : qbDialog.unread_messages_count;
-    dto.updatedAt = qbDialog.updated_at;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    dto.participantId = qbDialog.user_id.toString();
-    dto.name = qbDialog.name;
-    dto.photo = qbDialog.photo === null ? '' : qbDialog.photo;
-    dto.participantsIds = qbDialog.occupants_ids;
-    dto.newParticipantsIds = qbDialog.new_occupants_ids;
-
-    switch (qbDialog.type) {
-      case DialogType.private:
-        // eslint-disable-next-line no-case-declarations
-        const interlocutorId = dto.participantsIds.find(
-          (p) => p !== this.currentUserId,
-        ); // ;
-
-        dto.participantId = interlocutorId
-          ? interlocutorId.toString()
+    try {
+      dto.id = qbDialog._id;
+      dto.lastMessageId = qbDialog.last_message_id || '';
+      dto.lastMessageText = qbDialog.last_message as string;
+      dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
+      dto.lastMessageUserId =
+        qbDialog.last_message_user_id === null
+          ? 0
           : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            qbDialog.user_id.toString();
-        dto.id = qbDialog._id;
-        dto.lastMessageText = qbDialog.last_message as string;
-        dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
-        dto.lastMessageUserId =
-          qbDialog.last_message_user_id === null
-            ? 0
+            qbDialog.last_message_user_id;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      dto.ownerId = qbDialog.user_id.toString();
+      dto.type = qbDialog.type as number;
+      dto.unreadMessageCount =
+        qbDialog.unread_messages_count === null
+          ? 0
+          : qbDialog.unread_messages_count;
+      dto.updatedAt = qbDialog.updated_at;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      dto.participantId = qbDialog.user_id.toString();
+      dto.name = qbDialog.name;
+      dto.photo = qbDialog.photo === null ? '' : qbDialog.photo;
+      dto.participantsIds = qbDialog.occupants_ids;
+      dto.newParticipantsIds = qbDialog.new_occupants_ids;
+
+      switch (qbDialog.type) {
+        case DialogType.private:
+          // eslint-disable-next-line no-case-declarations
+          const interlocutorId = dto.participantsIds.find(
+            (p) => p !== this.currentUserId,
+          ); // ;
+
+          dto.participantId = interlocutorId
+            ? interlocutorId.toString()
             : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-              qbDialog.last_message_user_id;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        dto.ownerId = qbDialog.user_id.toString();
-        dto.type = qbDialog.type;
-        dto.unreadMessageCount =
-          qbDialog.unread_messages_count === null
-            ? 0
-            : qbDialog.unread_messages_count;
-        dto.updatedAt = qbDialog.updated_at;
-        break;
-      case DialogType.public:
-        dto.id = qbDialog._id;
-        dto.lastMessageText = qbDialog.last_message as string;
-        dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
-        dto.lastMessageUserId =
-          qbDialog.last_message_user_id === null
-            ? 0
-            : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-              qbDialog.last_message_user_id;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        dto.ownerId = qbDialog.user_id.toString();
-        dto.type = qbDialog.type;
-        dto.unreadMessageCount =
-          qbDialog.unread_messages_count === null
-            ? 0
-            : qbDialog.unread_messages_count;
-        dto.updatedAt = qbDialog.updated_at;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        dto.participantId = qbDialog.user_id.toString();
-        dto.name = qbDialog.name;
-        dto.photo = qbDialog.photo === null ? '' : qbDialog.photo;
-        break;
-      case DialogType.group:
-        dto.id = qbDialog._id;
-        dto.lastMessageText = qbDialog.last_message as string;
-        dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
-        dto.lastMessageUserId =
-          qbDialog.last_message_user_id === null
-            ? 0
-            : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-              qbDialog.last_message_user_id;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        dto.ownerId = qbDialog.user_id.toString();
-        dto.type = qbDialog.type;
-        dto.unreadMessageCount =
-          qbDialog.unread_messages_count === null
-            ? 0
-            : qbDialog.unread_messages_count;
-        dto.updatedAt = qbDialog.updated_at;
-        dto.name = qbDialog.name;
-        dto.photo = qbDialog.photo === null ? '' : qbDialog.photo;
-        dto.participantsIds = qbDialog.occupants_ids;
-        break;
-      default:
-        return Promise.reject(
-          new MapperDTOException(
-            UNEXPECTED_MAPPER_DTO_EXCEPTION_MESSAGE,
-            UNEXPECTED_MAPPER_DTO_EXCEPTION_EXCEPTION_CODE,
-            'undefinded type dialog in QBChatDialog',
-          ),
-        );
+              qbDialog.user_id.toString();
+          dto.id = qbDialog._id;
+          dto.lastMessageText = qbDialog.last_message as string;
+          dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
+          dto.lastMessageUserId =
+            qbDialog.last_message_user_id === null
+              ? 0
+              : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                qbDialog.last_message_user_id;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+          dto.ownerId = qbDialog.user_id.toString();
+          dto.type = qbDialog.type;
+          dto.unreadMessageCount =
+            qbDialog.unread_messages_count === null
+              ? 0
+              : qbDialog.unread_messages_count;
+          dto.updatedAt = qbDialog.updated_at;
+          break;
+        case DialogType.public:
+          dto.id = qbDialog._id;
+          dto.lastMessageText = qbDialog.last_message as string;
+          dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
+          dto.lastMessageUserId =
+            qbDialog.last_message_user_id === null
+              ? 0
+              : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                qbDialog.last_message_user_id;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+          dto.ownerId = qbDialog.user_id.toString();
+          dto.type = qbDialog.type;
+          dto.unreadMessageCount =
+            qbDialog.unread_messages_count === null
+              ? 0
+              : qbDialog.unread_messages_count;
+          dto.updatedAt = qbDialog.updated_at;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+          dto.participantId = qbDialog.user_id.toString();
+          dto.name = qbDialog.name;
+          dto.photo = qbDialog.photo === null ? '' : qbDialog.photo;
+          break;
+        case DialogType.group:
+          dto.id = qbDialog._id;
+          dto.lastMessageText = qbDialog.last_message as string;
+          dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
+          dto.lastMessageUserId =
+            qbDialog.last_message_user_id === null
+              ? 0
+              : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                qbDialog.last_message_user_id;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+          dto.ownerId = qbDialog.user_id.toString();
+          dto.type = qbDialog.type;
+          dto.unreadMessageCount =
+            qbDialog.unread_messages_count === null
+              ? 0
+              : qbDialog.unread_messages_count;
+          dto.updatedAt = qbDialog.updated_at;
+          dto.name = qbDialog.name;
+          dto.photo = qbDialog.photo === null ? '' : qbDialog.photo;
+          dto.participantsIds = qbDialog.occupants_ids;
+          break;
+        default:
+          return Promise.reject(
+            new MapperDTOException(
+              UNEXPECTED_MAPPER_DTO_EXCEPTION_MESSAGE,
+              UNEXPECTED_MAPPER_DTO_EXCEPTION_EXCEPTION_CODE,
+              'undefinded type dialog in QBChatDialog',
+            ),
+          );
+      }
+    } catch (e) {
+      console.log('MAPPER DTO ERROR for dto: ', JSON.stringify(dto));
     }
 
     return Promise.resolve(dto as unknown as TResult);

@@ -1,13 +1,15 @@
-import QB from 'quickblox/quickblox';
 import { SubscriptionPerformer } from '../../Domain/use_cases/base/Subscribable/SubscriptionPerformer';
 import { stringifyError } from '../../utils/parse';
+import { getQB } from '../../qb-api-calls';
 
 export default class ConnectionRepository extends SubscriptionPerformer<boolean> {
-  private timerId: NodeJS.Timer | undefined;
+  // private timerId: NodeJS.Timer | undefined;
+  private timerId: ReturnType<typeof setTimeout> | undefined;
 
   private _needInit: boolean;
 
   get needInit(): boolean {
+    const QB = getQB();
     const chatConnection = QB && QB.chat && QB.chat.isConnected;
 
     if (chatConnection) return false;
@@ -22,6 +24,7 @@ export default class ConnectionRepository extends SubscriptionPerformer<boolean>
   private chatConnectedStatus = false;
 
   public isChatConnected(): boolean {
+    const QB = getQB();
     const chatConnection = QB && QB.chat && QB.chat.isConnected;
 
     if (chatConnection) return true;
@@ -103,6 +106,8 @@ export default class ConnectionRepository extends SubscriptionPerformer<boolean>
   protected async ChatServerPing(): Promise<boolean> {
     const pingChat = (): Promise<string> => {
       return new Promise<string>((resolve, reject) => {
+        const QB = getQB();
+
         try {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           QB.chat.pingchat((error) => {

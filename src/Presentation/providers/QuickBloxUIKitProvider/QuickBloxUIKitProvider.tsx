@@ -16,6 +16,7 @@ import EventMessagesRepository from '../../../Data/repository/EventMessagesRepos
 import { CallBackFunction } from '../../../Domain/use_cases/base/IUseCase';
 import { DefaultConfigurations } from '../../../Data/DefaultConfigurations';
 import { QBUIKitConfig } from '../../../CommonTypes/CommonTypes';
+import { getQB, setQB } from '../../../qb-api-calls';
 
 const initialValues = {
   LOCAL_DATA_SOURCE: new LocalDataSource(), // localstorage or session storage
@@ -144,6 +145,18 @@ const initDataContext: QBDataContextType = {
   },
   authorize: async (authorizationData: AuthorizationData): Promise<void> => {
     console.log('UI Kit authorize');
+    console.log('QB inside library:', getQB());
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    console.log('QB inside authorize:', window.QB);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    if (typeof window !== 'undefined' && window.QB) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      setQB(window.QB);
+    }
     initialValues.REMOTE_DATA_SOURCE.authInformation = authorizationData;
     initialValues.REMOTE_DATA_SOURCE.setAuthProcessedSuccessed();
     //

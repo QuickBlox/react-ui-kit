@@ -204,8 +204,17 @@ export default class UsersRepository {
         let dto: RemoteUserDTO = new RemoteUserDTO();
 
         dto.id = usersIds[i]?.toString() || '-1';
-        // eslint-disable-next-line no-await-in-loop
-        dto = await this.remoteDataSource.getUser(dto);
+
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          dto = await this.remoteDataSource.getUser(dto);
+        } catch (e) {
+          dto.name = 'Unknown';
+          dto.login = dto.name;
+          dto.full_name = dto.name;
+          dto.email = dto.name;
+        }
+
         arrayUserDTO.push(dto);
       }
       const users: Array<UserEntity> = new Array<UserEntity>();

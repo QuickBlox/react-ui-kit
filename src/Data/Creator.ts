@@ -1,9 +1,9 @@
-import QB from 'quickblox/quickblox';
 import ChatMessageAttachmentEntity from '../Domain/entity/ChatMessageAttachmentEntity';
 import { DialogType } from '../Domain/entity/DialogTypes';
 import { MessageEntity } from '../Domain/entity/MessageEntity';
 import { FileEntity } from '../Domain/entity/FileEntity';
 import { FileType } from '../Domain/entity/FileTypes';
+import { getQB } from '../qb-api-calls';
 
 export type MessageEntityParams = {
   id?: string;
@@ -24,6 +24,7 @@ export type MessageEntityParams = {
 
 export class Creator {
   public static createPhotoByBlob = async (blob_id: number | string | null) => {
+    const QB = getQB();
     const fileId = (blob_id as number) || 0;
 
     const file_uid: string = await Creator.getInfoPromise(fileId);
@@ -63,6 +64,8 @@ export class Creator {
 
   private static async getInfoPromise(fileId: number): Promise<string> {
     return new Promise((resolve, reject) => {
+      const QB = getQB();
+
       QB.content.getInfo(fileId, function (error, result) {
         if (error) {
           reject(error);

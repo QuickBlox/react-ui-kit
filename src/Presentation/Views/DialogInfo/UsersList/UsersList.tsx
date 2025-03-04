@@ -56,7 +56,7 @@ const UsersList: React.FC<UsersListProps> = ({
       data={usersToView}
       renderItem={(user) => (
         <UserListItem
-          userName={user.full_name}
+          userName={user.full_name || user.login || user.email || ''}
           avatarUrl={user.photo!}
           key={user.id}
         />

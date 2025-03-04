@@ -25,7 +25,9 @@
     height: 24px;
 
     &--color{
-      fill: var(--main-elements)
+      fill: var(--main-elements);
+      width: 24px;
+      height: 24px;
     }
   }
 }

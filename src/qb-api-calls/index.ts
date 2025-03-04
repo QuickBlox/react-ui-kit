@@ -37,7 +37,25 @@ export type QBInitParams = {
   config?: QBUIKitConfig;
 };
 
+// eslint-disable-next-line import/no-mutable-exports
+export let qbSDK: typeof QB | undefined;
+
+export function setQB(sdk: typeof QB) {
+  qbSDK = sdk;
+}
+
+export function getQB(): typeof QB {
+  if (!qbSDK) {
+    qbSDK = QB;
+  }
+
+  return qbSDK;
+}
+
 export function QBInit(params: QBInitParams) {
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  const QB = getQB();
+
   QB.init(
     params.appIdOrToken,
     params.authKeyOrAppId,
@@ -49,6 +67,9 @@ export function QBInit(params: QBInitParams) {
 
 export function QBCreateSession(params?: QBLoginParams) {
   return new Promise<QBSession>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     if (!params) {
       QB.createSession((sessionError, session) => {
         if (sessionError) {
@@ -70,6 +91,9 @@ export function QBCreateSession(params?: QBLoginParams) {
 
 export function QBGetSession() {
   return new Promise<QBSession>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.getSession((getSessionError, response) => {
       if (getSessionError || !response?.session) {
         reject(
@@ -84,6 +108,9 @@ export function QBGetSession() {
 
 export function loginToQuickBlox(params: QBLoginParams) {
   return new Promise<QBUser>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.login(params, (loginError, user) => {
       if (loginError) {
         reject(stringifyError(loginError));
@@ -108,12 +135,18 @@ export function QBLogin(params: QBLoginParams) {
 
 export function QBLogout() {
   return new Promise((resolve) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.destroySession(resolve);
   });
 }
 
 export function QBChatConnect(params: ChatConnectParams) {
   return new Promise((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.chat.connect(params, (error, success) => {
       if (error) {
         reject(stringifyError(error));
@@ -125,11 +158,17 @@ export function QBChatConnect(params: ChatConnectParams) {
 }
 
 export function QBChatDisconnect() {
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  const QB = getQB();
+
   QB.chat.disconnect();
 }
 
 export function registrationAccount(params: QBUserCreateParams) {
   return new Promise<QBUser>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.users.create(params, (error, createdUser) => {
       if (error) {
         reject(stringifyError(error));
@@ -154,6 +193,9 @@ export function QBUserCreate(params: QBUserCreateParams) {
 
 export function QBUserUpdate(userId: QBUser['id'], user: Partial<QBUser>) {
   return new Promise<QBUser>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.users.update(userId, user, (error, updatedUser) => {
       if (error) {
         reject(stringifyError(error));
@@ -167,6 +209,9 @@ export function QBUserUpdate(userId: QBUser['id'], user: Partial<QBUser>) {
 export function QBUserGet(params: GetUserParams | number) {
   if (typeof params === 'number') {
     return new Promise<QBUser | undefined>((resolve, reject) => {
+      // eslint-disable-next-line @typescript-eslint/no-shadow
+      const QB = getQB();
+
       QB.users.get(params, (error, result) => {
         if (error) {
           reject(error);
@@ -178,6 +223,9 @@ export function QBUserGet(params: GetUserParams | number) {
   }
 
   return new Promise<ListUserResponse>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.users.get(params, (error, result) => {
       if (error) {
         reject(error);
@@ -190,6 +238,9 @@ export function QBUserGet(params: GetUserParams | number) {
 //
 export function QBUsersGet(params: GetUserParams) {
   return new Promise<ListUserResponse>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.users.get(params, (error, result) => {
       if (error) {
         reject(error);
@@ -201,6 +252,9 @@ export function QBUsersGet(params: GetUserParams) {
 }
 export function QBUsersGetById(params: number) {
   return new Promise<QBUser | undefined>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.users.get(params, (error, result) => {
       if (error) {
         reject(error);
@@ -214,6 +268,9 @@ export function QBUsersGetById(params: number) {
 //
 export function QBUserList(params: ListUserParams) {
   return new Promise<ListUserResponse | undefined>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.users.listUsers(params, (error, response) => {
       if (error) {
         reject(stringifyError(error));
@@ -234,6 +291,9 @@ export function QBDataGet<T extends QBCustomObject>(
     limit: number;
     skip: number;
   }>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.data.list<T>(className, filters, (error, result) => {
       if (error) {
         reject(stringifyError(error));
@@ -249,6 +309,9 @@ export function QBDataCreate<T extends QBCustomObject>(
   data: Dictionary<unknown>,
 ) {
   return new Promise<T>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.data.create<T>(className, data, (error, customObject) => {
       if (error) {
         reject(stringifyError(error));
@@ -264,6 +327,9 @@ export function QBDataDelete(
   ids: QBCustomObject['_id'] | Array<QBCustomObject['_id']>,
 ) {
   return new Promise<QBDataDeletedResponse>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.data.delete(className, ids, (error, customObject) => {
       if (error) {
         reject(stringifyError(error));
@@ -280,6 +346,9 @@ export function QBDataUpdate<T extends QBCustomObject>(
   data: Dictionary<unknown>,
 ) {
   return new Promise<T>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.data.update<T>(className, { _id, ...data }, (error, item) => {
       if (error) {
         reject(stringifyError(error));
@@ -293,6 +362,9 @@ export function QBDataUpdate<T extends QBCustomObject>(
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function QBGetDialogs(filters: Dictionary<any>) {
   return new Promise<QBGetDialogResult | undefined>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.chat.dialog.list(filters, (error, result) => {
       if (error) {
         reject(stringifyError(error));
@@ -305,6 +377,9 @@ export function QBGetDialogs(filters: Dictionary<any>) {
 
 export function QBGetDialogById(id: string) {
   return new Promise<QBGetDialogResult | undefined>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.chat.dialog.list({ _id: id }, (error, result) => {
       if (error) {
         reject(stringifyError(error));
@@ -327,6 +402,9 @@ export function QBCreatePrivateDialog(
   );
 
   return new Promise<QBUIKitChatDialog>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.chat.dialog.create(
       { name: dialogName || '-', occupants_ids: [userId], type: 3, data },
       (error, chat) => {
@@ -368,6 +446,9 @@ export function QBCreateGroupDialog(
   }
 
   return new Promise<QBUIKitChatDialog>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.chat.dialog.create(
       // {
       //   name: dialogName || '-',
@@ -392,6 +473,9 @@ export function QBUpdateDialog(
   data: Dictionary<unknown>,
 ) {
   return new Promise<QBUIKitChatDialog>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.chat.dialog.update(dialogId, data, (error, chat) => {
       if (error) {
         reject(stringifyError(error));
@@ -404,6 +488,8 @@ export function QBUpdateDialog(
 
 export function QBJoinGroupDialog(dialogId: QBUIKitChatDialog['_id']) {
   return new Promise((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
     const dialogJid = QB.chat.helpers.getRoomJidFromDialogId(dialogId);
 
     QB.chat.muc.join(dialogJid, (error, res) => {
@@ -418,6 +504,9 @@ export function QBJoinGroupDialog(dialogId: QBUIKitChatDialog['_id']) {
 
 export function QBDeleteDialog(dialogIds: Array<QBUIKitChatDialog['_id']>) {
   return new Promise<void>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.chat.dialog.delete(dialogIds, (error) => {
       if (error) {
         reject(stringifyError(error));
@@ -430,6 +519,8 @@ export function QBDeleteDialog(dialogIds: Array<QBUIKitChatDialog['_id']>) {
 
 export function QBLeaveDialog(dialogId: QBUIKitChatDialog['_id']) {
   return new Promise((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
     const dialogJid = QB.chat.helpers.getRoomJidFromDialogId(dialogId);
 
     QB.chat.muc.leave(dialogJid, (error, res) => {
@@ -444,6 +535,9 @@ export function QBLeaveDialog(dialogId: QBUIKitChatDialog['_id']) {
 
 export function QBGetInfoFile(fileId: QBBlob['id']) {
   return new Promise((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.content.getInfo(fileId, (error, response) => {
       if (error) {
         reject(stringifyError(error));
@@ -456,6 +550,9 @@ export function QBGetInfoFile(fileId: QBBlob['id']) {
 
 export function QBDeleteContent(contentId: QBBlob['id']) {
   return new Promise((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.content.delete(contentId, (error, response) => {
       if (error) {
         reject(stringifyError(error));
@@ -470,6 +567,9 @@ export function QBCreateAndUploadContent(
   paramContent: QBBlobCreateUploadParams,
 ) {
   return new Promise((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.content.createAndUpload(paramContent, (error, response) => {
       if (error) {
         reject(stringifyError(error));
@@ -526,6 +626,9 @@ export function qbChatGetMessagesExtended(
   }> = {},
 ): Promise<GetMessagesResult> {
   return new Promise<GetMessagesResult>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     QB.chat.message.list(
       {
         chat_dialog_id: dialogId,
@@ -547,6 +650,8 @@ export function QBSendIsTypingStatus(
   dialog: QBUIKitChatDialog,
   senderId: QBUser['id'],
 ) {
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  const QB = getQB();
   const isPrivate: QBChatDialogType = 3;
   const jidOrUserid =
     dialog.type === isPrivate
@@ -565,6 +670,8 @@ export function QBSendIsStopTypingStatus(
   dialog: QBUIKitChatDialog,
   senderId: QBUser['id'],
 ) {
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  const QB = getQB();
   const isPrivate: QBChatDialogType = 3;
   const jidOrUserid =
     dialog.type === isPrivate
@@ -586,6 +693,9 @@ export function QBChatSendMessage(
   message: QBUIKitChatNewMessage,
 ) {
   return new Promise<QBChatMessage['_id']>((resolve) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     resolve(QB.chat.send(to, message));
   });
 }
@@ -595,15 +705,24 @@ export function QBChatSendSystemMessage(
   message: { extension: QBSystemMessage['extension'] },
 ) {
   return new Promise<QBSystemMessage['id']>((resolve) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     resolve(QB.chat.sendSystemMessage(to, message));
   });
 }
 
 export function QBChatMarkMessageRead(params: QBMessageStatusParams) {
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  const QB = getQB();
+
   QB.chat.sendReadStatus(params);
 }
 
 export function QBChatMarkMessageDelivered(params: QBMessageStatusParams) {
+  // eslint-disable-next-line @typescript-eslint/no-shadow
+  const QB = getQB();
+
   QB.chat.sendDeliveredStatus(params);
 }
 
@@ -631,6 +750,9 @@ export function QBAnswerAssist(
   history: AIChatHistory,
 ) {
   return new Promise<AIAnswerResponse>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     QB.ai.answerAssist(
       smartChatAssistantId,
@@ -653,6 +775,9 @@ export function QBTranslate(
   languageCode: string,
 ) {
   return new Promise<AIAnswerResponse>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     QB.ai.translate(
       smartChatAssistantId,

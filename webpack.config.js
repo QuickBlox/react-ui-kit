@@ -15,6 +15,10 @@ module.exports = {
     },
     resolve: {
         extensions: ['.ts', '.tsx'],
+        alias: {
+            './errors': path.resolve(__dirname, 'node_modules/media-recorder-js/src/errors.js'),
+            './mimeTypes': path.resolve(__dirname, 'node_modules/media-recorder-js/src/mimeTypes.js'),
+        },
     },
     externals: {
         "react": "react",
@@ -29,7 +33,16 @@ module.exports = {
                     // Creates style nodes from JS strings
                     'style-loader',
                     // Translates CSS into CommonJS
-                    'css-loader'
+                    'css-loader',
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            implementation: require('sass'),
+                            sassOptions: {
+                                quietDeps: true, // Отключает устаревшие предупреждения
+                            },
+                        },
+                    },
                 ],
             },
             {

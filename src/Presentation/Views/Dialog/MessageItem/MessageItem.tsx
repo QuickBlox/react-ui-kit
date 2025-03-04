@@ -346,7 +346,7 @@ export default function MessageItem({
             }
           >
             {message.attachments && message.attachments.length > 0 ? (
-              <div>
+              <>
                 {message.attachments.map((attachment) => {
                   return (
                     <AttachmentBubble
@@ -355,7 +355,7 @@ export default function MessageItem({
                     />
                   );
                 })}
-              </div>
+              </>
             ) : (
               <TextBubble
                 text={

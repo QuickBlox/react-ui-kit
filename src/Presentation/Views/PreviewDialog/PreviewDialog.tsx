@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import React, { useEffect } from 'react';
-import QB from 'quickblox/quickblox';
 import './PreviewDialog.scss';
 import { DialogType } from '../../../Domain/entity/DialogTypes';
 import PreviewDialogViewModel from './PreviewDialogViewModel';
@@ -17,6 +16,7 @@ import DialogItemPreview from '../../ui-components/DialogItemPreview/DialogItemP
 import Dropdown from '../../ui-components/Dropdown/Dropdown';
 import { GroupChatSvg, MoreSvg, PublicChannelSvg, UserSvg } from '../../icons';
 import Avatar from '../../ui-components/Avatar/Avatar';
+import { getQB } from '../../../qb-api-calls';
 
 export type ThemeNames = 'light' | 'dark' | 'custom';
 type PreviewDialogsColorTheme = {
@@ -171,6 +171,7 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
 
   async function getFileForPreview() {
     const messageParts = getMessageParts(previewMessage || '');
+    const QB = getQB();
 
     setMessageContentParts(messageParts);
 
