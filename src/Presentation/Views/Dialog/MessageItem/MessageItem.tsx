@@ -1,4 +1,4 @@
-import React, { RefObject, useReducer } from 'react';
+import React, { ReactElement, RefObject, useReducer } from 'react';
 import { MessageEntity } from '../../../../Domain/entity/MessageEntity';
 import { getTimeShort24hFormat } from '../../../../utils/DateTimeFormatter';
 import Message from '../../../ui-components/Message/Message';
@@ -33,6 +33,7 @@ export type MessageItemProps = {
   messagesToView: MessageEntity[];
   onError: (messageError: string) => void;
   disableAction?: boolean;
+  avatar?: ReactElement;
 };
 
 interface MessageStates {
@@ -81,6 +82,7 @@ export default function MessageItem({
   languagesForAITranslate,
   onError,
   disableAction = false,
+  avatar,
 }: MessageItemProps) {
   const messageStates: Record<string, MessageStates> = {};
 
@@ -198,6 +200,7 @@ export default function MessageItem({
               <Message
                 key={nestedMessage.id}
                 userName={senderName}
+                avatar={avatar}
                 status={getStatusMessage(nestedMessage)}
                 time={getTimeShort24hFormat(message.date_sent)}
                 type={currentMessageType}
@@ -297,6 +300,7 @@ export default function MessageItem({
           <Message
             key={message.id}
             avatar={
+              avatar ||
               <Avatar
                 src={message?.sender?.photo || ''}
                 icon={<UserSvg />}
