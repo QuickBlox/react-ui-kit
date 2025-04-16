@@ -36,7 +36,6 @@ export class LeaveDialogUseCase implements IUseCase<void, boolean> {
     leaveType: DialogLeaveTypeArcheType,
     textInformationMessage: string,
   ) {
-    console.log('CONSTRUCTOR LeaveDialogUseCase');
     this.eventMessagesRepository = eventMessagesRepository;
     this.dialogRepository = dialogRepository;
     this.dialogToLeave = dialog;

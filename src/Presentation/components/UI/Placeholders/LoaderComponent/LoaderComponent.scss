@@ -2,9 +2,7 @@ $default-background-color: var(--main-elements);
 $default-width-icon: 44;
 $default-height-icon: 44;
 
-// #Loader{fill: $default-background-color};
-
-.loader {
+.qb-loader {
   animation: spin 2s linear infinite;
   svg path {fill: $default-background-color};
   min-width: $default-width-icon;

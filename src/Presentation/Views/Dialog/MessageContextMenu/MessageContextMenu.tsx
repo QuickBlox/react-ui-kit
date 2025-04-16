@@ -1,7 +1,7 @@
 import Dropdown from '../../../ui-components/Dropdown/Dropdown';
 import { MessageEntity } from '../../../../Domain/entity/MessageEntity';
 import { FunctionTypeMessageEntityToVoid } from '../../../../CommonTypes/BaseViewModel';
-import { ReactComponent as MoreSvg } from '../../../icons/navigation/more.svg';
+import MoreSvg from '../../../icons/navigation/more.svg?react';
 import { Option } from '../../../ui-components/Dropdown/DropdownOption';
 import './MessageContextMenu.scss';
 
@@ -57,7 +57,7 @@ export default function MessageContextMenu({
   }
 
   return (
-    <div>
+    <>
       {enableForwarding || enableReplying ? (
         <Dropdown
           options={options}
@@ -73,6 +73,6 @@ export default function MessageContextMenu({
           <MoreSvg className="message-context-menu-actions__icon" />
         </div>
       )}
-    </div>
+    </>
   );
 }

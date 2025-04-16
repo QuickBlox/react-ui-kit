@@ -4,8 +4,6 @@ $error-container-error-action-color: var(--main-elements);
 $error-container-divider: var(--divider);
 
 .error-container-wrapper {
-  // padding-top: 9px;
-  // padding-bottom: 12px;
   border: 1px solid $error-container-divider;
 }
 
@@ -17,7 +15,6 @@ $error-container-divider: var(--divider);
   margin: 0 auto;
   justify-content: center;
   align-items: center;
-  // border: 1px solid green;
   gap: 16px;
   background-color: $error-container-background-color;
   &__error-icon {
@@ -35,7 +32,6 @@ $error-container-divider: var(--divider);
   }
   &__error-message {
     min-height: 24px;
-    font-family: 'Roboto';
     font-style: normal;
     font-weight: 400;
     font-size: 16px;
@@ -63,7 +59,6 @@ $error-container-divider: var(--divider);
     }
     &__refresh-text {
       color: $error-container-error-action-color;
-      font-family: 'Roboto';
       font-style: normal;
       font-weight: 700;
       font-size: 14px;

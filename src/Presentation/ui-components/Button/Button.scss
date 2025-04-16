@@ -1,6 +1,6 @@
-@import '../../themes/styles/mixins';
+@use '../../themes/styles/mixins' as *;
 
-.button {
+.qb-button {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -15,9 +15,8 @@
   order: 1;
   flex-grow: 0;
 
-  font-family: 'Roboto';
   font-style: normal;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 14px;
   line-height: 16px;
   letter-spacing: 0.4px;
@@ -28,7 +27,7 @@
   @include applyBorderBox;
 
   &--default {
-    color: var(--secondary-background);
+    color: var(--system);
     background-color: var(--main-elements);
 
     &:hover {
@@ -44,7 +43,7 @@
       color: var(--color-background-info);
     }
 
-    &.button--disabled {
+    &.qb-button--disabled {
       cursor: not-allowed;
       background-color: var(--disabled-elements);
       color: var(--secondary-text);
@@ -53,8 +52,8 @@
 
   &--outlined {
     background-color: inherit;
-    border: 1px solid var(--main-elements);
-    color: var(--main-elements);
+    border: 1px solid var(--main-text);
+    color: var(--main-text);
 
     &:hover {
       background-color: var(--outgoing-background);
@@ -69,7 +68,7 @@
       color: var(--main-elements);
     }
 
-    &.button--disabled {
+    &.qb-button--disabled {
       cursor: not-allowed;
       border: 1px solid var(--disabled-elements);
       color: var(--disabled-elements);
@@ -78,7 +77,7 @@
 
   &--danger {
     background-color: var(--error);
-    color: var(--secondary-background);
+    color: var(--system);
 
     &:focus {
       outline: 2px solid var(--error-secondary);
@@ -88,7 +87,7 @@
       color: var(--error-secondary);
     }
 
-    &.button--disabled {
+    &.qb-button--disabled {
       cursor: not-allowed;
       background-color: var(--disabled-elements);
       color: var(--secondary-text);
@@ -107,7 +106,7 @@
       color: var(--color-default-hover);
     }
 
-    &.button--disabled {
+    &.qb-button--disabled {
       cursor: not-allowed;
       color: var(--disabled-elements);
     }

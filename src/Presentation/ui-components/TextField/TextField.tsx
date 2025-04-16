@@ -1,9 +1,10 @@
-import {
+import React, {
   DetailedHTMLProps,
   ForwardedRef,
   InputHTMLAttributes,
   ReactElement,
   forwardRef,
+  JSX,
   useId,
 } from 'react';
 import cn from 'classnames';
@@ -26,8 +27,8 @@ interface TextFieldProps extends Omit<HTMLInputProps, 'onChange'> {
   onChange: (value: string) => void;
 }
 
-const TextField = forwardRef(
-  (
+const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
+  function TextField(
     {
       label,
       icon,
@@ -40,44 +41,44 @@ const TextField = forwardRef(
       ...inputProps
     }: TextFieldProps,
     ref: ForwardedRef<HTMLInputElement>,
-  ) => {
+  ): JSX.Element {
     const defaultId = useId();
 
     return (
       <div
         className={cn(
-          'text-field',
+          'qb-text-field',
           {
-            'text-field--disabled': disabled,
+            'qb-text-field--disabled': disabled,
           },
           className,
         )}
       >
         {label && (
-          <label htmlFor={id || defaultId} className="text-field__label">
+          <label htmlFor={id || defaultId} className="qb-text-field__label">
             {label}
           </label>
         )}
 
-        <div className="text-field__wrapper">
-          {icon && <span className="text-field__icon">{icon}</span>}
+        <div className="qb-text-field__wrapper">
+          {icon && <span className="qb-text-field__icon">{icon}</span>}
           <input
             {...inputProps}
             ref={ref}
             disabled={loading || disabled}
-            className="text-field__input"
+            className="qb-text-field__input"
             id={id || defaultId}
             value={value}
             onChange={(e) => onChange(e.currentTarget.value)}
           />
           {!loading && value && (
             <RemoveSvg
-              className="text-field__reset"
+              className="qb-text-field__reset"
               onClick={() => onChange('')}
             />
           )}
           {loading && !disabled && (
-            <Loader size="sm" className="text-field__loader" />
+            <Loader size="sm" className="qb-text-field__loader" />
           )}
         </div>
       </div>

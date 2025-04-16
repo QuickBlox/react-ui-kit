@@ -4,13 +4,9 @@ $create-dialog-container-width: 332px;
 $create-dialog-container-height: 180px;
 
 .edit-container {
-  //border: 1px solid blue;
   min-height: $container-height;
   max-height: $container-height;
   height: $container-height;
-  //min-width: $container-width;
-  //max-width: $container-width;
-  //width: $container-width;
   width: 100%;
 
   display: flex;
@@ -21,13 +17,9 @@ $create-dialog-container-height: 180px;
 }
 
 .edit-btn-container {
-  //border: 3px solid black;
   min-height: 34px;
   max-height: 34px;
   height: 34px;
-  //min-width: $container-width;
-  //max-width: $container-width;
-  //width: $container-width;
   width: 100%;
 
   display: flex;
@@ -41,12 +33,7 @@ $create-dialog-container-height: 180px;
   min-height: $create-dialog-container-height;
   max-height: $create-dialog-container-height;
   height: $create-dialog-container-height;
-  //min-width: $create-dialog-container-width;
-  //max-width: $create-dialog-container-width;
-  //width: $create-dialog-container-width;
   width: 100%;
-
-  //border: 3px solid green;
 
   margin-bottom: 24px;
 
@@ -69,21 +56,14 @@ $create-dialog-container-height: 180px;
     justify-content: flex-start;
     align-items: flex-start;
 
-    //border: 1px solid blue;
-
     &__inf {
       min-height: 20px;
-
-      font-family: 'Roboto';
       font-style: normal;
       font-weight: 400;
       font-size: 14px;
       line-height: 20px;
       letter-spacing: 0.25px;
       color: var(--main-text);
-      // color: var(--color-background);
-
-      //border: 1px solid orange;
     }
 
     &__icon-container {
@@ -100,8 +80,6 @@ $create-dialog-container-height: 180px;
         max-height: 56px;
         height: 56px;
         min-width: 56px;
-        max-width: 56px;
-        height: 56px;
         margin-top: 8px;
 
         background-color: var(--disabled-elements);
@@ -111,12 +89,6 @@ $create-dialog-container-height: 180px;
         display: flex;
         justify-content: center;
         align-items: center;
-
-        //border: 1px solid red;
-
-        &__content {
-          // margin: 10px;
-        }
       }
 
       &__upload {
@@ -128,23 +100,17 @@ $create-dialog-container-height: 180px;
         padding-left: 16px;
         padding-top: 20px;
 
-        font-family: 'Roboto';
         font-style: normal;
         font-weight: 700;
         font-size: 14px;
         line-height: 16px;
         letter-spacing: 0.4px;
         color: var(--color-icon);
-        //cursor: pointer;
-
-        // border: 1px solid green;
       }
     }
 
     &__upload-error {
       min-height: 20px;
-
-      font-family: 'Roboto';
       font-style: normal;
       font-weight: 400;
       font-size: 14px;
@@ -156,16 +122,13 @@ $create-dialog-container-height: 180px;
 
     &__dialog-name-inf {
       min-height: 20px;
-
-      font-family: 'Roboto';
       font-style: normal;
       font-weight: 400;
       font-size: 14px;
       line-height: 20px;
       letter-spacing: 0.25px;
       margin-top: 24px;
-
-      //border: 1px solid orange;
+      color: var(--main-text);
     }
 
     &__text-field {

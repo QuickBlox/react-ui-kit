@@ -23,7 +23,6 @@ export class ForwardMessagesUseCase implements IUseCase<void, boolean> {
     relatedMessage: MessageEntity,
     userName: string,
   ) {
-    console.log('CONSTRUCTOR ForwardMessagesUseCase');
     this.messagesRepository = messagesRepository;
     this.relatedMessage = relatedMessage;
     this.targetDialogs = targetDialogs;

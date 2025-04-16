@@ -11,14 +11,11 @@ export class SendTextMessageUseCase implements IUseCase<void, MessageEntity> {
     messagesRepository: MessagesRepository,
     messageToSend: MessageEntity,
   ) {
-    console.log('CONSTRUCTOR SendTextMessageUseCase');
     this.messagesRepository = messagesRepository;
     this.messageToSend = messageToSend;
   }
 
   async execute(): Promise<MessageEntity> {
-    console.log('execute SendTextMessageUseCase');
-
     const sentMessage: MessageEntity =
       await this.messagesRepository.sendMessageToRemote(this.messageToSend);
 

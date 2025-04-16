@@ -8,13 +8,11 @@ export class UploadFileUseCase implements IUseCase<void, FileEntity> {
   private fileEntity: FileEntity;
 
   constructor(fileRepository: FileRepository, fileEntity: FileEntity) {
-    console.log('CONSTRUCTOR UploadFileUseCase');
     this.fileRepository = fileRepository;
     this.fileEntity = fileEntity;
   }
 
   async execute(): Promise<FileEntity> {
-    console.log('execute UploadFileUseCase');
     const result: FileEntity = await this.fileRepository.saveFileInRemote(
       this.fileEntity,
     );

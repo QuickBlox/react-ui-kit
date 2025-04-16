@@ -75,7 +75,7 @@ type HighLightLinkProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-export const HighLightLink: React.FC<HighLightLinkProps> = ({
+export const HighLightLink = ({
   messageText,
 }: HighLightLinkProps) => {
   /*

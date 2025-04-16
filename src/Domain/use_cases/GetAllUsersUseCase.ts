@@ -17,7 +17,6 @@ export class GetAllUsersUseCase
     currentPagination: Pagination,
     filter: string,
   ) {
-    console.log('CONSTRUCTOR GetUsersByIdsUseCase');
     this.usersRepository = usersRepository;
     this.currentPagination = currentPagination;
     this.filter = filter;

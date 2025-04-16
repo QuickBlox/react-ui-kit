@@ -1,8 +1,6 @@
-@import '../../themes/styles/mixins';
+@use '../../themes/styles/mixins' as *;
 
 .settings-item {
-  @include applyBorderBox;
-  background-color: var(--color-background);
 
   &__body {
     display: flex;
@@ -65,5 +63,12 @@
   &__icon {
     width: 24px;
     height: 24px;
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
   }
+
+  @include applyBorderBox;
 }

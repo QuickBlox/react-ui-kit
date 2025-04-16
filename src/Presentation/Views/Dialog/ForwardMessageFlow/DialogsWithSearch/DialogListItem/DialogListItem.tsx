@@ -1,5 +1,4 @@
 import React from 'react';
-import './DialogListItem.scss';
 import { FunctionTypeStringToVoid } from '../../../../../../CommonTypes/BaseViewModel';
 import { DialogType } from '../../../../../../Domain/entity/DialogTypes';
 import User from '../../../../../components/UI/svgs/Icons/Contents/User';
@@ -7,6 +6,8 @@ import GroupChat from '../../../../../components/UI/svgs/Icons/Contents/GroupCha
 import PublicChannel from '../../../../../components/UI/svgs/Icons/Contents/PublicChannel';
 import UserAvatar from '../../../../EditDialog/UserAvatar/UserAvatar';
 import { IconTheme } from '../../../../../components/UI/svgs/Icons/IconsCommonTypes';
+import CheckBox from '../../../../../ui-components/CheckBox/CheckBox';
+import './DialogListItem.scss';
 
 type DialogListItemProps = {
   name: string;
@@ -64,7 +65,7 @@ const renderAvatar = (urlAvatar: string, typeDialog: DialogType) => {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const DialogListItem: React.FC<DialogListItemProps> = ({
+const DialogListItem = ({
   name,
   avatar,
   typeDialog,
@@ -74,21 +75,11 @@ const DialogListItem: React.FC<DialogListItemProps> = ({
 }: DialogListItemProps) => {
   return (
     <div className="dialog-item-element">
-      <div className="item-element-avatar">
-        <div className="item-element-avatar-rectangle" />
-        <div className="item-element-avatar-ellipse" />
+      <div className="dialog-item-element-avatar">
         {renderAvatar(avatar, typeDialog)}
       </div>
       <div className="dialog-item-element-subtitle">{name}</div>
-      <div className="dialog-item-element-checkbox">
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={() => {
-            onSelect(id);
-          }}
-        />
-      </div>
+      <CheckBox onChange={() => onSelect(id)} disabled={false} checked={checked} />
     </div>
   );
 };

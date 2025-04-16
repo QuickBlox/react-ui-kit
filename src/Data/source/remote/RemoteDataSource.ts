@@ -13,7 +13,6 @@ import {
   QBSession,
   QBSystemMessage,
   QBUser,
-  QBMessageStatusParams,
   AIChatHistory,
   AIAnswerResponse,
 } from 'quickblox/quickblox';
@@ -107,6 +106,12 @@ export type AuthorizationData = {
 };
 
 export class RemoteDataSource implements IRemoteDataSource {
+  private joinStatusMap: Map<string, boolean> = new Map();
+  private joinCheckInterval: NodeJS.Timeout | null = null;
+  private processedDialogs = new Set<string>();
+  private userCache: Map<string, RemoteUserDTO> = new Map();
+  private userCachePreloadInterval: NodeJS.Timeout | null = null;
+
   private userDTOMapper: IDTOMapper;
 
   private messageDTOMapper: IDTOMapper;
@@ -118,8 +123,8 @@ export class RemoteDataSource implements IRemoteDataSource {
   private _authProcessed: boolean;
 
   get authProcessed(): boolean {
-    const QB = getQB();
     const auth = this._authProcessed;
+    const QB = getQB();
     const chatConnection = QB && QB.chat && QB.chat.isConnected;
 
     if (chatConnection) return true;
@@ -169,10 +174,43 @@ export class RemoteDataSource implements IRemoteDataSource {
 
     return dialogDTOMapper;
   }
+  //
+  private startUserCachePreload(): void {
+    if (this.userCachePreloadInterval) return; // Избегаем повторного запуска
+
+    this.userCachePreloadInterval = setInterval(async () => {
+      try {
+        const pagination = new Pagination(1, 100); // Пагинация по 100 пользователей
+        let hasMoreUsers = true;
+
+        while (hasMoreUsers) {
+          const { ResultData, PaginationResult } = await this.getAllUsers(pagination);
+
+          for (const user of ResultData) {
+            if (!this.userCache.has(user.id)) {
+              this.userCache.set(user.id, user);
+            }
+          }
+
+          if (PaginationResult.getCurrentPage() >= PaginationResult.totalPages) {
+            hasMoreUsers = false;
+          } else {
+            pagination.setCurrentPage(pagination.getCurrentPage() + 1);
+          }
+        }
+
+        console.log(`User cache preload complete. Loaded ${this.userCache.size} users.`);
+
+        clearInterval(this.userCachePreloadInterval!);
+        this.userCachePreloadInterval = null;
+      } catch (error) {
+        console.error('Error during user cache preload:', error);
+      }
+    }, 4500); // Интервал 10 секунд
+  }
 
   //
   constructor() {
-    console.log('CONSTRUCTOR RemoteDataSourceMock');
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     console.log('QB inside RemoteDataSource:', window.QB);
@@ -197,6 +235,8 @@ export class RemoteDataSource implements IRemoteDataSource {
       new SubscriptionPerformer<RemoteMessageDTO>();
     this.subscriptionOnSystemMessages[NotificationTypes.NEW_DIALOG] =
       new SubscriptionPerformer<RemoteMessageDTO>();
+
+    // this.startUserCachePreload();  //TODO: uncomment this line after test [CSAMPLES-4065] is done
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -217,42 +257,6 @@ export class RemoteDataSource implements IRemoteDataSource {
     return QBTranslate(smartChatAssistantId, text, languageCode);
   }
 
-  // async updateCurrentDialog(dto: RemoteDialogDTO, qbConfig: QBUIKitConfig): Promise<void> {
-  //   this.currentDialog = dto;
-  //   //
-  //   //
-  //   const dialogsDTOtoEntityMapper: IMapper = new DialogRemoteDTOMapper();
-  //
-  //   const dialogEntity: DialogEntity = await dialogsDTOtoEntityMapper.toEntity(
-  //     this.currentDialog,
-  //   );
-  //   const userId = this._authInformation?.userId || -1;
-  //   const dialogId = this.currentDialog.id;
-  //   const messageId = this.currentDialog.lastMessageId;
-  //   //
-  //   //
-  //   const resultMessage: DialogEventInfo = {
-  //     eventMessageType: EventMessageType.LocalMessage,
-  //     dialogInfo: dialogEntity,
-  //     messageInfo: undefined,
-  //     messageStatus: {
-  //       isTyping: false,
-  //       userId,
-  //       dialogId,
-  //       messageId,
-  //       deliveryStatus: 'delivered',
-  //     },
-  //     notificationTypes: undefined,
-  //   };
-  //
-  //   this.subscriptionOnMessageStatus.informSubscribers(
-  //     resultMessage,
-  //     EventMessageType.LocalMessage,
-  //   );
-  //   //
-  //
-  //   //
-  // }
   async updateCurrentDialog(
     dto: RemoteDialogDTO,
     qbConfig: QBUIKitConfig,
@@ -421,6 +425,10 @@ export class RemoteDataSource implements IRemoteDataSource {
     }
   }
 
+  public resetProcessedDialogs(): void {
+    this.processedDialogs.clear();
+  }
+
   public async disconnectAndLogoutUser() {
     if (this.authProcessed) {
       QBChatDisconnect();
@@ -428,6 +436,7 @@ export class RemoteDataSource implements IRemoteDataSource {
       this.authProcessed = false;
       this.releaseSubscriptions();
       this.releaseEventsHandlers();
+      this.resetProcessedDialogs();
     }
   }
 
@@ -779,10 +788,6 @@ export class RemoteDataSource implements IRemoteDataSource {
           error,
         )}, current auth status is: ${this.authProcessed ? 'true' : 'false'}`,
       );
-      this.subscriptionOnSessionExpiredListener.informSubscribers(
-        true,
-        EventMessageType.LocalMessage,
-      );
     };
 
     QB.chat.onReadStatusListener = (messageId, dialogId, userId) => {
@@ -852,21 +857,12 @@ export class RemoteDataSource implements IRemoteDataSource {
     //
     //
     this.initEventsHandlers();
-    //
-    //
-    console.log('USER DATA :  ', userRequiredParams);
-    console.log('USER SESSION DATA :  ', sessionResult);
-    console.log('Session token :  ', sessionResult.token);
 
     const session = sessionResult;
     const sessionDataTmp = JSON.stringify(session);
 
     const sessionData = JSON.parse(sessionDataTmp);
 
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    console.log(`user_id = ${sessionData.user_id}`);
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    console.log(`session token to chat init = ${sessionData.token}`);
     const authInformation = {
       userName: authParams.login,
       userId: sessionData.user_id,
@@ -879,114 +875,337 @@ export class RemoteDataSource implements IRemoteDataSource {
       password: authInformation.password,
     };
 
-    console.log(paramsConnect);
-    //
     const connectResult = await QBChatConnect(paramsConnect);
 
     if (connectResult) {
       //
       this._authInformation = authInformation;
       this.setAuthProcessedSuccessed();
-      console.log('CHAT CONNECTED. CAN WORK!');
-      console.log('CONNECTION DATA: ', JSON.stringify(authInformation));
-      // //
-      // this.initEventsHandlers();
-      // //
     } else {
       console.log('could not connect to chat');
     }
 
     //
   }
+  //get dialogs flow
+
+  private async joinGroupDialog(dialogId: string): Promise<void> {
+    try {
+      await QBJoinGroupDialog(dialogId).catch(() => {
+        this.joinStatusMap.set(dialogId, false);
+        throw new RemoteDataSourceException(
+          INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_MESSAGE,
+          INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,
+        );
+      });
+      this.joinStatusMap.set(dialogId, true);
+    } catch (reason) {
+      console.log(`QBJoinGroupDialog error for dialog ${dialogId}:`, reason);
+      this.joinStatusMap.set(dialogId, false);
+    }
+  }
+
+  //version 0.5.0-beta.11,12,14
+  private startJoinRetryProcess(): void {
+    if (this.joinCheckInterval) return;
+
+    this.joinCheckInterval = setInterval(async () => {
+      const dialogsToRetry = Array.from(this.joinStatusMap.entries())
+        .filter(([_, isJoined]) => !isJoined)
+        .map(([id]) => id);
+
+      if (dialogsToRetry.length === 0) {
+        clearInterval(this.joinCheckInterval!);
+        this.joinCheckInterval = null;
+        console.log('All dialogs successfully joined. Stopping retry process.');
+        return;
+      }
+
+      console.log(`Retrying join for ${dialogsToRetry.length} dialogs...`);
+      await this.processDialogs(dialogsToRetry);
+    }, 7000);
+  }
+
+  private async processDialogsInBackground(dialogIds: string[]): Promise<void> {
+    const BATCH_SIZE = 12;
+
+    console.log(`Starting background processing for ${dialogIds.length} dialogs`);
+
+    for (let i = 0; i < dialogIds.length; i += BATCH_SIZE) {
+      const batch = dialogIds.slice(i, i + BATCH_SIZE);
+
+      console.log(`Processing batch ${i / BATCH_SIZE + 1}:`, batch);
+
+      await Promise.all(batch.map((id) => this.joinGroupDialog(id)));
+      console.log(`Batch ${i / BATCH_SIZE + 1} completed.`);
+
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+    }
+
+    console.log('Background processing complete.');
+  }
+
+  private async processDialogs(dialogIds: string[]): Promise<void> {
+    await Promise.all(dialogIds.map((id) => this.joinGroupDialog(id)));
+  }
 
   async getDialogs(pagination?: Pagination): Promise<RemoteDialogsDTO> {
     let currentPagination: Pagination = pagination || new Pagination();
 
-    console.log(
-      'call getDialogs in RemoteDataSourceMock param pagination: ',
-      JSON.stringify(pagination),
-    );
-    console.log(
-      'call getDialogs in RemoteDataSourceMock with result pagination: ',
-      JSON.stringify(currentPagination),
-    );
     const pageNumber = currentPagination.getCurrentPage() || 1;
-
-    console.log('pageNumber: ', pageNumber);
     const perPage = currentPagination.perPage || 100;
 
-    console.log('perPage: ', perPage);
-    const params = {
-      created_at: {
-        lt: Date.now() / 1000,
-      },
-      // sort_desc: 'created_at',// artan 19.0.2024
+    const params: Dictionary<any> =  {
+      created_at: { lt: Date.now() / 1000 },
       sort_desc: 'updated_at',
       page: pageNumber,
-      // per_page: perPage,
       limit: perPage,
-      type: {
-        in: [2, 3],
-      },
+      // type: { in: [2, 3] },
     };
-    // filter['type[in]'] = [3, 2].join(',');
 
-    console.log(
-      'call getDialogs in RemoteDataSourceMock with params: ',
-      JSON.stringify(params),
-    );
+    // Conditionally filter dialog types unless public dialogs should be shown
+    if (!QBConfig.appConfig?.showPublicDialogsInList) {
+      params.type = {
+        in: [2, 3], // Only group and private dialogs
+      };
+    }
+
     const dialogsDTO: Array<RemoteDialogDTO> = [];
+    const joinDialogIds: string[] = [];
     const qbDialogs: QBGetDialogResult | undefined = await QBGetDialogs(params);
 
     if (qbDialogs) {
-      console.log(
-        `request completed. have: total_entries ${
-          qbDialogs.total_entries
-        }, limit: ${qbDialogs.limit}, skip: ${
-          qbDialogs.skip
-        } items: ${JSON.stringify(qbDialogs.items)}`,
-      );
       currentPagination = new Pagination(0, perPage);
       currentPagination.totalPages = qbDialogs.total_entries / perPage;
       currentPagination.setCurrentPage(pageNumber);
 
-      // eslint-disable-next-line no-restricted-syntax
       for (const item of qbDialogs.items) {
         const qbEntity: QBChatDialog = item;
+        if (!qbEntity) continue;
 
-        const newDTO: RemoteDialogDTO =
-          // eslint-disable-next-line no-await-in-loop
-          await this.getCurrentDialogDTOMapper().toTDO(qbEntity);
+        const newDTO: RemoteDialogDTO = await this.getCurrentDialogDTOMapper().toTDO(qbEntity);
 
-        // artan 27/06/23
-        if (newDTO.type === DialogType.group) {
-          // eslint-disable-next-line no-await-in-loop
-          await QBJoinGroupDialog(newDTO.id).catch((reason) => {
-            console.log('getDialogs. QBJoinGroupDialog error', reason);
-            throw new RemoteDataSourceException(
-              INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_MESSAGE,
-              INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,
-            );
-          });
+        if (newDTO.type === DialogType.group && !this.processedDialogs.has(newDTO.id)) {
+          this.processedDialogs.add(newDTO.id);
+
+          if (!this.joinStatusMap.has(newDTO.id)) {
+            this.joinStatusMap.set(newDTO.id, false);
+            joinDialogIds.push(newDTO.id);
+          }
         }
 
-        //
-        const currentUserId = this._authInformation?.userId || 0;
-        const statusMessageParams: QBMessageStatusParams = {
-          userId: newDTO.lastMessageUserId || currentUserId,
-          dialogId: newDTO.id,
-          messageId: newDTO.lastMessageId,
-        };
-
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        QBChatMarkMessageDelivered(statusMessageParams);
-
         dialogsDTO.push(newDTO);
+      }
+
+      const firstBatch = joinDialogIds.slice(0, 24);
+      await this.processDialogs(firstBatch);
+
+      const remainingDialogs = joinDialogIds.slice(24);
+      if (remainingDialogs.length) {
+        await this.processDialogsInBackground(remainingDialogs);
+        this.startJoinRetryProcess();
       }
     }
 
     return Promise.resolve(new RemoteDialogsDTO(dialogsDTO, currentPagination));
   }
+
+  //tested in 0.5.0-beta.10
+  // private async processDialogs(dialogIds: string[]): Promise<void> {
+  //   await Promise.all(dialogIds.map((id) => this.joinGroupDialog(id)));
+  // }
+  //
+  // private async processDialogsInBackground(dialogIds: string[]): Promise<void> {
+  //   const BATCH_SIZE = 12;
+  //
+  //   console.log(`Starting background processing for ${dialogIds.length} dialogs`);
+  //
+  //   for (let i = 0; i < dialogIds.length; i += BATCH_SIZE) {
+  //     const batch = dialogIds.slice(i, i + BATCH_SIZE);
+  //
+  //     console.log(`Processing batch ${i / BATCH_SIZE + 1}:`, batch);
+  //
+  //     await Promise.all(batch.map((id) => this.joinGroupDialog(id)));
+  //     console.log(`Batch ${i / BATCH_SIZE + 1} completed.`);
+  //
+  //     await new Promise((resolve) => setTimeout(resolve, 1500));
+  //   }
+  //
+  //   console.log('Background processing complete.');
+  // }
+  //
+  // private async joinGroupDialog(dialogId: string): Promise<void> {
+  //   try {
+  //     await QBJoinGroupDialog(dialogId);
+  //   } catch (reason) {
+  //     console.log(`QBJoinGroupDialog error for dialog ${dialogId}:`, reason);
+  //   }
+  // }
+  //
+  // async getDialogs(pagination?: Pagination): Promise<RemoteDialogsDTO> {
+  //   let currentPagination: Pagination = pagination || new Pagination();
+  //
+  //   console.log(
+  //     'call getDialogs in RemoteDataSourceMock param pagination: ',
+  //     JSON.stringify(pagination)
+  //   );
+  //   console.log(
+  //     'call getDialogs in RemoteDataSourceMock with result pagination: ',
+  //     JSON.stringify(currentPagination)
+  //   );
+  //
+  //   const pageNumber = currentPagination.getCurrentPage() || 1;
+  //   console.log('pageNumber: ', pageNumber);
+  //   const perPage = currentPagination.perPage || 100;
+  //   console.log('perPage: ', perPage);
+  //
+  //   const params = {
+  //     created_at: { lt: Date.now() / 1000 },
+  //     sort_desc: 'updated_at',
+  //     page: pageNumber,
+  //     limit: perPage,
+  //     type: { in: [2, 3] },
+  //   };
+  //
+  //   console.log(
+  //     'call getDialogs in RemoteDataSourceMock with params: ',
+  //     JSON.stringify(params)
+  //   );
+  //
+  //   const dialogsDTO: Array<RemoteDialogDTO> = [];
+  //   const joinDialogIds: string[] = [];
+  //   const qbDialogs: QBGetDialogResult | undefined = await QBGetDialogs(params);
+  //
+  //   if (qbDialogs) {
+  //     console.log(
+  //       `request completed. have: total_entries ${
+  //         qbDialogs.total_entries
+  //       }, limit: ${qbDialogs.limit}, skip: ${
+  //         qbDialogs.skip
+  //       } items: ${JSON.stringify(qbDialogs.items)}`
+  //     );
+  //
+  //     currentPagination = new Pagination(0, perPage);
+  //     currentPagination.totalPages = qbDialogs.total_entries / perPage;
+  //     currentPagination.setCurrentPage(pageNumber);
+  //
+  //     for (const item of qbDialogs.items) {
+  //       const qbEntity: QBChatDialog = item;
+  //       if (!qbEntity) continue;
+  //
+  //       const newDTO: RemoteDialogDTO = await this.getCurrentDialogDTOMapper().toTDO(qbEntity);
+  //
+  //       if (newDTO.type === DialogType.group && !this.processedDialogs.has(newDTO.id)) {
+  //         this.processedDialogs.add(newDTO.id);
+  //         joinDialogIds.push(newDTO.id);
+  //       }
+  //
+  //       dialogsDTO.push(newDTO);
+  //     }
+  //
+  //     const firstBatch = joinDialogIds.slice(0, 12);
+  //     await this.processDialogs(firstBatch);
+  //
+  //     const remainingDialogs = joinDialogIds.slice(12);
+  //     if (remainingDialogs.length) {
+  //       this.processDialogsInBackground(remainingDialogs).then();
+  //     }
+  //   }
+  //
+  //   return Promise.resolve(new RemoteDialogsDTO(dialogsDTO, currentPagination));
+  // }
+
+  // original version 0.4.5
+  // async getDialogs(pagination?: Pagination): Promise<RemoteDialogsDTO> {
+  //   let currentPagination: Pagination = pagination || new Pagination();
+  //
+  //   console.log(
+  //     'call getDialogs in RemoteDataSourceMock param pagination: ',
+  //     JSON.stringify(pagination),
+  //   );
+  //   console.log(
+  //     'call getDialogs in RemoteDataSourceMock with result pagination: ',
+  //     JSON.stringify(currentPagination),
+  //   );
+  //   const pageNumber = currentPagination.getCurrentPage() || 1;
+  //
+  //   console.log('pageNumber: ', pageNumber);
+  //   const perPage = currentPagination.perPage || 100;
+  //
+  //   console.log('perPage: ', perPage);
+  //   const params = {
+  //     created_at: {
+  //       lt: Date.now() / 1000,
+  //     },
+  //     // sort_desc: 'created_at',// artan 19.0.2024
+  //     sort_desc: 'updated_at',
+  //     page: pageNumber,
+  //     // per_page: perPage,
+  //     limit: perPage,
+  //     type: {
+  //       in: [2, 3],
+  //     },
+  //   };
+  //   // filter['type[in]'] = [3, 2].join(',');
+  //
+  //   console.log(
+  //     'call getDialogs in RemoteDataSourceMock with params: ',
+  //     JSON.stringify(params),
+  //   );
+  //   const dialogsDTO: Array<RemoteDialogDTO> = [];
+  //   const qbDialogs: QBGetDialogResult | undefined = await QBGetDialogs(params);
+  //
+  //   if (qbDialogs) {
+  //     console.log(
+  //       `request completed. have: total_entries ${
+  //         qbDialogs.total_entries
+  //       }, limit: ${qbDialogs.limit}, skip: ${
+  //         qbDialogs.skip
+  //       } items: ${JSON.stringify(qbDialogs.items)}`,
+  //     );
+  //     currentPagination = new Pagination(0, perPage);
+  //     currentPagination.totalPages = qbDialogs.total_entries / perPage;
+  //     currentPagination.setCurrentPage(pageNumber);
+  //
+  //     // eslint-disable-next-line no-restricted-syntax
+  //     for (const item of qbDialogs.items) {
+  //       const qbEntity: QBChatDialog = item;
+  //       if (!qbEntity) {
+  //         continue;
+  //       }
+  //       const newDTO: RemoteDialogDTO =
+  //         // eslint-disable-next-line no-await-in-loop
+  //         await this.getCurrentDialogDTOMapper().toTDO(qbEntity);
+  //
+  //       // artan 27/06/23
+  //       if (newDTO.type === DialogType.group) {
+  //         // eslint-disable-next-line no-await-in-loop
+  //         await QBJoinGroupDialog(newDTO.id).catch((reason) => {
+  //           console.log('getDialogs. QBJoinGroupDialog error', reason);
+  //           throw new RemoteDataSourceException(
+  //             INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_MESSAGE,
+  //             INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,
+  //           );
+  //         });
+  //       }
+  //
+  //       //
+  //       // const currentUserId = this._authInformation?.userId || 0;
+  //       // const statusMessageParams: QBMessageStatusParams = {
+  //       //   userId: newDTO.lastMessageUserId || currentUserId,
+  //       //   dialogId: newDTO.id,
+  //       //   messageId: newDTO.lastMessageId,
+  //       // };
+  //       //
+  //       // // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  //       // QBChatMarkMessageDelivered(statusMessageParams);
+  //
+  //       dialogsDTO.push(newDTO);
+  //     }
+  //   }
+  //
+  //   return Promise.resolve(new RemoteDialogsDTO(dialogsDTO, currentPagination));
+  // }
 
   // eslint-disable-next-line class-methods-use-this
   async createDialog(dto: RemoteDialogDTO): Promise<RemoteDialogDTO> {
@@ -1151,8 +1370,53 @@ export class RemoteDataSource implements IRemoteDataSource {
     return Promise.resolve();
   }
 
+  // async getUser(dto: RemoteUserDTO): Promise<RemoteUserDTO> {
+  //   const currentItem: QBUser | undefined = await QBUsersGetById(
+  //     parseInt(dto.id, 10),
+  //   );
+  //
+  //   if (currentItem === null || currentItem === undefined) {
+  //     return Promise.reject(
+  //       new RemoteDataSourceException(
+  //         INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_MESSAGE,
+  //         INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,
+  //       ),
+  //     );
+  //   }
+  //   let dtoUser: RemoteUserDTO | undefined;
+  //
+  //   try {
+  //     dtoUser = await this.userDTOMapper.toTDO<QBUser, RemoteUserDTO>(
+  //       currentItem,
+  //     );
+  //   } catch (e) {
+  //     console.log('problem with:');
+  //     console.log(JSON.stringify(currentItem));
+  //     console.log((e as MapperDTOException).message);
+  //     console.log((e as MapperDTOException)._description);
+  //   }
+  //
+  //   if (dtoUser !== null || dtoUser !== undefined) {
+  //     return Promise.resolve(dtoUser as RemoteUserDTO);
+  //   }
+  //
+  //   return Promise.reject(
+  //     new RemoteDataSourceException(
+  //       NOT_FOUND_REMOTE_DATASOURCE_EXCEPTION_MESSAGE,
+  //       NOT_FOUND_REMOTE_DATASOURCE_EXCEPTION_CODE,
+  //       `not found user with id: ${dto.id} (${dto.full_name})`,
+  //     ),
+  //   );
+  // }
+
   // eslint-disable-next-line @typescript-eslint/require-await,class-methods-use-this,@typescript-eslint/no-unused-vars
   async getUser(dto: RemoteUserDTO): Promise<RemoteUserDTO> {
+    // Проверяем кэш перед запросом на сервер
+    if (this.userCache.has(dto.id)) {
+      console.log(`User ${dto.id} found in cache.`);
+      return Promise.resolve(this.userCache.get(dto.id)!);
+    }
+
     const currentItem: QBUser | undefined = await QBUsersGetById(
       parseInt(dto.id, 10),
     );
@@ -1165,6 +1429,7 @@ export class RemoteDataSource implements IRemoteDataSource {
         ),
       );
     }
+
     let dtoUser: RemoteUserDTO | undefined;
 
     try {
@@ -1178,7 +1443,10 @@ export class RemoteDataSource implements IRemoteDataSource {
       console.log((e as MapperDTOException)._description);
     }
 
-    if (dtoUser !== null || dtoUser !== undefined) {
+    if (dtoUser !== null && dtoUser !== undefined) {
+      // Сохраняем пользователя в кэше
+      this.userCache.set(dto.id, dtoUser);
+      console.log(`User ${dto.id} added to cache.`);
       return Promise.resolve(dtoUser as RemoteUserDTO);
     }
 
@@ -1206,7 +1474,6 @@ export class RemoteDataSource implements IRemoteDataSource {
     return Promise.resolve(new RemoteUsersDTO(usersDTO, new Pagination()));
   }
 
-  //
   // eslint-disable-next-line class-methods-use-this
   public async getAllUsers(
     pagination: Pagination,
@@ -1292,8 +1559,6 @@ export class RemoteDataSource implements IRemoteDataSource {
 
     return { ResultData: users, PaginationResult: resultPagination };
   }
-  //
-  //
 
   // eslint-disable-next-line @typescript-eslint/require-await,class-methods-use-this,@typescript-eslint/no-unused-vars,@typescript-eslint/ban-ts-comment
   // @ts-ignore
@@ -1318,9 +1583,7 @@ export class RemoteDataSource implements IRemoteDataSource {
       );
     }
     console.log(
-      `GET MESSAGES ${qbMessages.items.length} FROM SERVER: ${JSON.stringify(
-        qbMessages,
-      )} `,
+      `GET MESSAGES ${qbMessages.items.length} FROM SERVER.`,
     );
     const currentUserId = this._authInformation?.userId;
 
@@ -1365,12 +1628,15 @@ export class RemoteDataSource implements IRemoteDataSource {
       await this.getCurrentDialogDTOMapper().fromDTO(dialogDTO);
 
     if (dialogDTO.type === DialogType.group) {
-      await QBJoinGroupDialog(dialogDTO.id).catch(() => {
-        throw new RemoteDataSourceException(
-          INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_MESSAGE,
-          INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,
-        );
-      });
+      if (!this.joinStatusMap.has(dialogDTO.id)) {
+        await this.joinGroupDialog(dialogDTO.id);
+      }
+      // await QBJoinGroupDialog(dialogDTO.id).catch(() => {
+      //   throw new RemoteDataSourceException(
+      //     INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_MESSAGE,
+      //     INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,
+      //   );
+      // });
     }
 
     QBSendIsTypingStatus(qbEntity, senderId);
@@ -1399,27 +1665,66 @@ export class RemoteDataSource implements IRemoteDataSource {
     //
     const messageText = dto.message;
 
-    const qbEntity: QBUIKitChatNewMessage = {
-      type: dto.dialog_type === DialogType.private ? 'chat' : 'groupchat',
-      body: messageText || '',
-      notification_type: dto.notification_type,
-      dialog_id: dto.dialogId,
-      extension: {
-        save_to_history: 1,
-        dialog_id: dto.dialogId,
-        notification_type: dto.notification_type,
-        sender_id: dto.sender_id || dto.recipient_id,
-        qb_message_action: dto.qb_message_action, // 'forward' 'reply'
-        origin_sender_name: dto.origin_sender_name,
-        qb_original_messages: MessageDTOMapper.translateOriginalDataToJSON(
-          MessageDTOMapper.convertToQBChatNewMessage(
-            dto.qb_original_messages || [],
-          ) || [],
-        ),
-      },
-      markable: 1,
-      // markable: 0, // mark_as_read ??
-    };
+      const extension: Partial<QBUIKitChatNewMessage['extension']> = {
+          save_to_history: 1,
+          dialog_id: dto.dialogId,
+      };
+
+      if (dto.notification_type) {
+          extension.notification_type = dto.notification_type;
+      }
+
+      if (dto.sender_id || dto.recipient_id) {
+          extension.sender_id = dto.sender_id || dto.recipient_id;
+      }
+
+      if (dto.qb_message_action) {
+          extension.qb_message_action = dto.qb_message_action;
+      }
+
+      if (dto.origin_sender_name) {
+          extension.origin_sender_name = dto.origin_sender_name;
+      }
+
+      const originalMessages = MessageDTOMapper.translateOriginalDataToJSON(
+          MessageDTOMapper.convertToQBChatNewMessage(dto.qb_original_messages || []) || [],
+      );
+
+      if (originalMessages && originalMessages.length > 0) {
+          extension.qb_original_messages = originalMessages;
+      }
+
+
+      const qbEntity: QBUIKitChatNewMessage = {
+          type: dto.dialog_type === DialogType.private ? 'chat' : 'groupchat',
+          body: messageText || '',
+          dialog_id: dto.dialogId,
+          extension: extension as QBUIKitChatNewMessage['extension'],
+          markable: 1,
+      };
+
+
+      // const qbEntity: QBUIKitChatNewMessage = {
+    //   type: dto.dialog_type === DialogType.private ? 'chat' : 'groupchat',
+    //   body: messageText || '',
+    //   notification_type: dto.notification_type,
+    //   dialog_id: dto.dialogId,
+    //   extension: {
+    //     save_to_history: 1,
+    //     dialog_id: dto.dialogId,
+    //     notification_type: dto.notification_type,
+    //     sender_id: dto.sender_id || dto.recipient_id,
+    //     qb_message_action: dto.qb_message_action, // 'forward' 'reply'
+    //     origin_sender_name: dto.origin_sender_name,
+    //     qb_original_messages: MessageDTOMapper.translateOriginalDataToJSON(
+    //       MessageDTOMapper.convertToQBChatNewMessage(
+    //         dto.qb_original_messages || [],
+    //       ) || [],
+    //     ),
+    //   },
+    //   markable: 1,
+    //   // markable: 0, // mark_as_read ??
+    // };
 
     if (dto.attachments?.length > 0) {
       qbEntity.extension.attachments = [];
@@ -1435,20 +1740,34 @@ export class RemoteDataSource implements IRemoteDataSource {
         qbEntity.extension.attachments?.push(chatMessageAttachment);
       });
     }
-    let qbMessageId: QBChatMessage['_id'];
+    let qbMessageId: QBChatMessage['_id'] | undefined | null;
 
     if (dto.dialog_type === DialogType.private) {
       qbMessageId = await QBChatSendMessage(dto.recipient_id, qbEntity);
     } else {
-      await QBJoinGroupDialog(dto.dialogId).catch(() => {
-        throw new RemoteDataSourceException(
-          INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_MESSAGE,
-          INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,
-        );
-      });
+      //original version
+      // await QBJoinGroupDialog(dto.dialogId).catch(() => {
+      //   throw new RemoteDataSourceException(
+      //     INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_MESSAGE,
+      //     INCORRECT_REMOTE_DATASOURCE_DATA_EXCEPTION_CODE,
+      //   );
+      // });
+      //beta version: 13-15
+      // if (!this.joinStatusMap.has(dto.dialogId)) {
+      //   await this.joinGroupDialog(dto.dialogId);
+      // }
+      await this.joinGroupDialog(dto.dialogId);
       const dialogJid = QB.chat.helpers.getRoomJidFromDialogId(dto.dialogId);
-
-      qbMessageId = await QBChatSendMessage(dialogJid, qbEntity);
+      try {
+        qbMessageId = await QBChatSendMessage(dialogJid, qbEntity);
+        console.log(`Dialog joined status is ${this.joinStatusMap.has(dto.dialogId)} and message was sent with Id: ${qbMessageId}`);
+      }catch (e) {
+        qbMessageId = undefined;
+        const errorMessage = `Error in DataSource: send message throw: ${stringifyError(e)}`;
+        console.log('Error in DataSource: send message throw: ', errorMessage);
+        console.warn('Error in DataSource: send message throw: ', errorMessage);
+        console.error('Error in DataSource: send message throw: ', errorMessage);
+      }
     }
 
     if (qbMessageId === null || qbMessageId === undefined) {
@@ -1459,7 +1778,7 @@ export class RemoteDataSource implements IRemoteDataSource {
         ),
       );
     }
-    console.log('regular message was sent');
+    console.log(`DataSource: regular message was sent, id: ${qbMessageId}`);
     // eslint-disable-next-line no-param-reassign
     dto.id = qbMessageId;
 

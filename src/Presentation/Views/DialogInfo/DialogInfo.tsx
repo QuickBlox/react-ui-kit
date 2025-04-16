@@ -44,7 +44,7 @@ type HeaderDialogsProps = {
   disableAction?: boolean;
 };
 // eslint-disable-next-line react/function-component-definition
-const DialogInfo: React.FC<HeaderDialogsProps> = ({
+const DialogInfo = ({
   dialog,
   dialogViewModel,
   onCloseDialogInformationHandler,
@@ -397,8 +397,8 @@ const DialogInfo: React.FC<HeaderDialogsProps> = ({
                 >
                   <EditDialog
                     disableActions={disableAction}
-                    nameDialog={dialogViewModel?.entity.name || dialog?.name}
-                    typeDialog={dialogViewModel?.entity.type || dialog?.type}
+                    nameDialog={dialogViewModel?.entity?.name || dialog?.name}
+                    typeDialog={dialogViewModel?.entity?.type || dialog?.type}
                     ulrIcon={getUrlAvatar(dialogViewModel?.entity || dialog)}
                     typeAddEditDialog={TypeOpenDialog.edit}
                     clickUpdatedHandler={getDialogUpdatedInfoHandler}

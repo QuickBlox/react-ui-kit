@@ -15,6 +15,7 @@ import QuickBloxUIKitDesktopLayout from './Presentation/layouts/Desktop/QuickBlo
 import DefaultTheme from './Presentation/themes/DefaultThemes/DefaultTheme';
 import useQbUIKitDataContext from './Presentation/providers/QuickBloxUIKitProvider/useQbUIKitDataContext';
 import { QBConfig } from './QBconfig';
+import MainButton, { TypeButton } from './Presentation/components/UI/Buttons/MainButton/MainButton';
 
 function App() {
   if ((window as any).QB === undefined) {
@@ -178,6 +179,11 @@ function App() {
           data,
         );
         await prepareContent().catch();
+        currentContext.setSubscribeOnSessionExpiredListener(() => {
+          console.timeLog('call OnSessionExpiredListener ... start')
+          // logoutHandler();
+          console.log('OnSessionExpiredListener ... end');
+        });
         navigate('/desktop-test-mock');
       }
     }
@@ -187,54 +193,66 @@ function App() {
     console.log('HEAVE USER: ', JSON.stringify(currentUser));
   }, [currentUser]);
 
-  useEffect(() => {
-    console.log('0. APP INIT');
-    prepareSDK(currentUser).catch((er) => {
-      console.log(er);
-    });
-  }, []);
-  //
-  // const { proxyConfig } = QBConfig.configAIApi.AIAnswerAssistWidgetConfig;
-  //
-  // const defaultAIAnswer = UseDefaultAIAssistAnswerWidget({
-  //   ...proxyConfig,
-  // });
+  // useEffect(() => {
+  //   console.log('0. APP INIT');
+  //   prepareSDK(currentUser).catch((er) => {
+  //     console.log(er);
+  //   });
+  // }, []);
 
   return (
-    <QuickBloxUIKitProvider
-      maxFileSize={QBConfig.appConfig.maxFileSize}
-      // SDK={QB} //init SDK
-      accountData={{ ...QBConfig.credentials, sessionToken: '' }}
-      qbConfig={{ ...QBConfig }}
-      loginData={{
-        login: currentUser.login,
-        password: currentUser.password,
-      }}
-    >
-      <div className="App">
-        <Routes>
-          {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
-          <Route path="/" element={<Login loginHandler={loginHandler} />} />
-          <Route
-            path="/desktop-test-mock"
-            element={
-              <div>
-                <div style={{ height: '56px' }}>Q-communicate</div>
-                <QuickBloxUIKitDesktopLayout
-                  theme={new DefaultTheme()}
-                  uikitHeightOffset="56px"
-                  // AIAssist={{
-                  //   enabled: true,
-                  //   default: true,
-                  //   AIWidget: defaultAIAnswer,
-                  // }}
-                />
-              </div>
-            }
-          />
-        </Routes>
+    <>
+      <div className="btn-group">
+        <MainButton
+          typeButton={TypeButton.outlined}
+          title="Light Theme"
+          clickHandler = {() => {
+            document.documentElement.setAttribute('data-theme', 'light');
+          }}
+        />
+        <MainButton
+          typeButton={TypeButton.defaultDisabled}
+          title="Dark Theme"
+          clickHandler = {() => {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }}
+        />
       </div>
-    </QuickBloxUIKitProvider>
+      <QuickBloxUIKitProvider
+        maxFileSize={QBConfig.appConfig.maxFileSize}
+        // SDK={QB} //init SDK
+        accountData={{ ...QBConfig.credentials, sessionToken: '' }}
+        qbConfig={{ ...QBConfig }}
+        loginData={{
+          login: currentUser.login,
+          password: currentUser.password,
+        }}
+      >
+        <div className="App">
+          <Routes>
+            {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+            <Route path="/" element={<Login loginHandler={loginHandler} />} />
+            <Route
+              path="/desktop-test-mock"
+              element={
+                <div>
+                  <QuickBloxUIKitDesktopLayout
+                    theme={ new DefaultTheme()}
+                    uikitHeightOffset="56px"
+                    // AIAssist={{
+                    //   enabled: true,
+                    //   default: true,
+                    //   AIWidget: defaultAIAnswer,
+                    // }}
+                  />
+                </div>
+              }
+            />
+          </Routes>
+        </div>
+      </QuickBloxUIKitProvider>
+    </>
+
   );
 }
 

@@ -1,3 +1,4 @@
+import React from 'react';
 import './FileBubble.scss';
 import FileUrl from '../../FileUrl/FileUrl';
 

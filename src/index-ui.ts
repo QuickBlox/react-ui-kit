@@ -25,6 +25,7 @@ import Dialog from './Presentation/Views/Dialog/Dialog';
 import DialogInfo from './Presentation/Views/DialogInfo/DialogInfo';
 import { DialogEntity } from './Domain/entity/DialogEntity';
 import BaseViewModel, {
+  FunctionTypeMessageEntityToVoid,
   FunctionTypeViewModelToVoid,
 } from './CommonTypes/BaseViewModel';
 import {
@@ -41,9 +42,14 @@ import { AISource, IChatMessage } from './Data/source/AISource';
 import AIWidgetIcon from './Presentation/components/UI/svgs/Icons/AIWidgets/AIWidget';
 import ErrorMessageIcon from './Presentation/Views/Dialog/AIWidgets/ErrorMessageIcon';
 import PreviewDialogViewModel from './Presentation/Views/PreviewDialog/PreviewDialogViewModel';
-import { AvatarContentIncomingUserProps } from './Presentation/Views/Dialog/Message/IncomingMessage/AvatarContentIncomingUser/AvatarContentIncomingUser';
+import AvatarContentIncomingUser, {
+  AvatarContentIncomingUserProps,
+} from './Presentation/Views/Dialog/Message/IncomingMessage/AvatarContentIncomingUser/AvatarContentIncomingUser';
 
-import { GetUserNameFct } from './Presentation/Views/Dialog/Message/IncomingMessage/IncomingMessage';
+import {
+  GetUserNameFct,
+  IncomingMessage,
+} from './Presentation/Views/Dialog/Message/IncomingMessage/IncomingMessage';
 import {
   AIWidgetPlaceHolder,
   QuickBloxUIKitProps,
@@ -56,7 +62,6 @@ import AIRephraseWidget from './Presentation/Views/Dialog/AIWidgets/AIRephraseWi
 
 import './Presentation/Views/Dialog/Dialog.scss';
 import './Presentation/Views/Dialog/DialogHeader/DialogInfoIcon/DialogInfoIcon.scss';
-
 
 import {
   Avatar,
@@ -80,13 +85,15 @@ import {
   SettingsItem,
 } from './Presentation/ui-components';
 
-// ✅ **Добавлены недостающие компоненты**
 import { DefaultConfigurations } from './Data/DefaultConfigurations';
 import { DialogType } from './Domain/entity/DialogTypes';
 import { GroupDialogEntity } from './Domain/entity/GroupDialogEntity';
 import { PublicDialogEntity } from './Domain/entity/PublicDialogEntity';
 import { MessageEntity } from './Domain/entity/MessageEntity';
-import { getDateForDialog } from './utils/DateTimeFormatter';
+import {
+  getDateForDialog,
+  getTimeShort24hFormat,
+} from './utils/DateTimeFormatter';
 import ReplyMessagePreview from './Presentation/ui-components/MessageInput/ReplyMessagePreview/ReplyMessagePreview';
 import ForwardMessageFlow from './Presentation/Views/Dialog/ForwardMessageFlow/ForwardMessageFlow';
 import SectionList from './Presentation/components/containers/SectionList';
@@ -95,7 +102,6 @@ import MembersList from './Presentation/Views/DialogInfo/MembersList/MembersList
 import PreviewDialog from './Presentation/Views/PreviewDialog/PreviewDialog';
 import CreateNewDialogFlow from './Presentation/Views/Flow/CreateDialogFlow/CreateNewDialogFlow';
 
-// ✅ **Добавлены недостающие иконки**
 import {
   GroupChatSvg,
   InformationSvg,
@@ -105,8 +111,68 @@ import {
   SearchSvg,
   ChatSvg,
 } from './Presentation/icons';
+import { MessageDTOMapper } from './Data/source/remote/Mapper/MessageDTOMapper';
+import AITranslate from './Presentation/Views/Dialog/AIComponents/AITranslate/AITranslate';
+import TextBubble from './Presentation/ui-components/Message/Bubble/TextBubble/TextBubble';
+import AIAssist from './Presentation/Views/Dialog/AIComponents/AIAssist/AIAssist';
+import MessageContextMenu from './Presentation/Views/Dialog/Message/MessageContextMenu/MessageContextMenu';
+import AttachmentBubble from './Presentation/ui-components/Message/Bubble/AttachmentBubble/AttachmentBubble';
+import {
+  HighLightLink,
+  messageHasUrls,
+} from './Presentation/Views/Dialog/Message/HighLightLink/HighLightLink';
+import AIAssistComponent from './Presentation/Views/Dialog/AIComponents/AIAssistComponent/AIAssistComponent';
+import AITranslateComponent from './Presentation/Views/Dialog/AIComponents/AITranslateComponent/AITranslateComponent';
+import AIWidgetActions from './Presentation/Views/Dialog/AIWidgets/AIWidgetActions/AIWidgetActions';
+import SliderMenu from './Presentation/Views/Dialog/AIWidgets/SliderMenu';
+import ContextMenu from './Presentation/Views/Dialog/ContextMenu/ContextMenu';
+import DialogHeader from './Presentation/Views/Dialog/DialogHeader/DialogHeader';
+import DialogBackIcon from './Presentation/Views/Dialog/DialogHeader/DialogBackIcon/DialogBackIcon';
+import DialogInfoIcon from './Presentation/Views/Dialog/DialogHeader/DialogInfoIcon/DialogInfoIcon';
+import { DropDownMenu } from './Presentation/Views/Dialog/DropDownMenu/DropDownMenu';
+import { ItemDropDownMenu } from './Presentation/Views/Dialog/DropDownMenu/ItemDropDownMenu/ItemDropDownMenu';
+import { ErrorToast } from './Presentation/Views/Dialog/ErrorToast/ErrorToast';
+import InputForForwarding from './Presentation/Views/Dialog/ForwardMessageFlow/InputForForwarding/InputForForwarding';
+import ForwardMessagePreview from './Presentation/Views/Dialog/ForwardMessageFlow/ForwardMessagePreview/ForwardMessagePreview';
+import DialogsWithSearch from './Presentation/Views/Dialog/ForwardMessageFlow/DialogsWithSearch/DialogsWithSearch';
+import SearchComponent from './Presentation/Views/Dialog/ForwardMessageFlow/DialogsWithSearch/SearchComponent/SearchComponent';
+import DialogListItem from './Presentation/Views/Dialog/ForwardMessageFlow/DialogsWithSearch/DialogListItem/DialogListItem';
+import InputMessage from './Presentation/Views/Dialog/InputMessage/InputMessage';
+import OutgoingRepliedMessage from './Presentation/Views/Dialog/Message/OutgoingRepliedMessage/OutgoingRepliedMessage';
+import { OutgoingMessage } from './Presentation/Views/Dialog/Message/OutgoingMessage/OutgoingMessage';
+import OutgoingForwardedMessage from './Presentation/Views/Dialog/Message/OutgoinForwardedMessage/OutgoinForwardedMessage';
+import MessageAttachment from './Presentation/Views/Dialog/Message/MessageAttachment/MessageAttachment';
+import VideoAttachment from './Presentation/Views/Dialog/Message/MessageAttachment/VideoAttachment/VideoAttachment';
+import ImageAttachment from './Presentation/Views/Dialog/Message/MessageAttachment/ImageAttachment/ImageAttachment';
+import DefaultAttachment from './Presentation/Views/Dialog/Message/MessageAttachment/DefaultAttachment/DefaultAttachment';
+import AudioAttachment from './Presentation/Views/Dialog/Message/MessageAttachment/AudioAttachment/AudioAttachment';
+import IncomingRepliedMessage from './Presentation/Views/Dialog/Message/IncomingRepliedMessage/IncomingRepliedMessage';
+import MessageContentComponent from './Presentation/Views/Dialog/Message/IncomingMessage/MessageContentComponent/MessageContentComponent';
+import IncomingForwardedMessage from './Presentation/Views/Dialog/Message/IncomingForwardedMessage/IncomingForwardedMessage';
+import { SystemDateBanner } from './Presentation/Views/Dialog/SystemDateBanner/SystemDateBanner';
+import { SystemMessageBanner } from './Presentation/Views/Dialog/SystemMessageBanner/SystemMessageBanner';
+import VoiceMessage from './Presentation/Views/Dialog/VoiceMessage/VoiceMessage';
+import UsersList from './Presentation/Views/DialogInfo/UsersList/UsersList';
+import UserSingle from './Presentation/Views/DialogInfo/UsersList/SingleUser/SingleUser';
+import DialogMembersButton from './Presentation/Views/DialogInfo/DialogMemberButton/DialogMembersButton';
+import DialogListHeader from './Presentation/Views/DialogListHeader/DialogListHeader';
+import EditDialog from './Presentation/Views/EditDialog/EditDialog';
+import UserAvatar from './Presentation/Views/EditDialog/UserAvatar/UserAvatar';
+import LeaveDialogFlow from './Presentation/Views/Flow/LeaveDialogFlow/LeaveDialogFlow';
+import CreateDialog from './Presentation/Views/Flow/CreateDialog/CreateDialog';
+import InviteMembers from './Presentation/Views/InviteMembers/InviteMembers';
+import NotFoundContent from './Presentation/Views/InviteMembers/NotFoundContent/NotFoundContent';
+import SingleUserWithCheckBox from './Presentation/Views/InviteMembers/InviteUsersList/SingleUserWithCheckBox/SingleUserWithCheckBox';
+import PreviewDialogContextMenu from './Presentation/Views/PreviewDialog/PreviewDialogContextMenu/PreviewDialogContextMenu';
+import YesNoQuestionComponent from './Presentation/Views/YesNoQuestion/YesNoQuestion';
 
 export {
+  AttachmentBubble,
+  messageHasUrls,
+  type FunctionTypeMessageEntityToVoid,
+  MessageDTOMapper,
+  getTimeShort24hFormat,
+  TextBubble,
   Avatar,
   Badge,
   Button,
@@ -117,7 +183,6 @@ export {
   Dropdown,
   Header,
   Loader,
-  Message,
   MessageInput,
   MessageSeparator,
   Placeholder,
@@ -148,9 +213,6 @@ export {
   NotificationTypes,
   stringifyError,
   DesktopLayout,
-  DialogList,
-  Dialog,
-  DialogInfo,
   type DialogEntity,
   BaseViewModel,
   QuickBloxUIKitDesktopLayout,
@@ -160,7 +222,6 @@ export {
   AISource,
   type IChatMessage,
   AIWidgetIcon,
-  ErrorMessageIcon,
   PreviewDialogViewModel,
   type FunctionTypeViewModelToVoid,
   type AvatarContentIncomingUserProps,
@@ -175,12 +236,8 @@ export {
   type MessageEntity,
   getDateForDialog,
   ReplyMessagePreview,
-  ForwardMessageFlow,
   SectionList,
   type SectionItem,
-  MembersList,
-  PreviewDialog,
-  CreateNewDialogFlow,
   GroupChatSvg,
   InformationSvg,
   PublicChannelSvg,
@@ -189,6 +246,65 @@ export {
   SearchSvg,
   ChatSvg,
   useQuickBloxUIKit,
+  AIAssist,
+  AIAssistComponent,
+  AITranslate,
+  AITranslateComponent,
+  AIRephraseWidget,
+  AIWidgetActions,
+  ErrorMessageIcon,
+  SliderMenu,
+  ContextMenu,
+  DialogHeader,
+  DialogBackIcon,
+  DialogInfoIcon,
+  DropDownMenu,
+  ItemDropDownMenu,
+  ErrorToast,
+  ForwardMessageFlow,
+  InputForForwarding,
+  ForwardMessagePreview,
+  DialogsWithSearch,
+  SearchComponent,
+  DialogListItem,
+  InputMessage,
+  Message,
+  OutgoingRepliedMessage,
+  OutgoingMessage,
+  OutgoingForwardedMessage,
+  MessageAttachment,
+  VideoAttachment,
+  ImageAttachment,
+  DefaultAttachment,
+  AudioAttachment,
+  IncomingRepliedMessage,
+  IncomingMessage,
+  MessageContentComponent,
+  AvatarContentIncomingUser,
+  IncomingForwardedMessage,
+  HighLightLink,
+  MessageContextMenu,
   MessageItem,
-  AIRephraseWidget
+  SystemDateBanner,
+  SystemMessageBanner,
+  VoiceMessage,
+  Dialog,
+  DialogInfo,
+  UsersList,
+  UserSingle,
+  MembersList,
+  DialogMembersButton,
+  DialogList,
+  DialogListHeader,
+  EditDialog,
+  UserAvatar,
+  LeaveDialogFlow,
+  CreateNewDialogFlow,
+  CreateDialog,
+  InviteMembers,
+  NotFoundContent,
+  SingleUserWithCheckBox,
+  PreviewDialog,
+  PreviewDialogContextMenu,
+  YesNoQuestionComponent,
 };

@@ -39,7 +39,7 @@ type MessageProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const Message: React.FC<MessageProps> = ({
+const Message = ({
   message,
   userId,
   setWaitAIWidget,

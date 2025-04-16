@@ -260,10 +260,14 @@ export class DefaultConfigurations {
         chatProtocol: {
           active: 2,
         },
+        pingLocalhostTimeInterval: 5,
+        chatReconnectionTimeInterval: 3,
         debug: true,
         enableForwarding: true,
         enableReplying: true,
         regexUserName: '', // '/^(?=[a-zA-Z])[-a-zA-Z_ ]{3,49}(?<! )$/',
+        showPublicDialogsInList: false,
+        allowPublicDialogCreation: false,
         endpoints: {
           api: 'api.quickblox.com',
           chat: 'chat.quickblox.com',

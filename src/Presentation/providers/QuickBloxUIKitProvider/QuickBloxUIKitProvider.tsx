@@ -93,14 +93,6 @@ const initDataContext: QBDataContextType = {
     CONNECTION_REPOSITORY: initialValues.CONNECTION_REPOSITORY,
     EVENT_MESSAGE_REPOSITORY: initialEvent.EVENT_MESSAGE_REPOSITORY,
     SYNC_DIALOGS_USE_CASE: initialSync.SYNC_DIALOGS_USE_CASE,
-    // SYNC_DIALOGS_USE_CASE: new SyncDialogsUseCase(
-    //   new DialogsRepository(
-    //     initialValues.LOCAL_DATA_SOURCE,
-    //     initialValues.REMOTE_DATA_SOURCE,
-    //   ),
-    //   initialValues.CONNECTION_REPOSITORY,
-    //   initialEvent.EVENT_MESSAGE_REPOSITORY,
-    // ),
   },
   InitParams: {
     accountData: DefaultConfigurations.getDefaultQBConfig().credentials,
@@ -161,9 +153,7 @@ const initDataContext: QBDataContextType = {
     initialValues.REMOTE_DATA_SOURCE.setAuthProcessedSuccessed();
     //
     initialValues.REMOTE_DATA_SOURCE.initEventsHandlers();
-    //
-    console.log('UI Kit authorize event handler has initialized');
-    //
+
     await initialValues.CONNECTION_REPOSITORY.initializeStates();
     if (!initialValues.CONNECTION_REPOSITORY.needInit) {
       initialValues.CONNECTION_REPOSITORY.keepALiveChatConnection();
@@ -202,37 +192,15 @@ function QuickBloxUIKitProvider({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   maxFileSize,
 }: QuickBloxProviderProps) {
-  console.log(
-    'QuickBloxUIKitProvider with account data: ',
-    JSON.stringify(accountData),
-  );
-  console.log(
-    'QuickBloxUIKitProvider with login data: ',
-    JSON.stringify(loginData),
-  );
   const initStorageState = {
     LOCAL_DATA_SOURCE: initialValues.LOCAL_DATA_SOURCE, // localstorage or session storage
     REMOTE_DATA_SOURCE: initialValues.REMOTE_DATA_SOURCE, // QB instances
     CONNECTION_REPOSITORY: initialValues.CONNECTION_REPOSITORY,
     EVENT_MESSAGE_REPOSITORY: initialEvent.EVENT_MESSAGE_REPOSITORY,
     SYNC_DIALOGS_USE_CASE: initialSync.SYNC_DIALOGS_USE_CASE,
-    // SYNC_DIALOGS_USE_CASE: new SyncDialogsUseCase(
-    //   new DialogsRepository(
-    //     initialValues.LOCAL_DATA_SOURCE,
-    //     initialValues.REMOTE_DATA_SOURCE,
-    //   ),
-    //   initialValues.CONNECTION_REPOSITORY,
-    //   initialEvent.EVENT_MESSAGE_REPOSITORY,
-    // ),
   };
-
-  console.log(
-    'QuickBloxUIKitProvider with storage init data: ',
-    JSON.stringify(initStorageState),
-  );
   const [storage, setStorage] = React.useState<QBDataStorage>(initStorageState);
 
-  console.log('have storage useState completed');
   const updateStorage = (dataStorage: QBDataStorage) => {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     setStorage(dataStorage);
@@ -356,8 +324,8 @@ function QuickBloxUIKitProvider({
         <ToastContainer
           position="top-center"
           autoClose={5000}
-          bodyClassName="toast__body"
-          toastClassName="toast"
+          bodyClassName="qb-toast__body"
+          toastClassName="qb-toast"
           pauseOnHover={false}
           closeButton={false}
           hideProgressBar

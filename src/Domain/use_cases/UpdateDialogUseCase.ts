@@ -22,7 +22,6 @@ export class UpdateDialogUseCase implements IUseCase<void, DialogEntity> {
     updateDialog: GroupDialogEntity,
     textInformationMessage: string,
   ) {
-    console.log('CONSTRUCTOR UpdateDialogUseCase');
     this.dialogRepository = dialogRepository;
     this.updateDialog = updateDialog;
     this.eventMessagesRepository = eventMessagesRepository;
@@ -30,7 +29,6 @@ export class UpdateDialogUseCase implements IUseCase<void, DialogEntity> {
   }
 
   async execute(): Promise<DialogEntity> {
-    console.log('execute UpdateDialogUseCase');
     const result: DialogEntity =
       await this.dialogRepository.updateDialogInRemote(this.updateDialog);
 

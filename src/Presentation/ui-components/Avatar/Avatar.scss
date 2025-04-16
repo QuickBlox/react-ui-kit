@@ -1,7 +1,6 @@
-@import '../../themes/styles/mixins';
+@use '../../themes/styles/mixins' as *;
 
-.avatar {
-  @include applyBorderBox;
+.qb-avatar {
   display: flex;
   flex-shrink: 0;
   align-items: center;
@@ -12,12 +11,12 @@
   background-color: var(--disabled-elements);
   color: var(--secondary-text);
 
+  @include applyBorderBox;
+
   svg {
-    height: 100%;
-    width: 100%;
-    
-    fill: var(--secondary-text);
-    padding: 10px;
+    height: 26px;
+    width: 26px;
+    fill: var(--tertiary-elements);
   }
 
   &__image {
@@ -44,6 +43,11 @@
   &--lg {
     width: 56px;
     height: 56px;
+
+    svg {
+      height: 33px;
+      width: 33px;
+    }
   }
 
   &--xl {

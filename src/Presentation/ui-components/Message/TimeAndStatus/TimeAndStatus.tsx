@@ -1,7 +1,7 @@
 import React from 'react';
-import { ReactComponent as StatusSentSvg } from '../../../icons/status/sent.svg';
-import { ReactComponent as StatusViewedDeliveredSvg } from '../../../icons/status/viewed-delivered.svg';
-import { ReactComponent as StatusErrorSvg } from '../../../icons/status/error.svg';
+import StatusSentSvg from '../../../icons/status/sent.svg?react';
+import StatusViewedDeliveredSvg from '../../../icons/status/viewed-delivered.svg?react';
+import  StatusErrorSvg  from '../../../icons/status/error.svg?react';
 import './TimeAndStatus.scss';
 
 const statusIconDictionary = {

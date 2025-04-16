@@ -11,11 +11,14 @@
     background: var(--incoming-background, #e4e6e8);
     border-radius: 8px;
     flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
   }
 
   &__icon {
     fill: var(--caption);
-    padding: 6px;
+    width: 16px;
+    height: 16px;
   }
 
   &__name {

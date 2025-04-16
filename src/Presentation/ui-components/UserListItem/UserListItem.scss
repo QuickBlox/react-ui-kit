@@ -6,7 +6,8 @@
   height: 56px;
   padding: 8px 19px 8px 16px;
   gap: 16px;
-  background-color: var(--color-background);
+  border-bottom: 1px solid var(--divider);
+
 
   &--disabled {
     cursor: not-allowed;
@@ -22,12 +23,19 @@
 
   &__name {
     margin-left: 16px;
-
-    font-family: 'Roboto';
     font-weight: 400;
     font-size: 16px;
     line-height: 24px;
     letter-spacing: 0.15px;
     color: var(--main-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 180px;
+
+
+    @media only screen and (max-width: 980px) {
+      width: 130px;
+    }
   }
 }

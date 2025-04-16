@@ -22,7 +22,6 @@ export class AIAnswerAssistWithSDKUseCase implements IUseCase<void, string> {
     dataSource: IRemoteDataSource,
     smartChatAssistantId: string,
   ) {
-    console.log('CONSTRUCTOR AIAnswerAssistWithSDKUseCase');
     this.textToSend = textToSend;
     this.dialogMessages = dialogMessages;
     this.dataSource = dataSource;
@@ -30,7 +29,6 @@ export class AIAnswerAssistWithSDKUseCase implements IUseCase<void, string> {
   }
 
   async execute(): Promise<string> {
-    console.log('execute AIAnswerAssistWithSDKUseCase');
     const history: AIChatMessage[] = this.dialogMessages.map(
       (msg: IChatMessage) => {
         return {

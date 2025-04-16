@@ -104,7 +104,7 @@ export const MessageInputDefault: StoryObj<typeof MessageInput> = {
   name: 'MessageInput Default',
   args: {
     value: '',
-    enableVoice: false,
+    enableVoice: true,
     disableAttachment: false,
     loading: false,
   },
@@ -115,6 +115,8 @@ export const MessageInputWithVoiceMessage: StoryObj<typeof MessageInput> = {
   args: {
     ...MessageInputDefault.args,
     enableVoice: true,
+    onVoice: () => {
+    }
   },
 };
 
@@ -141,5 +143,3 @@ export const MessageInputLoadingState: StoryObj<typeof MessageInput> = {
     loading: true,
   },
 };
-
-// Дополните примеры в соответствии с вашими требованиями

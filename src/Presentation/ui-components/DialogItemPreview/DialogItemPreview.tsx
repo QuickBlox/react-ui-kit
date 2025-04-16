@@ -1,11 +1,11 @@
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 import cn from 'classnames';
 import { FunctionTypeVoidToVoid } from '../../../CommonTypes/BaseViewModel';
 import './DialogItemPreview.scss';
 
 export type DialogItemPreviewProps = {
-  avatar: ReactElement;
-  title: string;
+  avatar?: ReactElement;
+  title?: string;
   active?: boolean;
   date?: string;
   lastMessage?: ReactElement | string;
@@ -16,7 +16,7 @@ export type DialogItemPreviewProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const DialogItemPreview: React.FC<DialogItemPreviewProps> = ({
+const DialogItemPreview = ({
   avatar,
   title,
   date,

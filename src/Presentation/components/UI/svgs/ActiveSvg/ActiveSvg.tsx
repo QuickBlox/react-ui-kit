@@ -9,7 +9,7 @@ type ActiveSvgContainerProps = {
   disabled?: boolean;
 };
 // eslint-disable-next-line react/function-component-definition
-const ActiveSvg: React.FC<ActiveSvgContainerProps> = ({
+const ActiveSvg = ({
   content,
   onTouch,
   onClick,

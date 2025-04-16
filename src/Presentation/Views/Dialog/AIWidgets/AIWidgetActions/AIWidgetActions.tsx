@@ -17,7 +17,7 @@ type ContextMenuProps = {
 
 const ContextMenuStyles: { [key: string]: CSSProperties } = {
   contextMenuIcon: {
-    display: 'inline-block',
+    // display: 'inline-block',
     position: 'relative',
     maxWidth: '42px',
     maxHeight: '42px',
@@ -84,7 +84,7 @@ function AIWidgetActions({
 
   return (
     <div style={ContextMenuStyles.contextMenuIcon}>
-      <div onClick={handleClick}>{widgetToRender || <EditDots />}</div>
+      <div className="ai-widget-actions-render" onClick={handleClick}>{widgetToRender || <EditDots />}</div>
       {menuVisible && (
         // <div ref={contextMenuRef} style={ContextMenuStyles.contextMenuContent}>
         <div

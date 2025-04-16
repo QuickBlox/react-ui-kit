@@ -15,6 +15,10 @@ $create-dialog-container-height: 412px;
   justify-content: flex-start;
   align-items: flex-start;
 
+  .disabled {
+    color: var(--secondary-text);
+  }
+
   &--add-members-container {
     min-height: $container-height;
     max-height: $container-height;
@@ -37,7 +41,6 @@ $create-dialog-container-height: 412px;
 
       &__inf {
         min-height: 20px;
-        font-family: 'Roboto';
         font-style: normal;
         font-weight: 500;
         font-size: 14px;
@@ -70,7 +73,6 @@ $create-dialog-container-height: 412px;
           padding: 0px;
           gap: 16px;
 
-          //width: 332px;
           width: 100%;
           height: 100px;
         }
@@ -93,7 +95,6 @@ $create-dialog-container-height: 412px;
         text-align: center;
         padding: 8px;
         width: 268px;
-        // width: 100%;
         height: 44px;
 
         border: 1px solid #90979f;
@@ -108,7 +109,6 @@ $create-dialog-container-height: 412px;
           margin-left: 6px;
           margin-right: 6px;
 
-          font-family: 'Roboto';
           font-style: normal;
           font-weight: 400;
           font-size: 16px;
@@ -136,12 +136,8 @@ $create-dialog-container-height: 412px;
   }
 
   &--btn-container {
-    min-height: 32px;
     max-height: 32px;
     height: 32px;
-    //min-width: $container-width;
-    //max-width: $container-width;
-    //width: $container-width;
     width: 100%;
     min-height: 34px;
     margin-top: 24px;
@@ -152,8 +148,6 @@ $create-dialog-container-height: 412px;
     flex-wrap: nowrap;
     justify-content: flex-end;
     align-items: flex-end;
-
-    //border: 2px solid blue;
   }
 
   &-loader {
@@ -162,31 +156,8 @@ $create-dialog-container-height: 412px;
 }
 .filtered-text-field{
   width: 100%;
-  //margin: 16px;
-  //padding: 8px;
-
   background-color: var(--main-background);
   color: var(--secondary-text);
-
-  //input {
-  //  color: var(--secondary-text);
-  //  background-color: var(--main-background);
-  //  margin-left: 6px;
-  //  margin-right: 6px;
-  //
-  //  font-family: 'Roboto';
-  //  font-style: normal;
-  //  font-weight: 400;
-  //  font-size: 16px;
-  //  line-height: 24px;
-  //
-  //  display: flex;
-  //  align-items: center;
-  //  letter-spacing: 0.15px;
-  //
-  //  border: none;
-  //  outline: none;
-  //}
 
   &__icon {
     width: 24px;

@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import cn from 'classnames';
 import Avatar from '../Avatar/Avatar';
 import CheckBox from '../CheckBox/CheckBox';
 import MessageCaption from './MessageCaption/MessageCaption';
@@ -54,12 +55,16 @@ export default function Message({
                 subtype={subtype}
                 userName={userName}
               />
-              {children}
+              <div className={cn(null, {
+                            'reply-forward-message': subtype === 'reply' || subtype === 'forward'}
+              )}>
+                {children}
+              </div>
             </div>
           </div>
         </div>
       ) : (
-        <div>
+        <>
           <div className="message-item__incoming-mes">
             {avatar}
             <div className="message-item__incoming">
@@ -70,7 +75,14 @@ export default function Message({
               />
               <div className="message-item__incoming__chat">
                 <div className="message-item__incoming__chat__bubble">
-                  {children}
+                  {
+                    (subtype === 'reply' || subtype === 'forward')
+                      ?
+                    <div className='reply-forward-message'>
+                      {children}
+                    </div>
+                    : children
+                  }
                   {bottomPart}
                 </div>
                 {additionalPart}
@@ -78,7 +90,7 @@ export default function Message({
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

@@ -25,6 +25,15 @@
   justify-content: flex-start;
   flex: 1;
   position: relative;
+
+  textarea {
+    overflow: auto;
+    scrollbar-width: none;
+  }
+
+  textarea::-webkit-scrollbar {
+    display: none;
+  }
 }
 .forwarding-message-input-input-type-message {
   color: var(--main-text, #636d78);
@@ -43,6 +52,8 @@
   height: 26px;
   min-height: 26px;
   max-height: 26px;
+
+
 }
 
 .forwarding-message-input-icon-send {

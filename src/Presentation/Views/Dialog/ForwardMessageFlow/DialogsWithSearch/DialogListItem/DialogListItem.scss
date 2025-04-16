@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: flex-start;
   flex-shrink: 0;
-  width: 270px;
+  //width: 270px;
   position: relative;
 
 }
@@ -20,22 +20,15 @@
   width: 40px;
   height: 40px;
   position: relative;
-}
-.dialog-item-element-avatar-rectangle {
-  width: 40px;
-  height: 40px;
-  position: absolute;
-  left: 0px;
-  top: 0px;
-}
-.dialog-item-element-avatar-ellipse {
-  background: var(--disabled-elements, #bcc1c5);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  position: absolute;
-  left: 0px;
-  top: 0px;
+  background-color: var(--disabled-elements);
+  color: var(--secondary-text);
+
 }
 .contents-user {
   position: absolute;
@@ -52,20 +45,15 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 200px;
+  @media (max-width: 767px) {
+    width: 120px;
+  }
 }
-.dialog-item-element-checkbox {
-  border-radius: 4px;
-  padding: 4px;
-  display: flex;
-  flex-direction: row;
-  gap: 0px;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  position: relative;
-}
+
 .toggle-check-on {
   align-self: stretch;
   flex: 1;

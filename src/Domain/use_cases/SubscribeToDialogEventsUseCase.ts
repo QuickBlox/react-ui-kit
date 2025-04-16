@@ -19,7 +19,6 @@ export class SubscribeToDialogEventsUseCase extends BaseUseCase<
     eventMessagesRepository: EventMessagesRepository,
     nameSubscription: string = SubscriptionPerformer.DEFAULT_SUBSCRIPTION_NAME,
   ) {
-    console.log('CONSTRUCTOR SubscribeToDialogsUpdatesUseCaseWithMock');
     super();
     this.callBackExecute = undefined;
 
@@ -75,19 +74,10 @@ export class SubscribeToDialogEventsUseCase extends BaseUseCase<
   }
 
   updateMessageStatusEventHandler(dialogEventInfo: DialogEventInfo): void {
-    console.log(
-      'execute newDialogEventHandler in SubscribeToDialogEventsUseCase:',
-      JSON.stringify(dialogEventInfo),
-    );
-
     this.informSubscribers(dialogEventInfo);
   }
 
   newMessageEventHandler(messageEntity: MessageEntity): void {
-    console.log(
-      'execute newDialogEventHandler in SubscribeToDialogEventsUseCase:',
-      JSON.stringify(messageEntity),
-    );
     const messageInfo: DialogEventInfo = {
       messageInfo: messageEntity,
       notificationTypes: NotificationTypes.UPDATE_DIALOG,
@@ -99,10 +89,6 @@ export class SubscribeToDialogEventsUseCase extends BaseUseCase<
   }
 
   updateDialogEventHandler(messageEntity: MessageEntity): void {
-    console.log(
-      'execute updateDialogEventHandler in SubscribeToDialogEventsUseCase:',
-      JSON.stringify(messageEntity),
-    );
     const messageInfo: DialogEventInfo = {
       messageInfo: messageEntity,
       notificationTypes: NotificationTypes.UPDATE_DIALOG,
@@ -114,10 +100,6 @@ export class SubscribeToDialogEventsUseCase extends BaseUseCase<
   }
 
   leaveDialogEventHandler(messageEntity: MessageEntity): void {
-    console.log(
-      'execute leaveDialogEventHandler in SubscribeToDialogEventsUseCase:',
-      JSON.stringify(messageEntity),
-    );
     const messageInfo: DialogEventInfo = {
       messageInfo: messageEntity,
       notificationTypes: NotificationTypes.DELETE_LEAVE_DIALOG,
@@ -129,10 +111,6 @@ export class SubscribeToDialogEventsUseCase extends BaseUseCase<
   }
 
   removeUserDialogEventHandler(messageEntity: MessageEntity): void {
-    console.log(
-      'execute removeUserDialogEventHandler in SubscribeToDialogEventsUseCase:',
-      JSON.stringify(messageEntity),
-    );
     const messageInfo: DialogEventInfo = {
       messageInfo: messageEntity,
       notificationTypes: NotificationTypes.REMOVE_USER,
@@ -144,10 +122,6 @@ export class SubscribeToDialogEventsUseCase extends BaseUseCase<
   }
 
   newDialogEventHandler(messageEntity: MessageEntity): void {
-    console.log(
-      'execute newDialogEventHandler in SubscribeToDialogEventsUseCase:',
-      JSON.stringify(messageEntity),
-    );
     const messageInfo: DialogEventInfo = {
       messageInfo: messageEntity,
       notificationTypes: NotificationTypes.NEW_DIALOG,

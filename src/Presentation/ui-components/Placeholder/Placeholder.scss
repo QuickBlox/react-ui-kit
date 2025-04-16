@@ -1,4 +1,4 @@
-@import '../../themes/styles/mixins';
+@use '../../themes/styles/mixins' as *;
 
 .placeholder {
   display: flex;
@@ -24,6 +24,11 @@
     margin-bottom: 16px;
 
     fill: var(--caption);
+
+    svg {
+      width: 52px;
+      height: 52px;
+    }
   }
 
   &__retry {

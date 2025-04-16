@@ -1,3 +1,4 @@
+import React from 'react';
 import cn from 'classnames';
 import { TextDocumentSvg, AudioFileSvg, PlaySvg } from '../../icons';
 import './PreviewFileMessage.scss';

@@ -1,3 +1,4 @@
+import React from 'react';
 import { ReactElement } from 'react';
 import cn from 'classnames';
 
@@ -23,12 +24,12 @@ export default function DropdownOption({
 }: DropdownOptionProps) {
   return (
     <li
-      className={cn('dropdown__option', {
-        'dropdown__option--disabled': disabled,
+      className={cn('qb-dropdown__option', {
+        'qb-dropdown__option--disabled': disabled,
       })}
       onClick={() => !disabled && onSelect(value)}
     >
-      <span className="dropdown__label">
+      <span className="qb-dropdown__label">
         {leftIcon}
         {label}
       </span>

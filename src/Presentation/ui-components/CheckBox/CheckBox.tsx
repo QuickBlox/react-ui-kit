@@ -1,4 +1,7 @@
+import React from 'react';
 import './CheckBox.scss';
+import cn from 'classnames';
+import { CheckOffSvg, CheckOnSvg } from '../../icons';
 
 interface CheckBoxProps {
   disabled: boolean;
@@ -12,12 +15,13 @@ export default function CheckBox({
   onChange,
 }: CheckBoxProps) {
   return (
-    <input
-      className="checkbox"
-      type="checkbox"
-      checked={checked}
-      disabled={disabled}
-      onChange={() => onChange?.(!checked)}
-    />
+    <label className={cn('checkbox-field', {
+      'disabled': disabled
+    })}>
+      {checked ? <CheckOnSvg className="icon-checkmark" /> : <CheckOffSvg className="icon-check" />}
+      <input type="checkbox"
+             onChange={() => onChange?.(!checked)}
+             disabled={disabled}  />
+    </label>
   );
 }

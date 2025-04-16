@@ -14,7 +14,7 @@ type InputForForwardingProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const InputForForwarding: React.FC<InputForForwardingProps> = ({
+const InputForForwarding = ({
   inputText,
   onChange,
   onSend,

@@ -8,13 +8,11 @@ export class GetDialogByIdUseCase implements IUseCase<void, DialogEntity> {
   private readonly dialogId: string;
 
   constructor(dialogRepository: DialogsRepository, dialogId: string) {
-    console.log('CONSTRUCTOR GetDialogByIdUseCase');
     this.dialogRepository = dialogRepository;
     this.dialogId = dialogId;
   }
 
   async execute(): Promise<DialogEntity> {
-    console.log('execute GetAllDialogsUseCaseWithMock');
     const fromRemote: DialogEntity =
       await this.dialogRepository.getDialogFromRemote(this.dialogId);
 

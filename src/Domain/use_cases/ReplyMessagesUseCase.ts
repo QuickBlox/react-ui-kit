@@ -14,14 +14,12 @@ export class ReplyMessagesUseCase implements IUseCase<void, MessageEntity> {
     messagesToReply: MessageEntity[],
     relatedMessage: MessageEntity,
   ) {
-    console.log('CONSTRUCTOR ReplyMessagesUseCase');
     this.messagesRepository = messagesRepository;
     this.relatedMessage = relatedMessage;
     this.messagesToReply = messagesToReply;
   }
 
   async execute(): Promise<MessageEntity> {
-    console.log('execute ReplyMessagesUseCase');
     this.relatedMessage.qb_original_messages = this.messagesToReply;
     this.relatedMessage.qb_message_action = 'reply';
     this.relatedMessage.origin_sender_name =

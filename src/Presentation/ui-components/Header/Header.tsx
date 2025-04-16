@@ -1,4 +1,4 @@
-import { Children, ReactElement } from 'react';
+import React, { Children, ReactElement } from 'react';
 import cn from 'classnames';
 import { FunctionTypeVoidToVoid } from '../../../CommonTypes/BaseViewModel';
 import { BackSvg } from '../../icons';
@@ -14,7 +14,7 @@ export type HeaderProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const Header: React.FC<HeaderProps> = ({
+const Header = ({
   title,
   avatar,
   badge,

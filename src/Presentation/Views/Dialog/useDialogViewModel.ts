@@ -43,15 +43,12 @@ export default function useDialogViewModel(
   dialogType: DialogType,
   dialogEntity: DialogEntity,
 ): DialogViewModel {
-  console.log('useDialogViewModel');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const startPagination: Pagination = new Pagination(0, 0);
   const [pagination, setPagination] = useState<Pagination>(startPagination);
   const [messages, setMessages] = useState<MessageEntity[]>([]);
-  // const [users, setUsers] = useState<Record<number, UserEntity>>();
   const [dialog, setDialog] = useState<DialogEntity>(dialogEntity);
-  // const [dialogsParticipants, setDialogsParticipants] = useState<number[]>([]);
 
   const currentContext = useQbInitializedDataContext();
   const remoteDataSourceMock: RemoteDataSource =
@@ -83,10 +80,9 @@ export default function useDialogViewModel(
 
     updateCurrentDialogInDataSourceUseCase.execute().catch((e) => {
       console.log(
-        'useDialogViewModel Error updateCurrentDialogInDataSourceUseCase: ',
+        'Error: useDialogViewModel Error updateCurrentDialogInDataSourceUseCase: ',
         stringifyError(e),
       );
-      throw new Error(stringifyError(e));
     });
   }
 
@@ -175,7 +171,7 @@ export default function useDialogViewModel(
         console.log(
           `DIALOG: ${JSON.stringify(dialogEntity)} WITH ${
             data.ResultData.length
-          } messages:${JSON.stringify(data)}`,
+          } messages.`,
         );
 
         messagesDialog = data.ResultData;
@@ -243,7 +239,7 @@ export default function useDialogViewModel(
       return obj;
     });
 
-    console.log(`result messages:${JSON.stringify(ResultMessages)}`);
+    console.log(`result messages, count:${ResultMessages.length}`);
     setMessages((prevState) => {
       const newItems: MessageEntity[] =
         currentPagination === undefined ||
@@ -254,11 +250,9 @@ export default function useDialogViewModel(
       return newItems;
     });
     setLoading(false);
-    console.log('EXECUTE USE CASE MessagesViewModelWithMockUseCase EXECUTED');
   }
 
   const dialogUpdateHandler = (dialogInfo: DialogEventInfo) => {
-    console.log('call dialogUpdateHandler in useDialogViewModel');
 
     if (dialogInfo.eventMessageType === EventMessageType.LocalMessage) {
       if (dialogInfo.messageStatus) {
@@ -408,13 +402,10 @@ export default function useDialogViewModel(
     );
 
   const sendTypingTextMessage = () => {
-    console.log('call release in MessagesViewModelWithMockUseCase');
     userTypingMessageUseCase.execute().catch((reason) => {
       const errorMessage: string = stringifyError(reason);
 
-      console.log('have exception in sendTypingTextMessage: ', errorMessage);
-
-      throw new Error(errorMessage);
+      console.log('Error: have exception in sendTypingTextMessage: ', errorMessage);
     });
   };
 
@@ -490,11 +481,10 @@ export default function useDialogViewModel(
         const errorMessage: string = stringifyError(reason);
 
         console.log(
-          'exception in sendMessage in useDialogViewModel',
+          'Error: exception in sendMessage in useDialogViewModel',
           errorMessage,
         );
         setLoading(false);
-        throw new Error(errorMessage);
       })
       .finally(() => {
         setLoading(false);
@@ -572,7 +562,6 @@ export default function useDialogViewModel(
   };
 
   const sendAttachmentMessage = async (newMessage: File): Promise<boolean> => {
-    console.log('call sendAttachmentMessage');
     setLoading(true);
     const currentUserId = REMOTE_DATA_SOURCE.authInformation?.userId || 0;
 
@@ -614,11 +603,10 @@ export default function useDialogViewModel(
         const errorMessage: string = stringifyError(reason);
 
         console.log(
-          'exception in sendMessage in useDialogViewModel',
+          'Error: exception in sendMessage in useDialogViewModel',
           errorMessage,
         );
         setLoading(false);
-        throw new Error(errorMessage);
       })
       .finally(() => {
         setLoading(false);
@@ -707,11 +695,10 @@ export default function useDialogViewModel(
         const errorMessage: string = stringifyError(reason);
 
         console.log(
-          'exception in sendMessage in useDialogViewModel',
+          'Error: exception in sendMessage in useDialogViewModel',
           errorMessage,
         );
         setLoading(false);
-        throw new Error(errorMessage);
       })
       .finally(() => {
         setLoading(false);

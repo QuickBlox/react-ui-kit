@@ -85,10 +85,23 @@ export interface QBUIKitConfig extends QBConfig {
     chatProtocol: {
       active: number;
     };
+    pingLocalhostTimeInterval?: number;
+    chatReconnectionTimeInterval?: number
     debug: boolean;
     enableForwarding: boolean;
     enableReplying: boolean;
     regexUserName?: string;
+    /**
+     * Whether public dialogs should be shown in the dialogs list.
+     * Defaults to false if not provided.
+     */
+    showPublicDialogsInList?: boolean;
+
+    /**
+     * Whether creating public dialogs is allowed.
+     * Defaults to false if not provided.
+     */
+    allowPublicDialogCreation?: boolean;
     endpoints: {
       api: string;
       chat: string;

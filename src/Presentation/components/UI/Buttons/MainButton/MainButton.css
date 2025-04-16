@@ -13,15 +13,13 @@
   flex: none;
   order: 1;
   flex-grow: 0;
-
-  font-family: 'Roboto';
   font-style: normal;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 14px;
   line-height: 16px;
   letter-spacing: 0.4px;
 
-  color: var(--main-background);
+  color: var(--system);
 
   border: none;
   outline: none;
@@ -41,9 +39,8 @@
   flex: none;
   order: 1;
   flex-grow: 0;
-  font-family: 'Roboto';
   font-style: normal;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 14px;
   line-height: 16px;
   letter-spacing: 0.4px;
@@ -69,9 +66,8 @@
   order: 0;
   flex-grow: 0;
 
-  font-family: 'Roboto';
   font-style: normal;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 14px;
   line-height: 16px;
   letter-spacing: 0.4px;
@@ -90,9 +86,8 @@
   flex: none;
   order: 1;
   flex-grow: 0;
-  font-family: 'Roboto';
   font-style: normal;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 14px;
   line-height: 16px;
   letter-spacing: 0.4px;

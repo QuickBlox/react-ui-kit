@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import cn from 'classnames';
 
 import { DownSvg } from '../../icons';

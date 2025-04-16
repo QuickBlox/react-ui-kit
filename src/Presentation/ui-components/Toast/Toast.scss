@@ -1,13 +1,13 @@
-.container {
+.qb-container {
   width: 25%;
 }
 
-.toast {
+.qb-toast {
   min-height: 24px;
   padding: 4px 12px;
   opacity: 60% !important;
   border-radius: 4px;
-  background-color: var(--toast-color);
+  background-color: var(--caption);
 
   &__body {
     padding: 0;
@@ -16,7 +16,7 @@
     font-size: 12px;
     line-height: 16px;
     letter-spacing: 0.5px;
-    color: var(--main-background);
+    color: var(--secondary-elements);
     text-align: center;
   }
 }

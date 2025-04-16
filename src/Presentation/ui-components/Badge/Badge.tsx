@@ -1,3 +1,4 @@
+import React from 'react';
 import cn from 'classnames';
 
 import './Badge.scss';
@@ -16,7 +17,7 @@ export default function Badge({
   classNames,
 }: BadgeProps) {
   return (
-    <div className={cn('badge', { 'badge--mute': mute }, classNames)}>
+    <div className={cn('qb-badge', { 'qb-badge--mute': mute }, classNames)}>
       {limit && count > limit ? `${limit}+` : count}
     </div>
   );

@@ -10,7 +10,7 @@ type ItemDropDownMenuProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-export const ItemDropDownMenu: React.FC<ItemDropDownMenuProps> = ({
+export const ItemDropDownMenu = ({
   item,
   icon,
   touchAction,

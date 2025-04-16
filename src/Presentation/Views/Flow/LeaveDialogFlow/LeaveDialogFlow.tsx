@@ -11,7 +11,7 @@ type LeaveDialogFlowProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const LeaveDialogFlow: React.FC<LeaveDialogFlowProps> = ({
+const LeaveDialogFlow = ({
   dialogsViewModel,
   dialog,
 }: LeaveDialogFlowProps) => {

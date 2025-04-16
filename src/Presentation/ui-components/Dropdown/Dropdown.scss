@@ -1,6 +1,6 @@
-@import '../../themes/styles/mixins';
+@use '../../themes/styles/mixins' as *;
 
-.dropdown {
+.qb-dropdown {
   width: 100%;
   height: 100%;
   position: relative;

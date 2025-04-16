@@ -1,3 +1,4 @@
+import React from 'react';
 import { ButtonHTMLAttributes, DetailedHTMLProps, ReactElement } from 'react';
 import cn from 'classnames';
 
@@ -29,9 +30,9 @@ export default function Button({
     // eslint-disable-next-line react/button-has-type
     <button
       className={cn(
-        'button',
-        `button--${variant}`,
-        { 'button--disabled': disabled },
+        'qb-button',
+        `qb-button--${variant}`,
+        { 'qb-button--disabled': disabled },
         className,
       )}
       disabled={disabled || loading}
@@ -39,7 +40,7 @@ export default function Button({
     >
       {loading && !disabled ? (
         <Loader
-          className={cn('button__loader', `button__loader--${variant}`)}
+          className={cn('qb-button__loader', `qb-button__loader--${variant}`)}
         />
       ) : (
         children

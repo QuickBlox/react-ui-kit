@@ -14,7 +14,6 @@ export class SubscribeToDialogsUpdatesUseCase extends BaseUseCase<
   private dialogs: Array<DialogEntity> = [];
 
   constructor(dialogRepository: DialogsRepository) {
-    console.log('CONSTRUCTOR SubscribeToDialogsUpdatesUseCase');
     super();
     this.callBackExecute = undefined;
 

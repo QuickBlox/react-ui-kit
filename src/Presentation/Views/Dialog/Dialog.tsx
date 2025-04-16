@@ -18,18 +18,18 @@ type DialogProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const Dialog: React.FC<DialogProps> = ({
-  messagesViewModel,
-  maxWidthToResize = undefined,
-  warningErrorText,
-  renderHeader,
-  renderMessageList,
-  renderMessageInput,
-  theme = undefined,
-  headerContent = undefined,
-  rootStyles = {},
-  messagesContainerStyles = {},
-}: DialogProps) => {
+const Dialog = ({
+                  messagesViewModel,
+                  maxWidthToResize = undefined,
+                  warningErrorText,
+                  renderHeader,
+                  renderMessageList,
+                  renderMessageInput,
+                  theme = undefined,
+                  headerContent = undefined,
+                  rootStyles = {},
+                  messagesContainerStyles = {},
+                }: DialogProps) => {
   const [currentWarningErrorText, setCurrentWarningErrorText] =
     useState<string>('');
 

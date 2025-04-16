@@ -1,18 +1,11 @@
 $dialog-information-container-height: 800px;
 $dialog-information-container-dialog-information-height: 64px;
 
-.dialog-information-container {
-  // min-height: $dialog-information-container-height;
-  // max-height: $dialog-information-container-height;
-  // height: $dialog-information-container-height;
-  // border: 1px solid var(--divider);
-}
 .header-dialog-info,
 .header-dialog-info * {
   box-sizing: border-box;
 }
 .header-dialog-info {
-  background: var(--color-background, #ffffff);
   padding: 16px 16px 16px 24px;
   display: flex;
   flex-direction: row;
@@ -20,15 +13,18 @@ $dialog-information-container-dialog-information-height: 64px;
   justify-content: space-between;
   align-self: stretch;
   flex-shrink: 0;
+  font: var(--title-title-large);
   position: relative;
   border-bottom: 1px solid var(--divider);
   height: $dialog-information-container-dialog-information-height;
-}
-.header-dialog-info-headline {
-  color: var(--main-text, #0b1b0f);
-  text-align: left;
-  font: var(--title-title-large);
-  position: relative;
+
+  .dialog-header__icon {
+      svg {
+        width: 24px;
+        height: 24px;
+        fill: var(--secondary-elements);
+      }
+    }
 }
 .header-dialog-info-icon {
   width: 24px;
@@ -36,12 +32,19 @@ $dialog-information-container-dialog-information-height: 64px;
   fill: var(--secondary-elements);
 }
 
+.header-dialog-info-headline {
+  color: var(--main-text, #0b1b0f);
+  text-align: left;
+  font: var(--title-title-large);
+  position: relative;
+}
+
+
 .dialog-information-profile,
 .dialog-information-profile * {
   box-sizing: border-box;
 }
 .dialog-information-profile {
-  background: var(--color-background, #ffffff);
   padding: 24px 0px 24px 0px;
   align-self: stretch;
   flex-flow: column;
@@ -51,9 +54,7 @@ $dialog-information-container-dialog-information-height: 64px;
   border-bottom: 1px solid var(--divider);
 }
 .dialog-information-profile-avatar {
-  // width: 80px;
   height: 80px;
-  // position: absolute;
   left: 140px;
   top: 24px;
 }
@@ -62,7 +63,6 @@ $dialog-information-container-dialog-information-height: 64px;
   justify-content: center;
 }
 .dialog-info-profile-avatar-ellipse {
-  background: var(--disabled-elements, #bcc1c5);
   border-radius: 50%;
   position: absolute;
   height: 81px;
@@ -70,7 +70,6 @@ $dialog-information-container-dialog-information-height: 64px;
   top: 24px;
 }
 .dialog-info-profile-avatar-contents {
-  height: auto;
   position: absolute;
   right: 17.86%;
   left: 17.86%;
@@ -85,7 +84,6 @@ $dialog-information-container-dialog-information-height: 64px;
   color: var(--main-text, #0b1b0f);
   text-align: center;
   font: var(--title-title-medium);
-  // position: absolute;
   left: 134.5px;
   top: 112px;
   display: flex;
@@ -93,18 +91,15 @@ $dialog-information-container-dialog-information-height: 64px;
   justify-content: center;
 }
 .dialog-information-profile-edit {
-  position: relative;
   right: -10px;
-  //top: 30px;
   border-radius: 4px;
   padding: 8px 56px 0px 0px;
   display: flex;
   flex-direction: row;
-  gap: 0px;
+  gap: 0;
   align-items: center;
   justify-content: center;
   position: absolute;
-  //left: 294px;
   top: 8px;
 }
 .dialog-information-profile-edit-button {
@@ -124,7 +119,6 @@ $dialog-information-container-dialog-information-height: 64px;
   box-sizing: border-box;
 }
 .dialog-info-action-wrapper-settings {
-  background: var(--color-background, #ffffff);
   padding: 16px;
   display: flex;
   flex-direction: row;
@@ -149,7 +143,7 @@ $dialog-information-container-dialog-information-height: 64px;
   padding: 4px;
   display: flex;
   flex-direction: row;
-  gap: 0px;
+  gap: 0;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
@@ -202,7 +196,7 @@ $dialog-information-container-dialog-information-height: 64px;
   text-align: center;
   font: var(--label-label-medium);
   position: relative;
-  padding: 0px 5px 0px 5px;
+  padding: 0 5px 0 5px;
 }
 
 .dialog-info-leave {

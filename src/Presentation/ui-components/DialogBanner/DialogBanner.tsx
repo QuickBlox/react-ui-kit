@@ -1,4 +1,5 @@
-import { ReactComponent as DownSvg } from '../../icons/navigation/down.svg';
+import React from 'react';
+import  DownSvg  from '../../icons/navigation/down.svg?react';
 import './DialogBanner.scss';
 
 type DialogBannerProps = {

@@ -38,7 +38,6 @@ export default function useDialogListViewModel(
   currentContext: QBDataContextType,
   initPagination?: Pagination,
 ): DialogListViewModel {
-  console.log('3.1. useDialogListViewModel');
   const startPagination: Pagination = initPagination || new Pagination();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');

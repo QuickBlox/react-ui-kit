@@ -23,7 +23,7 @@ type MainButtonProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition,@typescript-eslint/no-unused-vars
-const MainButton: React.FC<MainButtonProps> = ({
+const MainButton = ({
   title,
   typeButton = TypeButton.default,
   disabled = false,
@@ -31,7 +31,7 @@ const MainButton: React.FC<MainButtonProps> = ({
   styleBox,
   clickHandler,
   touchHandler,
-}) => {
+}:MainButtonProps) => {
   const StyleButton: Record<string, string> = {};
 
   StyleButton[TypeButton.default] = 'main-button';

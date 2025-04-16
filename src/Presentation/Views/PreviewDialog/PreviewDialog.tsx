@@ -57,7 +57,7 @@ type PreviewDialogsProps = {
   disableActions?: boolean;
 };
 // eslint-disable-next-line react/function-component-definition
-const PreviewDialog: React.FC<PreviewDialogsProps> = ({
+const PreviewDialog = ({
   typeDialog,
   dialogViewModel,
   dialogAvatar,
@@ -177,7 +177,7 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
 
     if (
       messageParts &&
-      messageParts.length > 0 &&
+      messageParts.length > 0 && messageParts[3] &&
       messageParts[3].includes('image')
     ) {
       const fileUid: string = messageParts[2];
@@ -256,22 +256,22 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
     if (messageContentParts && messageContentParts.length > 0) {
       const [, fileName, , type] = messageContentParts;
 
-      if (type.includes('audio')) {
+      if (type && type.includes('audio')) {
         return (
           <PreviewFileMessage type="audio" name={trimFileName(fileName)} />
         );
       }
-      if (type.includes('video')) {
+      if (type && type.includes('video')) {
         return (
           <PreviewFileMessage type="video" name={trimFileName(fileName)} />
         );
       }
-      if (type.includes('image')) {
+      if (type && type.includes('image')) {
         return (
           <PreviewFileMessage name={trimFileName(fileName)} src={fileUrl} />
         );
       }
-      if (fileName.length > 0 && fileName.includes('.')) {
+      if (fileName && fileName.length > 0 && fileName.includes('.')) {
         return <PreviewFileMessage name={trimFileName(fileName)} />;
       }
 
@@ -318,7 +318,9 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
           }}
           placement="left"
         >
-          <MoreSvg />
+          <div className="dialog-preview-container-context-menu">
+            <MoreSvg className="" />
+          </div>
         </Dropdown>
       }
       onClick={() => {

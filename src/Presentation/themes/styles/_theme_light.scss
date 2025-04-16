@@ -1,9 +1,9 @@
-@import 'theme_colors_scheme';
+@use 'theme_colors_scheme' as *;
 
 :root {
   --primary: #{$primary-500};
   --color-background: #{$primary-a-100};
-  --color-background-modal: #{$primary-100};
+  --color-background-modal: #{$background-overlay-light};
   --color-background-overlay: #{$secondary-900};
   --color-divider: #{$primary-50};
   --color-font: #{$secondary-900};
@@ -30,9 +30,10 @@
   --incoming-background: #{$secondary-50};
   --outgoing-background: #{$primary-50};
   --dropdown-background: #{$primary-a-100};
-  --chat-input: #{$primary-a-200};
+  --chat-input: #{$secondary-50};
   --divider: #{$primary-50};
   --error: #{$error-500};
   --error-secondary: #{$error-200};
   --hightlight: #{$highlight};
+  --system: #{$primary-a-100};
 }

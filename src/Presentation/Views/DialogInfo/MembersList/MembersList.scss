@@ -6,7 +6,6 @@ $members-container-header-height: 64px;
   box-sizing: border-box;
 }
 .members-container-header {
-  background: var(--color-background, #ffffff);
   padding: 16px 16px 16px 24px;
   display: flex;
   flex-direction: row;
@@ -21,6 +20,15 @@ $members-container-header-height: 64px;
   border-width: 0 0 1px 0;
 
   height: $members-container-header-height;
+
+  .dialog-header__icon {
+    svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--main-text);
+      padding: 0;
+    }
+  }
 }
 .members-container-header-left {
   display: flex;

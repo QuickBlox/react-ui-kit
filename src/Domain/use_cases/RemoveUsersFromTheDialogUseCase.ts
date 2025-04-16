@@ -30,7 +30,6 @@ export class RemoveUsersFromTheDialogUseCase
     usersIds: Array<number>,
     textInformationMessage: string,
   ) {
-    console.log('CONSTRUCTOR LeaveDialogUseCase');
     this.eventMessagesRepository = eventMessagesRepository;
     this.dialogRepository = dialogRepository;
     this.dialogToLeave = dialog;

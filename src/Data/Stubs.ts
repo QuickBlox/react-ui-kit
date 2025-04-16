@@ -131,12 +131,12 @@ export class Stubs {
       id: '10231',
       type: FileType.image,
       uid: '10231',
-      url: 'https://via.placeholder.com/600/92c952',
+      url: 'https://files.readme.io/00b5563-small-qb-logo-docs-white-9px.png',
       file: {
         id: '10231',
         uid: '',
         type: FileType.image,
-        url: 'https://via.placeholder.com/600/92c952',
+        url: 'https://files.readme.io/00b5563-small-qb-logo-docs-white-9px.png',
       },
     };
     const photoAttachments: ChatMessageAttachmentEntity[] = [photo];
@@ -267,12 +267,12 @@ export class Stubs {
       id: '10231',
       type: FileType.image,
       uid: '10231',
-      url: 'https://via.placeholder.com/600/92c952',
+      url: 'https://cdn-ikpjoif.nitrocdn.com/WZsqFPiehrtwFaaeJNQAQZrkRMgaTuyL/assets/images/optimized/rev-83f47e6/quickblox.com/wp-content/themes/QuickbloxTheme2021/img/chat-api-feature-rich-sdk.jpg',
       file: {
         id: '10231',
         uid: '',
         type: FileType.image,
-        url: 'https://via.placeholder.com/600/92c952',
+        url: 'https://cdn-ikpjoif.nitrocdn.com/WZsqFPiehrtwFaaeJNQAQZrkRMgaTuyL/assets/images/optimized/rev-83f47e6/quickblox.com/wp-content/themes/QuickbloxTheme2021/img/chat-api-feature-rich-sdk.jpg',
       },
     };
     const photoAttachments: ChatMessageAttachmentEntity[] = [photo];
@@ -1029,12 +1029,12 @@ export class Stubs {
       id: '10231',
       type: FileType.image,
       uid: '10231',
-      url: 'https://via.placeholder.com/600/92c952',
+      url: 'https://files.readme.io/00b5563-small-qb-logo-docs-white-9px.png',
       file: {
         id: '10231',
         uid: '',
         type: FileType.image,
-        url: 'https://via.placeholder.com/600/92c952',
+        url: 'https://files.readme.io/00b5563-small-qb-logo-docs-white-9px.png',
       },
     };
     const photoAttachments: ChatMessageAttachmentEntity[] = [photo];

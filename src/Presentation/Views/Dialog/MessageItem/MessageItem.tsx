@@ -1,4 +1,4 @@
-import React, { RefObject, useReducer } from 'react';
+import React, { ReactElement, RefObject, useReducer } from 'react';
 import { MessageEntity } from '../../../../Domain/entity/MessageEntity';
 import { getTimeShort24hFormat } from '../../../../utils/DateTimeFormatter';
 import Message from '../../../ui-components/Message/Message';
@@ -13,11 +13,12 @@ import Loader from '../../../ui-components/Loader/Loader';
 import MessageSeparator from '../../../ui-components/MessageSeparator/MessageSeparator';
 import { MessageDTOMapper } from '../../../../Data/source/remote/Mapper/MessageDTOMapper';
 import Avatar from '../../../ui-components/Avatar/Avatar';
-import { ReactComponent as UserSvg } from '../../../icons/contents/user.svg';
+import UserSvg from '../../../icons/contents/user.svg?react';
 import './MessageItem.scss';
 
 export type MessageItemProps = {
   message: MessageEntity;
+  avatar?: ReactElement;
   currentUserId?: number;
   AITranslateWidget?: AIMessageWidget;
   AIAssistWidget?: AIMessageWidget;
@@ -66,6 +67,7 @@ function reducer(
 
 export default function MessageItem({
   message,
+  avatar,
   currentUserId,
   enableForwarding,
   enableReplying,
@@ -124,12 +126,12 @@ export default function MessageItem({
 
   function getStatusMessage(messageEntity: MessageEntity) {
     if (
-      messageEntity.delivered_ids &&
+      Array.isArray(messageEntity.delivered_ids) &&
       messageEntity.delivered_ids.length > 0 &&
       messageEntity.delivered_ids.some((id) => id !== currentUserId)
     ) {
       if (
-        messageEntity.read_ids &&
+        Array.isArray(messageEntity.read_ids) &&
         messageEntity.read_ids.length > 0 &&
         messageEntity.read_ids.some((id) => id !== currentUserId)
       ) {
@@ -297,6 +299,7 @@ export default function MessageItem({
           <Message
             key={message.id}
             avatar={
+            avatar ||
               <Avatar
                 src={message?.sender?.photo || ''}
                 icon={<UserSvg />}

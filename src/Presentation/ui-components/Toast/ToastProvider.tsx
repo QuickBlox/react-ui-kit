@@ -1,4 +1,4 @@
-import { ReactNode, createContext } from 'react';
+import React, { ReactNode, createContext } from 'react';
 import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,11 +14,11 @@ export default function ToastProvider({ children }: ToastProps) {
   return (
     <ToastContext.Provider value={undefined}>
       <ToastContainer
-        className="container"
+        className="qb-container"
         position="top-center"
         autoClose={3000}
-        bodyClassName="toast__body"
-        toastClassName="toast"
+        bodyClassName="qb-toast__body"
+        toastClassName="qb-toast"
         pauseOnHover={false}
         closeButton={false}
         hideProgressBar

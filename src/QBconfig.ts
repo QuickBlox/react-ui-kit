@@ -127,6 +127,8 @@ export const QBConfig: QBUIKitConfig = {
     chatProtocol: {
       active: 2,
     },
+    pingLocalhostTimeInterval: 0,
+    chatReconnectionTimeInterval: 3,
     debug: true,
     enableForwarding: true,
     enableReplying: true,

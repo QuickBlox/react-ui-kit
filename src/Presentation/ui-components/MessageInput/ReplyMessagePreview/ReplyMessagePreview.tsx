@@ -21,7 +21,7 @@ function trimMessage(messageText: string) {
 }
 
 // eslint-disable-next-line react/function-component-definition
-const ReplyMessagePreview: React.FC<ReplyMessagePreviewProps> = ({
+const ReplyMessagePreview = ({
   messages,
   userNameSentMessage,
   onClose,

@@ -13,7 +13,6 @@ import { DefaultConfigurations } from '../../../../Data/DefaultConfigurations';
 export default function useUsersListViewModel(
   dialogEntity?: DialogEntity,
 ): UsersListViewModel {
-  console.log('create useUsersListViewModel');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('error with getting user list');
   const [users, setUsers] = useState<UserEntity[]>([]);
@@ -27,7 +26,7 @@ export default function useUsersListViewModel(
   const regex = regexUserName ? new RegExp(regexUserName) : null;
 
   function logData(message: string, data: any) {
-    console.log(`${message} :`, JSON.stringify(data));
+    // console.log(`${message} :`, JSON.stringify(data));
   }
   function handleSuccessfulFetch(participants: Array<number>, data: any) {
     logData('have getUsers', data);
@@ -84,7 +83,6 @@ export default function useUsersListViewModel(
     }
   }
   async function getUsers() {
-    console.log('call getUsers in useUsersListViewModel');
     const participants: Array<number> =
       // eslint-disable-next-line no-nested-ternary
       dialog?.type === DialogType.group
@@ -94,7 +92,6 @@ export default function useUsersListViewModel(
         : [];
 
     await fetchUsersData(participants);
-    console.log('EXECUTE USE CASES getUsers');
   }
   async function getUserById(id: number): Promise<UserEntity> {
     const response = await getUsersData([id]);

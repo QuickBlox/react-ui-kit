@@ -1,30 +1,31 @@
-@import '../../themes/styles/mixins';
+@use '../../themes/styles/mixins' as *;
 
 .system-date-banner-chat-banner {
-  @include applyBorderBox;
-
   background: var(--incoming-background);
   border-radius: 30px;
-  padding: 2px 8px 2px 8px;
+  padding: 2px 8px;
   display: flex;
   gap: 10px;
   align-items: center;
   justify-content: center;
   color: var(--secondary-text);
   text-align: center;
-  font: var(--label-label-small, 500 11px/16px "Roboto", sans-serif);
+  font: var(--label-label-small);
+
+  @include applyBorderBox; // Теперь после всех CSS-свойств
 }
 
 .system-message-chat-banner {
-    padding: 2px 8px 2px 8px;
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: var(--secondary-text);
-    text-align: center;
-    font: var(--label-label-small, 500 11px/16px "Roboto", sans-serif);
-}
+  padding: 2px 8px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--secondary-text);
+  text-align: center;
+  font: var(--label-label-small);
 
+  @include applyBorderBox; // Теперь после всех CSS-свойств
+}

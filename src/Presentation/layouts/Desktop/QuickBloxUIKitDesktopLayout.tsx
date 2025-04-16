@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import cn from 'classnames';
 import '../../Views/Dialog/Dialog.scss';
 import '../../Views/Dialog/DialogHeader/DialogInfoIcon/DialogInfoIcon.scss';
@@ -47,14 +47,11 @@ import CreateNewDialogFlow from '../../Views/Flow/CreateDialogFlow/CreateNewDial
 import useQuickBloxUIKit from '../../../hooks/useQuickBloxUIKit';
 import { QuickBloxUIKitDesktopLayoutProps } from '../../../CommonTypes/CommonTypes';
 
-const QuickBloxUIKitDesktopLayout: React.FC<
-  QuickBloxUIKitDesktopLayoutProps
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,react/function-component-definition
-> = ({
-  theme = undefined,
-  AITranslate = undefined,
-  AIRephrase = undefined,
-  AIAssist = undefined,
+const QuickBloxUIKitDesktopLayout = ({
+  theme,
+  AITranslate,
+  AIRephrase,
+  AIAssist,
   uikitHeightOffset = '0px',
 }: QuickBloxUIKitDesktopLayoutProps) => {
   const {
@@ -207,13 +204,96 @@ const QuickBloxUIKitDesktopLayout: React.FC<
   const [selectedItem, setSelectedItem] = React.useState<
     BaseViewModel<DialogEntity> | undefined
   >(undefined);
+  const [pointerEventsValue, setPointerEventsValue] = useState<'auto' | 'none'>(
+    'auto',
+  );
+
+  const pointerEventsRef = useRef<'auto' | 'none'>('auto');
+
+  let timeout: number | null = null;
+
+  useEffect(() => {
+    return () => {
+      if (timeout !== null) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (dialogsViewModel.loading) {
+      pointerEventsRef.current = 'none';
+      setPointerEventsValue('none');
+
+      if (timeout !== null) {
+        clearTimeout(timeout);
+      }
+
+      timeout = window.setTimeout(() => {
+        console.warn('Forced unlock after 12 seconds due to loading timeout.');
+        pointerEventsRef.current = 'auto';
+        setPointerEventsValue('auto');
+
+        // Ensure loading status is reset
+        dialogsViewModel.setWaitLoadingStatus(false);
+
+        timeout = null;
+      }, 12000);
+    } else {
+      if (timeout !== null) {
+        clearTimeout(timeout);
+        timeout = null;
+      }
+
+      pointerEventsRef.current = 'auto';
+      setPointerEventsValue('auto');
+
+      // Ensure loading status is reset on successful load
+      dialogsViewModel.setWaitLoadingStatus(false);
+    }
+  }, [dialogsViewModel.loading]);
+
+  // previous version
+  // let timeout: NodeJS.Timeout | number | undefined;
+  //
+  // useEffect(() => {
+  //   return () => {
+  //     if (timeout) {
+  //       clearTimeout(timeout);
+  //     }
+  //   };
+  // }, []);
+  //
+  // useEffect(() => {
+  //
+  //   if (dialogsViewModel.loading) {
+  //     setPointerEventsValue('none');
+  //
+  //     timeout = setTimeout(() => {
+  //       console.warn('Forced unlock after 12 seconds due to loading timeout.');
+  //       setPointerEventsValue('auto');
+  //     }, 12000);
+  //   } else {
+  //     setPointerEventsValue('auto');
+  //   }
+  //
+  // }, [dialogsViewModel.loading]);
+
+  useEffect(() => {
+    if (pointerEventsValue === 'auto') {
+      dialogsViewModel.setWaitLoadingStatus(false);
+    }
+  }, [pointerEventsValue]);
 
   const selectDialogActions = (item: BaseViewModel<DialogEntity>): void => {
-    if (isOnline) {
-      if (!dialogsViewModel.loading) {
-        setSelectedDialog(item.entity);
-        // dialogsViewModel.entity = item.entity;
-      }
+    if (
+      isOnline &&
+      (pointerEventsValue !== 'none' ||
+        pointerEventsRef.current === 'auto' ||
+        !dialogsViewModel.loading)
+    ) {
+      setSelectedDialog(item.entity);
     }
   };
 
@@ -277,29 +357,6 @@ const QuickBloxUIKitDesktopLayout: React.FC<
       )
     : dialogsToView;
 
-  const [pointerEventsValue, setPointerEventsValue] = useState<string>('auto');
-
-  let timeout: NodeJS.Timeout | number | undefined;
-
-  useEffect(() => {
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (dialogsViewModel.loading) {
-      setPointerEventsValue('none');
-      timeout = setTimeout(() => {
-        setPointerEventsValue('auto');
-      }, 12000);
-    } else {
-      setPointerEventsValue('auto');
-    }
-  }, [dialogsViewModel.loading]);
-
   function getMessageDateTimeSent(item: PreviewDialogViewModel): string {
     let dateInt = 0;
     let formattedValue = '';
@@ -317,8 +374,8 @@ const QuickBloxUIKitDesktopLayout: React.FC<
 
   const getDialogAvatar = (
     currentDialog: PreviewDialogViewModel,
-  ): JSX.Element | undefined => {
-    let AvatarComponent: JSX.Element | undefined;
+  ): React.JSX.Element | undefined => {
+    let AvatarComponent: React.JSX.Element | undefined;
 
     if (
       currentDialog.entity.type === DialogType.group ||
@@ -537,7 +594,12 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                         groupMessages.map((message) => (
                           <MessageItem
                             disableAction={!isOnline}
-                            // defaultGetSenderName={defaultGetSenderName}
+                            avatar={
+                            <Avatar
+                              src={message?.sender?.photo || ''}
+                              icon={<UserSvg />}
+                              size="md"
+                            />}
                             message={message}
                             currentUserId={currentUserId || -1}
                             enableForwarding={enableForwarding}
@@ -614,7 +676,7 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                     }}
                     rephrase={
                       <AIRephraseWidget
-                        disableActions={!isOnline}
+                        disableActions={!isOnline || messageText.length === 0}
                         waitAIWidget={waitAIWidget}
                         messageText={messageText}
                         theme={theme}

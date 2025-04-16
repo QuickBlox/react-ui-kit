@@ -1,3 +1,4 @@
+import React from 'react';
 import { ReactElement } from 'react';
 import cn from 'classnames';
 import { UserSvg } from '../../icons';
@@ -18,13 +19,13 @@ export default function Avatar({
 }: AvatarProps) {
   if (src) {
     return (
-      <div className={cn('avatar', `avatar--${size}`, className)}>
-        <img src={src} className="avatar__image" alt="Avatar" />
+      <div className={cn('qb-avatar', `qb-avatar--${size}`, className)}>
+        <img src={src} className="qb-avatar__image" alt="Avatar" />
       </div>
     );
   }
 
   return (
-    <div className={cn('avatar', `avatar--${size}`, className)}>{icon}</div>
+    <div className={cn('qb-avatar', `qb-avatar--${size}`, className)}>{icon}</div>
   );
 }

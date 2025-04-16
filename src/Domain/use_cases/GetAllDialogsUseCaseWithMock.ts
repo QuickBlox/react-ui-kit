@@ -11,13 +11,11 @@ export class GetAllDialogsUseCaseWithMock
   private readonly pagination: Pagination;
 
   constructor(dialogRepository: DialogsRepository, pagination?: Pagination) {
-    console.log('CONSTRUCTOR GetAllDialogsUseCaseWithMock');
     this.dialogRepository = dialogRepository;
     this.pagination = pagination || new Pagination();
   }
 
   async execute(): Promise<PaginatedResult<DialogEntity>> {
-    console.log('execute GetAllDialogsUseCaseWithMock');
     const fromRemote: PaginatedResult<DialogEntity> =
       await this.dialogRepository.getDialogsFromRemote(this.pagination);
 

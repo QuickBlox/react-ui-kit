@@ -31,7 +31,6 @@ export class AIRephraseWithProxyUseCase implements IUseCase<void, string> {
     sessionToken: string,
     openAIModel = 'gpt-3.5-turbo',
   ) {
-    console.log('CONSTRUCTOR AIRephraseUseCase');
     this.api = api;
     this.openAIModel = openAIModel;
     this.port = port;
@@ -43,8 +42,6 @@ export class AIRephraseWithProxyUseCase implements IUseCase<void, string> {
   }
 
   async execute(): Promise<string> {
-    console.log('execute AIRephraseUseCase');
-
     const settings = QBAIRephrase.createDefaultAIRephraseSettings();
 
     settings.token = this.sessionToken;

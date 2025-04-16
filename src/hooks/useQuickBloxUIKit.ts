@@ -459,7 +459,7 @@ export default function useQuickBloxUIKit({
     setWarningErrorText(errorMessage);
     setTimeout(() => {
       setWarningErrorText('');
-    }, 3000);
+    }, 4500);
   };
 
   const closeReplyMessageFlowHandler = () => {
@@ -544,18 +544,38 @@ export default function useQuickBloxUIKit({
   };
 
   // Request microphone access and setup WebRTC
+  const activateSilentAudioHack = () => {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.start();
+    gainNode.gain.value = 0.001; // Неслышный звук поддерживает аудиосессию активной
+  };
+
   const getMicrophonePermission = async () => {
     if (!window) {
       showErrorMessage(
-        'The MediaRecorder API is not supported in your browser.',
+        'The MediaRecorder API is not supported on your platform.',
       );
 
       return;
     }
 
+    // if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    //   showErrorMessage(
+    //     'Your browser does not support microphone recording. Please update your browser or check permissions.'
+    //   );
+    //   return;
+    // }
+
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         audio: true,
+        video: false,
       });
 
       // Create WebRTC peer connection
@@ -574,17 +594,85 @@ export default function useQuickBloxUIKit({
       setPermission(true);
       console.log('Microphone access granted, WebRTC connection established.');
     } catch (err) {
-      showErrorMessage(
-        `The MediaRecorder API throws exception ${stringifyError(err)}.`,
-      );
+      console.error('Error accessing microphone:', err);
+
+      const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+      if (isIOS) activateSilentAudioHack();
+
+      // Retry for iOS browsers
+      if (isIOS) {
+        setTimeout(async () => {
+          try {
+            const mediaStream = await navigator.mediaDevices.getUserMedia({
+              audio: true,
+              video: false,
+            });
+            setPermission(true);
+            setStream(mediaStream);
+          } catch (retryError) {
+            showErrorMessage(
+              'Microphone access is not available. Please check your iOS settings.'
+            );
+          }
+        }, 1500); // Retry after 1 second for iOS
+      } else {
+        showErrorMessage(
+          'Microphone access is not available. Please check your browser settings.'
+        );
+      }
     }
   };
 
   // Start recording using QBMediaRecorder
+  const startWebRTCRecording = async () => {
+    try {
+      // const audioContext = new AudioContext();
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioContext.createMediaStreamSource(stream!);
+      const destination = audioContext.createMediaStreamDestination();
+      source.connect(destination);
+
+      const recorder = new QBMediaRecorder({
+        mimeType: 'audio/mp4',
+        timeslice: 1000, // Chunks of 1 second
+        ignoreMutedMedia: true,
+        onstart: () => console.log('Recording started in startWebRTCRecording'),
+        onstop: (file) => {
+          console.log('Final audio file:', file);
+          setResultAudioBlob(file);
+          setAudioChunks([]); // Clear recorded chunks
+        },
+        ondataavailable: (event) => {
+          if (event.data.size > 0) {
+            setAudioChunks((prevChunks) => [...prevChunks, event.data]);
+          }
+        },
+      });
+
+      mediaRecorder.current = recorder;
+      recorder.start(destination.stream);
+      setIsRecording(true);
+
+      console.log('WebRTC recording started.');
+    } catch (error) {
+      console.error('Error starting WebRTC recording:', error);
+    }
+  };
   // eslint-disable-next-line @typescript-eslint/require-await
   const startRecording = async () => {
     if (!stream) return;
 
+    // Detect browser type
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isSafari = /^((?!chrome|android).)*safari/.test(userAgent);
+
+    if (isSafari || !window.MediaRecorder) {
+      console.log('Safari detected, using WebRTC.');
+      await startWebRTCRecording();
+      return;
+    }
+
+    console.log('Using QBMediaRecorder.');
     const mimeType = detectBrowserAndMimeType();
 
     console.log(`Selected MIME-type: ${mimeType}`);
@@ -593,7 +681,7 @@ export default function useQuickBloxUIKit({
       mimeType,
       timeslice: 1000, // Chunks of 1 second
       ignoreMutedMedia: true,
-      onstart: () => console.log('Recording started'),
+      onstart: () => console.log('Recording started in startRecording'),
       onstop: (file) => {
         console.log('Final audio file:', file);
         setResultAudioBlob(file);
@@ -629,18 +717,6 @@ export default function useQuickBloxUIKit({
     return new File([blob], fileName, { type: blob.type });
   };
 
-  // const blobToFile = (theBlob: Blob, fileName: string): File => {
-  //   const b: any = theBlob;
-  //
-  //   // A Blob() is almost a File() - it's just missing the two properties below which we will add
-  //   b.lastModifiedDate = new Date();
-  //   b.name = fileName;
-  //
-  //   // Cast to a File() type
-  //   const resultFile = theBlob as unknown as File;
-  //
-  //   return resultFile;
-  // };
 
   function sendTextMessageActions(textToSend: string) {
     if (isOnline) {
@@ -783,7 +859,7 @@ export default function useQuickBloxUIKit({
   };
 
   useEffect(() => {
-    const codeVersion = '0.4.2';
+    const codeVersion = '0.5.0';
 
     console.log(`React UIKit CODE VERSION IS ${codeVersion}`);
     if (isAuthProcessed()) {

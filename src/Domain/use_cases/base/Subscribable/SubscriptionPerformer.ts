@@ -50,7 +50,6 @@ export class SubscriptionPerformer<TArg> implements ISubscribable<TArg> {
   }
 
   constructor() {
-    console.log('CONSTRUCTOR SubscriptionPerformer');
     // this.onEventByTypeSubscribers[EventMessageType.LocalMessage] = [];
     this.onEventByTypeSubscribers[EventMessageType.LocalMessage] =
       this.subscribers;

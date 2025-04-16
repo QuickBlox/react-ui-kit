@@ -1,4 +1,4 @@
-import {
+import React, {
   ReactElement,
   useEffect,
   useRef,
@@ -62,17 +62,17 @@ export default function Dropdown({
   }, [isOpen]);
 
   return (
-    <div ref={dropdownRef} className={cn('dropdown', className)}>
+    <div ref={dropdownRef} className={cn('qb-dropdown', className)}>
       <button
         type="button"
-        className="dropdown__toggle"
+        className="qb-dropdown__toggle"
         onClick={handleToggleOpen}
       >
         {children}
       </button>
       <ul
-        className={cn('dropdown__menu', `dropdown__menu--${placement}`, {
-          'dropdown__menu--opened': isOpen,
+        className={cn('qb-dropdown__menu', `qb-dropdown__menu--${placement}`, {
+          'qb-dropdown__menu--opened': isOpen,
         })}
       >
         {options.map(({ label, value, leftIcon, rightIcon }) => (

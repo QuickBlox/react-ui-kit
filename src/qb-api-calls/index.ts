@@ -492,13 +492,46 @@ export function QBJoinGroupDialog(dialogId: QBUIKitChatDialog['_id']) {
     const QB = getQB();
     const dialogJid = QB.chat.helpers.getRoomJidFromDialogId(dialogId);
 
+    // QB.chat.muc.join(dialogJid, (error, res) => {
+    //   if (error) {
+    //     console.log('ERROR in QBJoinGroupDialog with join group dialog:', error);
+    //     reject(stringifyError(error));
+    //   } else {
+    //     console.log('QBJoinGroupDialog: join group dialog:', res);
+    //     resolve(res);
+    //   }
+    // });
     QB.chat.muc.join(dialogJid, (error, res) => {
       if (error) {
-        reject(stringifyError(error));
+        console.log('ERROR in QBJoinGroupDialog with join group dialog:', error);
+        console.log('stringify Error:', stringifyError(error));
+        // Если ошибка содержит станзу, проверяем ее на наличие тега <error>
+        try {
+          const errorNode = error as any;
+
+          if (errorNode.childNodes && errorNode.childNodes.length > 0) {
+            for (let i = 0; i < errorNode.childNodes.length; i++) {
+              const elItem = errorNode.childNodes.item(i);
+              if (elItem.tagName === 'error') {
+                const code = elItem.getAttribute('code') || '500';
+                const message = elItem.textContent || 'Unknown issue';
+                console.log(`Join error: ${code}, message: ${message}`);
+                return reject({ code, message });
+              }
+            }
+          }
+        } catch (parseError) {
+          console.log('Error parsing join error stanza:', parseError);
+          return reject({ code: '500', message: 'Error parsing join error stanza' });
+        }
+
+        return reject({ code: '500', message: 'Unknown error during join' });
       } else {
+        console.log('QBJoinGroupDialog: join group dialog:', res);
         resolve(res);
       }
     });
+
   });
 }
 

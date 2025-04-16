@@ -1,4 +1,4 @@
-.loader {
+.qb-loader {
   &--sm {
     width: 24px;
     height: 24px;
@@ -14,8 +14,6 @@
     height: 52px;
   }
 
-  animation: rotate 1s infinite linear;
-
   @keyframes rotate {
     from {
       transform: rotate(0deg);
@@ -23,5 +21,9 @@
     to {
       transform: rotate(360deg);
     }
+  }
+
+  & {
+    animation: rotate 1s infinite linear;
   }
 }

@@ -21,7 +21,7 @@ type CreateNewDialogFlowProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const CreateNewDialogFlow: React.FC<CreateNewDialogFlowProps> = ({
+const CreateNewDialogFlow = ({
   dialogsViewModel,
   onFinished,
   onCancel,
@@ -39,6 +39,8 @@ const CreateNewDialogFlow: React.FC<CreateNewDialogFlowProps> = ({
   const [uidAvatar, setUidAvatar] = React.useState<string | undefined>(
     undefined,
   );
+  const { allowPublicDialogCreation } =
+    currentContext.InitParams.qbConfig.appConfig;
 
   useEffect(() => {
     if (
@@ -76,6 +78,7 @@ const CreateNewDialogFlow: React.FC<CreateNewDialogFlowProps> = ({
           });
       } else {
         setUidAvatar('null');
+        setNumStepToCreate(inviteUsers);
       }
     } else {
       setNumStepToCreate(inviteUsers);
@@ -123,7 +126,7 @@ const CreateNewDialogFlow: React.FC<CreateNewDialogFlowProps> = ({
   };
 
   return (
-    <div>
+    <>
       <div
         style={{
           position: 'absolute',
@@ -138,6 +141,7 @@ const CreateNewDialogFlow: React.FC<CreateNewDialogFlowProps> = ({
       />
       {stepToCreate === setUpDialogType && (
         <CreateDialog
+          allowPublicDialogCreation={allowPublicDialogCreation || false}
           createPrivateDialogOnClick={() => {
             setSelectedDialogType(DialogType.private);
           }}
@@ -184,7 +188,7 @@ const CreateNewDialogFlow: React.FC<CreateNewDialogFlowProps> = ({
           idOwnerDialog={remoteDataSourceMock.authInformation!.userId.toString()}
         />
       )}
-    </div>
+    </>
   );
 };
 

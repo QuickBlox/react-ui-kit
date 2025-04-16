@@ -6,10 +6,7 @@ type ReplyImagePreviewAttachmentProps = {
   imageFile: FileEntity;
 };
 // eslint-disable-next-line react/function-component-definition
-const ReplyImagePreviewAttachment: React.FC<
-  ReplyImagePreviewAttachmentProps
-  // eslint-disable-next-line react/function-component-definition
-> = ({ imageFile }: ReplyImagePreviewAttachmentProps) => {
+const ReplyImagePreviewAttachment = ({ imageFile }: ReplyImagePreviewAttachmentProps) => {
   return (
     <div>
       <a href={imageFile.url} download="file" target="_blank" rel="noreferrer">

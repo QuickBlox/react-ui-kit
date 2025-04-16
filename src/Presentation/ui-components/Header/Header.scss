@@ -1,23 +1,30 @@
-@import '../../themes/styles/mixins';
+@use '../../themes/styles/mixins' as *;
 
 .dialog-header {
-  @include applyBorderBox;
-
   width: 100%;
   padding: 12px 16px 12px 20px;
   display: flex;
   align-items: center;
   gap: 33px;
 
+  @include applyBorderBox;
+
   &__icon {
     cursor: pointer;
     width: 24px;
     height: 24px;
     flex-shrink: 0;
+
+    svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--main-elements);
+    }
   }
 
   &__back {
-    color: var(--main-elements);
+    color: var(--main-text);
+    fill: var(--main-text);
   }
 
   &__body {
@@ -47,7 +54,7 @@
   &__title {
     color: var(--main-text, #0b1b0f);
     text-align: left;
-    font: var(--title-title-medium);
+    font: var(--title-title-large);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

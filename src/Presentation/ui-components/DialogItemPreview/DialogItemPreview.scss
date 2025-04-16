@@ -1,11 +1,12 @@
-@import '../../themes/styles/mixins';
+@use '../../themes/styles/mixins' as *;
 
 .dialog-item-preview {
-  @include applyBorderBox;
   display: flex;
   align-items: center;
   padding: 8px 16px;
   gap: 16px;
+
+  @include applyBorderBox; // Переместил после основных свойств
 
   &:hover {
     background: var(--divider);
@@ -27,7 +28,7 @@
       justify-content: space-between;
 
       &-title {
-        font: var(--label-label-medium, 500 12px/16px "Roboto", sans-serif);
+        font: var(--label-label-medium);
         color: var(--main-text, #0b1b0f);
         overflow: hidden;
         white-space: nowrap;
@@ -36,7 +37,7 @@
 
       &-date {
         color: var(--tertiary-elements, #636d78);
-        font: var(--label-label-small, 500 11px/16px "Roboto", sans-serif);
+        font: var(--label-label-small);
       }
     }
 
@@ -49,7 +50,7 @@
       &-message {
         color: var(--secondary-text, #636d78);
         text-align: left;
-        font: var(--body-body-small, 400 12px/16px "Roboto", sans-serif);
+        font: var(--body-body-small);
         overflow: hidden;
         display: -webkit-box;
         -webkit-line-clamp: 2;

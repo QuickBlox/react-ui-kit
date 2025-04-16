@@ -6,7 +6,7 @@ type SystemMessageBannerProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-export const SystemMessageBanner: React.FC<SystemMessageBannerProps> = ({
+export const SystemMessageBanner = ({
   messageText,
 }: SystemMessageBannerProps) => {
   return (

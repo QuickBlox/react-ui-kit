@@ -8,7 +8,6 @@ export class GetAllDialogsUseCase
   private dialogRepository: DialogsRepository;
 
   constructor(dialogRepository: DialogsRepository) {
-    console.log('CONSTRUCTOR GetAllDialogsUseCase');
     this.dialogRepository = dialogRepository;
   }
 

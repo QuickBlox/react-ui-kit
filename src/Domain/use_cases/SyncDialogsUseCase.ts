@@ -19,7 +19,7 @@ export class SyncDialogsUseCase extends BaseUseCase<boolean, boolean> {
 
   private timer2Id: NodeJS.Timer | undefined;
 
-  private timerId: NodeJS.Timer | undefined;
+  private timerId: NodeJS.Timeout | null = null;
 
   constructor(
     dialogRepository: DialogsRepository,
@@ -27,7 +27,6 @@ export class SyncDialogsUseCase extends BaseUseCase<boolean, boolean> {
     eventMessagesRepository: EventMessagesRepository,
   ) {
     super();
-    console.log('CONSTRUCTOR SyncDialogsUseCaseWithMock');
     this.callBackExecute = undefined;
 
     this.dialogRepository = dialogRepository;
@@ -171,7 +170,7 @@ export class SyncDialogsUseCase extends BaseUseCase<boolean, boolean> {
   override release() {
     super.release();
     if (this.timerId) {
-      clearTimeout(this.timerId);
+      clearInterval(this.timerId as NodeJS.Timeout);
     }
   }
 }

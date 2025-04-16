@@ -2,46 +2,13 @@ $create-dialog-container-width: 380px;
 $create-dialog-container-height: 312px;
 
 .create-dialog-container {
-  min-height: $create-dialog-container-height;
-  max-height: $create-dialog-container-height;
-  height: $create-dialog-container-height;
-  //border: 1px solid green;
-  //&--btn-wrapper{
-  //  height: 64px;
-  //  // width: 280px;
-  //  display: flex;
-  //  flex-direction: row;
-  //  flex-wrap: nowrap;
-  //  justify-content: flex-start;
-  //  align-items: center;
-  //  gap: 16px;
-  //  cursor: pointer;
-  //  border-radius: 4px;
-  //
-  //  border: 1px solid var(--tertiary-elements);
-  //
-  //  &__text{
-  //    min-height: 24px;
-  //    // margin: 16px 16px 16px 16px;
-  //    font-family: 'Roboto';
-  //    font-style: normal;
-  //    font-weight: 400;
-  //    font-size: 16px;
-  //    line-height: 24px;
-  //    letter-spacing: 0.15px;
-  //    flex: 2 2 268px;
-  //    letter-spacing: 0.15px;
-  //
-  //    //border: 1px solid orange;
-  //  }
-  //  &__icon{
-  //    min-height: 24px;
-  //    margin-left: 10px;
-  //    flex: 1 1 24px;
-  //
-  //   // border: 1px solid red;
-  //  }
-  //}
+  //min-height: $create-dialog-container-height;
+  //max-height: $create-dialog-container-height;
+  //height: $create-dialog-container-height;
+
+  .column-container {
+    width: 330px;
+  }
 }
 
 
@@ -52,7 +19,7 @@ $create-dialog-container-height: 312px;
 .item-type-dialog {
   border-radius: 4px;
   border-style: solid;
-  border-color: var(--light-theme-tertiaryelements, #636d78);
+  border-color: var(--tertiary-elements, #636d78);
   border-width: 1px;
   padding: 16px;
   display: flex;
@@ -78,7 +45,7 @@ $create-dialog-container-height: 312px;
   position: relative;
 }
 .item-type-dialog-name {
-  color: var(--light-theme-maintext, #0b1b0f);
+  color: var(--main-text, #0b1b0f);
   text-align: left;
   font-family: var(
                   --body-body-medium-font-family,
@@ -90,4 +57,12 @@ $create-dialog-container-height: 312px;
   font-weight: var(--body-body-medium-font-weight, 400);
   position: relative;
   flex: 1;
+}
+
+@media only screen and (max-width: 980px) {
+  .create-dialog-container {
+    .column-container {
+      width: unset;
+    }
+  }
 }

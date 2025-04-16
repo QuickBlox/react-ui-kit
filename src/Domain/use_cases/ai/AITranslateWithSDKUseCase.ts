@@ -82,7 +82,6 @@ export class AITranslateWithSDKUseCase implements IUseCase<void, string> {
     dataSource: IRemoteDataSource,
     smartChatAssistantId: string,
   ) {
-    console.log('CONSTRUCTOR AITranslateWithSDKUseCase');
     this.dataSource = dataSource;
     this.textToSend = textToSend;
     this.language = language;
@@ -94,8 +93,6 @@ export class AITranslateWithSDKUseCase implements IUseCase<void, string> {
   }
 
   async execute(): Promise<string> {
-    console.log('execute AITranslateWithSDKUseCase');
-
     const response: AIAnswerResponse = await this.dataSource.translate(
       this.textToSend,
       this.getLanguageCode(this.language),

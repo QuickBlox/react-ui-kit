@@ -23,13 +23,13 @@ export default function LoaderComponent(
       }
     : {};
   const loaderClasses = [
-    theme && Object.keys(theme).length > 0 ? '' : 'loader',
+    theme && Object.keys(theme).length > 0 ? '' : 'qb-loader',
   ].join(' ');
 
   return (
     <div style={loaderStyles} className={loaderClasses}>
       {theme ? (
-        <LoaderSvg className="loader" />
+        <LoaderSvg className="qb-loader" />
       ) : (
         // <Loader
         //   color={theme?.color}
@@ -37,7 +37,7 @@ export default function LoaderComponent(
         //   height={theme?.height}
         // />
         // <Loader />
-        <LoaderSvg className="loader" />
+        <LoaderSvg className="qb-loader" />
       )}
     </div>
   );

@@ -23,7 +23,6 @@ export class CreateDialogUseCase implements IUseCase<void, DialogEntity> {
     newDialog: GroupDialogEntity,
     textInformationMessage: string,
   ) {
-    console.log('CONSTRUCTOR CreateDialogUseCase');
     this.dialogRepository = dialogRepository;
     this.newDialog = newDialog;
     this.eventMessagesRepository = eventMessagesRepository;

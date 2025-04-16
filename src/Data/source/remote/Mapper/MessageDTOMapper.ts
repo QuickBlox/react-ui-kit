@@ -134,7 +134,15 @@ export class MessageDTOMapper implements IDTOMapper {
 
     if (!offValidate) {
       // original version
-      MessageDTOMapper.validateQBMessage(qbMessage);
+      try {
+        MessageDTOMapper.validateQBMessage(qbMessage);
+      } catch (e) {
+        console.log(
+          `Error validating QBChatMessage: (${JSON.stringify(qbMessage)})`,
+        );
+        console.error(e);
+      }
+
 
       dto.id = qbMessage._id;
       dto.dialogId = qbMessage.chat_dialog_id;

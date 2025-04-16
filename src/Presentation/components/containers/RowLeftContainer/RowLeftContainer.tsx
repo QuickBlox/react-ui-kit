@@ -32,7 +32,7 @@ export type RowLeftContainerProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const RowLeftContainer: React.FC<RowLeftContainerProps> = ({
+const RowLeftContainer = ({
   LeftItem,
   CenterItem,
   RightItem,

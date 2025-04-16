@@ -18,14 +18,12 @@ export class UpdateCurrentDialogInDataSourceUseCase
     updateDialog: GroupDialogEntity,
     qbConfig: QBUIKitConfig,
   ) {
-    console.log('CONSTRUCTOR UpdateCurrentDialogInDataSourceUseCase');
     this.dialogRepository = dialogRepository;
     this.updateDialog = updateDialog;
     this.qbConfig = qbConfig;
   }
 
   async execute(): Promise<DialogEntity> {
-    console.log('execute UpdateCurrentDialogInDataSourceUseCase');
     const result: DialogEntity =
       await this.dialogRepository.updateCurrentDialogInLocalDataSource(
         this.updateDialog,

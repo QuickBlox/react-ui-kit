@@ -40,7 +40,7 @@ type AIRephraseWidgetProps = {
   disableActions?: boolean;
 };
 // eslint-disable-next-line react/function-component-definition
-const AIRephraseWidget: React.FC<AIRephraseWidgetProps> = ({
+const AIRephraseWidget = ({
   messageText,
   waitAIWidget,
   setWaitAIWidget,
@@ -132,7 +132,7 @@ const AIRephraseWidget: React.FC<AIRephraseWidgetProps> = ({
       });
     }
     //
-    items.push({
+    items.unshift({
       title: 'Back to prev.',
       icon: <WhiteCheckMarkIcon />,
       action: () => {

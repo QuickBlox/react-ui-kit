@@ -8,15 +8,17 @@ export class GetUsersByIdsUseCase implements IUseCase<void, Array<UserEntity>> {
   private userIds: Array<number>;
 
   constructor(usersRepository: UsersRepository, userIds: Array<number>) {
-    console.log('CONSTRUCTOR GetUsersByIdsUseCase');
     this.usersRepository = usersRepository;
     this.userIds = userIds;
   }
 
   execute(): Promise<Array<UserEntity>> {
-    console.log('execute GetUsersByIdsUseCase');
+     if (this.userIds.length > 0) {
 
-    // return this.usersRepository.getUsersFromLocal(this.userIds);
-    return this.usersRepository.getUsersFromRemote(this.userIds);
+       return this.usersRepository.getUsersFromRemote(this.userIds);
+     }else
+     {
+       return this.usersRepository.getUsersFromLocal(this.userIds);
+     }
   }
 }

@@ -48,7 +48,6 @@
   }
 
   &__outgoing {
-    background: var(--main-background, #ffffff);
     padding: 0px 8px 8px 16px;
     display: flex;
     flex-direction: row;
@@ -79,6 +78,11 @@
         justify-content: flex-start;
         flex-shrink: 0;
         position: relative;
+        width: 100%;
+      }
+      .reply-forward-message {
+        color: var(--secondary-text);
+        width: 100%;
       }
     }
   }

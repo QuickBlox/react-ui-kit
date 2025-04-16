@@ -17,7 +17,6 @@ export class GetAllMessagesForDialogMock
     dialogId: string,
     currentPagination: Pagination,
   ) {
-    console.log('CONSTRUCTOR GetAllMessagesForDialog');
     this.messagesRepository = messagesRepository;
     this.dialogId = dialogId;
     this.currentPagination = currentPagination;
@@ -32,12 +31,17 @@ export class GetAllMessagesForDialogMock
         this.dialogId,
         this.currentPagination,
       );
+      console.log(
+          `GET MESSAGES ${
+              result.ResultData.length
+          } FROM REPOSITORY.`,
+      );
 
-    console.log(
-      `GET MESSAGES ${
-        result.ResultData.length
-      } FROM REPOSITORY: ${JSON.stringify(result)} `,
-    );
+    // console.log(
+    //   `GET MESSAGES ${
+    //     result.ResultData.length
+    //   } FROM REPOSITORY: ${JSON.stringify(result)} `,
+    // );
 
     //
     // await Promise.all(

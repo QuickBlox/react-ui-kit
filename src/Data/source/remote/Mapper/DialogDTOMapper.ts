@@ -5,8 +5,6 @@ import {
   INCORRECT_DATA_MAPPER_DTO_EXCEPTION_CODE,
   INCORRECT_DATA_MAPPER_DTO_EXCEPTION_MESSAGE,
   MapperDTOException,
-  UNEXPECTED_MAPPER_DTO_EXCEPTION_EXCEPTION_CODE,
-  UNEXPECTED_MAPPER_DTO_EXCEPTION_MESSAGE,
 } from '../../exception/MapperDTOException';
 import {
   QBChatDialogType,
@@ -167,13 +165,32 @@ export class DialogDTOMapper implements IDTOMapper {
           dto.participantsIds = qbDialog.occupants_ids;
           break;
         default:
-          return Promise.reject(
-            new MapperDTOException(
-              UNEXPECTED_MAPPER_DTO_EXCEPTION_MESSAGE,
-              UNEXPECTED_MAPPER_DTO_EXCEPTION_EXCEPTION_CODE,
-              'undefinded type dialog in QBChatDialog',
-            ),
-          );
+          dto.id = qbDialog._id;
+          dto.lastMessageText = qbDialog.last_message as string;
+          dto.lastMessageDateSent = qbDialog.last_message_date_sent || 0;
+          dto.lastMessageUserId =
+            qbDialog.last_message_user_id === null
+              ? 0
+              : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+              qbDialog.last_message_user_id;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+          dto.ownerId = qbDialog.user_id.toString();
+          dto.type = qbDialog.type;
+          dto.unreadMessageCount =
+            qbDialog.unread_messages_count === null
+              ? 0
+              : qbDialog.unread_messages_count;
+          dto.updatedAt = qbDialog.updated_at;
+          dto.name = qbDialog.name;
+          dto.photo = qbDialog.photo === null ? '' : qbDialog.photo;
+          dto.participantsIds = qbDialog.occupants_ids;
+          // return Promise.reject(
+          //   new MapperDTOException(
+          //     UNEXPECTED_MAPPER_DTO_EXCEPTION_MESSAGE,
+          //     UNEXPECTED_MAPPER_DTO_EXCEPTION_EXCEPTION_CODE,
+          //     'undefined type dialog in QBChatDialog',
+          //   ),
+          // );
       }
     } catch (e) {
       console.log('MAPPER DTO ERROR for dto: ', JSON.stringify(dto));

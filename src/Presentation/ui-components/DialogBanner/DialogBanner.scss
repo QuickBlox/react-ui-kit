@@ -1,17 +1,18 @@
-@import '../../themes/styles/mixins';
+@use '../../themes/styles/mixins' as *;
 
 .dialog-banner {
-    @include applyBorderBox;
-    background: var(--main-elements, #3978fc);
-    border-radius: 4px;
-    padding: 2px 8px 2px 8px;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-width: 312px;
-    cursor: pointer;
+  background: var(--main-elements, #3978fc);
+  border-radius: 4px;
+  padding: 2px 8px 2px 8px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 312px;
+  cursor: pointer;
+
+  @include applyBorderBox; // Переносится после всех основных свойств
 
   &__text {
     color: var(--color-background, #ffffff);
@@ -26,4 +27,3 @@
     fill: var(--color-background, #ffffff);
   }
 }
-

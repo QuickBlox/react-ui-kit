@@ -26,7 +26,13 @@ $message-view-container-ai-translate-text-color: var(--tertiary-elements);
   &--header{
     min-height: $message-view-container-header-min-height;
     max-height: $message-view-container-header-min-height;
-    width: 100%
+    width: 100%;
+
+    .dialog-header{
+      &__title {
+        font: var(--title-title-medium);
+      }
+    }
   }
   &--information{
     background-color: $message-view-container-information-background-color;

@@ -48,9 +48,11 @@ export class Creator {
 
     const blobFile = await fetch(imageSrc)
       .catch(async function () {
-        const response = await fetch(imageSrc);
+        const response = await fetch(imageSrc).catch((reason: any) => {
+          console.error('Image fetch error', reason);
+        });
 
-        if (response.ok) {
+        if (response?.ok) {
           await setBlob(response);
         }
       })
