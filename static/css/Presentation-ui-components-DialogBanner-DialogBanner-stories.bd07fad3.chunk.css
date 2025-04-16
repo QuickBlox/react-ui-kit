@@ -1,3 +1,0 @@
-.dialog-banner{background:#3978fc;background:var(--main-elements, #3978fc);border-radius:4px;padding:2px 8px 2px 8px;display:flex;gap:8px;align-items:center;justify-content:center;width:100%;min-width:312px;cursor:pointer}.dialog-banner,.dialog-banner *{box-sizing:border-box}.dialog-banner__text{color:#ffffff;color:var(--color-background, #ffffff);text-align:center;font:var(--label-label-small)}.dialog-banner__navigation-icon{flex-shrink:0;width:16px;height:16px;fill:#ffffff;fill:var(--color-background, #ffffff)}
-
-/*# sourceMappingURL=Presentation-ui-components-DialogBanner-DialogBanner-stories.bd07fad3.chunk.css.map*/
