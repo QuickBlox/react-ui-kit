@@ -1,3 +1,0 @@
-.qb-avatar{display:flex;flex-shrink:0;align-items:center;justify-content:center;overflow:hidden;border-radius:50%;background-color:var(--disabled-elements);color:var(--secondary-text)}.qb-avatar,.qb-avatar *{box-sizing:border-box}.qb-avatar svg{height:26px;width:26px;fill:var(--tertiary-elements)}.qb-avatar__image{object-fit:cover;width:100%;height:100%}.qb-avatar--xs{width:32px;height:32px}.qb-avatar--sm{width:36px;height:36px}.qb-avatar--md{width:40px;height:40px}.qb-avatar--lg{width:56px;height:56px}.qb-avatar--lg svg{height:33px;width:33px}.qb-avatar--xl{width:64px;height:64px}.qb-avatar--xxl{width:80px;height:80px}
-
-/*# sourceMappingURL=Presentation-ui-components-Avatar-avatar-stories.a700cf02.chunk.css.map*/
