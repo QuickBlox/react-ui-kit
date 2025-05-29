@@ -17,7 +17,7 @@ type DialogsWithSearchProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const DialogsWithSearch = ({
+const DialogsWithSearch: React.FC<DialogsWithSearchProps> = ({
   dialogs,
   currentDialog,
   selectedDialogs,

@@ -9,13 +9,13 @@ type VoiceRecordingProgressProps = {
   onTouch?: FunctionTypeVoidToVoid;
 };
 // eslint-disable-next-line react/function-component-definition
-const VoiceRecordingProgress = ({
+const VoiceRecordingProgress: React.FC<VoiceRecordingProgressProps> = ({
   startStatus,
   longRecInSec,
   onClick,
   onTouch,
 }: VoiceRecordingProgressProps) => {
-  let timerId: NodeJS.Timeout | null = null;
+  let timerId: NodeJS.Timer | undefined;
   const [currentTime, setCurrentTime] = useState(Date.now());
   const [timeString, setTimeString] = useState('00:00:00');
   const [startTime] = useState(Date.now());
@@ -34,8 +34,8 @@ const VoiceRecordingProgress = ({
 
   const stopTimer = () => {
     if (timerId) {
-      clearInterval(timerId as NodeJS.Timeout);
-      timerId = null;
+      clearTimeout(timerId);
+      timerId = undefined;
     }
     if (onClick) onClick();
     if (onTouch) onTouch();

@@ -143,7 +143,6 @@ export class MessageDTOMapper implements IDTOMapper {
         console.error(e);
       }
 
-
       dto.id = qbMessage._id;
       dto.dialogId = qbMessage.chat_dialog_id;
       dto.message = qbMessage.message; // MessageDTOMapper.formatMessage(qbMessage.message);
@@ -193,12 +192,12 @@ export class MessageDTOMapper implements IDTOMapper {
   ): ChatMessageAttachment {
     return {
       id: attachment.id.toString(),
-      uid: attachment.uid || '',
+      uid: attachment.uid?.toString() || '',
       type: attachment.type.toString(),
-      url: attachment.url || '',
-      name: attachment.name || '',
-      size: attachment.size || 0,
-    };
+      url: attachment.url?.toString() || '',
+      name: attachment.name?.toString() || '',
+      size: attachment.size?.toString() || '',
+    } as ChatMessageAttachment;
   }
 
   public static convertToQBChatNewMessage(

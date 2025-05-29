@@ -21,7 +21,7 @@ type ForwardMessageFlowProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const ForwardMessageFlow = ({
+const ForwardMessageFlow: React.FC<ForwardMessageFlowProps> = ({
   messages,
   dialogs,
   currentDialog,

@@ -1,7 +1,7 @@
 import Dropdown from '../../../ui-components/Dropdown/Dropdown';
 import { MessageEntity } from '../../../../Domain/entity/MessageEntity';
 import { FunctionTypeMessageEntityToVoid } from '../../../../CommonTypes/BaseViewModel';
-import MoreSvg from '../../../icons/navigation/more.svg?react';
+import { ReactComponent as MoreSvg } from '../../../icons/navigation/more.svg';
 import { Option } from '../../../ui-components/Dropdown/DropdownOption';
 import './MessageContextMenu.scss';
 
@@ -57,6 +57,7 @@ export default function MessageContextMenu({
   }
 
   return (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {enableForwarding || enableReplying ? (
         <Dropdown

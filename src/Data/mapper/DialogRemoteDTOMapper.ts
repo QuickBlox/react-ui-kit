@@ -667,6 +667,12 @@ export class DialogRemoteDTOMapper implements IMapper {
 
         return updatedAt !== undefined;
       },
+      is_join_required(v: unknown): v is RemoteDialogDTO['is_join_required'] {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { is_join_required } = v as RemoteDialogDTO;
+
+        return true;
+      },
     };
 
     if (!dtoValidator.id(data))

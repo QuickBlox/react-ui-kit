@@ -12,7 +12,7 @@ type YesNoQuestionProps = {
   noActionCaption?: string;
 };
 // eslint-disable-next-line react/function-component-definition
-const YesNoQuestionComponent = ({
+const YesNoQuestionComponent: React.FC<YesNoQuestionProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   messageText,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

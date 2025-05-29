@@ -131,12 +131,12 @@ export class Stubs {
       id: '10231',
       type: FileType.image,
       uid: '10231',
-      url: 'https://files.readme.io/00b5563-small-qb-logo-docs-white-9px.png',
+      url: 'https://via.placeholder.com/600/92c952',
       file: {
         id: '10231',
         uid: '',
         type: FileType.image,
-        url: 'https://files.readme.io/00b5563-small-qb-logo-docs-white-9px.png',
+        url: 'https://via.placeholder.com/600/92c952',
       },
     };
     const photoAttachments: ChatMessageAttachmentEntity[] = [photo];
@@ -267,12 +267,12 @@ export class Stubs {
       id: '10231',
       type: FileType.image,
       uid: '10231',
-      url: 'https://cdn-ikpjoif.nitrocdn.com/WZsqFPiehrtwFaaeJNQAQZrkRMgaTuyL/assets/images/optimized/rev-83f47e6/quickblox.com/wp-content/themes/QuickbloxTheme2021/img/chat-api-feature-rich-sdk.jpg',
+      url: 'https://via.placeholder.com/600/92c952',
       file: {
         id: '10231',
         uid: '',
         type: FileType.image,
-        url: 'https://cdn-ikpjoif.nitrocdn.com/WZsqFPiehrtwFaaeJNQAQZrkRMgaTuyL/assets/images/optimized/rev-83f47e6/quickblox.com/wp-content/themes/QuickbloxTheme2021/img/chat-api-feature-rich-sdk.jpg',
+        url: 'https://via.placeholder.com/600/92c952',
       },
     };
     const photoAttachments: ChatMessageAttachmentEntity[] = [photo];
@@ -607,6 +607,7 @@ export class Stubs {
         lastMessageId: '',
         unreadMessageCount: 0,
         updatedAt: '',
+        is_join_required: undefined,
       },
       {
         id: '2',
@@ -622,6 +623,7 @@ export class Stubs {
         lastMessageId: '',
         unreadMessageCount: 0,
         updatedAt: '',
+        is_join_required: undefined,
       },
       {
         id: '3',
@@ -637,6 +639,7 @@ export class Stubs {
         lastMessageId: '',
         unreadMessageCount: 0,
         updatedAt: '',
+        is_join_required: undefined,
       },
       {
         id: '4',
@@ -652,6 +655,7 @@ export class Stubs {
         lastMessageId: '',
         unreadMessageCount: 0,
         updatedAt: '',
+        is_join_required: undefined,
       },
       {
         id: '5',
@@ -667,6 +671,7 @@ export class Stubs {
         lastMessageId: '',
         unreadMessageCount: 0,
         updatedAt: '',
+        is_join_required: undefined,
       },
       {
         id: '6',
@@ -682,6 +687,7 @@ export class Stubs {
         lastMessageId: '',
         unreadMessageCount: 0,
         updatedAt: '',
+        is_join_required: undefined,
       },
       {
         id: '7',
@@ -697,6 +703,7 @@ export class Stubs {
         lastMessageId: '',
         unreadMessageCount: 0,
         updatedAt: '',
+        is_join_required: undefined,
       },
     ];
 
@@ -720,6 +727,7 @@ export class Stubs {
       updated_at: '02.03.2023',
       user_id: 0,
       xmpp_room_jid: null,
+      is_join_required: undefined,
     };
 
     return qbDialog;
@@ -742,6 +750,7 @@ export class Stubs {
       updated_at: '02.03.2023',
       user_id: 0,
       xmpp_room_jid: null,
+      is_join_required: undefined,
     };
 
     return qbDialog;
@@ -764,6 +773,7 @@ export class Stubs {
       updated_at: '02.03.2023',
       user_id: 0,
       xmpp_room_jid: null,
+      is_join_required: undefined,
     };
 
     return qbDialog;
@@ -1029,12 +1039,12 @@ export class Stubs {
       id: '10231',
       type: FileType.image,
       uid: '10231',
-      url: 'https://files.readme.io/00b5563-small-qb-logo-docs-white-9px.png',
+      url: 'https://via.placeholder.com/600/92c952',
       file: {
         id: '10231',
         uid: '',
         type: FileType.image,
-        url: 'https://files.readme.io/00b5563-small-qb-logo-docs-white-9px.png',
+        url: 'https://via.placeholder.com/600/92c952',
       },
     };
     const photoAttachments: ChatMessageAttachmentEntity[] = [photo];

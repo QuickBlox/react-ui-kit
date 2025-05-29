@@ -12,11 +12,11 @@ type UserAvatarProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const UserAvatar = ({
+const UserAvatar: React.FC<UserAvatarProps> = ({
   urlAvatar,
   iconTheme = { width: '55px', height: '55px' },
   clickRemoveAvatarHandler,
-}:UserAvatarProps) => {
+}) => {
   return (
     <div
       className="user-avatar-wrapper"

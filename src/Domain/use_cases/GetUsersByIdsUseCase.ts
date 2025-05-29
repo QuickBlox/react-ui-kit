@@ -13,12 +13,10 @@ export class GetUsersByIdsUseCase implements IUseCase<void, Array<UserEntity>> {
   }
 
   execute(): Promise<Array<UserEntity>> {
-     if (this.userIds.length > 0) {
+    if (this.userIds.length > 0) {
+      return this.usersRepository.getUsersFromRemote(this.userIds);
+    }
 
-       return this.usersRepository.getUsersFromRemote(this.userIds);
-     }else
-     {
-       return this.usersRepository.getUsersFromLocal(this.userIds);
-     }
+    return this.usersRepository.getUsersFromLocal(this.userIds);
   }
 }

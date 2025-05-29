@@ -1,6 +1,7 @@
-@use '../../themes/styles/mixins' as *;
+@import '../../themes/styles/mixins';
 
 .qb-avatar {
+  @include applyBorderBox;
   display: flex;
   flex-shrink: 0;
   align-items: center;
@@ -10,8 +11,6 @@
   border-radius: 50%;
   background-color: var(--disabled-elements);
   color: var(--secondary-text);
-
-  @include applyBorderBox;
 
   svg {
     height: 26px;

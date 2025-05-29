@@ -12,7 +12,7 @@ type ErrorComponentProps = {
   theme?: IconTheme;
 };
 // eslint-disable-next-line react/function-component-definition
-const ErrorComponent = ({
+const ErrorComponent: React.FC<ErrorComponentProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   title,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

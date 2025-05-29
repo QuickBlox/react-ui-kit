@@ -8,7 +8,10 @@ type RenderLeftActionsProps = {
   onClickBack: FunctionTypeVoidToVoid;
 };
 
-const DialogBackIcon = ({ onClickBack }: RenderLeftActionsProps) => {
+const DialogBackIcon: React.FC<
+  RenderLeftActionsProps
+  // eslint-disable-next-line react/function-component-definition
+> = ({ onClickBack }: RenderLeftActionsProps) => {
   return (
     <div className="dialog-header-left-icon">
       <ActiveSvg

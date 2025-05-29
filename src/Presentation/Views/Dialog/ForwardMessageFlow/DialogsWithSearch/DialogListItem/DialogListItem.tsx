@@ -65,7 +65,7 @@ const renderAvatar = (urlAvatar: string, typeDialog: DialogType) => {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const DialogListItem = ({
+const DialogListItem: React.FC<DialogListItemProps> = ({
   name,
   avatar,
   typeDialog,
@@ -79,7 +79,11 @@ const DialogListItem = ({
         {renderAvatar(avatar, typeDialog)}
       </div>
       <div className="dialog-item-element-subtitle">{name}</div>
-      <CheckBox onChange={() => onSelect(id)} disabled={false} checked={checked} />
+      <CheckBox
+        onChange={() => onSelect(id)}
+        disabled={false}
+        checked={checked}
+      />
     </div>
   );
 };

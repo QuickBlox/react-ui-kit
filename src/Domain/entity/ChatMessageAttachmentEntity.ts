@@ -10,6 +10,6 @@ export default interface ChatMessageAttachmentEntity {
   /** Link to a file in Internet */
   url?: string;
   name?: string;
-  size?: number;
+  size?: number | string;
   [key: string]: unknown;
 }

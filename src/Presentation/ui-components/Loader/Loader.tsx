@@ -11,6 +11,8 @@ interface LoaderProps {
 
 export default function Loader({ className, size = 'md' }: LoaderProps) {
   return (
-    <LoaderSvg className={cn('qb-loader', size && `qb-loader--${size}`, className)} />
+    <LoaderSvg
+      className={cn('qb-loader', size && `qb-loader--${size}`, className)}
+    />
   );
 }

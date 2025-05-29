@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import TextField from './TextField';
@@ -60,7 +59,7 @@ const meta: Meta<typeof TextField> = {
     loading: {
       table: {
         defaultValue: {
-          summary: 'false',
+          summary: false,
         },
       },
       description: 'Displays the load',
@@ -69,7 +68,7 @@ const meta: Meta<typeof TextField> = {
       table: {
         type: { summary: 'boolean' },
         defaultValue: {
-          summary: 'false',
+          summary: false,
         },
       },
       description: 'Active',

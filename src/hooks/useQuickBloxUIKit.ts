@@ -545,7 +545,8 @@ export default function useQuickBloxUIKit({
 
   // Request microphone access and setup WebRTC
   const activateSilentAudioHack = () => {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const audioContext = new (window.AudioContext ||
+      window.webkitAudioContext)();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
 
@@ -597,39 +598,45 @@ export default function useQuickBloxUIKit({
       console.error('Error accessing microphone:', err);
 
       const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+
       if (isIOS) activateSilentAudioHack();
 
       // Retry for iOS browsers
       if (isIOS) {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         setTimeout(async () => {
           try {
             const mediaStream = await navigator.mediaDevices.getUserMedia({
               audio: true,
               video: false,
             });
+
             setPermission(true);
             setStream(mediaStream);
           } catch (retryError) {
             showErrorMessage(
-              'Microphone access is not available. Please check your iOS settings.'
+              'Microphone access is not available. Please check your iOS settings.',
             );
           }
         }, 1500); // Retry after 1 second for iOS
       } else {
         showErrorMessage(
-          'Microphone access is not available. Please check your browser settings.'
+          'Microphone access is not available. Please check your browser settings.',
         );
       }
     }
   };
 
   // Start recording using QBMediaRecorder
+  // eslint-disable-next-line @typescript-eslint/require-await
   const startWebRTCRecording = async () => {
     try {
       // const audioContext = new AudioContext();
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
       const source = audioContext.createMediaStreamSource(stream!);
       const destination = audioContext.createMediaStreamDestination();
+
       source.connect(destination);
 
       const recorder = new QBMediaRecorder({
@@ -669,6 +676,7 @@ export default function useQuickBloxUIKit({
     if (isSafari || !window.MediaRecorder) {
       console.log('Safari detected, using WebRTC.');
       await startWebRTCRecording();
+
       return;
     }
 
@@ -716,7 +724,6 @@ export default function useQuickBloxUIKit({
   const blobToFile = (blob: Blob, fileName: string): File => {
     return new File([blob], fileName, { type: blob.type });
   };
-
 
   function sendTextMessageActions(textToSend: string) {
     if (isOnline) {
@@ -859,7 +866,7 @@ export default function useQuickBloxUIKit({
   };
 
   useEffect(() => {
-    const codeVersion = '0.5.0';
+    const codeVersion = '0.4.6';
 
     console.log(`React UIKit CODE VERSION IS ${codeVersion}`);
     if (isAuthProcessed()) {

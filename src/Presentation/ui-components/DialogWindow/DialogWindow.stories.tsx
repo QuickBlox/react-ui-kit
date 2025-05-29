@@ -1,4 +1,3 @@
-import React from 'react';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -41,7 +40,7 @@ const meta: Meta<typeof DialogWindow> = {
     open: {
       table: {
         defaultValue: {
-          summary: 'false',
+          summary: false,
         },
         type: { summary: 'boolean' },
       },
@@ -62,14 +61,6 @@ const meta: Meta<typeof DialogWindow> = {
       },
       description: 'closes the modal window',
     },
-    disableActions: {
-      table: {
-        defaultValue: {
-          summary: 'false',
-        },
-        type: { summary: 'boolean' },
-      },
-    }
   },
 };
 

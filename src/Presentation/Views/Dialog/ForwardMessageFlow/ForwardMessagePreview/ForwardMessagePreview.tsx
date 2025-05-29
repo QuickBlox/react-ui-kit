@@ -17,7 +17,7 @@ function trimMessage(messageText: string) {
 }
 
 // eslint-disable-next-line react/function-component-definition
-const ForwardMessagePreview = ({
+const ForwardMessagePreview: React.FC<ForwardMessagePreviewProps> = ({
   messages,
   userNameSentMessage,
 }: ForwardMessagePreviewProps) => {

@@ -7,7 +7,7 @@ type ImageAttachmentComponentProps = {
   imageFile: FileEntity;
 };
 // eslint-disable-next-line react/function-component-definition
-const ImageAttachment = ({
+const ImageAttachment: React.FC<ImageAttachmentComponentProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   imageFile,
 }: ImageAttachmentComponentProps) => {

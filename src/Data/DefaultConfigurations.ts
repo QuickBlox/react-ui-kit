@@ -260,7 +260,7 @@ export class DefaultConfigurations {
         chatProtocol: {
           active: 2,
         },
-        pingLocalhostTimeInterval: 5,
+        pingLocalhostTimeInterval: 0,
         chatReconnectionTimeInterval: 3,
         debug: true,
         enableForwarding: true,

@@ -51,6 +51,7 @@ export class DialogDTOMapper implements IDTOMapper {
       updated_at: dialogDTO.updatedAt,
       user_id: parseInt(dialogDTO.ownerId, 10),
       xmpp_room_jid: null,
+      is_join_required: dialogDTO.is_join_required,
     };
 
     return Promise.resolve(dialog as TResult);
@@ -172,7 +173,7 @@ export class DialogDTOMapper implements IDTOMapper {
             qbDialog.last_message_user_id === null
               ? 0
               : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-              qbDialog.last_message_user_id;
+                qbDialog.last_message_user_id;
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           dto.ownerId = qbDialog.user_id.toString();
           dto.type = qbDialog.type;
@@ -184,13 +185,13 @@ export class DialogDTOMapper implements IDTOMapper {
           dto.name = qbDialog.name;
           dto.photo = qbDialog.photo === null ? '' : qbDialog.photo;
           dto.participantsIds = qbDialog.occupants_ids;
-          // return Promise.reject(
-          //   new MapperDTOException(
-          //     UNEXPECTED_MAPPER_DTO_EXCEPTION_MESSAGE,
-          //     UNEXPECTED_MAPPER_DTO_EXCEPTION_EXCEPTION_CODE,
-          //     'undefined type dialog in QBChatDialog',
-          //   ),
-          // );
+        // return Promise.reject(
+        //   new MapperDTOException(
+        //     UNEXPECTED_MAPPER_DTO_EXCEPTION_MESSAGE,
+        //     UNEXPECTED_MAPPER_DTO_EXCEPTION_EXCEPTION_CODE,
+        //     'undefined type dialog in QBChatDialog',
+        //   ),
+        // );
       }
     } catch (e) {
       console.log('MAPPER DTO ERROR for dto: ', JSON.stringify(dto));
@@ -271,6 +272,12 @@ export class DialogDTOMapper implements IDTOMapper {
         const { updatedAt } = v as RemoteDialogDTO;
 
         return updatedAt !== undefined && updatedAt !== null;
+      },
+      is_join_required(v: unknown): v is RemoteDialogDTO['is_join_required'] {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { is_join_required } = v as RemoteDialogDTO;
+
+        return true;
       },
     };
 
@@ -428,6 +435,12 @@ export class DialogDTOMapper implements IDTOMapper {
         const { xmpp_room_jid } = v as QBUIKitChatDialog;
 
         return xmpp_room_jid !== undefined && xmpp_room_jid !== null;
+      },
+      is_join_required(v: unknown): v is RemoteDialogDTO['is_join_required'] {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { is_join_required } = v as RemoteDialogDTO;
+
+        return true;
       },
     };
 

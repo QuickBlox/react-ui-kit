@@ -23,7 +23,7 @@ type SliderMenuProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const SliderMenu = ({
+const SliderMenu: React.FC<SliderMenuProps> = ({
   items,
   width,
   arrowColor = 'black',
@@ -37,7 +37,7 @@ const SliderMenu = ({
   fontSize = 14,
   activeItemBorderColor = 'blue',
   activeItemBoxShadow = '2px 2px 4px rgba(0, 0, 0, 0.2)',
-}:SliderMenuProps) => {
+}) => {
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 

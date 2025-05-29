@@ -1,6 +1,8 @@
-@use '../../themes/styles/mixins' as *;
+@import '../../themes/styles/mixins';
 
 .dialog-window {
+  @include applyBorderBox;
+
   left: 0;
   top: 0;
   width: 100%;
@@ -8,8 +10,6 @@
   z-index: 100;
   position: fixed;
   background-color: var(--color-background-modal);
-
-  @include applyBorderBox;
 
   &--disable {
     position: absolute;

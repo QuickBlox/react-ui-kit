@@ -10,13 +10,13 @@ type SwitchButtonProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const SwitchButton = ({
+const SwitchButton: React.FC<SwitchButtonProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   disabled = false,
   styleBox,
   clickHandler,
   touchHandler,
-}:SwitchButtonProps) => {
+}) => {
   return (
     <div
       style={styleBox}

@@ -80,15 +80,17 @@ $dialog-information-container-dialog-information-height: 64px;
   overflow: visible;
 }
 .dialog-information-profile-dialog-name {
-  margin-top: 8px;
   color: var(--main-text, #0b1b0f);
   text-align: center;
   font: var(--title-title-medium);
   left: 134.5px;
   top: 112px;
-  display: flex;
   align-items: center;
   justify-content: center;
+  margin: 8px 12px 0 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .dialog-information-profile-edit {
   right: -10px;

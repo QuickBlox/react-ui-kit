@@ -19,7 +19,7 @@ type DialogListHeaderProps = {
   settings?: any;
 };
 // eslint-disable-next-line react/function-component-definition
-const DialogListHeader = ({
+const DialogListHeader: React.FC<DialogListHeaderProps> = ({
   title,
   clickSearchHandler,
   touchSearchHandler,

@@ -21,7 +21,7 @@ type MessageInputProps = {
   theme?: UiKitTheme;
 };
 // eslint-disable-next-line react/function-component-definition
-const InputMessage = ({
+const InputMessage: React.FC<MessageInputProps> = ({
   messageText,
   onChangeText,
   sendText,

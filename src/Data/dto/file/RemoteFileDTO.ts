@@ -7,7 +7,7 @@ export class RemoteFileDTO {
 
   public name: string;
 
-  public size: number;
+  public size: number | string;
 
   public type: string;
 

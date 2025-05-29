@@ -19,7 +19,7 @@ export class SyncDialogsUseCase extends BaseUseCase<boolean, boolean> {
 
   private timer2Id: NodeJS.Timer | undefined;
 
-  private timerId: NodeJS.Timeout | null = null;
+  private timerId: NodeJS.Timer | undefined | null = null;
 
   constructor(
     dialogRepository: DialogsRepository,
@@ -170,7 +170,7 @@ export class SyncDialogsUseCase extends BaseUseCase<boolean, boolean> {
   override release() {
     super.release();
     if (this.timerId) {
-      clearInterval(this.timerId as NodeJS.Timeout);
+      clearTimeout(this.timerId);
     }
   }
 }

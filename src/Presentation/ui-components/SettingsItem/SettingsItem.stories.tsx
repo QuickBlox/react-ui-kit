@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import SettingsItem from './SettingsItem';
@@ -108,13 +107,13 @@ export const SettingsItemNotification: StoryDefault = {
         }}
       />
     ),
-    // rightSection: (
-    //   <CloseSvg
-    //     style={{
-    //       cursor: 'pointer',
-    //     }}
-    //   />
-    // ),
+    rightSection: (
+      <CloseSvg
+        style={{
+          cursor: 'pointer',
+        }}
+      />
+    ),
   },
 };
 

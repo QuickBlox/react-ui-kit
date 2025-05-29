@@ -3,7 +3,8 @@ import { stringifyError } from '../../utils/parse';
 import { getQB } from '../../qb-api-calls';
 
 export default class ConnectionRepository extends SubscriptionPerformer<boolean> {
-  private timerId: NodeJS.Timeout | null = null; // Используем Timeout вместо Timer
+  // private timerId: NodeJS.Timer | undefined;
+  private timerId: ReturnType<typeof setTimeout> | undefined;
 
   private _needInit: boolean;
 

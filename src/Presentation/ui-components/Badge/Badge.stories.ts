@@ -1,5 +1,5 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+
 import Badge from './Badge';
 
 const meta: Meta<typeof Badge> = {
@@ -14,7 +14,7 @@ const meta: Meta<typeof Badge> = {
     count: {
       table: {
         defaultValue: {
-          summary: '0',
+          summary: 0,
         },
       },
       description: 'Number of unread messages',
@@ -22,7 +22,7 @@ const meta: Meta<typeof Badge> = {
     limit: {
       table: {
         defaultValue: {
-          summary: '99',
+          summary: 99,
         },
       },
       description: 'Limt of message count',

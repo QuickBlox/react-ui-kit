@@ -13,7 +13,12 @@ import Loader from '../../../ui-components/Loader/Loader';
 import MessageSeparator from '../../../ui-components/MessageSeparator/MessageSeparator';
 import { MessageDTOMapper } from '../../../../Data/source/remote/Mapper/MessageDTOMapper';
 import Avatar from '../../../ui-components/Avatar/Avatar';
-import UserSvg from '../../../icons/contents/user.svg?react';
+// TODO почему ругается на UserSvg?
+// import { ReactComponent as UserSvg } from '../../../icons/contents/user.svg';
+// import InformationFill from '../../../../components/UI/svgs/Icons/Status/InformationFill';
+// import { ReactComponent as UserSvg } from '../../../icons/contents/user.svg';
+// import { UserSvg } from '../../icons';
+import { UserSvg } from '../../../icons';
 import './MessageItem.scss';
 
 export type MessageItemProps = {
@@ -299,12 +304,13 @@ export default function MessageItem({
           <Message
             key={message.id}
             avatar={
-            avatar ||
-              <Avatar
-                src={message?.sender?.photo || ''}
-                icon={<UserSvg />}
-                size="md"
-              />
+              avatar || (
+                <Avatar
+                  src={message?.sender?.photo || ''}
+                  icon={<UserSvg />}
+                  size="md"
+                />
+              )
             }
             userName={senderName}
             status={getStatusMessage(message)}

@@ -16,7 +16,7 @@ export type DialogItemPreviewProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const DialogItemPreview = ({
+const DialogItemPreview: React.FC<DialogItemPreviewProps> = ({
   avatar,
   title,
   date,

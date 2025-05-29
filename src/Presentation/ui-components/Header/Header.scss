@@ -1,13 +1,13 @@
-@use '../../themes/styles/mixins' as *;
+@import '../../themes/styles/mixins';
 
 .dialog-header {
+  @include applyBorderBox;
+
   width: 100%;
   padding: 12px 16px 12px 20px;
   display: flex;
   align-items: center;
   gap: 33px;
-
-  @include applyBorderBox;
 
   &__icon {
     cursor: pointer;

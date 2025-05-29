@@ -1,5 +1,5 @@
-@use "theme_light" as *;
-@use "theme_dark" as *;
+@import "theme_light";
+@import "theme_dark";
 
 $qb-min-width-screen-desktop: 980px;
 

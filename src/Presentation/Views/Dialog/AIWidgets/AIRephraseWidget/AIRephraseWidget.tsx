@@ -40,7 +40,7 @@ type AIRephraseWidgetProps = {
   disableActions?: boolean;
 };
 // eslint-disable-next-line react/function-component-definition
-const AIRephraseWidget = ({
+const AIRephraseWidget: React.FC<AIRephraseWidgetProps> = ({
   messageText,
   waitAIWidget,
   setWaitAIWidget,

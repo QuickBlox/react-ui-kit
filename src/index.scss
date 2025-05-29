@@ -1,7 +1,7 @@
-@use 'Presentation/themes/styles/fonts' as *;
-@use 'Presentation/themes/styles/theme_colors_scheme' as *;
-@use 'Presentation/themes/styles/variables' as *;
-@use 'Presentation/themes/styles/mixins' as *;
+@import 'Presentation/themes/styles/fonts';
+@import 'Presentation/themes/styles/theme_colors_scheme';
+@import 'Presentation/themes/styles/variables';
+@import 'Presentation/themes/styles/mixins';
 
 .qb-uikit-layout * {
   box-sizing: border-box;

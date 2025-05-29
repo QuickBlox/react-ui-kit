@@ -245,20 +245,46 @@ export default function useDialogListViewModel(
             .then((newItem) => {
               //
               setDialogs((prevDialogs) => {
-                const newDialogs = [
-                  ...prevDialogs,
-                  newItem as PublicDialogEntity,
-                ];
+                let updatedDialogs: PublicDialogEntity[];
 
-                const sortedData = [...newDialogs].sort((a, b) => {
-                  return b.lastMessage.dateSent && a.lastMessage.dateSent
-                    ? new Date(b.lastMessage.dateSent).getTime() -
-                        new Date(a.lastMessage.dateSent).getTime()
-                    : new Date(b.updatedAt).getTime() -
-                        new Date(a.updatedAt).getTime();
+                if (newItem.type === DialogType.private) {
+                  const filteredDialogs = prevDialogs.filter(
+                    (d) => d.id !== newItem.id,
+                  );
+
+                  updatedDialogs = [
+                    ...filteredDialogs,
+                    newItem as PublicDialogEntity,
+                  ];
+                } else {
+                  updatedDialogs = [
+                    ...prevDialogs,
+                    newItem as PublicDialogEntity,
+                  ];
+                }
+
+                const sortedDialogs = updatedDialogs.sort((a, b) => {
+                  const aDate = a.lastMessage?.dateSent ?? a.updatedAt;
+                  const bDate = b.lastMessage?.dateSent ?? b.updatedAt;
+
+                  return new Date(bDate).getTime() - new Date(aDate).getTime();
                 });
 
-                return sortedData;
+                return sortedDialogs;
+                // const newDialogs = [
+                //   ...prevDialogs,
+                //   newItem as PublicDialogEntity,
+                // ];
+                //
+                // const sortedData = [...newDialogs].sort((a, b) => {
+                //   return b.lastMessage.dateSent && a.lastMessage.dateSent
+                //     ? new Date(b.lastMessage.dateSent).getTime() -
+                //         new Date(a.lastMessage.dateSent).getTime()
+                //     : new Date(b.updatedAt).getTime() -
+                //         new Date(a.updatedAt).getTime();
+                // });
+                //
+                // return sortedData;
               });
               //
             })

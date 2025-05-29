@@ -6,7 +6,7 @@ type SystemDateBannerProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-export const SystemDateBanner = ({
+export const SystemDateBanner: React.FC<SystemDateBannerProps> = ({
   text,
 }: SystemDateBannerProps) => {
   return (

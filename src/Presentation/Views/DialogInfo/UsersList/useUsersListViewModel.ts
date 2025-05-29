@@ -25,6 +25,7 @@ export default function useUsersListViewModel(
   const { regexUserName } = QBConfig.appConfig;
   const regex = regexUserName ? new RegExp(regexUserName) : null;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function logData(message: string, data: any) {
     // console.log(`${message} :`, JSON.stringify(data));
   }

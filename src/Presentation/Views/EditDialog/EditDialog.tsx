@@ -35,7 +35,7 @@ type EditDialogProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition,@typescript-eslint/no-unused-vars
-const EditDialog = ({
+const EditDialog: React.FC<EditDialogProps> = ({
   nameDialog = '',
   typeDialog,
   ulrIcon = '',
@@ -43,7 +43,7 @@ const EditDialog = ({
   clickUpdatedHandler,
   clickCancelHandler,
   disableActions = false,
-}: EditDialogProps) => {
+}) => {
   const currentContext = useQbInitializedDataContext();
   const maxUploadFileSize = currentContext.InitParams.maxFileSize;
   const minLengthNameDialog = 3;

@@ -1,27 +1,12 @@
-import ArrowLeftSvg from './arrow-left.svg?react';
-import ArrowRightSvg from './arrow-right.svg?react';
-import BackSvg from './back.svg?react';
-import CloseSvg from './close.svg?react';
-import DownSvg from './down.svg?react';
-import NextSVG from './next.svg?react';
-import LeaveSvg from './leave.svg?react';
-import MoreSvg from './more.svg?react';
-import PlusSvg from './plus.svg?react';
-import RefreshSvg from './refresh.svg?react';
-import SearchSvg from './search.svg?react';
-import SettingsFilledSvg from './settings-filled.svg?react';
-
-export {
-  ArrowLeftSvg,
-  ArrowRightSvg,
-  BackSvg,
-  CloseSvg,
-  DownSvg,
-  NextSVG,
-  LeaveSvg,
-  MoreSvg,
-  PlusSvg,
-  RefreshSvg,
-  SearchSvg,
-  SettingsFilledSvg
-};
+export { ReactComponent as ArrowLeftSvg } from './arrow-left.svg';
+export { ReactComponent as ArrowRightSvg } from './arrow-right.svg';
+export { ReactComponent as BackSvg } from './back.svg';
+export { ReactComponent as CloseSvg } from './close.svg';
+export { ReactComponent as DownSvg } from './down.svg';
+export { ReactComponent as NextSVG } from './next.svg';
+export { ReactComponent as LeaveSvg } from './leave.svg';
+export { ReactComponent as MoreSvg } from './more.svg';
+export { ReactComponent as PlusSvg } from './plus.svg';
+export { ReactComponent as RefreshSvg } from './refresh.svg';
+export { ReactComponent as SearchSvg } from './search.svg';
+export { ReactComponent as SettingsFilledSvg } from './settings-filled.svg';

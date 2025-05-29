@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import PlaySvg from '../../../../icons/toggle/play.svg?react';
-import PauseSvg from '../../../../icons/toggle/pause.svg?react';
+import { ReactComponent as PlaySvg } from '../../../../icons/toggle/play.svg';
+import { ReactComponent as PauseSvg } from '../../../../icons/toggle/pause.svg';
 
 import './AudioBubble.scss';
 

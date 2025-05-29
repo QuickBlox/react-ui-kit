@@ -1,13 +1,5 @@
-import AdminSvg from './admin.svg?react';
-import BannedSvg from './banned.svg?react';
-import ModerationsSvg from './moderations.svg?react';
-import FreezeSvg from './freeze.svg?react';
-import MutedSvg from './muted.svg?react';
-
-export {
-  AdminSvg,
-  BannedSvg,
-  ModerationsSvg,
-  FreezeSvg,
-  MutedSvg
-};
+export { ReactComponent as AdminSvg } from './admin.svg';
+export { ReactComponent as BannedSvg } from './banned.svg';
+export { ReactComponent as ModerationsSvg } from './moderations.svg';
+export { ReactComponent as FreezeSvg } from './freeze.svg';
+export { ReactComponent as MutedSvg } from './muted.svg';

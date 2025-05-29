@@ -9,7 +9,7 @@ type SearchComponentProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const SearchComponent = ({
+const SearchComponent: React.FC<SearchComponentProps> = ({
   onChange,
 }: SearchComponentProps) => {
   const [stringForFilter, setStringForFilter] = useState('');

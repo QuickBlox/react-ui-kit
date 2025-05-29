@@ -6,7 +6,7 @@ type AttachmentMessageProps = {
   disableAction: boolean;
 };
 // eslint-disable-next-line react/function-component-definition
-const AttachmentUploader= ({
+const AttachmentUploader: React.FC<AttachmentMessageProps> = ({
   icon,
   onChangeFile,
   disableAction,

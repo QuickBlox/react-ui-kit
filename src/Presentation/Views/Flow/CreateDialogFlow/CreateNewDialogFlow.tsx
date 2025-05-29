@@ -21,7 +21,7 @@ type CreateNewDialogFlowProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const CreateNewDialogFlow = ({
+const CreateNewDialogFlow: React.FC<CreateNewDialogFlowProps> = ({
   dialogsViewModel,
   onFinished,
   onCancel,

@@ -501,37 +501,53 @@ export function QBJoinGroupDialog(dialogId: QBUIKitChatDialog['_id']) {
     //     resolve(res);
     //   }
     // });
+    // eslint-disable-next-line consistent-return
     QB.chat.muc.join(dialogJid, (error, res) => {
       if (error) {
-        console.log('ERROR in QBJoinGroupDialog with join group dialog:', error);
+        console.log(
+          'ERROR in QBJoinGroupDialog with join group dialog:',
+          error,
+        );
         console.log('stringify Error:', stringifyError(error));
         // Если ошибка содержит станзу, проверяем ее на наличие тега <error>
         try {
           const errorNode = error as any;
 
           if (errorNode.childNodes && errorNode.childNodes.length > 0) {
+            // eslint-disable-next-line no-plusplus
             for (let i = 0; i < errorNode.childNodes.length; i++) {
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-call
               const elItem = errorNode.childNodes.item(i);
+
               if (elItem.tagName === 'error') {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 const code = elItem.getAttribute('code') || '500';
                 const message = elItem.textContent || 'Unknown issue';
+
+                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                 console.log(`Join error: ${code}, message: ${message}`);
+
+                // eslint-disable-next-line prefer-promise-reject-errors
                 return reject({ code, message });
               }
             }
           }
         } catch (parseError) {
           console.log('Error parsing join error stanza:', parseError);
-          return reject({ code: '500', message: 'Error parsing join error stanza' });
+
+          // eslint-disable-next-line prefer-promise-reject-errors
+          return reject({
+            code: '500',
+            message: 'Error parsing join error stanza',
+          });
         }
 
+        // eslint-disable-next-line prefer-promise-reject-errors
         return reject({ code: '500', message: 'Unknown error during join' });
-      } else {
-        console.log('QBJoinGroupDialog: join group dialog:', res);
-        resolve(res);
       }
+      console.log('QBJoinGroupDialog: join group dialog:', res);
+      resolve(res);
     });
-
   });
 }
 

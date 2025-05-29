@@ -44,7 +44,7 @@ type HeaderDialogsProps = {
   disableAction?: boolean;
 };
 // eslint-disable-next-line react/function-component-definition
-const DialogInfo = ({
+const DialogInfo: React.FC<HeaderDialogsProps> = ({
   dialog,
   dialogViewModel,
   onCloseDialogInformationHandler,

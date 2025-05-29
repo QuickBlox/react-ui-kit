@@ -1,41 +1,33 @@
 {
   "compilerOptions": {
     "outDir": "./dist/",
-    "declaration": true,
-    "declarationMap": true,
-    "emitDeclarationOnly": false,
     "sourceMap": true,
-    "target": "ES2022",
+    "declaration": true,
+    "target": "es5",
     "lib": [
-      "es2022",
+      "es2015",
       "dom",
       "dom.iterable",
       "esnext"
     ],
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "allowJs": false,
-    "esModuleInterop": true,
+    "allowJs": true,
     "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "noEmit": false,
     "jsx": "react-jsx",
-    "types": ["react", "react-dom", "node"],
-    "strict": true
   },
   "include": [
     "src",
-    "global.d.ts",
-    "media-recorder-js.d.ts",
+    "global.d.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "stories",
-    "src/**/*.stories.tsx",
-    "dist",
-    "tests",
-    "**/*.test.ts",
-    "**/*.test.tsx"
-  ],
+  "exclude": ["node_modules", "dist"]
+
 }

@@ -1,12 +1,11 @@
-@use '../../themes/styles/mixins' as *;
+@import '../../themes/styles/mixins';
 
 .dialog-item-preview {
+  @include applyBorderBox;
   display: flex;
   align-items: center;
   padding: 8px 16px;
   gap: 16px;
-
-  @include applyBorderBox; // Переместил после основных свойств
 
   &:hover {
     background: var(--divider);

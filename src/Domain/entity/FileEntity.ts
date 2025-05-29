@@ -5,7 +5,7 @@ export interface FileEntity {
   uid: string;
   url?: string;
   name?: string;
-  size?: number;
+  size?: number | string;
   type?: FileType;
   data?: File;
 }

@@ -9,12 +9,12 @@ type MainBoundedButtonProps = {
   touchHandler?: FunctionTypeVoidToVoid;
 };
 // eslint-disable-next-line react/function-component-definition,@typescript-eslint/no-unused-vars
-const MainBoundedButton = ({
+const MainBoundedButton: React.FC<MainBoundedButtonProps> = ({
   title,
   styleBox,
   clickHandler,
   touchHandler,
-}:MainBoundedButtonProps) => {
+}) => {
   return (
     <button
       type="button"

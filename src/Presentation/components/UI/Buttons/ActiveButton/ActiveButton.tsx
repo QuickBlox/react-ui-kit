@@ -7,7 +7,7 @@ type ActiveButtonContainerProps = {
   clickAction?: FunctionTypeVoidToVoid;
 };
 // eslint-disable-next-line react/function-component-definition
-const ActiveButton = ({
+const ActiveButton: React.FC<ActiveButtonContainerProps> = ({
   content,
   touchAction,
   clickAction,

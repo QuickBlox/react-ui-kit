@@ -19,13 +19,13 @@ type SingleUserWithCheckBoxProps = {
   keyValue?: number;
 };
 // eslint-disable-next-line react/function-component-definition,@typescript-eslint/no-unused-vars
-const SingleUserWithCheckBox = ({
+const SingleUserWithCheckBox: React.FC<SingleUserWithCheckBoxProps> = ({
   user,
   checkedHandler,
   isElementChecked,
   keyValue,
   isDisabled = false,
-}:SingleUserWithCheckBoxProps) => {
+}) => {
   const [isMobile] = useMobileLayout();
 
   function getChecked(index: number | undefined) {

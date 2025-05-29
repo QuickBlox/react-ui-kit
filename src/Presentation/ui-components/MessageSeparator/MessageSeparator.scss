@@ -1,6 +1,8 @@
-@use '../../themes/styles/mixins' as *;
+@import '../../themes/styles/mixins';
 
 .system-date-banner-chat-banner {
+  @include applyBorderBox;
+
   background: var(--incoming-background);
   border-radius: 30px;
   padding: 2px 8px;
@@ -12,7 +14,6 @@
   text-align: center;
   font: var(--label-label-small);
 
-  @include applyBorderBox; // Теперь после всех CSS-свойств
 }
 
 .system-message-chat-banner {
@@ -26,6 +27,4 @@
   color: var(--secondary-text);
   text-align: center;
   font: var(--label-label-small);
-
-  @include applyBorderBox; // Теперь после всех CSS-свойств
 }

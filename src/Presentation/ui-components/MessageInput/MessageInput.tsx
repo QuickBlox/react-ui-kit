@@ -28,7 +28,7 @@ export type MessageInputProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const MessageInput = ({
+const MessageInput: React.FC<MessageInputProps> = ({
   value,
   onChange,
   onChanging,
@@ -69,30 +69,30 @@ const MessageInput = ({
   }
 
   return (
-      <div className={cn('chat-container', className)}>
-        {previewMessage}
-        <div
-          onBlur={() => {
-            if (!(value && value.length > 0)) {
-              setVoiceMessage(true);
-            }
-          }}
-          className="chat-input"
-        >
-          <AttachmentUploader
-            disableAction={disableActions}
-            icon={
-              <AttachmentSvg
-                className={cn('chat-container__icon', {
-                  'chat-container__icon--mute': disableAttachment || loading,
-                  'chat-container__icon--disable': disableActions,
-                })}
-              />
-            }
-            onChangeFile={onAttachment}
-          />
-          {!enableVoice && (
-            <div className="input-text-message type-message">
+    <div className={cn('chat-container', className)}>
+      {previewMessage}
+      <div
+        onBlur={() => {
+          if (!(value && value.length > 0)) {
+            setVoiceMessage(true);
+          }
+        }}
+        className="chat-input"
+      >
+        <AttachmentUploader
+          disableAction={disableActions}
+          icon={
+            <AttachmentSvg
+              className={cn('chat-container__icon', {
+                'chat-container__icon--mute': disableAttachment || loading,
+                'chat-container__icon--disable': disableActions,
+              })}
+            />
+          }
+          onChangeFile={onAttachment}
+        />
+        {!enableVoice && (
+          <div className="input-text-message type-message">
             <textarea
               disabled={loading}
               value={value}
@@ -108,54 +108,53 @@ const MessageInput = ({
               }}
               placeholder={placeholder || 'Type message'}
             />
-              {rephrase}
-            </div>
-          )}
+            {rephrase}
+          </div>
+        )}
 
-          {enableVoice && (
-            <VoiceRecordingProgress
-              startStatus={enableVoice}
-              longRecInSec={60}
+        {enableVoice && (
+          <VoiceRecordingProgress
+            startStatus={enableVoice}
+            longRecInSec={60}
+            onClick={() => {
+              if (onVoice) {
+                onVoice();
+              }
+            }}
+          />
+        )}
+        {!isVoiceMessage && !loading && (
+          <div className="chat-container__send-icon">
+            <SendSvg
+              className={cn('chat-container__icon__send', {
+                'chat-container__icon--mute': loading,
+                'chat-container__icon--disable': disableActions,
+              })}
+              onClick={() => {
+                sendTextMessageActions();
+              }}
+            />
+          </div>
+        )}
+        {loading ? (
+          <Loader size="sm" className="chat-container__loader" />
+        ) : (
+          isVoiceMessage && (
+            <VoiceSvg
+              className={cn('chat-container__icon', {
+                'chat-container__icon--red': enableVoice,
+                'chat-container__icon--disable': disableActions,
+              })}
               onClick={() => {
                 if (onVoice) {
                   onVoice();
                 }
               }}
             />
-          )}
-          {!isVoiceMessage && !loading && (
-            <div className="chat-container__send-icon">
-              <SendSvg
-                className={cn('chat-container__icon__send', {
-                  'chat-container__icon--mute': loading,
-                  'chat-container__icon--disable': disableActions,
-                })}
-                onClick={() => {
-                  sendTextMessageActions();
-                }}
-              />
-            </div>
-          )}
-          {loading ? (
-            <Loader size="sm" className="chat-container__loader" />
-          ) : (
-            isVoiceMessage && (
-              <VoiceSvg
-                className={cn('chat-container__icon', {
-                  'chat-container__icon--red': enableVoice,
-                  'chat-container__icon--disable': disableActions,
-                })}
-                onClick={() => {
-                  if (onVoice) {
-                    onVoice();
-                  }
-                }}
-              />
-            )
-          )}
-        </div>
+          )
+        )}
       </div>
-
+    </div>
   );
 };
 

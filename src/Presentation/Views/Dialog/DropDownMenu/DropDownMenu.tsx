@@ -67,7 +67,7 @@ type DropDownMenuProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-export const DropDownMenu = ({
+export const DropDownMenu: React.FC<DropDownMenuProps> = ({
   items,
 }: // itemsAI,
 DropDownMenuProps) => {

@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport';
 import DialogItemPreview from './DialogItemPreview';
@@ -73,7 +72,7 @@ const meta: Meta<typeof DialogItemPreview> = {
     active: {
       table: {
         defaultValue: {
-          summary: 'false',
+          summary: false,
         },
         type: { summary: 'boolean' },
       },
@@ -119,7 +118,7 @@ export const DialogItemPreviewDefault: Story = {
   },
   render: (args) => {
     // eslint-disable-next-line no-param-reassign
-    args.date = args.date ? new Date(args.date!).toLocaleDateString() : new Date().toLocaleDateString();
+    args.date = new Date(args.date!).toLocaleDateString();
 
     return <DialogItemPreview {...args} />;
   },
@@ -134,7 +133,6 @@ export const DialogItemPreviewFullScreen: Story = {
       "Hello, dear Mr. User. Thank you for choosing us. I'm here to assist with your order's delivery. Please provide your preferred address and any specific instructions. We offer standard, express, and same-day delivery in select areas. Let us know your convenience, and we'll ensure a smooth process.",
     badge: <Badge count={5} />,
     contextMenu: <MoreSvg />,
-
   },
   parameters: {
     viewport: {
@@ -143,7 +141,7 @@ export const DialogItemPreviewFullScreen: Story = {
   },
   render: (args) => {
     // eslint-disable-next-line no-param-reassign
-    args.date = new Date().toLocaleDateString();
+    args.date = new Date(args.date!).toLocaleDateString();
 
     return <DialogItemPreview {...args} />;
   },
@@ -166,7 +164,7 @@ export const DialogItemPreviewMobileScreen: Story = {
   },
   render: (args) => {
     // eslint-disable-next-line no-param-reassign
-    args.date = args.date ? new Date(args.date!).toLocaleDateString() : new Date().toLocaleDateString();
+    args.date = new Date(args.date!).toLocaleDateString();
 
     return <DialogItemPreview {...args} />;
   },
@@ -189,9 +187,7 @@ export const DialogItemPreviewMobileScreenIPad: Story = {
   },
   render: (args) => {
     // eslint-disable-next-line no-param-reassign
-    args.date = args.date
-      ? new Date(args.date!).toLocaleDateString()
-      : new Date().toLocaleDateString();
+    args.date = new Date(args.date!).toLocaleDateString();
 
     return <DialogItemPreview {...args} />;
   },

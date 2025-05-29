@@ -29,6 +29,8 @@ export class RemoteDialogDTO {
 
   public photo: string;
 
+  public is_join_required: number | undefined | null;
+
   constructor() {
     this.id = '';
     this.type = 0;
@@ -54,5 +56,7 @@ export class RemoteDialogDTO {
     this.name = '';
 
     this.photo = '';
+
+    this.is_join_required = undefined;
   }
 }

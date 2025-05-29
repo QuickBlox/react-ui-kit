@@ -85,8 +85,8 @@ export interface QBUIKitConfig extends QBConfig {
     chatProtocol: {
       active: number;
     };
-    pingLocalhostTimeInterval?: number;
-    chatReconnectionTimeInterval?: number
+    pingLocalhostTimeInterval: number;
+    chatReconnectionTimeInterval: number;
     debug: boolean;
     enableForwarding: boolean;
     enableReplying: boolean;
@@ -189,6 +189,7 @@ export interface QBUIKitChatDialog extends QBChatDialog {
   };
   new_occupants_ids?: number[]; // TODO: EXTENDS TYPE AND SWITCH TO THIS NEW TYPE
   joined?: boolean; // TODO: EXTENDS TYPE AND SWITCH TO THIS NEW TYPE
+  is_join_required: number | undefined | null;
 }
 
 export interface QBUIKitChatNewMessage extends QBChatNewMessage {

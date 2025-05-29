@@ -11,7 +11,7 @@ type DialogHeaderProps = {
   theme?: UiKitTheme;
 };
 // eslint-disable-next-line react/function-component-definition
-const DialogHeader = ({
+const DialogHeader: React.FC<DialogHeaderProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   dialogName,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

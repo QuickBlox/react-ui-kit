@@ -1,4 +1,3 @@
-import React from 'react';
 import './MessageSeparator.scss';
 
 type MessageSeparatorProps = {

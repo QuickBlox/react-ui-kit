@@ -184,11 +184,23 @@ export default function useDialogViewModel(
         setError((e as unknown as Error).message);
       });
 
-    //
-
     const senderIds = Array.from(
-      new Set(messagesDialog.map((msg) => msg.sender_id)),
+      new Set(
+        messagesDialog.flatMap((msg) => {
+          const ids = [msg.sender_id];
+
+          if (
+            Array.isArray(msg.qb_original_messages) &&
+            msg.qb_original_messages.length > 0
+          ) {
+            ids.push(msg.qb_original_messages[0].sender_id);
+          }
+
+          return ids;
+        }),
+      ),
     );
+
     const missingSenderIds = senderIds.filter((id) => !(id in userDictionary));
 
     const getMissingSenderUsersFromDialogByIdsUseCase: GetUsersByIdsUseCase =
@@ -236,6 +248,26 @@ export default function useDialogViewModel(
         }
       }
 
+      if (message.qb_original_messages) {
+        const nestedObj = message.qb_original_messages;
+
+        if (nestedObj && nestedObj.length > 0) {
+          if (userDictionary) {
+            nestedObj[0].sender = userDictionary[nestedObj[0].sender_id];
+            if (
+              nestedObj[0].sender &&
+              nestedObj[0].sender.full_name &&
+              regex &&
+              !regex.test(nestedObj[0].sender.full_name)
+            ) {
+              nestedObj[0].sender.full_name = 'Unknown';
+            }
+          }
+
+          obj.qb_original_messages = nestedObj;
+        }
+      }
+
       return obj;
     });
 
@@ -253,7 +285,6 @@ export default function useDialogViewModel(
   }
 
   const dialogUpdateHandler = (dialogInfo: DialogEventInfo) => {
-
     if (dialogInfo.eventMessageType === EventMessageType.LocalMessage) {
       if (dialogInfo.messageStatus) {
         if (
@@ -405,7 +436,10 @@ export default function useDialogViewModel(
     userTypingMessageUseCase.execute().catch((reason) => {
       const errorMessage: string = stringifyError(reason);
 
-      console.log('Error: have exception in sendTypingTextMessage: ', errorMessage);
+      console.log(
+        'Error: have exception in sendTypingTextMessage: ',
+        errorMessage,
+      );
     });
   };
 
@@ -663,6 +697,8 @@ export default function useDialogViewModel(
     relatedMessage: MessageEntity,
   ): Promise<void> => {
     //
+    const senderRepliedMessage = messagesToReply[0].sender;
+
     const replyMessagesUseCase: ReplyMessagesUseCase = new ReplyMessagesUseCase(
       new MessagesRepository(LOCAL_DATA_SOURCE, REMOTE_DATA_SOURCE),
       messagesToReply,
@@ -684,6 +720,34 @@ export default function useDialogViewModel(
           })
           .finally(() => {
             setMessages((prevState) => {
+              if (messageEntity.qb_original_messages) {
+                const nestedObj = messageEntity.qb_original_messages;
+
+                if (nestedObj && nestedObj.length > 0) {
+                  nestedObj[0].sender = senderRepliedMessage;
+                  if (
+                    nestedObj[0].sender &&
+                    nestedObj[0].sender.full_name &&
+                    regex &&
+                    !regex.test(nestedObj[0].sender.full_name)
+                  ) {
+                    nestedObj[0].sender.full_name = 'Unknown';
+                  }
+                  // eslint-disable-next-line no-param-reassign
+                  messageEntity.qb_original_messages = nestedObj;
+                }
+              }
+
+              if (
+                messageEntity.sender &&
+                messageEntity.sender.full_name &&
+                regex &&
+                !regex.test(messageEntity.sender.full_name)
+              ) {
+                // eslint-disable-next-line no-param-reassign
+                messageEntity.sender.full_name = 'Unknown';
+              }
+
               const newState = [...prevState, messageEntity];
 
               return newState;
@@ -703,6 +767,7 @@ export default function useDialogViewModel(
       .finally(() => {
         setLoading(false);
       });
+    //
   };
   const sendReplyMessages = async (
     replyData: ReplyMessagesParams,

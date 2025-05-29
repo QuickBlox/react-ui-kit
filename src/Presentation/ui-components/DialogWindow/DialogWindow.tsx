@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode } from 'react';
+import React, { ReactElement } from 'react';
 import { createPortal } from 'react-dom';
 import cn from 'classnames';
 
@@ -9,7 +9,7 @@ import './DialogWindow.scss';
 interface DialogWindowProps {
   open: boolean;
   title: string;
-  children: ReactNode;
+  children: ReactElement | ReactElement[];
   onClose?: VoidFunction;
   className?: string;
   disableActions?: boolean;
@@ -22,7 +22,7 @@ export default function DialogWindow({
   title,
   className,
   disableActions = false,
-}: DialogWindowProps): React.JSX.Element | null {
+}: DialogWindowProps) {
   if (!open) return null;
 
   return createPortal(
@@ -40,5 +40,5 @@ export default function DialogWindow({
       </div>
     </div>,
     document.body,
-  ) as unknown as React.JSX.Element | null;
+  );
 }
