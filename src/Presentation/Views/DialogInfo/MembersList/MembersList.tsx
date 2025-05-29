@@ -14,7 +14,7 @@ type MembersListProps = {
   maxHeight?: number;
 };
 // eslint-disable-next-line react/function-component-definition
-const MembersList: React.FC<MembersListProps> = ({
+const MembersList = ({
   closeInformationHandler,
   members,
   maxHeight = 0,

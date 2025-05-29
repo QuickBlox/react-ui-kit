@@ -1,5 +1,5 @@
 import cn from 'classnames';
-import { ReactComponent as RobotSvg } from '../../../../icons/actions/robot.svg';
+import RobotSvg from '../../../../icons/actions/robot.svg?react';
 import { AIMessageWidget } from '../../AIWidgets/AIMessageWidget';
 import { MessageEntity } from '../../../../../Domain/entity/MessageEntity';
 import { AIUtils } from '../../../../../utils/utils';

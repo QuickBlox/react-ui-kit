@@ -143,6 +143,7 @@ export class MessageDTOMapper implements IDTOMapper {
         console.error(e);
       }
 
+
       dto.id = qbMessage._id;
       dto.dialogId = qbMessage.chat_dialog_id;
       dto.message = qbMessage.message; // MessageDTOMapper.formatMessage(qbMessage.message);
@@ -187,20 +188,33 @@ export class MessageDTOMapper implements IDTOMapper {
   }
 
   //
-  public static convertAttachment(
-    attachment: ChatMessageAttachmentEntity,
-  ): ChatMessageAttachment {
-    return {
-      id: attachment.id.toString(),
-      uid: attachment.uid?.toString() || '',
-      type: attachment.type.toString(),
-      url: attachment.url?.toString() || '',
-      name: attachment.name?.toString() || '',
-      size: attachment.size?.toString() || '',
-    } as ChatMessageAttachment;
-  }
+  // public static convertAttachment(
+  //   attachment: ChatMessageAttachmentEntity,
+  // ): ChatMessageAttachment {
+  //   return {
+  //     id: attachment.id.toString(),
+  //     uid: attachment.uid || '',
+  //     type: attachment.type.toString(),
+  //     url: attachment.url || '',
+  //     name: attachment.name || '',
+  //     size: attachment.size || 0,
+  //   };
+  // }
+    public static convertAttachment(
+        attachment: ChatMessageAttachmentEntity,
+    ): ChatMessageAttachment {
+        return {
+            id: attachment.id.toString(),
+            uid: attachment.uid?.toString() || '',
+            type: attachment.type.toString(),
+            url: attachment.url?.toString() || '',
+            name: attachment.name?.toString() || '',
+            size: attachment.size?.toString() || '',
+        } as ChatMessageAttachment;
+    }
 
-  public static convertToQBChatNewMessage(
+
+    public static convertToQBChatNewMessage(
     messages: RemoteMessageDTO[],
   ): QBChatMessage[] {
     return messages.map((message) => {

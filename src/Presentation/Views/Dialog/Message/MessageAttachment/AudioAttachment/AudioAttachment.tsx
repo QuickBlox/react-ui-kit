@@ -8,7 +8,7 @@ type AudioAttachmentComponentProps = {
   audioFile: FileEntity;
 };
 // eslint-disable-next-line react/function-component-definition
-const AudioAttachment: React.FC<AudioAttachmentComponentProps> = ({
+const AudioAttachment = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   audioFile,
 }: AudioAttachmentComponentProps) => {

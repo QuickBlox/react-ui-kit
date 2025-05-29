@@ -7,7 +7,7 @@ type VideoAttachmentComponentProps = {
   videoFile: FileEntity;
 };
 // eslint-disable-next-line react/function-component-definition
-const VideoAttachment: React.FC<VideoAttachmentComponentProps> = ({
+const VideoAttachment = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   videoFile,
 }: VideoAttachmentComponentProps) => {

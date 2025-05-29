@@ -9,7 +9,7 @@ type UserSingleProps = {
   keyValue?: number;
 };
 // eslint-disable-next-line react/function-component-definition,@typescript-eslint/no-unused-vars
-const UserSingle: React.FC<UserSingleProps> = ({ user, keyValue }) => {
+const UserSingle = ({ user, keyValue }:UserSingleProps) => {
   // const [dialogAvatarUrl, setDialogAvatarUrl] = React.useState('');
   // const getUserAvatarUid = () => {
   //   let result = '';

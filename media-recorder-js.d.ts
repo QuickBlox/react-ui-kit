@@ -1,8 +1,8 @@
 declare module 'media-recorder-js' {
   interface QBMediaRecorderConstructorProps {
     /** Preferred MIME type */
-    mimeType?: string;
-    workerPath?: string;
+    mimeType?: string
+    workerPath?: string
     /**
      * The minimum number of milliseconds of data to return
      * in a single Blob, fire 'ondataavaible' callback
@@ -10,7 +10,7 @@ declare module 'media-recorder-js' {
      *
      * @default 1000
      */
-    timeslice?: number;
+    timeslice?: number
     /**
      * What to do with a muted input MediaStreamTrack,
      * e.g. insert black frames/zero audio volume in the recording
@@ -18,62 +18,62 @@ declare module 'media-recorder-js' {
      *
      * @default true
      */
-    ignoreMutedMedia?: boolean;
+    ignoreMutedMedia?: boolean
     /** Recording start event handler */
-    onstart?: VoidFunction;
+    onstart?: VoidFunction
     /** Recording stop event handler */
-    onstop?: (file: Blob) => void;
+    onstop?: (file: Blob) => void
     /** Recording pause event handler */
-    onpause?: VoidFunction;
+    onpause?: VoidFunction
     /** Recording resume event handler */
-    onresume?: VoidFunction;
+    onresume?: VoidFunction
     /** Error event handler */
-    onerror?: (error: unknown) => void;
+    onerror?: (error: unknown) => void
     /**
      * `dataavailable` event handler.
      * The Blob of recorded data is contained in this event (callback
      * isn't supported if use 'audio/wav' of 'audio/mp3' for recording)
      */
-    ondataavailable?: (event: { data: Blob }) => void;
+    ondataavailable?: (event: { data: Blob }) => void
   }
 
   class QBMediaRecorder {
-    constructor(config: QBMediaRecorderConstructorProps);
+    constructor(config: QBMediaRecorderConstructorProps)
 
     /**
      * Switch recording Blob objects to the specified
      * MIME type if `MediaRecorder` support it.
      */
-    toggleMimeType(mimeType: string): void;
+    toggleMimeType(mimeType: string): void
 
     /**
      * Returns current `MediaRecorder` state
      */
-    getState(): 'inactive' | 'recording' | 'paused';
+    getState(): 'inactive' | 'recording' | 'paused'
 
     /**
      * Starts recording a stream.
      * Fires `onstart` callback.
      */
-    start(stream: MediaStream): void;
+    start(stream: MediaStream): void
 
     /**
      * Stops recording a stream
      *
      * @fires `onstop` callback and passing there Blob recorded
      */
-    stop(): void;
+    stop(): void
 
     /** Pausing stream recording */
-    pause(): void;
+    pause(): void
 
     /** Resumes stream recording */
-    resume(): void;
+    resume(): void
 
     /**
      * Change record source
      */
-    change(stream: MediaStream): void;
+    change(stream: MediaStream): void
 
     /**
      * Create a file from blob and download as file.
@@ -82,9 +82,9 @@ declare module 'media-recorder-js' {
      * @param {string} filename Name of video file to be downloaded
      * (default to `Date.now()`)
      */
-    download(filename?: string): void;
+    download(filename?: string): void
 
-    _getBlobRecorded(): Blob;
+    _getBlobRecorded(): Blob
 
     callbacks: Pick<
       QBMediaRecorderConstructorProps,
@@ -94,19 +94,19 @@ declare module 'media-recorder-js' {
       | 'onresume'
       | 'ondataavailable'
       | 'onerror'
-    >;
+    >
 
     /**
      * Checks capability of recording in the environment.
      * Checks `MediaRecorder`, `MediaRecorder.isTypeSupported` and `Blob`.
      */
-    static isAvailable(): boolean;
+    static isAvailable(): boolean
 
     /**
      * Checks if AudioContext API is available.
      * Checks `window.AudioContext` or `window.webkitAudioContext`.
      */
-    static isAudioContext(): boolean;
+    static isAudioContext(): boolean
     /**
      * The `QBMediaRecorder.isTypeSupported()` static method returns
      * a Boolean which is true if the MIME type specified is one
@@ -120,14 +120,14 @@ declare module 'media-recorder-js' {
      * agent is incapable of recording the specified format.
      */
 
-    static isTypeSupported(mimeType: string): boolean;
+    static isTypeSupported(mimeType: string): boolean
 
     /**
      * Return supported mime types
      * @param type video or audio (dafault to 'video')
      */
-    static getSupportedMimeTypes(type: 'audio' | 'video' = 'video'): string[];
+    static getSupportedMimeTypes(type: 'audio' | 'video' = 'video'): string[]
   }
 
-  export default QBMediaRecorder;
+  export default QBMediaRecorder
 }

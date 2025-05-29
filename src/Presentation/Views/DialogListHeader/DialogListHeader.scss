@@ -1,4 +1,4 @@
-@import "../../../index";
+@use "../../../index" as *;
 
 $header-color-divider: var(--color-divider);
 $header-container-height: 64px;

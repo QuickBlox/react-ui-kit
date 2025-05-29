@@ -57,7 +57,7 @@ type PreviewDialogsProps = {
   disableActions?: boolean;
 };
 // eslint-disable-next-line react/function-component-definition
-const PreviewDialog: React.FC<PreviewDialogsProps> = ({
+const PreviewDialog = ({
   typeDialog,
   dialogViewModel,
   dialogAvatar,
@@ -177,8 +177,7 @@ const PreviewDialog: React.FC<PreviewDialogsProps> = ({
 
     if (
       messageParts &&
-      messageParts.length > 0 &&
-      messageParts[3] &&
+      messageParts.length > 0 && messageParts[3] &&
       messageParts[3].includes('image')
     ) {
       const fileUid: string = messageParts[2];

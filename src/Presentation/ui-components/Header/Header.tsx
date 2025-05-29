@@ -14,7 +14,7 @@ export type HeaderProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-const Header: React.FC<HeaderProps> = ({
+const Header = ({
   title,
   avatar,
   badge,

@@ -1,7 +1,6 @@
-@import '../../themes/styles/mixins';
+@use '../../themes/styles/mixins' as *;
 
 .settings-item {
-  @include applyBorderBox;
 
   &__body {
     display: flex;
@@ -70,4 +69,6 @@
       height: 24px;
     }
   }
+
+  @include applyBorderBox;
 }

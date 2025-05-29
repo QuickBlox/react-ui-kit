@@ -13,12 +13,7 @@ import Loader from '../../../ui-components/Loader/Loader';
 import MessageSeparator from '../../../ui-components/MessageSeparator/MessageSeparator';
 import { MessageDTOMapper } from '../../../../Data/source/remote/Mapper/MessageDTOMapper';
 import Avatar from '../../../ui-components/Avatar/Avatar';
-// TODO почему ругается на UserSvg?
-// import { ReactComponent as UserSvg } from '../../../icons/contents/user.svg';
-// import InformationFill from '../../../../components/UI/svgs/Icons/Status/InformationFill';
-// import { ReactComponent as UserSvg } from '../../../icons/contents/user.svg';
-// import { UserSvg } from '../../icons';
-import { UserSvg } from '../../../icons';
+import UserSvg from '../../../icons/contents/user.svg?react';
 import './MessageItem.scss';
 
 export type MessageItemProps = {
@@ -201,10 +196,15 @@ export default function MessageItem({
       return (
         <>
           {message.qb_original_messages.map((nestedMessage) => {
+            const senderNameNestedMessage =
+              nestedMessage.sender?.full_name ||
+              nestedMessage.sender?.login ||
+              nestedMessage.sender?.email ||
+              '';
             return (
               <Message
                 key={nestedMessage.id}
-                userName={senderName}
+                userName={senderNameNestedMessage}
                 status={getStatusMessage(nestedMessage)}
                 time={getTimeShort24hFormat(message.date_sent)}
                 type={currentMessageType}
@@ -304,13 +304,12 @@ export default function MessageItem({
           <Message
             key={message.id}
             avatar={
-              avatar || (
-                <Avatar
-                  src={message?.sender?.photo || ''}
-                  icon={<UserSvg />}
-                  size="md"
-                />
-              )
+            avatar ||
+              <Avatar
+                src={message?.sender?.photo || ''}
+                icon={<UserSvg />}
+                size="md"
+              />
             }
             userName={senderName}
             status={getStatusMessage(message)}

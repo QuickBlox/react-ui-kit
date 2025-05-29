@@ -1,9 +1,5 @@
-import React, {
-  ButtonHTMLAttributes,
-  DetailedHTMLProps,
-  ReactElement,
-} from 'react';
-
+import React from 'react';
+import { ButtonHTMLAttributes, DetailedHTMLProps, ReactElement } from 'react';
 import cn from 'classnames';
 
 import Loader from '../Loader/Loader';

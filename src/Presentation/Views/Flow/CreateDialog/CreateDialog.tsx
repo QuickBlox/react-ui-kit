@@ -16,9 +16,8 @@ type CreateDialogProps = {
   createPublicDialogOnTouch: FunctionTypeVoidToVoid;
   allowPublicDialogCreation: boolean;
 };
-
-// eslint-disable-next-line react/function-component-definition
-const CreateDialog: React.FC<CreateDialogProps> = ({
+// eslint-disable-next-line react/function-component-definition,@typescript-eslint/no-unused-vars
+const CreateDialog = ({
   createPrivateDialogOnClick,
   createPrivateDialogOnTouch,
   createGroupDialogOnClick,
@@ -26,7 +25,7 @@ const CreateDialog: React.FC<CreateDialogProps> = ({
   createPublicDialogOnClick,
   createPublicDialogOnTouch,
   allowPublicDialogCreation = false,
-}) => {
+}:CreateDialogProps) => {
   return (
     <div className="create-dialog-container">
       <ColumnContainer gapBetweenItem="8px">
@@ -54,22 +53,23 @@ const CreateDialog: React.FC<CreateDialogProps> = ({
           clickAction={createGroupDialogOnClick}
           touchAction={createGroupDialogOnTouch}
         />
-        {allowPublicDialogCreation && (
-          <ActiveButton
-            content={
-              <div className="item-type-dialog">
-                <div className="item-type-dialog-icon">
-                  <PublicChannel width="32" height="32" applyZoom />
-                </div>
-                <div className="item-type-dialog-name">Public</div>
+          {allowPublicDialogCreation && (
+        <ActiveButton
+          content={
+            <div className="item-type-dialog">
+              <div className="item-type-dialog-icon">
+                <PublicChannel width="32" height="32" applyZoom />
               </div>
-            }
-            clickAction={createPublicDialogOnClick}
-            touchAction={createPublicDialogOnTouch}
-          />
-        )}
+              <div className="item-type-dialog-name">Public</div>
+            </div>
+          }
+          clickAction={createPublicDialogOnClick}
+          touchAction={createPublicDialogOnTouch}
+        />
+          )}
       </ColumnContainer>
     </div>
+
   );
 };
 

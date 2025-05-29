@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './InviteMembers.scss';
-import cn from 'classnames';
 import ColumnContainer from '../../components/containers/ColumnContainer/ColumnContainer';
 import RowRightContainer from '../../components/containers/RowRightContainer/RowRightContainer';
 import MainButton, {
@@ -19,6 +18,7 @@ import { OpenDialogArcheType, TypeOpenDialog } from '../EditDialog/EditDialog';
 import { Loader, UserListItem } from '../../ui-components';
 import { SearchSvg } from '../../icons';
 import TextField from '../../ui-components/TextField/TextField';
+import cn from 'classnames';
 
 type SelectedItemInfo = { isChecked: boolean; userid: number };
 
@@ -36,14 +36,14 @@ type InviteMembersProps = {
   cancelInviteMembersHandler?: FunctionTypeVoidToVoid;
 };
 // eslint-disable-next-line react/function-component-definition,@typescript-eslint/no-unused-vars
-const InviteMembers: React.FC<InviteMembersProps> = ({
+const InviteMembers = ({
   typeDialog,
   idOwnerDialog,
   typeAddEditDialog,
   applyInviteUsersHandler,
   participants,
   cancelInviteMembersHandler,
-}) => {
+}: InviteMembersProps) => {
   const userPerPage = 12;
   const userViewModel: InviteMembersViewModel = useInviteMembersViewModel();
 
@@ -65,10 +65,9 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
     userViewModel.getUsers(new Pagination(0, userPerPage));
   }, []);
 
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define,no-use-before-define
+  useEffect( () => {
     setCountSelected(getUsersForIncludeInDialog().length);
-  }, [Object.entries(selectedItems).length]);
+  }, [Object.entries(selectedItems).length])
 
   const fetchMoreData = () => {
     if (userViewModel.pagination.hasNextPage()) {
@@ -139,10 +138,7 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
 
   const handleUserListItemChange = (userId: number, value: boolean) => {
     setSelectedItems((prevState) => {
-      const updatedState = {
-        ...prevState,
-        [userId]: { isChecked: value, userid: userId },
-      };
+      const updatedState = { ...prevState, [userId]: { isChecked: value, userid: userId } };
 
       Object.keys(updatedState).forEach((key) => {
         if (!updatedState[Number(key)].isChecked) {
@@ -199,14 +195,9 @@ const InviteMembers: React.FC<InviteMembersProps> = ({
                 setUserNameForFilter(value);
               }}
             />
-            <div
-              className={cn(
-                'container-invite-members--add-members-container--wrapper__inf',
-                {
-                  disabled: countSelectedItems < 1,
-                },
-              )}
-            >
+            <div className= {cn("container-invite-members--add-members-container--wrapper__inf", {
+              "disabled" : countSelectedItems < 1
+            })}>
               {countSelectedItems} selected
             </div>
             <div className="container-invite-members--add-members-container--wrapper__members">

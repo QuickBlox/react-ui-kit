@@ -1,5 +1,5 @@
-import React, { ReactElement } from 'react';
-
+import React from 'react';
+import { ReactElement } from 'react';
 import cn from 'classnames';
 import { UserSvg } from '../../icons';
 import './Avatar.scss';
@@ -26,8 +26,6 @@ export default function Avatar({
   }
 
   return (
-    <div className={cn('qb-avatar', `qb-avatar--${size}`, className)}>
-      {icon}
-    </div>
+    <div className={cn('qb-avatar', `qb-avatar--${size}`, className)}>{icon}</div>
   );
 }

@@ -1,4 +1,4 @@
-@import 'theme_colors_scheme';
+@use 'theme_colors_scheme' as *;
 // https://sass-lang.com/documentation/breaking-changes/css-vars
 
 html[data-theme='dark'] {

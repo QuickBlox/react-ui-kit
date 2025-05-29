@@ -194,8 +194,8 @@ export class Stubs {
           '103',
           i % 9 === 0
             ? `${
-                i + 1
-              } very very very long test text message for dialog 103. The text message with huge text: bla-bla-bla long long long long, bla-bla-bla, very very very long test text message for dialog 103. very very very long test text message for dialog 103. etc`
+              i + 1
+            } very very very long test text message for dialog 103. The text message with huge text: bla-bla-bla long long long long, bla-bla-bla, very very very long test text message for dialog 103. very very very long test text message for dialog 103. etc`
             : `${i + 1} test message for dialog 103`,
           '31.03.2023',
           Date.now(),
@@ -345,8 +345,8 @@ export class Stubs {
           '103',
           i % 3 === 0
             ? `${
-                i + 1
-              } very very very long test text message for dialog 103. The text message with huge text: bla-bla-bla long long long long, bla-bla-bla, very very very long test text message for dialog 103. very very very long test text message for dialog 103. etc`
+              i + 1
+            } very very very long test text message for dialog 103. The text message with huge text: bla-bla-bla long long long long, bla-bla-bla, very very very long test text message for dialog 103. very very very long test text message for dialog 103. etc`
             : `${i + 1} test message for dialog 103`,
           '31.03.2023',
           Date.now(),

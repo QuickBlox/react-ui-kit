@@ -7,7 +7,7 @@ type ErrorToastProps = {
 };
 
 // eslint-disable-next-line react/function-component-definition
-export const ErrorToast: React.FC<ErrorToastProps> = ({
+export const ErrorToast = ({
   messageText,
 }: // displayTimeout,
 ErrorToastProps) => {

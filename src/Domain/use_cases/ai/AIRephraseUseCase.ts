@@ -42,6 +42,7 @@ export class AIRephraseUseCase implements IUseCase<void, string> {
   }
 
   async execute(): Promise<string> {
+
     const settings = QBAIRephrase.createDefaultAIRephraseSettings();
 
     settings.apiKey = this.sessionToken;

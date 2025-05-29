@@ -1,9 +1,10 @@
-import {
+import React, {
   DetailedHTMLProps,
   ForwardedRef,
   InputHTMLAttributes,
   ReactElement,
   forwardRef,
+  JSX,
   useId,
 } from 'react';
 import cn from 'classnames';
@@ -26,8 +27,8 @@ interface TextFieldProps extends Omit<HTMLInputProps, 'onChange'> {
   onChange: (value: string) => void;
 }
 
-const TextField = forwardRef(
-  (
+const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
+  function TextField(
     {
       label,
       icon,
@@ -40,7 +41,7 @@ const TextField = forwardRef(
       ...inputProps
     }: TextFieldProps,
     ref: ForwardedRef<HTMLInputElement>,
-  ) => {
+  ): JSX.Element {
     const defaultId = useId();
 
     return (

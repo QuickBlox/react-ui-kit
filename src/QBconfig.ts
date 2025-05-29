@@ -123,12 +123,14 @@ export const QBConfig: QBUIKitConfig = {
   },
   appConfig: {
     maxFileSize: 10485760,
-    sessionTimeOut: 122,
+    sessionTimeOut: 119,
     chatProtocol: {
       active: 2,
     },
-    pingLocalhostTimeInterval: 0,
+    pingLocalhostTimeInterval: 5,
     chatReconnectionTimeInterval: 3,
+    showPublicDialogsInList: false,
+    allowPublicDialogCreation: false,
     debug: true,
     enableForwarding: true,
     enableReplying: true,

@@ -1,3 +1,4 @@
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import Button from './Button';
@@ -30,7 +31,7 @@ const meta = {
     disabled: {
       table: {
         defaultValue: {
-          summary: false,
+          summary: 'false',
         },
         type: { summary: 'boolean' },
       },
@@ -39,7 +40,7 @@ const meta = {
     loading: {
       table: {
         defaultValue: {
-          summary: false,
+          summary: 'false',
         },
         type: { summary: 'boolean' },
       },
@@ -57,7 +58,7 @@ const meta = {
     children: {
       table: {
         defaultValue: {
-          summary: null,
+          summary: undefined,
         },
         type: { summary: 'ReactElement | string | number' },
       },

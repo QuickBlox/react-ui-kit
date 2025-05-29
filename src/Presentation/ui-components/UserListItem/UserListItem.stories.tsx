@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import UserListItem from './UserListItem';
@@ -38,7 +38,7 @@ const meta = {
       table: {
         type: { summary: 'boolean' },
         defaultValue: {
-          summary: false,
+          summary: 'false',
         },
       },
       description: 'Active',
@@ -47,7 +47,7 @@ const meta = {
       table: {
         type: { summary: 'boolean' },
         defaultValue: {
-          summary: false,
+          summary: 'true',
         },
       },
       description: 'Checkbox',
@@ -117,11 +117,24 @@ function UserListExample() {
   );
 }
 
+function UserListItemExample() {
+  const [checked, setChecked] = useState(false)
+
+  return (
+    <UserListItem
+      userName="User name"
+      checked={checked}
+      onChange={(value:boolean) => {
+        setChecked(value);
+      }}
+    />
+  )
+
+}
+
 export const UserListItemDefault: StoryDefault = {
   name: 'UserListItem Default',
-  args: {
-    userName: 'User name',
-  },
+  render: () => <UserListItemExample />
 };
 
 export const UserList: StoryDefault = {

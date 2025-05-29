@@ -1,3 +1,4 @@
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { LocationSvg, NextSVG } from '../../icons';
@@ -23,7 +24,7 @@ const meta: Meta<typeof Dropdown> = {
       control: false,
       table: {
         defaultValue: {
-          summary: null,
+          summary: undefined,
         },
         type: { summary: 'ReactElement | string | number' },
       },
@@ -54,7 +55,7 @@ const meta: Meta<typeof Dropdown> = {
     disabled: {
       table: {
         defaultValue: {
-          summary: false,
+          summary: 'false',
         },
         type: { summary: 'boolean' },
       },

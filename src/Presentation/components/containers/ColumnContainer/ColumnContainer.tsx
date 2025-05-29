@@ -3,7 +3,7 @@ import './ColumnContainer.scss';
 import { ContainerProps } from '../../../layouts/LayoutCommonTypes';
 
 // eslint-disable-next-line react/function-component-definition
-const ColumnContainer: React.FC<ContainerProps> = ({
+const ColumnContainer = ({
   children,
   gapBetweenItem,
   maxWidth,

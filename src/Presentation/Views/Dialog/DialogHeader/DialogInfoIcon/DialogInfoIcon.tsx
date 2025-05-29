@@ -9,10 +9,7 @@ type RenderRightActionsProps = {
   onClickInfo: FunctionTypeVoidToVoid;
   theme?: UiKitTheme;
 };
-const DialogInfoIcon: React.FC<
-  RenderRightActionsProps
-  // eslint-disable-next-line react/function-component-definition
-> = ({
+const DialogInfoIcon = ({
   onClickInfo,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   theme = undefined,

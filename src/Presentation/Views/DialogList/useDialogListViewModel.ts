@@ -248,25 +248,15 @@ export default function useDialogListViewModel(
                 let updatedDialogs: PublicDialogEntity[];
 
                 if (newItem.type === DialogType.private) {
-                  const filteredDialogs = prevDialogs.filter(
-                    (d) => d.id !== newItem.id,
-                  );
-
-                  updatedDialogs = [
-                    ...filteredDialogs,
-                    newItem as PublicDialogEntity,
-                  ];
+                  const filteredDialogs = prevDialogs.filter(d => d.id !== newItem.id);
+                  updatedDialogs = [...filteredDialogs, newItem as PublicDialogEntity];
                 } else {
-                  updatedDialogs = [
-                    ...prevDialogs,
-                    newItem as PublicDialogEntity,
-                  ];
+                  updatedDialogs = [...prevDialogs, newItem as PublicDialogEntity];
                 }
 
                 const sortedDialogs = updatedDialogs.sort((a, b) => {
                   const aDate = a.lastMessage?.dateSent ?? a.updatedAt;
                   const bDate = b.lastMessage?.dateSent ?? b.updatedAt;
-
                   return new Date(bDate).getTime() - new Date(aDate).getTime();
                 });
 

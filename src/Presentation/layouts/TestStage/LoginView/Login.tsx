@@ -8,7 +8,7 @@ type LoginProps = {
   loginHandler?: FunctionTypeLoginDataToVoid;
 };
 // eslint-disable-next-line react/function-component-definition
-const Login: React.FC<LoginProps> = ({ loginHandler }: LoginProps) => {
+const Login = ({ loginHandler }: LoginProps) => {
   // const currentContext = useQbInitializedDataContext();
   const [UserName, setUsername] = useState('');
   const [Password, setPassword] = useState('');

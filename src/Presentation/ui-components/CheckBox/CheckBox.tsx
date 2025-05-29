@@ -15,21 +15,13 @@ export default function CheckBox({
   onChange,
 }: CheckBoxProps) {
   return (
-    <label
-      className={cn('checkbox-field', {
-        disabled,
-      })}
-    >
-      {checked ? (
-        <CheckOnSvg className="icon-checkmark" />
-      ) : (
-        <CheckOffSvg className="icon-check" />
-      )}
-      <input
-        type="checkbox"
-        onChange={() => onChange?.(!checked)}
-        disabled={disabled}
-      />
+    <label className={cn('checkbox-field', {
+      'disabled': disabled
+    })}>
+      {checked ? <CheckOnSvg className="icon-checkmark" /> : <CheckOffSvg className="icon-check" />}
+      <input type="checkbox"
+             onChange={() => onChange?.(!checked)}
+             disabled={disabled}  />
     </label>
   );
 }

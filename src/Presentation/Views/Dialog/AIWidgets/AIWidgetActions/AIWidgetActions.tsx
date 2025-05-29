@@ -84,9 +84,7 @@ function AIWidgetActions({
 
   return (
     <div style={ContextMenuStyles.contextMenuIcon}>
-      <div className="ai-widget-actions-render" onClick={handleClick}>
-        {widgetToRender || <EditDots />}
-      </div>
+      <div className="ai-widget-actions-render" onClick={handleClick}>{widgetToRender || <EditDots />}</div>
       {menuVisible && (
         // <div ref={contextMenuRef} style={ContextMenuStyles.contextMenuContent}>
         <div

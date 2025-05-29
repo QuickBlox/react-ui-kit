@@ -7,7 +7,7 @@ type VoiceMessageProps = {
   onClick: FunctionTypeVoidToVoid;
 };
 // eslint-disable-next-line react/function-component-definition
-const VoiceMessage: React.FC<VoiceMessageProps> = ({
+const VoiceMessage = ({
   icon,
   onClick,
 }: VoiceMessageProps) => {

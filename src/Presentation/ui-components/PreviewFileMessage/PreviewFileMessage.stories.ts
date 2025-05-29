@@ -1,3 +1,4 @@
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import PreviewFileMessage from './PreviewFileMessage';
 
@@ -72,6 +73,7 @@ export const PreviewFileMessageImage: StoryDefault = {
   name: 'PreviewFileMessage Image',
   args: {
     src: 'https://quickblox.com/wp-content/themes/QuickbloxTheme2021/img/chat-messaging.svg',
+    // src: 'https://cdn-ikpjoif.nitrocdn.com/WZsqFPiehrtwFaaeJNQAQZrkRMgaTuyL/assets/images/optimized/rev-83f47e6/quickblox.com/wp-content/themes/QuickbloxTheme2021/img/custom-white-label-solution.jpg',
     name: 'screenshot.jpg',
   },
 };

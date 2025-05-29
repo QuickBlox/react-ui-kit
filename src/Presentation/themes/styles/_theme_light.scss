@@ -1,4 +1,4 @@
-@import 'theme_colors_scheme';
+@use 'theme_colors_scheme' as *;
 
 :root {
   --primary: #{$primary-500};

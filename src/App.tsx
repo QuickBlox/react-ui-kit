@@ -15,9 +15,7 @@ import QuickBloxUIKitDesktopLayout from './Presentation/layouts/Desktop/QuickBlo
 import DefaultTheme from './Presentation/themes/DefaultThemes/DefaultTheme';
 import useQbUIKitDataContext from './Presentation/providers/QuickBloxUIKitProvider/useQbUIKitDataContext';
 import { QBConfig } from './QBconfig';
-import MainButton, {
-  TypeButton,
-} from './Presentation/components/UI/Buttons/MainButton/MainButton';
+import MainButton, { TypeButton } from './Presentation/components/UI/Buttons/MainButton/MainButton';
 
 function App() {
   if ((window as any).QB === undefined) {
@@ -182,7 +180,7 @@ function App() {
         );
         await prepareContent().catch();
         currentContext.setSubscribeOnSessionExpiredListener(() => {
-          console.timeLog('call OnSessionExpiredListener ... start');
+          console.timeLog('call OnSessionExpiredListener ... start')
           // logoutHandler();
           console.log('OnSessionExpiredListener ... end');
         });
@@ -195,18 +193,12 @@ function App() {
     console.log('HEAVE USER: ', JSON.stringify(currentUser));
   }, [currentUser]);
 
-  useEffect(() => {
-    console.log('0. APP INIT');
-    prepareSDK(currentUser).catch((er) => {
-      console.log(er);
-    });
-  }, []);
-  //
-  // const { proxyConfig } = QBConfig.configAIApi.AIAnswerAssistWidgetConfig;
-  //
-  // const defaultAIAnswer = UseDefaultAIAssistAnswerWidget({
-  //   ...proxyConfig,
-  // });
+  // useEffect(() => {
+  //   console.log('0. APP INIT');
+  //   prepareSDK(currentUser).catch((er) => {
+  //     console.log(er);
+  //   });
+  // }, []);
 
   return (
     <>
@@ -214,14 +206,14 @@ function App() {
         <MainButton
           typeButton={TypeButton.outlined}
           title="Light Theme"
-          clickHandler={() => {
+          clickHandler = {() => {
             document.documentElement.setAttribute('data-theme', 'light');
           }}
         />
         <MainButton
           typeButton={TypeButton.defaultDisabled}
           title="Dark Theme"
-          clickHandler={() => {
+          clickHandler = {() => {
             document.documentElement.setAttribute('data-theme', 'dark');
           }}
         />
@@ -245,7 +237,7 @@ function App() {
               element={
                 <div>
                   <QuickBloxUIKitDesktopLayout
-                    theme={new DefaultTheme()}
+                    theme={ new DefaultTheme()}
                     uikitHeightOffset="56px"
                     // AIAssist={{
                     //   enabled: true,
@@ -260,6 +252,7 @@ function App() {
         </div>
       </QuickBloxUIKitProvider>
     </>
+
   );
 }
 

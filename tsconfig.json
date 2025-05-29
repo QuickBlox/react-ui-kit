@@ -3,9 +3,9 @@
     "outDir": "./dist/",
     "sourceMap": true,
     "declaration": true,
-    "target": "es5",
+    "target": "ES2022", // Обновлено для поддержки React 19
     "lib": [
-      "es2015",
+      "es2022",
       "dom",
       "dom.iterable",
       "esnext"
@@ -18,11 +18,12 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler", // Добавлено для корректной работы с React 19
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
     "jsx": "react-jsx",
+    "types": ["@types/node", "@types/react", "@storybook/react"],
   },
   "include": [
     "src",
@@ -30,5 +31,4 @@
     "media-recorder-js.d.ts"
   ],
   "exclude": ["node_modules", "dist"]
-
 }

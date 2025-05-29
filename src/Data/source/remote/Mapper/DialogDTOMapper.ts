@@ -173,7 +173,7 @@ export class DialogDTOMapper implements IDTOMapper {
             qbDialog.last_message_user_id === null
               ? 0
               : // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                qbDialog.last_message_user_id;
+              qbDialog.last_message_user_id;
           // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           dto.ownerId = qbDialog.user_id.toString();
           dto.type = qbDialog.type;
@@ -185,13 +185,13 @@ export class DialogDTOMapper implements IDTOMapper {
           dto.name = qbDialog.name;
           dto.photo = qbDialog.photo === null ? '' : qbDialog.photo;
           dto.participantsIds = qbDialog.occupants_ids;
-        // return Promise.reject(
-        //   new MapperDTOException(
-        //     UNEXPECTED_MAPPER_DTO_EXCEPTION_MESSAGE,
-        //     UNEXPECTED_MAPPER_DTO_EXCEPTION_EXCEPTION_CODE,
-        //     'undefined type dialog in QBChatDialog',
-        //   ),
-        // );
+          // return Promise.reject(
+          //   new MapperDTOException(
+          //     UNEXPECTED_MAPPER_DTO_EXCEPTION_MESSAGE,
+          //     UNEXPECTED_MAPPER_DTO_EXCEPTION_EXCEPTION_CODE,
+          //     'undefined type dialog in QBChatDialog',
+          //   ),
+          // );
       }
     } catch (e) {
       console.log('MAPPER DTO ERROR for dto: ', JSON.stringify(dto));

@@ -85,8 +85,8 @@ export interface QBUIKitConfig extends QBConfig {
     chatProtocol: {
       active: number;
     };
-    pingLocalhostTimeInterval: number;
-    chatReconnectionTimeInterval: number;
+    pingLocalhostTimeInterval?: number;
+    chatReconnectionTimeInterval?: number
     debug: boolean;
     enableForwarding: boolean;
     enableReplying: boolean;

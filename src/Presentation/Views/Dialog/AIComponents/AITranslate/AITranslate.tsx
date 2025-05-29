@@ -1,6 +1,6 @@
 import cn from 'classnames';
 import Dropdown from '../../../../ui-components/Dropdown/Dropdown';
-import { ReactComponent as TranslateSvg } from '../../../../icons/actions/translate.svg';
+import TranslateSvg from '../../../../icons/actions/translate.svg?react';
 import { MessageEntity } from '../../../../../Domain/entity/MessageEntity';
 import { AIMessageWidget } from '../../AIWidgets/AIMessageWidget';
 import { AIUtils } from '../../../../../utils/utils';

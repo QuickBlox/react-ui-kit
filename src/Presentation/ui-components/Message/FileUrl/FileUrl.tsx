@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactComponent as FileSvg } from '../../../icons/media/file.svg';
+import FileSvg from '../../../icons/media/file.svg?react';
 import './FileUrl.scss';
 
 interface FileUrlProps {

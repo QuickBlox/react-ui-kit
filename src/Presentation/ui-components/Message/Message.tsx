@@ -55,36 +55,42 @@ export default function Message({
                 subtype={subtype}
                 userName={userName}
               />
-              <div
-                className={cn(null, {
-                  'reply-forward-message':
-                    subtype === 'reply' || subtype === 'forward',
-                })}
-              >
+              <div className={cn(null, {
+                            'reply-forward-message': subtype === 'reply' || subtype === 'forward'}
+              )}>
                 {children}
               </div>
             </div>
           </div>
         </div>
       ) : (
-        <div className="message-item__incoming-mes">
-          {avatar}
-          <div className="message-item__incoming">
-            <MessageCaption type={type} subtype={subtype} userName={userName} />
-            <div className="message-item__incoming__chat">
-              <div className="message-item__incoming__chat__bubble">
-                {subtype === 'reply' || subtype === 'forward' ? (
-                  <div className="reply-forward-message">{children}</div>
-                ) : (
-                  children
-                )}
-                {bottomPart}
+        <>
+          <div className="message-item__incoming-mes">
+            {avatar}
+            <div className="message-item__incoming">
+              <MessageCaption
+                type={type}
+                subtype={subtype}
+                userName={userName}
+              />
+              <div className="message-item__incoming__chat">
+                <div className="message-item__incoming__chat__bubble">
+                  {
+                    (subtype === 'reply' || subtype === 'forward')
+                      ?
+                    <div className='reply-forward-message'>
+                      {children}
+                    </div>
+                    : children
+                  }
+                  {bottomPart}
+                </div>
+                {additionalPart}
+                <TimeAndStatus time={time} />
               </div>
-              {additionalPart}
-              <TimeAndStatus time={time} />
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

@@ -60,3 +60,10 @@ $desktop-main-container-item-center-width: 720px;
   justify-content: center;
   height: 100%;
 }
+
+@media only screen and (max-width: 430px) {
+
+  .desktop-layout-main-container {
+    display: block;
+  }
+}

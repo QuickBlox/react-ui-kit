@@ -1,5 +1,5 @@
-import React, { ReactElement } from 'react';
-
+import React from 'react';
+import { ReactElement } from 'react';
 import cn from 'classnames';
 
 export interface Option {

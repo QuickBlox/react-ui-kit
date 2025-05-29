@@ -468,6 +468,90 @@ export function QBCreateGroupDialog(
   });
 }
 
+// START
+
+export function QBCreatePrivateDialogWithAutojoinFalse(
+  userId: QBUser['id'],
+  dialogName?: string,
+  data?: Dictionary<unknown>,
+) {
+  console.log(
+    `call QBCreatePrivateDialog with userid: ${userId} dialog name: ${
+      dialogName || '-'
+    }`,
+  );
+
+  return new Promise<QBUIKitChatDialog>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
+    QB.chat.dialog.create(
+      { name: dialogName || '-', occupants_ids: [userId], type: 3, data, is_join_required: 0 },
+      (error, chat) => {
+        if (error) {
+          reject(stringifyError(error));
+        } else {
+          resolve(chat!);
+        }
+      },
+    );
+  });
+}
+export function QBCreateGroupDialogWithAutojoinFalse(
+  userIds: Array<QBUser['id']>,
+  dialogName?: string,
+  data?: Dictionary<unknown>,
+) {
+  console.log(
+    `call QBCreateGroupDialog with ids: ${JSON.stringify(userIds)} name: ${
+      dialogName || ''
+    }`,
+  );
+
+  let params = {};
+
+  if (data && data?.photo) {
+    params = {
+      name: dialogName || '-',
+      occupants_ids: [userIds],
+      type: 2,
+      photo: data?.photo,
+      is_join_required: 0,
+    };
+  } else {
+    params = {
+      name: dialogName || '-',
+      occupants_ids: [userIds],
+      type: 2,
+      is_join_required: 0
+    };
+  }
+
+  return new Promise<QBUIKitChatDialog>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const QB = getQB();
+
+    QB.chat.dialog.create(
+      // {
+      //   name: dialogName || '-',
+      //   occupants_ids: [userIds],
+      //   type: 2,
+      //   photo: data?.photo,
+      // },
+      params,
+      (error, chat) => {
+        if (error) {
+          reject(stringifyError(error));
+        } else {
+          resolve(chat!);
+        }
+      },
+    );
+  });
+}
+
+// END
+
 export function QBUpdateDialog(
   dialogId: QBUIKitChatDialog['_id'],
   data: Dictionary<unknown>,
@@ -491,63 +575,40 @@ export function QBJoinGroupDialog(dialogId: QBUIKitChatDialog['_id']) {
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const QB = getQB();
     const dialogJid = QB.chat.helpers.getRoomJidFromDialogId(dialogId);
-
-    // QB.chat.muc.join(dialogJid, (error, res) => {
-    //   if (error) {
-    //     console.log('ERROR in QBJoinGroupDialog with join group dialog:', error);
-    //     reject(stringifyError(error));
-    //   } else {
-    //     console.log('QBJoinGroupDialog: join group dialog:', res);
-    //     resolve(res);
-    //   }
-    // });
-    // eslint-disable-next-line consistent-return
+    // для ВЕРСИИ ТЕСТОВОГО ПРИМЕРА СПИСОК ДИАЛГОВ БЕЗ АВТОДЖОИНА нужно просто закомментировать
+    // содержимое этого
+    // метода
     QB.chat.muc.join(dialogJid, (error, res) => {
       if (error) {
-        console.log(
-          'ERROR in QBJoinGroupDialog with join group dialog:',
-          error,
-        );
+        console.log('ERROR in QBJoinGroupDialog with join group dialog:', error);
         console.log('stringify Error:', stringifyError(error));
         // Если ошибка содержит станзу, проверяем ее на наличие тега <error>
         try {
           const errorNode = error as any;
 
           if (errorNode.childNodes && errorNode.childNodes.length > 0) {
-            // eslint-disable-next-line no-plusplus
             for (let i = 0; i < errorNode.childNodes.length; i++) {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-call
               const elItem = errorNode.childNodes.item(i);
-
               if (elItem.tagName === 'error') {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 const code = elItem.getAttribute('code') || '500';
                 const message = elItem.textContent || 'Unknown issue';
-
-                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                 console.log(`Join error: ${code}, message: ${message}`);
-
-                // eslint-disable-next-line prefer-promise-reject-errors
                 return reject({ code, message });
               }
             }
           }
         } catch (parseError) {
           console.log('Error parsing join error stanza:', parseError);
-
-          // eslint-disable-next-line prefer-promise-reject-errors
-          return reject({
-            code: '500',
-            message: 'Error parsing join error stanza',
-          });
+          return reject({ code: '500', message: 'Error parsing join error stanza' });
         }
 
-        // eslint-disable-next-line prefer-promise-reject-errors
         return reject({ code: '500', message: 'Unknown error during join' });
+      } else {
+        console.log('QBJoinGroupDialog: join group dialog:', res);
+        resolve(res);
       }
-      console.log('QBJoinGroupDialog: join group dialog:', res);
-      resolve(res);
     });
+
   });
 }
 
@@ -571,7 +632,7 @@ export function QBLeaveDialog(dialogId: QBUIKitChatDialog['_id']) {
     // eslint-disable-next-line @typescript-eslint/no-shadow
     const QB = getQB();
     const dialogJid = QB.chat.helpers.getRoomJidFromDialogId(dialogId);
-
+    // unjoin
     QB.chat.muc.leave(dialogJid, (error, res) => {
       if (error) {
         reject(stringifyError(error));
@@ -628,34 +689,6 @@ export function QBCreateAndUploadContent(
     });
   });
 }
-
-// export function QBChatGetMessages(
-//   dialogId: QBChatDialog['_id'],
-//   skip = 0,
-//   limit = 100,
-// ) {
-//   return new Promise<GetMessagesResult & { dialogId: QBChatDialog['_id'] }>(
-//     (resolve, reject) => {
-//       QB.chat.message.list(
-//         {
-//           chat_dialog_id: dialogId,
-//           sort_desc: 'date_sent',
-//           limit,
-//           skip,
-//           mark_as_read: 0,
-//         },
-//         (error, messages) => {
-//           if (error) {
-//             reject(stringifyError(error));
-//           } else {
-//             resolve({ ...messages, dialogId });
-//           }
-//         },
-//       );
-//     },
-//   );
-// }
-// //
 
 export function qbChatGetMessagesExtended(
   dialogId: QBUIKitChatDialog['_id'],
@@ -789,9 +822,6 @@ export function QBWebRTCSessionGetUserMedia(
     });
   });
 }
-// export interface AIAnswerResponse {
-//   answer: string;
-// } // artim 19.05.2024
 
 export function QBAnswerAssist(
   smartChatAssistantId: string,

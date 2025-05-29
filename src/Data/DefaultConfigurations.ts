@@ -256,11 +256,11 @@ export class DefaultConfigurations {
       },
       appConfig: {
         maxFileSize: 10 * 1024 * 1024,
-        sessionTimeOut: 122,
+        sessionTimeOut: 119,
         chatProtocol: {
           active: 2,
         },
-        pingLocalhostTimeInterval: 0,
+        pingLocalhostTimeInterval: 5,
         chatReconnectionTimeInterval: 3,
         debug: true,
         enableForwarding: true,

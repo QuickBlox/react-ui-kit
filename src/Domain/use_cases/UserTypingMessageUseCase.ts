@@ -11,7 +11,7 @@ export class UserTypingMessageUseCase implements IUseCase<void, void> {
 
   private typingTimeout = 3;
 
-  private _typingTimer: NodeJS.Timer | undefined;
+  private _typingTimer: NodeJS.Timeout | null = null;
 
   private _typingTime = 0;
 
@@ -36,8 +36,8 @@ export class UserTypingMessageUseCase implements IUseCase<void, void> {
       this._typingTimer = setInterval(() => {
         if ((Date.now() - this._typingTime) / 1000 >= this.typingTimeout) {
           this.messagesRepository.typingMessageStop(this.dialog, this.senderId);
-          clearInterval(this._typingTimer);
-          this._typingTimer = undefined;
+          clearInterval(this._typingTimer as NodeJS.Timeout);
+          this._typingTimer = null;
           this._typingTime = 0;
         }
       }, 500);

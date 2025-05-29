@@ -17,7 +17,7 @@ type DefaultAttachmentComponentProps = {
   fileUrl: string;
 };
 // eslint-disable-next-line react/function-component-definition
-const DefaultAttachment: React.FC<DefaultAttachmentComponentProps> = ({
+const DefaultAttachment = ({
   fileName,
   fileUrl,
 }: DefaultAttachmentComponentProps) => {

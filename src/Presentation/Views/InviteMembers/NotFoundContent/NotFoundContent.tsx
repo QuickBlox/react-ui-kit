@@ -6,7 +6,7 @@ type NotFoundContentProps = {
   message: string;
 };
 // eslint-disable-next-line react/function-component-definition
-const NotFoundContent: React.FC<NotFoundContentProps> = ({
+const NotFoundContent = ({
   message,
 }: NotFoundContentProps) => {
   return (

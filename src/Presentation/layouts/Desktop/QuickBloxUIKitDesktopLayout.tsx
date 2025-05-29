@@ -47,14 +47,11 @@ import CreateNewDialogFlow from '../../Views/Flow/CreateDialogFlow/CreateNewDial
 import useQuickBloxUIKit from '../../../hooks/useQuickBloxUIKit';
 import { QuickBloxUIKitDesktopLayoutProps } from '../../../CommonTypes/CommonTypes';
 
-const QuickBloxUIKitDesktopLayout: React.FC<
-  QuickBloxUIKitDesktopLayoutProps
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,react/function-component-definition
-> = ({
-  theme = undefined,
-  AITranslate = undefined,
-  AIRephrase = undefined,
-  AIAssist = undefined,
+const QuickBloxUIKitDesktopLayout = ({
+  theme,
+  AITranslate,
+  AIRephrase,
+  AIAssist,
   uikitHeightOffset = '0px',
 }: QuickBloxUIKitDesktopLayoutProps) => {
   const {
@@ -377,8 +374,8 @@ const QuickBloxUIKitDesktopLayout: React.FC<
 
   const getDialogAvatar = (
     currentDialog: PreviewDialogViewModel,
-  ): JSX.Element | undefined => {
-    let AvatarComponent: JSX.Element | undefined;
+  ): React.JSX.Element | undefined => {
+    let AvatarComponent: React.JSX.Element | undefined;
 
     if (
       currentDialog.entity.type === DialogType.group ||
@@ -598,12 +595,11 @@ const QuickBloxUIKitDesktopLayout: React.FC<
                           <MessageItem
                             disableAction={!isOnline}
                             avatar={
-                              <Avatar
-                                src={message?.sender?.photo || ''}
-                                icon={<UserSvg />}
-                                size="md"
-                              />
-                            }
+                            <Avatar
+                              src={message?.sender?.photo || ''}
+                              icon={<UserSvg />}
+                              size="md"
+                            />}
                             message={message}
                             currentUserId={currentUserId || -1}
                             enableForwarding={enableForwarding}

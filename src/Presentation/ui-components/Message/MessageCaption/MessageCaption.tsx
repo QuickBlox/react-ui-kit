@@ -1,6 +1,6 @@
 import React from 'react';
-import { ReactComponent as ForwardSvg } from '../../../icons/actions/forward-filled.svg';
-import { ReactComponent as ReplySvg } from '../../../icons/actions/reply-filled.svg';
+import ForwardSvg from '../../../icons/actions/forward-filled.svg?react';
+import ReplySvg from '../../../icons/actions/reply-filled.svg?react';
 import './MessageCaption.scss';
 
 interface MessageCaptionProps {

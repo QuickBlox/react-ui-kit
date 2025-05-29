@@ -1,13 +1,13 @@
-@import '../../themes/styles/mixins';
+@use '../../themes/styles/mixins' as *;
 
 .dialog-header {
-  @include applyBorderBox;
-
   width: 100%;
   padding: 12px 16px 12px 20px;
   display: flex;
   align-items: center;
   gap: 33px;
+
+  @include applyBorderBox;
 
   &__icon {
     cursor: pointer;
@@ -70,6 +70,13 @@
 @media only screen and (max-width: var(--min-width-screen-desktop)) {
   .dialog-header__body-left {
     gap: 3px;
+  }
+
+  .dialog-header {
+    &__body {
+      width: unset;
+    }
+
   }
 }
 @media only screen and (min-width: 981px) {

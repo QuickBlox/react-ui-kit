@@ -9,11 +9,11 @@ type DialogMembersButtonProps = {
   touchHandler: FunctionTypeVoidToVoid;
 };
 // eslint-disable-next-line react/function-component-definition,@typescript-eslint/no-unused-vars
-const DialogMembersButton: React.FC<DialogMembersButtonProps> = ({
+const DialogMembersButton = ({
   content,
   clickHandler,
   touchHandler,
-}) => {
+}:DialogMembersButtonProps) => {
   return (
     <ActiveButton
       content={<div className="dialog-members-btn">{content}</div>}
